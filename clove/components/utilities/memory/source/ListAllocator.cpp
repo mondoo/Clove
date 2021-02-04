@@ -6,8 +6,7 @@
 
 namespace garlic::clove {
     ListAllocator::ListAllocator(size_t sizeBytes)
-        : listSize(sizeBytes)
-        , freeMemory(true) {
+        : listSize(sizeBytes) {
         rawList = reinterpret_cast<std::byte *>(malloc(listSize));
         head    = rawList;
     }

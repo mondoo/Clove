@@ -14,7 +14,7 @@ namespace garlic::clove {
         : device{ std::move(device) }
         , queue{ queue }
         , commandPool{ commandPool }
-        , queueFamilyIndices{ std::move(queueFamilyIndices) } {
+        , queueFamilyIndices{ queueFamilyIndices } {
     }
 
     VulkanTransferQueue::VulkanTransferQueue(VulkanTransferQueue &&other) noexcept = default;
@@ -28,7 +28,7 @@ namespace garlic::clove {
     std::unique_ptr<GhaTransferCommandBuffer> VulkanTransferQueue::allocateCommandBuffer() {
         //TODO: Multiple command buffer allocation
 
-        VkCommandBuffer commandBuffer;
+        VkCommandBuffer commandBuffer{ nullptr };
 
         VkCommandBufferAllocateInfo allocInfo{
             .sType              = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
@@ -97,7 +97,7 @@ namespace garlic::clove {
             });
         }
 
-        VkFence const vkFence{ signalFence ? polyCast<VulkanFence const>(signalFence)->getFence() : VK_NULL_HANDLE };
+        VkFence const vkFence{ signalFence != nullptr ? polyCast<VulkanFence const>(signalFence)->getFence() : VK_NULL_HANDLE };
 
         if(vkQueueSubmit(queue, std::size(vkSubmissions), std::data(vkSubmissions), vkFence) != VK_SUCCESS) {
             CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to submit graphics command buffer(s)");

@@ -18,7 +18,7 @@ namespace garlic::clove {
         VkSwapchainKHR swapchain{ VK_NULL_HANDLE };
 
         VkFormat swapChainImageFormat;
-        VkExtent2D swapChainExtent;
+        VkExtent2D swapChainExtent{};
 
         std::vector<VkImage> images;
         std::vector<std::shared_ptr<VulkanImageView>> imageViews;

@@ -15,23 +15,23 @@ namespace garlic::clove {
 
         //VARIABLES
     private:
-        std::byte* stack;
-        size_t stackSize = 0;
-        std::byte* top   = nullptr;
+        std::byte *stack{};
+        size_t stackSize{ 0 };
+        std::byte *top{ nullptr };
 
-        bool freeMemory = true;
+        bool freeMemory{ true };
 
         //FUNCTIONS
     public:
         StackAllocator() = delete;
         StackAllocator(size_t sizeBytes);
-        StackAllocator(std::byte* start, size_t sizeBytes);
+        StackAllocator(std::byte *start, size_t sizeBytes);
 
-        StackAllocator(StackAllocator const& other) = delete;
-        StackAllocator(StackAllocator&& other) noexcept;
+        StackAllocator(StackAllocator const &other) = delete;
+        StackAllocator(StackAllocator &&other) noexcept;
 
-        StackAllocator& operator=(StackAllocator const& other) = delete;
-        StackAllocator& operator=(StackAllocator&& other) noexcept;
+        StackAllocator &operator=(StackAllocator const &other) = delete;
+        StackAllocator &operator=(StackAllocator &&other) noexcept;
 
         ~StackAllocator();
 
@@ -40,7 +40,7 @@ namespace garlic::clove {
          */
         Marker markPosition();
 
-        void* alloc(size_t bytes);
+        void *alloc(size_t bytes);
 
         /**
          * @brief Free the entire allocator, effectively resetting the stack.

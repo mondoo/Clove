@@ -40,7 +40,7 @@ namespace garlic::clove {
 
             camera.camera.setView(lookAt(position, position + camFront, camUp));
 
-            renderer->submitCamera(camera.camera, std::move(position));
+            renderer->submitCamera(camera.camera, position);
 
             activeCamera = entity;
         });
@@ -48,14 +48,14 @@ namespace garlic::clove {
         //Submit static meshes
         entityManager->forEach([this](TransformComponent const &transform, StaticModelComponent const &staticModel) {
             mat4f const modelTransform{ transform.worldMatrix };
-            std::array<mat4f, MAX_JOINTS> matrixPalet;
+            std::array<mat4f, MAX_JOINTS> matrixPalet{};
             matrixPalet.fill(mat4f{ 1.0f });
 
             std::set<GeometryPass::Id> passIds;
-            for(auto &technique : staticModel.model.getTechniques()) {
+            for(auto const &technique : staticModel.model.getTechniques()) {
                 passIds.insert(technique.passIds.begin(), technique.passIds.end());
             }
-            for(auto &mesh : staticModel.model.getMeshes()) {
+            for(auto const &mesh : staticModel.model.getMeshes()) {
                 renderer->submitMesh(ForwardRenderer3D::MeshInfo{ mesh, staticModel.model.getMaterial(), modelTransform, matrixPalet }, passIds);
             }
         });
@@ -65,10 +65,10 @@ namespace garlic::clove {
             auto const matrixPalet{ animatedModel.model.update(deltaTime) };
 
             std::set<GeometryPass::Id> passIds;
-            for(auto &technique : animatedModel.model.getTechniques()) {
+            for(auto const &technique : animatedModel.model.getTechniques()) {
                 passIds.insert(technique.passIds.begin(), technique.passIds.end());
             }
-            for(auto &mesh : animatedModel.model.getMeshes()) {
+            for(auto const &mesh : animatedModel.model.getMeshes()) {
                 renderer->submitMesh(ForwardRenderer3D::MeshInfo{ mesh, animatedModel.model.getMaterial(), modelTransform, matrixPalet }, passIds);
             }
         });
@@ -91,7 +91,7 @@ namespace garlic::clove {
                 .shadowTransform = shadowProj * lookAt(dirLightPos, dirLightPos + light.direction, vec3f{ 0.0f, 1.0f, 0.0f }),
             };
 
-            renderer->submitLight(std::move(lightProxy));
+            renderer->submitLight(lightProxy);
         });
         //Submit point lights
         entityManager->forEach([this](TransformComponent const &transform, PointLightComponent &light) {
@@ -118,7 +118,7 @@ namespace garlic::clove {
                 }
             };
 
-            renderer->submitLight(std::move(lightProxy));
+            renderer->submitLight(lightProxy);
         });
     }
 }

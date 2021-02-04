@@ -60,7 +60,7 @@ namespace garlic::clove {
             .vertexShader         = *ghaFactory.createShaderFromSource({ animatedmeshshadowmap_v, animatedmeshshadowmap_vLength }, shaderIncludes, "Shadow Map - Animated Mesh (vertex)", GhaShader::Stage::Vertex),
             .fragmentShader       = *ghaFactory.createShaderFromSource({ meshshadowmap_p, meshshadowmap_pLength }, shaderIncludes, "Shadow Map (pixel)", GhaShader::Stage::Pixel),
             .vertexInput          = Vertex::getInputBindingDescriptor(),
-            .vertexAttributes     = std::move(vertexAttributes),
+            .vertexAttributes     = vertexAttributes,
             .viewportDescriptor   = viewScissorArea,
             .scissorDescriptor    = viewScissorArea,
             .enableBlending       = false,
@@ -69,7 +69,7 @@ namespace garlic::clove {
                 createMeshDescriptorSetLayout(ghaFactory),
             },
             .pushConstants = { 
-                std::move(pushConstant),
+                pushConstant,
             },
         });
     }

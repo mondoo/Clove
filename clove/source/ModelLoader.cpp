@@ -99,7 +99,7 @@ namespace garlic::clove::ModelLoader {
 
             aiMatrix4x4 const parentTransformation{ getJointPoseTransform(node->mParent, parentToStopAt, frame, animation, jointNameIdMap) };
 
-            if(!channel) {
+            if(channel == nullptr) {
                 return parentTransformation * node->mTransformation;
             }
 
@@ -353,7 +353,7 @@ namespace garlic::clove::ModelLoader {
 
         Assimp::Importer importer;
         const aiScene *scene{ openFile(modelFilePath, importer) };
-        if(scene == nullptr || (scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE) || scene->mRootNode == nullptr) {
+        if(scene == nullptr || ((scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE) != 0u) || scene->mRootNode == nullptr) {
             CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Assimp Error: {0}", importer.GetErrorString());
             return { meshes, std::make_shared<Material>() };
         }
@@ -377,7 +377,7 @@ namespace garlic::clove::ModelLoader {
 
         Assimp::Importer importer;
         const aiScene *scene{ openFile(modelFilePath, importer) };
-        if(scene == nullptr || (scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE) || scene->mRootNode == nullptr) {
+        if(scene == nullptr || ((scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE) != 0u) || scene->mRootNode == nullptr) {
             CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Assimp Error: {0}", importer.GetErrorString());
             return { meshes, std::make_shared<Material>(), nullptr, {} };
         }

@@ -15,7 +15,7 @@ namespace garlic::clove {
     OpenAlFactory::~OpenAlFactory() = default;
 
     Expected<std::unique_ptr<AhaBuffer>, std::runtime_error> OpenAlFactory::createAudioBuffer(AhaBuffer::Descriptor descriptor) {
-        ALuint buffer;
+        ALuint buffer{ 0 };
         alGenBuffers(1, &buffer);
 
         ALenum const error{ alGetError() };
@@ -24,11 +24,11 @@ namespace garlic::clove {
             return Unexpected{ std::runtime_error{ "Failed to create AhaBuffer. See log for details." } };
         }
 
-        return std::unique_ptr<AhaBuffer>{ std::make_unique<OpenAlBuffer>(buffer, std::move(descriptor)) };
+        return std::unique_ptr<AhaBuffer>{ std::make_unique<OpenAlBuffer>(buffer, descriptor) };
     }
 
     Expected<std::unique_ptr<AhaSource>, std::runtime_error> OpenAlFactory::createAudioSource() {
-        ALuint source;
+        ALuint source{ 0 };
         alGenSources(1, &source);
 
         ALenum const error{ alGetError() };

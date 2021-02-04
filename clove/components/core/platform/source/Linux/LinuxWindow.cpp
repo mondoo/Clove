@@ -10,7 +10,7 @@ namespace garlic::clove {
 
         display = XOpenDisplay(nullptr);//makes the connection to the client, where to display the window
 
-        if(!display) {
+        if(display == nullptr) {
             //TODO: Exception
             CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Could not open display");
             return;
@@ -22,17 +22,17 @@ namespace garlic::clove {
         windowAttribs                   = {};
         windowAttribs.border_pixel      = BlackPixel(display, screenID);
         windowAttribs.background_pixel  = WhitePixel(display, screenID);
-        windowAttribs.override_redirect = true;
+        windowAttribs.override_redirect = 1;
         windowAttribs.colormap          = XCreateColormap(display, RootWindow(display, screenID), screen->root_visual, AllocNone);
         windowAttribs.event_mask        = ExposureMask;
 
         window = XCreateWindow(display, RootWindow(display, screenID), 0, 0, descriptor.width, descriptor.height, 0, screen->depths[0].depth, InputOutput, screen->root_visual, CWBackPixel | CWColormap | CWBorderPixel | CWEventMask, &windowAttribs);
 
         //Remap the delete window message so we can gracefully close the application
-        atomWmDeleteWindow = XInternAtom(display, "WM_DELETE_WINDOW", false);
+        atomWmDeleteWindow = XInternAtom(display, "WM_DELETE_WINDOW", 0);
         XSetWMProtocols(display, window, &atomWmDeleteWindow, 1);
 
-        XSync(display, false);//Passing true here flushes the event queue
+        XSync(display, 0);//Passing true here flushes the event queue
 
         long const keyboardMask{ KeyPressMask | KeyReleaseMask | KeymapStateMask };
         long const mouseMask{ PointerMotionMask | ButtonPressMask | ButtonReleaseMask | EnterWindowMask | LeaveWindowMask };
@@ -60,13 +60,13 @@ namespace garlic::clove {
     }
 
     vec2i LinuxWindow::getPosition() const {
-        ::Window rootWindow;
-        int32_t posX;
-        int32_t posY;
-        uint32_t width;
-        uint32_t height;
-        uint32_t borderWidth;
-        uint32_t depth;
+        ::Window rootWindow{ 0 };
+        int32_t posX{ 0 };
+        int32_t posY{ 0 };
+        uint32_t width{ 0 };
+        uint32_t height{ 0 };
+        uint32_t borderWidth{ 0 };
+        uint32_t depth{ 0 };
 
         if(XGetGeometry(display, window, &rootWindow, &posX, &posY, &width, &height, &borderWidth, &depth) != 0) {
             return { posX, posY };
@@ -77,13 +77,13 @@ namespace garlic::clove {
     }
 
     vec2i LinuxWindow::getSize() const {
-        ::Window rootWindow;
-        int32_t posX;
-        int32_t posY;
-        uint32_t width;
-        uint32_t height;
-        uint32_t borderWidth;
-        uint32_t depth;
+        ::Window rootWindow{ 0 };
+        int32_t posX{ 0 };
+        int32_t posY{ 0 };
+        uint32_t width{ 0 };
+        uint32_t height{ 0 };
+        uint32_t borderWidth{ 0 };
+        uint32_t depth{ 0 };
 
         if(XGetGeometry(display, window, &rootWindow, &posX, &posY, &width, &height, &borderWidth, &depth) != 0) {
             return { width, height };
@@ -115,7 +115,7 @@ namespace garlic::clove {
 
     void LinuxWindow::processInput() {
         if(XPending(display) > 0) {
-            KeySym xkeysym = 0;
+            KeySym xkeysym{ 0 };
 
             XNextEvent(display, &xevent);
             switch(xevent.type) {
@@ -148,7 +148,7 @@ namespace garlic::clove {
                 case KeyRelease: {
                     bool isRepeat = false;
 
-                    if(XEventsQueued(display, QueuedAlready)) {
+                    if(XEventsQueued(display, QueuedAlready) != 0) {
                         XEvent nextEvent;
                         XPeekEvent(display, &nextEvent);
 

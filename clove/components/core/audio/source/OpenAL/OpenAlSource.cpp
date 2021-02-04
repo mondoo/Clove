@@ -47,7 +47,7 @@ namespace garlic::clove {
         CLOVE_ASSERT(numToUnqueue <= maxAbleToUnQueue, "{0}, Can't unqueue {1} buffers. Only {2} buffers have been processed", CLOVE_FUNCTION_NAME_PRETTY, numToUnqueue, maxAbleToUnQueue);
 #endif
 
-        ALuint *buffers = new ALuint[numToUnqueue];
+        auto *buffers = new ALuint[numToUnqueue];
         alCall(alSourceUnqueueBuffers(source, numToUnqueue, buffers));
 
         std::set<ALuint> pendingBuffers;

@@ -39,11 +39,11 @@ namespace garlic::clove {
     DevicePointer::DevicePointer(DevicePointer &&other) noexcept {
         release();
 
-        instance       = std::move(other.instance);
-        surface        = std::move(other.surface);
-        physicalDevice = std::move(other.physicalDevice);
-        logicalDevice  = std::move(other.logicalDevice);
-        debugMessenger = std::move(other.debugMessenger);
+        instance       = other.instance;
+        surface        = other.surface;
+        physicalDevice = other.physicalDevice;
+        logicalDevice  = other.logicalDevice;
+        debugMessenger = other.debugMessenger;
 
         counter       = other.counter;
         other.counter = nullptr;
@@ -67,11 +67,11 @@ namespace garlic::clove {
     DevicePointer &DevicePointer::operator=(DevicePointer &&other) noexcept {
         release();
 
-        instance       = std::move(other.instance);
-        surface        = std::move(other.surface);
-        physicalDevice = std::move(other.physicalDevice);
-        logicalDevice  = std::move(other.logicalDevice);
-        debugMessenger = std::move(other.debugMessenger);
+        instance       = other.instance;
+        surface        = other.surface;
+        physicalDevice = other.physicalDevice;
+        logicalDevice  = other.logicalDevice;
+        debugMessenger = other.debugMessenger;
 
         counter       = other.counter;
         other.counter = nullptr;

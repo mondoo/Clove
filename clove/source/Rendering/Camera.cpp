@@ -7,12 +7,12 @@
 
 namespace garlic::clove {
     Camera::Camera(Viewport viewport, ProjectionMode const projection)
-        : viewport(std::move(viewport)) {
+        : viewport(viewport) {
         setProjectionMode(projection);
     }
 
     Camera::Camera(ProjectionMode const projection) {
-        auto window{ Application::get().getSurface() };
+        auto *window{ Application::get().getSurface() };
 
         surfaceResizeHandle = window->onSurfaceResize().bind([this](vec2ui const &size) {
             setViewport({ 0, 0, static_cast<int32_t>(size.x), static_cast<int32_t>(size.y) });
@@ -24,9 +24,9 @@ namespace garlic::clove {
 
     Camera::Camera(Camera &&other) noexcept
         : currentProjectionMode{ other.currentProjectionMode }
-        , view{ std::move(other.view) }
-        , projection{ std::move(other.projection) }
-        , viewport{ std::move(other.viewport) }
+        , view{ other.view }
+        , projection{ other.projection }
+        , viewport{ other.viewport }
         , zoomLevel{ other.zoomLevel } {
         if(other.surfaceResizeHandle.isValid()) {
             surfaceResizeHandle = Application::get().getSurface()->onSurfaceResize().bind([this](vec2ui const &size) {
@@ -37,9 +37,9 @@ namespace garlic::clove {
 
     Camera &Camera::operator=(Camera &&other) noexcept {
         currentProjectionMode = other.currentProjectionMode;
-        view                  = std::move(other.view);
-        projection            = std::move(other.projection);
-        viewport              = std::move(other.viewport);
+        view                  = other.view;
+        projection            = other.projection;
+        viewport              = other.viewport;
         zoomLevel             = other.zoomLevel;
         if(other.surfaceResizeHandle.isValid()) {
             surfaceResizeHandle = Application::get().getSurface()->onSurfaceResize().bind([this](vec2ui const &size) {
@@ -53,7 +53,7 @@ namespace garlic::clove {
     Camera::~Camera() = default;
 
     void Camera::setView(mat4f view) {
-        this->view = std::move(view);
+        this->view = view;
     }
 
     void Camera::setProjectionMode(ProjectionMode const mode) {
@@ -86,7 +86,7 @@ namespace garlic::clove {
     }
 
     void Camera::setViewport(Viewport viewport) {
-        this->viewport = std::move(viewport);
+        this->viewport = viewport;
         setProjectionMode(currentProjectionMode);
     }
 

@@ -53,7 +53,7 @@ namespace garlic::clove {
         }
 
         bool checkValidationLayerSupport(std::vector<char const *> const &validationLayers) {
-            uint32_t layerCount;
+            uint32_t layerCount{ 0 };
             vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
 
             std::vector<VkLayerProperties> availableLayers(layerCount);
@@ -88,7 +88,7 @@ namespace garlic::clove {
 
             for(int i{ 0 }; auto const &queueFamily : queueFamilies) {
                 //Make sure we have the queue family that'll let us render graphics
-                if(queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
+                if((queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) != 0u) {
                     indices.graphicsFamily = i;
                 }
 
@@ -102,7 +102,7 @@ namespace garlic::clove {
                 }
 
                 //Find a transfer queue family that specifically doesn't support graphics
-                if(queueFamily.queueFlags & VK_QUEUE_TRANSFER_BIT && !(queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT)) {
+                if(((queueFamily.queueFlags & VK_QUEUE_TRANSFER_BIT) != 0u) && ((queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) == 0u)) {
                     indices.transferFamily = i;
                 }
 
@@ -118,7 +118,7 @@ namespace garlic::clove {
         }
 
         bool checkDeviceExtensionsSupport(VkPhysicalDevice device, std::vector<char const *> const &extensions) {
-            uint32_t extensionCount;
+            uint32_t extensionCount{ 0 };
             vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr);
 
             std::vector<VkExtensionProperties> availableExtensions(extensionCount);
@@ -162,7 +162,7 @@ namespace garlic::clove {
             }
 
             bool const requirePresentFamily{ surface != VK_NULL_HANDLE };
-            return indices.isComplete(requirePresentFamily) && extentionsAreSupported && surfaceIsAdequate.value_or(true) && deviceFeatures.samplerAnisotropy;
+            return indices.isComplete(requirePresentFamily) && extentionsAreSupported && surfaceIsAdequate.value_or(true) && (deviceFeatures.samplerAnisotropy != 0u);
         }
     }
 
@@ -280,7 +280,7 @@ namespace garlic::clove {
         }
 
         //Pick physical device
-        VkPhysicalDevice physicalDevice;
+        VkPhysicalDevice physicalDevice{ nullptr };
         {
             uint32_t deviceCount = 0;
             vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
@@ -315,7 +315,7 @@ namespace garlic::clove {
         QueueFamilyIndices queueFamilyIndices{ findQueueFamilies(physicalDevice, surface) };
 
         //Create logical device
-        VkDevice logicalDevice;
+        VkDevice logicalDevice{ nullptr };
         {
             std::set<uint32_t> uniqueQueueFamilies{
                 *queueFamilyIndices.graphicsFamily,
@@ -366,7 +366,7 @@ namespace garlic::clove {
         }
 
         devicePtr = DevicePointer{ instance, surface, physicalDevice, logicalDevice, debugMessenger };
-        factory   = std::make_shared<VulkanFactory>(devicePtr, std::move(queueFamilyIndices));
+        factory   = std::make_shared<VulkanFactory>(devicePtr, queueFamilyIndices);
     }
 
     VulkanDevice::VulkanDevice(VulkanDevice &&other) noexcept = default;

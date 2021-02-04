@@ -80,7 +80,7 @@ namespace garlic::clove {
                 .imageView   = polyCast<const VulkanImageView>(imageViews[i].get())->getImageView(),
                 .imageLayout = VulkanImage::convertLayout(layout),
             };
-            imageInfos[i] = std::move(imageInfo);
+            imageInfos[i] = imageInfo;
         }
 
         VkWriteDescriptorSet writeInfo{

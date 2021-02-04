@@ -33,7 +33,7 @@ namespace garlic::clove {
 
     VulkanGraphicsCommandBuffer::VulkanGraphicsCommandBuffer(VkCommandBuffer commandBuffer, QueueFamilyIndices queueFamilyIndices)
         : commandBuffer(commandBuffer)
-        , queueFamilyIndices(std::move(queueFamilyIndices)) {
+        , queueFamilyIndices(queueFamilyIndices) {
     }
 
     VulkanGraphicsCommandBuffer::VulkanGraphicsCommandBuffer(VulkanGraphicsCommandBuffer &&other) noexcept = default;

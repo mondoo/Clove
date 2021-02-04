@@ -157,13 +157,13 @@ namespace garlic::clove {
         //ForwardRenderer3D(ForwardRenderer3D&& other) noexcept;
 
         ForwardRenderer3D &operator=(ForwardRenderer3D const &other) = delete;
-        ForwardRenderer3D &operator                                  =(ForwardRenderer3D &&other) noexcept;
+        ForwardRenderer3D &operator=(ForwardRenderer3D &&other) noexcept;
 
         ~ForwardRenderer3D();
 
         void begin();
 
-        void submitMesh(MeshInfo meshInfo, std::set<GeometryPass::Id> geometryPassIds);
+        void submitMesh(MeshInfo meshInfo, std::set<GeometryPass::Id> const &geometryPassIds);
 
         /**
          * @brief Submit the active camera the renderer will use.
@@ -173,8 +173,8 @@ namespace garlic::clove {
         void submitLight(DirectionalLight const &light);
         void submitLight(PointLight const &light);
 
-        void submitWidget(std::shared_ptr<GhaImageView> const widget, mat4f const modelProjection);
-        void submitText(std::shared_ptr<GhaImageView> const text, mat4f const modelProjection);
+        void submitWidget(std::shared_ptr<GhaImageView> const &widget, mat4f const modelProjection);
+        void submitText(std::shared_ptr<GhaImageView> const &text, mat4f const modelProjection);
 
         void end();
 

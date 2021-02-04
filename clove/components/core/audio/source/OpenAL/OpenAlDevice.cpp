@@ -42,7 +42,7 @@ namespace garlic::clove {
     OpenAlDevice::OpenAlDevice()
         : factory{ std::make_shared<OpenAlFactory>() } {
         alDevice = alcOpenDevice(nullptr);
-        if(!alDevice) {
+        if(alDevice == nullptr) {
             CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to create OpenAL device");
             return;
         }

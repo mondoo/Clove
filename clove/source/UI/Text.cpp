@@ -12,11 +12,11 @@ namespace garlic::clove {
 
     Text::Text(Text const &other) = default;
 
-    Text::Text(Text &&other) = default;
+    Text::Text(Text &&other)  noexcept = default;
 
     Text &Text::operator=(Text const &other) = default;
 
-    Text &Text::operator=(Text &&other) = default;
+    Text &Text::operator=(Text &&other)  noexcept = default;
 
     Text::~Text() = default;
 
@@ -57,8 +57,8 @@ namespace garlic::clove {
 
     void Text::buildGlyphs() {
         characters.clear();
-        for(size_t i = 0; i < text.length(); ++i) {
-            characters.emplace_back(font.getChar(text[i]));
+        for(char i : text) {
+            characters.emplace_back(font.getChar(i));
         }
         isBufferDirty = false;
     }

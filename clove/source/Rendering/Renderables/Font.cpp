@@ -32,7 +32,7 @@ namespace garlic::clove {
         : graphicsFactory(Application::get().getGraphicsDevice()->getGraphicsFactory())
         , face(nullptr, nullptr) {
         if(ftLib.use_count() == 0) {
-            FT_Library library;
+            FT_Library library{ nullptr };
             if(FT_Init_FreeType(&library) != FT_Err_Ok) {
                 CLOVE_ASSERT(false, "Could not load freetype");
             } else {
@@ -59,7 +59,7 @@ namespace garlic::clove {
 
     Font::Font(std::span<std::byte const> bytes)
         : Font() {
-        face = createFace(std::move(bytes));
+        face = createFace(bytes);
     }
 
     Font::Font(Font const &other)
@@ -117,7 +117,7 @@ namespace garlic::clove {
             .sharingMode = SharingMode::Exclusive,
         };
 
-        glyph.character     = createImageWithData(*graphicsFactory, std::move(glyphImageDescriptor), faceBuffer, sizeBytes);
+        glyph.character     = createImageWithData(*graphicsFactory, glyphImageDescriptor, faceBuffer, sizeBytes);
         glyph.characterView = glyph.character->createView(GhaImageView::Descriptor{
             .type       = GhaImageView::Type::_2D,
             .layer      = 0,
@@ -128,7 +128,7 @@ namespace garlic::clove {
     }
 
     Font::FacePtr Font::createFace(std::string const &filePath) {
-        FT_Face face;
+        FT_Face face{ nullptr };
         if(FT_New_Face(ftLibReference.get(), filePath.c_str(), 0, &face) != FT_Err_Ok) {
             CLOVE_ASSERT(false, "Could not load font");
         }
@@ -137,7 +137,7 @@ namespace garlic::clove {
     }
 
     Font::FacePtr Font::createFace(std::span<std::byte const> bytes) {
-        FT_Face face;
+        FT_Face face{ nullptr };
         if(FT_New_Memory_Face(ftLibReference.get(), reinterpret_cast<unsigned char const *>(bytes.data()), bytes.size_bytes(), 0, &face) != FT_Err_Ok) {
             CLOVE_ASSERT(false, "Could not load font");
         }

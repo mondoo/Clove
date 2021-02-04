@@ -75,7 +75,7 @@ namespace garlic::clove {
          * @param windowDescriptor A descriptor describing the properties of the window.
          * @return The created application instance.
          */
-        static std::unique_ptr<Application> create(GraphicsApi graphicsApi, AudioApi audioApi, WindowDescriptor windowDescriptor);
+        static std::unique_ptr<Application> create(GraphicsApi graphicsApi, AudioApi audioApi, WindowDescriptor const &windowDescriptor);
 
         /**
          * @brief Create a Garlic application without a window that is capable of offscreen rendering.

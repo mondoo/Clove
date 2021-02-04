@@ -95,7 +95,7 @@ namespace garlic::clove {
         Keyboard &operator=(Keyboard const &other) = delete;
         Keyboard &operator=(Keyboard &&other) noexcept = delete;
 
-        ~Keyboard();
+        ~Keyboard() = default;
 
         bool isKeyPressed(Key key) const;
         std::optional<Event> getKeyEvent();
