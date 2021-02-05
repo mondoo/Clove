@@ -86,12 +86,16 @@ namespace garlic::clove {
         return v1::emitt(node);
     }
 
-    Node loadYaml(std::filesystem::path const &filePath) {
-        YAML::Node file{ YAML::LoadFile(filePath.string()) };
+    Expected<Node, LoadError> loadYaml(std::filesystem::path const &filePath) {
+        YAML::Node file{};
+        try {
+            file = YAML::LoadFile(filePath.string());
+        } catch(YAML::BadFile e) {
+            return Unexpected{ LoadError::BadFile };
+        }
 
         if(file["type"].as<std::string>() != "yaml") {
-            //TODO: Error / exected
-            return {};
+            return Unexpected{ LoadError::WrongType };
         }
 
         int32_t const version{ file["version"].as<int32_t>() };
@@ -99,8 +103,7 @@ namespace garlic::clove {
             case 1:
                 return v1::build(file);
             default:
-                //TODO: Error / expected
-                return {};
+                return Unexpected{ LoadError::WrongVersion };
         }
     }
 }

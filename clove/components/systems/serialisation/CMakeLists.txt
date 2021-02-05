@@ -25,6 +25,7 @@ target_link_libraries(
 
 	PUBLIC
         CloveDefinitions
+        CloveExpected
 
     PRIVATE
         CONAN_PKG::yaml-cpp

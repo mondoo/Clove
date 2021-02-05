@@ -9,3 +9,8 @@ Parent:
 TestType:
   memberOne: 420
   memberTwo: 1.5
+TestParentType:
+  memberOne:
+    memberOne: 100
+    memberTwo: 200
+  memberTwo: 99
