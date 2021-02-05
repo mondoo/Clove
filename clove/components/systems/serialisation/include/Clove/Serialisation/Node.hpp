@@ -25,7 +25,7 @@ namespace garlic::clove {
 namespace garlic::clove::serialiser {
     struct Node {
         std::string name;
-        std::variant<float, std::vector<Node>> value{};
+        std::variant<float, std::string, std::vector<Node>> value{};
 
         Node();
         Node(std::string name);
@@ -39,6 +39,9 @@ namespace garlic::clove::serialiser {
 
         template<typename T, std::enable_if_t<std::is_arithmetic_v<T>, int> = 0>
         Node &operator=(T scalar);
+
+        Node &operator=(std::string string);
+        Node &operator=(char const *string);
 
         template<typename T, std::enable_if_t<!std::is_arithmetic_v<T>, int> = 0>
         Node &operator=(const T &object);

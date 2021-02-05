@@ -14,6 +14,8 @@ namespace garlic::clove {
 
             if(auto *floatVal{ std::get_if<float>(&node.value) }) {
                 emitterNode[node.name] = *floatVal;
+            } else if(auto *stringVal{ std::get_if<std::string>(&node.value) }) {
+                emitterNode[node.name] = *stringVal;
             } else if(auto *children{ std::get_if<std::vector<Node>>(&node.value) }; children != nullptr && children->size() > 0) {
                 YAML::Node childNode{};
                 for(auto &child : *children) {

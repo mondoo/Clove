@@ -12,6 +12,16 @@ namespace garlic::clove::serialiser {
     Node::Node(Node const &other)     = default;
     Node::Node(Node &&other) noexcept = default;
 
+    Node &Node::operator=(std::string string) {
+        value = string;
+        return *this;
+    }
+
+    Node &Node::operator=(char const *string){
+        value = string;
+        return *this;
+    }
+
     Node &Node::operator=(Node const &other) {
         //Note: Not taking name on assignment only
         value = other.value;

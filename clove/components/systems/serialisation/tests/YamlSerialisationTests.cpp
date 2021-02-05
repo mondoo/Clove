@@ -31,6 +31,7 @@ TEST(YamlSerialisationTests, CanAddAChildNodeWithAValue) {
     uint32_t ui{ 200 };
     int16_t i16{ 16 };
     uint16_t ui16{ 1600 };
+    std::string str{ "Hello!" };
 
     root["value1"]   = 5.0f;
     root["value2"]   = 3;
@@ -39,8 +40,10 @@ TEST(YamlSerialisationTests, CanAddAChildNodeWithAValue) {
     root["uint32_t"] = ui;
     root["int16_t"]  = i16;
     root["uint16_t"] = ui16;
+    root["string1"]  = str;
+    root["string2"]  = "World!";
 
-    EXPECT_EQ(emittYaml(root), "type: yaml\nversion: 1\nvalue1: 5\nvalue2: 3\nfloat: 99\nint32_t: 100\nuint32_t: 200\nint16_t: 16\nuint16_t: 1600");
+    EXPECT_EQ(emittYaml(root), "type: yaml\nversion: 1\nvalue1: 5\nvalue2: 3\nfloat: 99\nint32_t: 100\nuint32_t: 200\nint16_t: 16\nuint16_t: 1600\nstring1: Hello!\nstring2: World!");
 }
 
 TEST(YamlSerialisationTests, CanAddANodeAsAChildNode) {
