@@ -6,7 +6,7 @@ using namespace garlic::clove;
 using namespace garlic::clove::serialiser;
 
 TEST(YamlDeserialisationTests, CanLoadSimpleValueFromFile) {
-    Node file{ *loadYaml(FILE_DIR "/TestFile.yaml") };
+    Node file{ *loadYaml("files/TestFile.yaml") };
 
     EXPECT_EQ(file["IntValue"].as<int32_t>(), 3);
     EXPECT_EQ(file["FloatValue"].as<float>(), 4.5f);
@@ -14,34 +14,34 @@ TEST(YamlDeserialisationTests, CanLoadSimpleValueFromFile) {
 }
 
 TEST(YamlDeserialisationTests, CanLoadNestedValuesFromParentNodes) {
-    Node file{ *loadYaml(FILE_DIR "/TestFile.yaml") };
+    Node file{ *loadYaml("files/TestFile.yaml") };
 
     EXPECT_EQ(file["Parent"]["ChildOne"].as<int32_t>(), 1);
     EXPECT_EQ(file["Parent"]["ChildTwo"]["Value"].as<int32_t>(), 8);
 }
 
 TEST(YamlDeserialisationTests, CannotGetIncorrectType) {
-    Node file{ *loadYaml(FILE_DIR "/TestFile.yaml") };
+    Node file{ *loadYaml("files/TestFile.yaml") };
 
     EXPECT_ANY_THROW(file["IntValue"].as<std::string>());
 }
 
 TEST(YamlDeserialisationTests, ErrorsWhenOpeningNoFile) {
-    Expected<Node, LoadError> file{ loadYaml(FILE_DIR "/ThisShouldNeverExist.yaml") };
+    Expected<Node, LoadError> file{ loadYaml("files/ThisShouldNeverExist.yaml") };
 
     ASSERT_FALSE(file.hasValue());
     EXPECT_EQ(file.getError(), LoadError::BadFile);
 }
 
 TEST(YamlDeserialisationTests, CannotLoadIncorrectSerialisedType) {
-    Expected<Node, LoadError> file{ loadYaml(FILE_DIR "/WrongType.yaml") };
+    Expected<Node, LoadError> file{ loadYaml("files/WrongType.yaml") };
 
     ASSERT_FALSE(file.hasValue());
     EXPECT_EQ(file.getError(), LoadError::WrongType);
 }
 
 TEST(YamlDeserialisationTests, CannotLoadIncorrectSerialisedVersion) {
-    Expected<Node, LoadError> file{ loadYaml(FILE_DIR "/WrongVersion.yaml") };
+    Expected<Node, LoadError> file{ loadYaml("files/WrongVersion.yaml") };
 
     ASSERT_FALSE(file.hasValue());
     EXPECT_EQ(file.getError(), LoadError::WrongVersion);
@@ -71,7 +71,7 @@ namespace garlic::clove {
 }
 
 TEST(YamlDeserialisationTests, CanLoadSerialisableTypeFromFile) {
-    Node file{ *loadYaml(FILE_DIR "/TestFile.yaml") };
+    Node file{ *loadYaml("files/TestFile.yaml") };
 
     auto type{ file["TestType"].as<BasicSerialisableType>() };
 
@@ -103,7 +103,7 @@ namespace garlic::clove {
 }
 
 TEST(YamlDeserialisationTests, CanLoadSerialisableParentTypeFromFile) {
-    Node file{ *loadYaml(FILE_DIR "/TestFile.yaml") };
+    Node file{ *loadYaml("files/TestFile.yaml") };
 
     auto type{ file["TestParentType"].as<ParentSerialisableType>() };
 
