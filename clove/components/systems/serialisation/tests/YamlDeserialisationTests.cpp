@@ -14,6 +14,13 @@ TEST(YamlDeserialisationTests, CanLoadSimpleValueFromFile){
     EXPECT_EQ(file["FloatValue"].as<float>(), 4.5f);
 }
 
+TEST(YamlDeserialisationTests, CanLoadNestedValuesFromParentNodes){
+    Node file{ loadYaml(FILE_DIR "/TestFile.yaml") };
+
+    EXPECT_EQ(file["Parent"]["ChildOne"].as<int32_t>(), 1);
+    EXPECT_EQ(file["Parent"]["ChildTwo"]["Value"].as<int32_t>(), 8);
+}
+
 struct BasicSerialisableType {
     int32_t memberOne;
     float memberTwo;
@@ -46,5 +53,5 @@ TEST(YamlDeserialisationTests, CanLoadSerialisableTypeFromFile){
     EXPECT_EQ(type.memberTwo, 1.5f);
 }
 
-//TODO: Parent nodes
+
 //TODO: Parent types

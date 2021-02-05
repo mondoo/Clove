@@ -2,6 +2,10 @@ type: yaml
 version: 1
 IntValue: 3
 FloatValue: 4.5
+Parent:
+  ChildOne: 1
+  ChildTwo:
+    Value: 8
 TestType:
   memberOne: 420
   memberTwo: 1.5
