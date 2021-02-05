@@ -19,15 +19,21 @@ namespace garlic::clove::serialiser {
     template<typename T>
     T Node::as() const {
         if constexpr(std::is_arithmetic_v<T>) {
-            if(float const *floatValue{ std::get_if<float>(&value) }) {
+            if(auto const *floatValue{ std::get_if<float>(&value) }) {
                 return *floatValue;
             } else {
                 throw std::runtime_error{ "Node is not holding a value!" };
             }
+        } else if constexpr(std::is_same_v<std::string, T>) {
+            if(auto const *stringValue{ std::get_if<std::string>(&value) }) {
+                return *stringValue;
+            } else {
+                throw std::runtime_error{ "Node is not holding a value!" };
+            }
         } else {
-            if(std::vector<Node> const *nodeValue{ std::get_if<std::vector<Node>>(&value) }){
+            if(auto const *nodeValue{ std::get_if<std::vector<Node>>(&value) }) {
                 return deserialise<T>(*this);
-            }else{
+            } else {
                 throw std::runtime_error{ "Node is not holding any nodes!" };
             }
         }

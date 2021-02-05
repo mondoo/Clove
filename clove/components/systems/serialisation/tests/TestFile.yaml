@@ -2,6 +2,7 @@ type: yaml
 version: 1
 IntValue: 3
 FloatValue: 4.5
+StringValue: "Hello, World!"
 Parent:
   ChildOne: 1
   ChildTwo:

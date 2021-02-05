@@ -10,6 +10,7 @@ TEST(YamlDeserialisationTests, CanLoadSimpleValueFromFile) {
 
     EXPECT_EQ(file["IntValue"].as<int32_t>(), 3);
     EXPECT_EQ(file["FloatValue"].as<float>(), 4.5f);
+    EXPECT_EQ(file["StringValue"].as<std::string>(), "Hello, World!");
 }
 
 TEST(YamlDeserialisationTests, CanLoadNestedValuesFromParentNodes) {

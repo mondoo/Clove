@@ -31,7 +31,11 @@ namespace garlic::clove {
             for(YAML::const_iterator it{ node.begin() }; it != node.end(); ++it) {
                 std::string const name{ it->first.as<std::string>() };
                 if(it->second.IsScalar()) {
-                    outNode[name] = it->second.as<float>();
+                    if(it->second.Tag() == "?") {
+                        outNode[name] = it->second.as<float>();
+                    } else {
+                        outNode[name] = it->second.as<std::string>();
+                    }
                 } else {
                     outNode[name] = buildNode(it->second);
                 }
@@ -73,7 +77,11 @@ namespace garlic::clove {
                     }
 
                     if(it->second.IsScalar()) {
-                        deserialisedFile[name] = it->second.as<float>();
+                        if(it->second.Tag() == "?"){
+                            deserialisedFile[name] = it->second.as<float>();
+                        }else{
+                            deserialisedFile[name] = it->second.as<std::string>();
+                        }
                     } else {
                         deserialisedFile[name] = buildNode(it->second);
                     }
