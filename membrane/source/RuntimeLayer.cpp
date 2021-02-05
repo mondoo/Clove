@@ -97,10 +97,9 @@ namespace garlic::membrane {
     }
 
     void RuntimeLayer::onDetach() {
-        //TODO: Handled by the scene?
-        /*for(auto &entity : runtimeEntities) {
+        for(auto &entity : runtimeEntities) {
             entityManager->destroy(entity);
-        }*/
+        }
     }
 
     clove::Entity RuntimeLayer::createEntity(std::string_view name) {
