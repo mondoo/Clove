@@ -10,18 +10,6 @@ namespace garlic::clove::serialiser {
     struct Node;
 }
 
-namespace garlic::clove {
-    template<typename UnkownType>
-    serialiser::Node serialise(UnkownType const &object) {
-        return {};
-    }
-
-    template<typename UnkownType>
-    UnkownType deserialise(serialiser::Node const &node) {
-        return {};
-    }
-}
-
 namespace garlic::clove::serialiser {
     struct Node {
         std::string name;
@@ -54,6 +42,18 @@ namespace garlic::clove::serialiser {
         Node &operator[](std::string_view nodeName);
         Node const &operator[](std::string_view nodeName) const;
     };
+}
+
+namespace garlic::clove {
+    template<typename UnkownType>
+    serialiser::Node serialise(UnkownType const &object) {
+        return {};
+    }
+
+    template<typename UnkownType>
+    UnkownType deserialise(serialiser::Node const &node) {
+        return {};
+    }
 }
 
 #include "Node.inl"
