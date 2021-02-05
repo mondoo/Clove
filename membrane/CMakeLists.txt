@@ -20,9 +20,6 @@ add_library(
         ${SOURCE}/EditorLayer.cpp
         ${INCLUDE}/RuntimeLayer.hpp
         ${SOURCE}/RuntimeLayer.cpp
-
-        ${INCLUDE}/Scene.hpp
-        ${SOURCE}/Scene.cpp
         
         ${INCLUDE}/ViewportSurface.hpp
         ${SOURCE}/ViewportSurface.cpp

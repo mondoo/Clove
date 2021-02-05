@@ -2,7 +2,6 @@
 
 #include "Membrane/EditorTypes.hpp"
 #include "Membrane/MessageHandler.hpp"
-#include "Membrane/Scene.hpp"
 
 #include <Clove/ECS/Entity.hpp>
 #include <Clove/Layer.hpp>
@@ -26,8 +25,6 @@ namespace garlic::membrane {
         //VARIABLES
     private:
         msclr::gcroot<RuntimeLayerMessageProxy ^> proxy;
-
-        Scene currentScene{ "scene.yaml" }; //TEMP: not loading in a file for now
 
         clove::EntityManager *entityManager{ nullptr };
         std::vector<clove::Entity> runtimeEntities; //TODO: Remove? Keeping just so update transforms etc.

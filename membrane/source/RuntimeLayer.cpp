@@ -49,11 +49,11 @@ namespace garlic::membrane {
         }
 
         void saveScene(Editor_SaveScene ^message){
-            layer->currentScene.save();
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, clove::LogLevel::Warning, "Saving not yet handled!");
         }
 
         void loadScene(Editor_LoadScene ^message){
-            layer->currentScene.load();
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, clove::LogLevel::Warning, "Loading not yet handled!");
         }
     };
     // clang-format on
@@ -104,7 +104,7 @@ namespace garlic::membrane {
     }
 
     clove::Entity RuntimeLayer::createEntity(std::string_view name) {
-        clove::Entity entity{ currentScene.createEntity() };
+        clove::Entity entity{ entityManager->create() };
         runtimeEntities.push_back(entity);
 
         Engine_OnEntityCreated ^ message { gcnew Engine_OnEntityCreated };
