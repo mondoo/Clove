@@ -104,8 +104,8 @@ namespace garlic::clove {
         for(auto &job : jobs) {
             commandBuffer.bindDescriptorSet(*frameData.meshDescriptorSets[job.meshDescriptorIndex], 0);
 
-            commandBuffer.bindVertexBuffer(*job.mesh->getGhaBuffer(), job.mesh->getVertexOffset());
-            commandBuffer.bindIndexBuffer(*job.mesh->getGhaBuffer(), job.mesh->getIndexOffset(), IndexType::Uint16);
+            commandBuffer.bindVertexBuffer(*job.mesh->getCombinedBuffer(), job.mesh->getVertexOffset());
+            commandBuffer.bindIndexBuffer(*job.mesh->getCombinedBuffer(), job.mesh->getIndexOffset(), IndexType::Uint16);
 
             commandBuffer.drawIndexed(job.mesh->getIndexCount());
         }

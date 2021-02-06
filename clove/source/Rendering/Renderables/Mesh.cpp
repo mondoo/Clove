@@ -11,7 +11,7 @@ namespace garlic::clove {
         , indices(std::move(indices)) {
         using namespace garlic::clove;
 
-        garlic::clove::GhaFactory &factory = *Application::get().getGraphicsDevice()->getGraphicsFactory();
+        GhaFactory &factory{ *Application::get().getGraphicsDevice()->getGraphicsFactory() };
 
         size_t const vertexBufferSize{ sizeof(Vertex) * std::size(this->vertices) };
         size_t const indexBufferSize{ sizeof(uint16_t) * std::size(this->indices) };
@@ -22,20 +22,30 @@ namespace garlic::clove {
 
         auto transferQueue{ *factory.createTransferQueue({ QueueFlags::Transient }) };
 
-        std::shared_ptr<GhaTransferCommandBuffer> transferCommandBuffer = transferQueue->allocateCommandBuffer();
+        std::shared_ptr<GhaTransferCommandBuffer> transferCommandBuffer{ transferQueue->allocateCommandBuffer() };
+
+        using enum GhaBuffer::UsageMode;
 
         //Staging buffer
         auto stagingBuffer = *factory.createBuffer(GhaBuffer::Descriptor{
             .size        = totalSize,
-            .usageFlags  = GhaBuffer::UsageMode::TransferSource,
+            .usageFlags  = TransferSource,
             .sharingMode = SharingMode::Exclusive,
             .memoryType  = MemoryType::SystemMemory,
         });
 
-        //Buffer
-        buffer = *factory.createBuffer(GhaBuffer::Descriptor{
+        //VertexBuffer
+        vertexBuffer = *factory.createBuffer(GhaBuffer::Descriptor{
+            .size        = vertexBufferSize,
+            .usageFlags  = TransferDestination | VertexBuffer,
+            .sharingMode = SharingMode::Concurrent,
+            .memoryType  = MemoryType::VideoMemory,
+        });
+
+        //Combined Buffer
+        combinedBuffer = *factory.createBuffer(GhaBuffer::Descriptor{
             .size        = totalSize,
-            .usageFlags  = GhaBuffer::UsageMode::TransferDestination | GhaBuffer::UsageMode::VertexBuffer | GhaBuffer::UsageMode::IndexBuffer,
+            .usageFlags  = TransferDestination | VertexBuffer | IndexBuffer,
             .sharingMode = SharingMode::Concurrent,
             .memoryType  = MemoryType::VideoMemory,
         });
@@ -46,7 +56,8 @@ namespace garlic::clove {
 
         //Transfer the data to video memory
         transferCommandBuffer->beginRecording(CommandBufferUsage::OneTimeSubmit);
-        transferCommandBuffer->copyBufferToBuffer(*stagingBuffer, 0, *buffer, 0, totalSize);
+        transferCommandBuffer->copyBufferToBuffer(*stagingBuffer, 0, *vertexBuffer, 0, vertexBufferSize);
+        transferCommandBuffer->copyBufferToBuffer(*stagingBuffer, 0, *combinedBuffer, 0, totalSize);
         transferCommandBuffer->endRecording();
 
         auto transferQueueFinishedFence{ *factory.createFence({ false }) };

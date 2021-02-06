@@ -297,8 +297,8 @@ namespace garlic::clove {
 
         //Lambda used to draw a mesh
         auto const drawMesh = [](GhaGraphicsCommandBuffer &commandBuffer, Mesh const &mesh) {
-            commandBuffer.bindVertexBuffer(*mesh.getGhaBuffer(), mesh.getVertexOffset());
-            commandBuffer.bindIndexBuffer(*mesh.getGhaBuffer(), mesh.getIndexOffset(), IndexType::Uint16);
+            commandBuffer.bindVertexBuffer(*mesh.getCombinedBuffer(), mesh.getVertexOffset());
+            commandBuffer.bindIndexBuffer(*mesh.getCombinedBuffer(), mesh.getIndexOffset(), IndexType::Uint16);
 
             commandBuffer.drawIndexed(mesh.getIndexCount());
         };
