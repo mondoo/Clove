@@ -7,11 +7,13 @@
 
 namespace garlic::clove {
     Camera::Camera(Viewport viewport, ProjectionMode const projection)
-        : viewport(viewport) {
+        : viewport{ viewport }
+        , currentProjectionMode{ projection } {
         setProjectionMode(projection);
     }
 
-    Camera::Camera(ProjectionMode const projection) {
+    Camera::Camera(ProjectionMode const projection)
+        : currentProjectionMode{ projection } {
         auto *window{ Application::get().getSurface() };
 
         surfaceResizeHandle = window->onSurfaceResize().bind([this](vec2ui const &size) {
