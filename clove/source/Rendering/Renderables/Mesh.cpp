@@ -24,12 +24,10 @@ namespace garlic::clove {
 
         std::shared_ptr<GhaTransferCommandBuffer> transferCommandBuffer{ transferQueue->allocateCommandBuffer() };
 
-        using enum GhaBuffer::UsageMode;
-
         //Staging buffer
         auto stagingBuffer = *factory.createBuffer(GhaBuffer::Descriptor{
             .size        = totalSize,
-            .usageFlags  = TransferSource,
+            .usageFlags  = GhaBuffer::UsageMode::TransferSource,
             .sharingMode = SharingMode::Exclusive,
             .memoryType  = MemoryType::SystemMemory,
         });
@@ -37,7 +35,7 @@ namespace garlic::clove {
         //VertexBuffer
         vertexBuffer = *factory.createBuffer(GhaBuffer::Descriptor{
             .size        = vertexBufferSize,
-            .usageFlags  = TransferDestination | VertexBuffer,
+            .usageFlags  = GhaBuffer::UsageMode::TransferDestination | GhaBuffer::UsageMode::VertexBuffer,
             .sharingMode = SharingMode::Concurrent,
             .memoryType  = MemoryType::VideoMemory,
         });
@@ -45,7 +43,7 @@ namespace garlic::clove {
         //Combined Buffer
         combinedBuffer = *factory.createBuffer(GhaBuffer::Descriptor{
             .size        = totalSize,
-            .usageFlags  = TransferDestination | VertexBuffer | IndexBuffer,
+            .usageFlags  = GhaBuffer::UsageMode::TransferDestination | GhaBuffer::UsageMode::VertexBuffer | GhaBuffer::UsageMode::IndexBuffer,
             .sharingMode = SharingMode::Concurrent,
             .memoryType  = MemoryType::VideoMemory,
         });
