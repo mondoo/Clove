@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Clove/Graphics/GhaBuffer.hpp"
+#include "Clove/Graphics/GhaComputePipelineObject.hpp"
 #include "Clove/Graphics/GhaDescriptorPool.hpp"
 #include "Clove/Graphics/GhaDescriptorSetLayout.hpp"
 #include "Clove/Graphics/GhaFence.hpp"
@@ -56,11 +57,12 @@ namespace garlic::clove {
         virtual Expected<std::unique_ptr<GhaDescriptorSetLayout>, std::runtime_error> createDescriptorSetLayout(GhaDescriptorSetLayout::Descriptor descriptor) = 0;
 
         virtual Expected<std::unique_ptr<GhaGraphicsPipelineObject>, std::runtime_error> createGraphicsPipelineObject(GhaGraphicsPipelineObject::Descriptor descriptor) = 0;
+        virtual Expected<std::unique_ptr<GhaComputePipelineObject>, std::runtime_error> createComputePipelineObject(GhaComputePipelineObject::Descriptor descriptor)    = 0;
 
         virtual Expected<std::unique_ptr<GhaFramebuffer>, std::runtime_error> createFramebuffer(GhaFramebuffer::Descriptor descriptor)          = 0;
         virtual Expected<std::unique_ptr<GhaDescriptorPool>, std::runtime_error> createDescriptorPool(GhaDescriptorPool::Descriptor descriptor) = 0;
 
-        virtual Expected<std::unique_ptr<GhaSemaphore>, std::runtime_error> createSemaphore()                     = 0;
+        virtual Expected<std::unique_ptr<GhaSemaphore>, std::runtime_error> createSemaphore()                        = 0;
         virtual Expected<std::unique_ptr<GhaFence>, std::runtime_error> createFence(GhaFence::Descriptor descriptor) = 0;
 
         virtual Expected<std::unique_ptr<GhaBuffer>, std::runtime_error> createBuffer(GhaBuffer::Descriptor descriptor) = 0;

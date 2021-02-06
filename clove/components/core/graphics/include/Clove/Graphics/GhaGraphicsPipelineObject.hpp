@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Clove/Graphics/GhaShader.hpp"
+#include "Clove/Graphics/PipelineObject.hpp"
 
 #include <Clove/Maths/Vector.hpp>
 #include <memory>
@@ -47,12 +48,6 @@ namespace garlic::clove {
     struct DepthStateDescriptor {
         bool depthTest{ true };
         bool depthWrite{ true };
-    };
-
-    struct PushConstantDescriptor {
-        GhaShader::Stage stage;
-        size_t offset{ 0 }; /**< Offset specified in the shader (layout(offset = x)). Required if using different push constants for different stages. */
-        size_t size{ 0 };
     };
 }
 
