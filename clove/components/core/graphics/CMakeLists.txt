@@ -81,6 +81,8 @@ add_library(
 		${INCLUDE}/CommandBuffer.hpp
 		${INCLUDE}/Descriptor.hpp
 		${INCLUDE}/GhaBuffer.hpp
+		${INCLUDE}/GhaComputeCommandBuffer.hpp
+		${INCLUDE}/GhaComputeQueue.hpp
 		${INCLUDE}/GhaDescriptorPool.hpp
 		${INCLUDE}/GhaDescriptorSet.hpp
 		${INCLUDE}/GhaDescriptorSetLayout.hpp
