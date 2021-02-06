@@ -87,10 +87,12 @@ namespace garlic::clove {
     }
 
     void VulkanComputeCommandBuffer::imageMemoryBarrier(GhaImage &image, ImageMemoryBarrierInfo const &barrierInfo, PipelineStage sourceStage, PipelineStage destinationStage) {
+        GhaImage::Descriptor const &imageDescriptor{ image.getDescriptor() };
+
         uint32_t const sourceFamilyIndex{ getQueueFamilyIndex(barrierInfo.sourceQueue, queueFamilyIndices) };
         uint32_t const destinationFamilyIndex{ getQueueFamilyIndex(barrierInfo.destinationQueue, queueFamilyIndices) };
 
-        VkImageAspectFlags const aspectFlags{ static_cast<VkImageAspectFlags>(image.getDescriptor().format == GhaImage::Format::D32_SFLOAT ? VK_IMAGE_ASPECT_DEPTH_BIT : VK_IMAGE_ASPECT_COLOR_BIT) };
+        VkImageAspectFlags const aspectFlags{ static_cast<VkImageAspectFlags>(imageDescriptor.format == GhaImage::Format::D32_SFLOAT ? VK_IMAGE_ASPECT_DEPTH_BIT : VK_IMAGE_ASPECT_COLOR_BIT) };
 
         VkImageMemoryBarrier const barrier{
             .sType               = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
@@ -107,7 +109,7 @@ namespace garlic::clove {
                 .baseMipLevel   = 0,
                 .levelCount     = 1,
                 .baseArrayLayer = 0,
-                .layerCount     = 1,
+                .layerCount     = imageDescriptor.type == GhaImage::Type::Cube ? 6u : 1u,
             },
         };
 
