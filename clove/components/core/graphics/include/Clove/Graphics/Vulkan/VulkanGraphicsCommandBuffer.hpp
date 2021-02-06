@@ -9,7 +9,7 @@ namespace garlic::clove {
     class VulkanGraphicsCommandBuffer : public GhaGraphicsCommandBuffer {
         //VARIABLES
     private:
-        VkCommandBuffer commandBuffer = VK_NULL_HANDLE;
+        VkCommandBuffer commandBuffer{ VK_NULL_HANDLE };
 
         VkPipelineLayout currentLayout{};
 

@@ -76,8 +76,8 @@ namespace garlic::clove {
          * @param offset Offset into the buffer where the indices begin.
          */
         virtual void bindIndexBuffer(GhaBuffer &indexBuffer, size_t const offset, IndexType indexType) = 0;
+        
         virtual void bindDescriptorSet(GhaDescriptorSet &descriptorSet, uint32_t const setNum)         = 0;
-
         virtual void pushConstant(GhaShader::Stage const stage, size_t const offset, size_t const size, void const *data) = 0;
 
         virtual void drawIndexed(size_t const indexCount) = 0;

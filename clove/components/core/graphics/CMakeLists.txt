@@ -21,6 +21,8 @@ set(
 		${SOURCE}/Vulkan/VulkanBuffer.cpp
 		${INCLUDE}/Vulkan/VulkanCommandBuffer.hpp
 		${SOURCE}/Vulkan/VulkanCommandBuffer.cpp
+		${INCLUDE}/Vulkan/VulkanComputeCommandBuffer.hpp
+		${SOURCE}/Vulkan/VulkanComputeCommandBuffer.cpp
 		${INCLUDE}/Vulkan/VulkanComputePipelineObject.hpp
 		${SOURCE}/Vulkan/VulkanComputePipelineObject.cpp
 		${INCLUDE}/Vulkan/VulkanComputeQueue.hpp

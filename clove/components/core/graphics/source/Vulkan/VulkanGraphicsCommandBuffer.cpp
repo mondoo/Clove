@@ -5,9 +5,9 @@
 #include "Clove/Graphics/Vulkan/VulkanDescriptorSet.hpp"
 #include "Clove/Graphics/Vulkan/VulkanFramebuffer.hpp"
 #include "Clove/Graphics/Vulkan/VulkanGraphicsPipelineObject.hpp"
-#include "Clove/Graphics/Vulkan/VulkanPipelineObject.hpp"
 #include "Clove/Graphics/Vulkan/VulkanImage.hpp"
 #include "Clove/Graphics/Vulkan/VulkanMemoryBarrier.hpp"
+#include "Clove/Graphics/Vulkan/VulkanPipelineObject.hpp"
 #include "Clove/Graphics/Vulkan/VulkanRenderPass.hpp"
 #include "Clove/Graphics/Vulkan/VulkanResource.hpp"
 #include "Clove/Graphics/Vulkan/VulkanShader.hpp"
@@ -113,7 +113,7 @@ namespace garlic::clove {
     }
 
     void VulkanGraphicsCommandBuffer::bindPipelineObject(GhaGraphicsPipelineObject &pipelineObject) {
-        auto const *pipeline = polyCast<VulkanGraphicsPipelineObject>(&pipelineObject);
+        auto const *pipeline{ polyCast<VulkanGraphicsPipelineObject>(&pipelineObject) };
 
         currentLayout = pipeline->getLayout();
 
