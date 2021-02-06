@@ -1,47 +1,92 @@
 #include <Clove/Serialisation/Node.hpp>
 #include <Clove/Serialisation/Yaml.hpp>
+#include <filesystem>
+#include <fstream>
 #include <gtest/gtest.h>
 
 using namespace garlic::clove;
 using namespace garlic::clove::serialiser;
 
-TEST(YamlDeserialisationTests, CanLoadSimpleValueFromFile) {
-    Node file{ *loadYaml("files/TestFile.yaml") };
+class YamlDeserialisationTests : public ::testing::Test {
+protected:
+    static void SetUpTestSuite() {
+        {
+            std::ofstream testFile{ "TestFile.yaml" };
+            testFile << "type: yaml" << std::endl;
+            testFile << "version: 1" << std::endl;
+            testFile << "IntValue: 3" << std::endl;
+            testFile << "FloatValue: 4.5" << std::endl;
+            testFile << "StringValue: \"Hello, World!\"" << std::endl;
+            testFile << "Parent:" << std::endl;
+            testFile << "  ChildOne: 1" << std::endl;
+            testFile << "  ChildTwo:" << std::endl;
+            testFile << "    Value: 8" << std::endl;
+            testFile << "TestType:" << std::endl;
+            testFile << "  memberOne: 420" << std::endl;
+            testFile << "  memberTwo: 1.5" << std::endl;
+            testFile << "TestParentType:" << std::endl;
+            testFile << "  memberOne:" << std::endl;
+            testFile << "    memberOne: 100" << std::endl;
+            testFile << "    memberTwo: 200" << std::endl;
+            testFile << "  memberTwo: 99" << std::endl;
+        }
+
+        {
+            std::ofstream wrongType{ "WrongType.yaml" };
+            wrongType << "type: asodiufg" << std::endl;
+        }
+
+        {
+            std::ofstream wrongVersion{ "WrongVersion.yaml" };
+            wrongVersion << "type: yaml" << std::endl;
+            wrongVersion << "version: -1" << std::endl;
+        }
+    }
+
+    static void TearDownTestSuite() {
+        std::remove("TestFile.yaml");
+        std::remove("WrongType.yaml");
+        std::remove("WrongVersion.yaml");
+    }
+};
+
+TEST_F(YamlDeserialisationTests, CanLoadSimpleValueFromFile) {
+    Node file{ *loadYaml("TestFile.yaml") };
 
     EXPECT_EQ(file["IntValue"].as<int32_t>(), 3);
     EXPECT_EQ(file["FloatValue"].as<float>(), 4.5f);
     EXPECT_EQ(file["StringValue"].as<std::string>(), "Hello, World!");
 }
 
-TEST(YamlDeserialisationTests, CanLoadNestedValuesFromParentNodes) {
-    Node file{ *loadYaml("files/TestFile.yaml") };
+TEST_F(YamlDeserialisationTests, CanLoadNestedValuesFromParentNodes) {
+    Node file{ *loadYaml("TestFile.yaml") };
 
     EXPECT_EQ(file["Parent"]["ChildOne"].as<int32_t>(), 1);
     EXPECT_EQ(file["Parent"]["ChildTwo"]["Value"].as<int32_t>(), 8);
 }
 
-TEST(YamlDeserialisationTests, CannotGetIncorrectType) {
-    Node file{ *loadYaml("files/TestFile.yaml") };
+TEST_F(YamlDeserialisationTests, CannotGetIncorrectType) {
+    Node file{ *loadYaml("TestFile.yaml") };
 
     EXPECT_ANY_THROW(file["IntValue"].as<std::string>());
 }
 
-TEST(YamlDeserialisationTests, ErrorsWhenOpeningNoFile) {
-    Expected<Node, LoadError> file{ loadYaml("files/ThisShouldNeverExist.yaml") };
+TEST_F(YamlDeserialisationTests, ErrorsWhenOpeningNoFile) {
+    Expected<Node, LoadError> file{ loadYaml("ThisShouldNeverExist.yaml") };
 
     ASSERT_FALSE(file.hasValue());
     EXPECT_EQ(file.getError(), LoadError::BadFile);
 }
 
-TEST(YamlDeserialisationTests, CannotLoadIncorrectSerialisedType) {
-    Expected<Node, LoadError> file{ loadYaml("files/WrongType.yaml") };
+TEST_F(YamlDeserialisationTests, CannotLoadIncorrectSerialisedType) {
+    Expected<Node, LoadError> file{ loadYaml("WrongType.yaml") };
 
     ASSERT_FALSE(file.hasValue());
     EXPECT_EQ(file.getError(), LoadError::WrongType);
 }
 
-TEST(YamlDeserialisationTests, CannotLoadIncorrectSerialisedVersion) {
-    Expected<Node, LoadError> file{ loadYaml("files/WrongVersion.yaml") };
+TEST_F(YamlDeserialisationTests, CannotLoadIncorrectSerialisedVersion) {
+    Expected<Node, LoadError> file{ loadYaml("WrongVersion.yaml") };
 
     ASSERT_FALSE(file.hasValue());
     EXPECT_EQ(file.getError(), LoadError::WrongVersion);
@@ -70,8 +115,8 @@ namespace garlic::clove {
     }
 }
 
-TEST(YamlDeserialisationTests, CanLoadSerialisableTypeFromFile) {
-    Node file{ *loadYaml("files/TestFile.yaml") };
+TEST_F(YamlDeserialisationTests, CanLoadSerialisableTypeFromFile) {
+    Node file{ *loadYaml("TestFile.yaml") };
 
     auto type{ file["TestType"].as<BasicSerialisableType>() };
 
@@ -102,8 +147,8 @@ namespace garlic::clove {
     }
 }
 
-TEST(YamlDeserialisationTests, CanLoadSerialisableParentTypeFromFile) {
-    Node file{ *loadYaml("files/TestFile.yaml") };
+TEST_F(YamlDeserialisationTests, CanLoadSerialisableParentTypeFromFile) {
+    Node file{ *loadYaml("TestFile.yaml") };
 
     auto type{ file["TestParentType"].as<ParentSerialisableType>() };
 
