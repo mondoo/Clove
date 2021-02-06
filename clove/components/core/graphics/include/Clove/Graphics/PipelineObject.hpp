@@ -2,6 +2,8 @@
 
 #include "Clove/Graphics/GhaShader.hpp"
 
+#include <cstddef>
+
 namespace garlic::clove {
     enum class PipelineStage {
         //External Stages
