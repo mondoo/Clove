@@ -5,8 +5,8 @@
 #include "Clove/Graphics/Vulkan/VulkanGraphicsPipelineObject.hpp"
 #include "Clove/Graphics/Vulkan/VulkanImage.hpp"
 #include "Clove/Graphics/Vulkan/VulkanMemoryBarrier.hpp"
-#include "Clove/Graphics/Vulkan/VulkanResource.hpp"
 #include "Clove/Graphics/Vulkan/VulkanPipelineObject.hpp"
+#include "Clove/Graphics/Vulkan/VulkanResource.hpp"
 
 #include <Clove/Cast.hpp>
 #include <Clove/Definitions.hpp>
@@ -125,7 +125,9 @@ namespace garlic::clove {
         uint32_t const sourceFamilyIndex{ getQueueFamilyIndex(barrierInfo.sourceQueue, queueFamilyIndices) };
         uint32_t const destinationFamilyIndex{ getQueueFamilyIndex(barrierInfo.destinationQueue, queueFamilyIndices) };
 
-        VkImageMemoryBarrier barrier{
+        VkImageAspectFlags const aspectFlags{ static_cast<VkImageAspectFlags>(image.getDescriptor().format == GhaImage::Format::D32_SFLOAT ? VK_IMAGE_ASPECT_DEPTH_BIT : VK_IMAGE_ASPECT_COLOR_BIT) };
+
+        VkImageMemoryBarrier const barrier{
             .sType               = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
             .pNext               = nullptr,
             .srcAccessMask       = convertAccessFlags(barrierInfo.currentAccess),
@@ -136,7 +138,7 @@ namespace garlic::clove {
             .dstQueueFamilyIndex = destinationFamilyIndex,
             .image               = polyCast<VulkanImage>(&image)->getImage(),
             .subresourceRange    = {
-                .aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT,//TODO: Handle other aspect masks
+                .aspectMask     = aspectFlags,
                 .baseMipLevel   = 0,
                 .levelCount     = 1,
                 .baseArrayLayer = 0,

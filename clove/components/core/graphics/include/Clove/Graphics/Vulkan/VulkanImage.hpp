@@ -37,6 +37,8 @@ namespace garlic::clove {
 
         ~VulkanImage();
 
+        Descriptor const &getDescriptor() const override;
+
         std::unique_ptr<GhaImageView> createView(GhaImageView::Descriptor viewDescriptor) const override;
 
         inline VkImage getImage() const;

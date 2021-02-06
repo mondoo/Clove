@@ -70,6 +70,8 @@ namespace garlic::clove {
     public:
         virtual ~GhaImage() = default;
 
+        virtual Descriptor const &getDescriptor() const = 0;
+
         virtual std::unique_ptr<GhaImageView> createView(GhaImageView::Descriptor viewDescriptor) const = 0;
     };
 
