@@ -2,10 +2,10 @@
 
 #include "Clove/Graphics/Vulkan/VulkanBuffer.hpp"
 #include "Clove/Graphics/Vulkan/VulkanCommandBuffer.hpp"
-#include "Clove/Graphics/Vulkan/VulkanResource.hpp"
+#include "Clove/Graphics/Vulkan/VulkanGraphicsPipelineObject.hpp"
 #include "Clove/Graphics/Vulkan/VulkanImage.hpp"
 #include "Clove/Graphics/Vulkan/VulkanMemoryBarrier.hpp"
-#include "Clove/Graphics/Vulkan/VulkanPipelineObject.hpp"
+#include "Clove/Graphics/Vulkan/VulkanResource.hpp"
 
 #include <Clove/Cast.hpp>
 #include <Clove/Definitions.hpp>
@@ -87,7 +87,7 @@ namespace garlic::clove {
         vkCmdCopyImageToBuffer(commandBuffer, polyCast<VulkanImage>(&source)->getImage(), VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, polyCast<VulkanBuffer>(&destination)->getBuffer(), 1, &copyRegion);
     }
 
-    void VulkanTransferCommandBuffer::bufferMemoryBarrier(GhaBuffer &buffer, BufferMemoryBarrierInfo const &barrierInfo, GhaPipelineObject::Stage sourceStage, GhaPipelineObject::Stage destinationStage) {
+    void VulkanTransferCommandBuffer::bufferMemoryBarrier(GhaBuffer &buffer, BufferMemoryBarrierInfo const &barrierInfo, GhaGraphicsPipelineObject::Stage sourceStage, GhaGraphicsPipelineObject::Stage destinationStage) {
         uint32_t const sourceFamilyIndex{ getQueueFamilyIndex(barrierInfo.sourceQueue, queueFamilyIndices) };
         uint32_t const destinationFamilyIndex{ getQueueFamilyIndex(barrierInfo.destinationQueue, queueFamilyIndices) };
 
@@ -103,13 +103,13 @@ namespace garlic::clove {
             .size                = VK_WHOLE_SIZE,
         };
 
-        VkPipelineStageFlags const vkSourceStage{ VulkanPipelineObject::convertStage(sourceStage) };
-        VkPipelineStageFlags const vkDestinationStage{ VulkanPipelineObject::convertStage(destinationStage) };
+        VkPipelineStageFlags const vkSourceStage{ VulkanGraphicsPipelineObject::convertStage(sourceStage) };
+        VkPipelineStageFlags const vkDestinationStage{ VulkanGraphicsPipelineObject::convertStage(destinationStage) };
 
         vkCmdPipelineBarrier(commandBuffer, vkSourceStage, vkDestinationStage, 0, 0, nullptr, 1, &barrier, 0, nullptr);
     }
 
-    void VulkanTransferCommandBuffer::imageMemoryBarrier(GhaImage &image, ImageMemoryBarrierInfo const &barrierInfo, GhaPipelineObject::Stage sourceStage, GhaPipelineObject::Stage destinationStage) {
+    void VulkanTransferCommandBuffer::imageMemoryBarrier(GhaImage &image, ImageMemoryBarrierInfo const &barrierInfo, GhaGraphicsPipelineObject::Stage sourceStage, GhaGraphicsPipelineObject::Stage destinationStage) {
         bool const isValidLayout =
             barrierInfo.newImageLayout != GhaImage::Layout::ShaderReadOnlyOptimal &&
             barrierInfo.newImageLayout != GhaImage::Layout::ColourAttachmentOptimal &&
@@ -143,8 +143,8 @@ namespace garlic::clove {
             },
         };
 
-        VkPipelineStageFlags const vkSourceStage{ VulkanPipelineObject::convertStage(sourceStage) };
-        VkPipelineStageFlags const vkDestinationStage{ VulkanPipelineObject::convertStage(destinationStage) };
+        VkPipelineStageFlags const vkSourceStage{ VulkanGraphicsPipelineObject::convertStage(sourceStage) };
+        VkPipelineStageFlags const vkDestinationStage{ VulkanGraphicsPipelineObject::convertStage(destinationStage) };
 
         vkCmdPipelineBarrier(commandBuffer, vkSourceStage, vkDestinationStage, 0, 0, nullptr, 0, nullptr, 1, &barrier);
     }

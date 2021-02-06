@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Clove/Graphics/GhaPipelineObject.hpp>
+#include <Clove/Graphics/GhaGraphicsPipelineObject.hpp>
 #include <Clove/Maths/Vector.hpp>
 
 namespace garlic::clove {

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Clove/Graphics/CommandBuffer.hpp"
-#include "Clove/Graphics/GhaPipelineObject.hpp"
+#include "Clove/Graphics/GhaGraphicsPipelineObject.hpp"
 #include "Clove/Graphics/GhaShader.hpp"
 #include "Clove/Graphics/MemoryBarrier.hpp"
 
@@ -12,7 +12,7 @@
 namespace garlic::clove {
     class GhaRenderPass;
     class GhaFramebuffer;
-    class GhaPipelineObject;
+    class GhaGraphicsPipelineObject;
     class GhaBuffer;
     class GhaDescriptorSet;
     class GhaImage;
@@ -65,7 +65,7 @@ namespace garlic::clove {
         virtual void setViewport(vec2i position, vec2ui size) = 0;
         virtual void setScissor(vec2i position, vec2ui size)  = 0;
 
-        virtual void bindPipelineObject(GhaPipelineObject &pipelineObject) = 0;
+        virtual void bindPipelineObject(GhaGraphicsPipelineObject &pipelineObject) = 0;
         /**
          * @brief Bind a vertex buffer to be used in the next draw call.
          * @param offset Offset into the buffer where the vertices begin.
@@ -89,7 +89,7 @@ namespace garlic::clove {
          * @param sourceStage The pipeline stage that gets executed before the barrier.
          * @param destinationStage The pipeline stage executed after the barrier that waits for the results of the sourceStage.
          */
-        virtual void bufferMemoryBarrier(GhaBuffer &buffer, BufferMemoryBarrierInfo const &barrierInfo, GhaPipelineObject::Stage sourceStage, GhaPipelineObject::Stage destinationStage) = 0;
+        virtual void bufferMemoryBarrier(GhaBuffer &buffer, BufferMemoryBarrierInfo const &barrierInfo, GhaGraphicsPipelineObject::Stage sourceStage, GhaGraphicsPipelineObject::Stage destinationStage) = 0;
         /**
          * @brief Creates a memory barrier for an image. Allowing for how it's accessed, it's layout and queue ownership to change.
          * @param image The image to create the barrier for.
@@ -97,6 +97,6 @@ namespace garlic::clove {
          * @param sourceStage The pipeline stage that gets executed before the barrier.
          * @param destinationStage The pipeline stage executed after the barrier that waits for the results of the sourceStage.
          */
-        virtual void imageMemoryBarrier(GhaImage &image, ImageMemoryBarrierInfo const &barrierInfo, GhaPipelineObject::Stage sourceStage, GhaPipelineObject::Stage destinationStage) = 0;
+        virtual void imageMemoryBarrier(GhaImage &image, ImageMemoryBarrierInfo const &barrierInfo, GhaGraphicsPipelineObject::Stage sourceStage, GhaGraphicsPipelineObject::Stage destinationStage) = 0;
     };
 }

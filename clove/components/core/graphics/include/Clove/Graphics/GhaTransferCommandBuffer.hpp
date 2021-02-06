@@ -3,7 +3,7 @@
 #include "Clove/Graphics/CommandBuffer.hpp"
 #include "Clove/Graphics/GhaImage.hpp"
 #include "Clove/Graphics/MemoryBarrier.hpp"
-#include "Clove/Graphics/GhaPipelineObject.hpp"
+#include "Clove/Graphics/GhaGraphicsPipelineObject.hpp"
 
 #include <Clove/Maths/Vector.hpp>
 
@@ -36,7 +36,7 @@ namespace garlic::clove {
          * @param sourceStage The pipeline stage that gets executed before the barrier.
          * @param destinationStage The pipeline stage executed after the barrier that waits for the results of the sourceStage.
          */
-        virtual void bufferMemoryBarrier(GhaBuffer &buffer, BufferMemoryBarrierInfo const &barrierInfo, GhaPipelineObject::Stage sourceStage, GhaPipelineObject::Stage destinationStage) = 0;
+        virtual void bufferMemoryBarrier(GhaBuffer &buffer, BufferMemoryBarrierInfo const &barrierInfo, GhaGraphicsPipelineObject::Stage sourceStage, GhaGraphicsPipelineObject::Stage destinationStage) = 0;
         /**
          * @brief Creates a memory barrier for an image. Allowing for how it's accessed, it's layout and queue ownership to change.
          * @param image The image to create the barrier for.
@@ -44,6 +44,6 @@ namespace garlic::clove {
          * @param sourceStage The pipeline stage that gets executed before the barrier.
          * @param destinationStage The pipeline stage executed after the barrier that waits for the results of the sourceStage.
          */
-        virtual void imageMemoryBarrier(GhaImage &image, ImageMemoryBarrierInfo const &barrierInfo, GhaPipelineObject::Stage sourceStage, GhaPipelineObject::Stage destinationStage) = 0;
+        virtual void imageMemoryBarrier(GhaImage &image, ImageMemoryBarrierInfo const &barrierInfo, GhaGraphicsPipelineObject::Stage sourceStage, GhaGraphicsPipelineObject::Stage destinationStage) = 0;
     };
 }

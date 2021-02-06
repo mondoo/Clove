@@ -1,4 +1,4 @@
-#include "Clove/Graphics/Vulkan/VulkanPipelineObject.hpp"
+#include "Clove/Graphics/Vulkan/VulkanGraphicsPipelineObject.hpp"
 
 #include "Clove/Graphics/Vulkan/VulkanDescriptorSetLayout.hpp"
 #include "Clove/Graphics/Vulkan/VulkanRenderPass.hpp"
@@ -11,30 +11,30 @@
 #include <array>
 
 namespace garlic::clove {
-    VulkanPipelineObject::VulkanPipelineObject(DevicePointer device, VkPipeline pipeline, VkPipelineLayout pipelineLayout)
+    VulkanGraphicsPipelineObject::VulkanGraphicsPipelineObject(DevicePointer device, VkPipeline pipeline, VkPipelineLayout pipelineLayout)
         : device{ std::move(device) }
         , pipeline{ pipeline }
         , pipelineLayout{ pipelineLayout } {
     }
 
-    VulkanPipelineObject::VulkanPipelineObject(VulkanPipelineObject &&other) noexcept = default;
+    VulkanGraphicsPipelineObject::VulkanGraphicsPipelineObject(VulkanGraphicsPipelineObject &&other) noexcept = default;
 
-    VulkanPipelineObject &VulkanPipelineObject::operator=(VulkanPipelineObject &&other) noexcept = default;
+    VulkanGraphicsPipelineObject &VulkanGraphicsPipelineObject::operator=(VulkanGraphicsPipelineObject &&other) noexcept = default;
 
-    VulkanPipelineObject::~VulkanPipelineObject() {
+    VulkanGraphicsPipelineObject::~VulkanGraphicsPipelineObject() {
         vkDestroyPipeline(device.get(), pipeline, nullptr);
         vkDestroyPipelineLayout(device.get(), pipelineLayout, nullptr);
     }
 
-    VkPipeline VulkanPipelineObject::getPipeline() const {
+    VkPipeline VulkanGraphicsPipelineObject::getPipeline() const {
         return pipeline;
     }
 
-    VkPipelineLayout VulkanPipelineObject::getLayout() const {
+    VkPipelineLayout VulkanGraphicsPipelineObject::getLayout() const {
         return pipelineLayout;
     }
 
-    VkPipelineStageFlags VulkanPipelineObject::convertStage(Stage garlicStage) {
+    VkPipelineStageFlags VulkanGraphicsPipelineObject::convertStage(Stage garlicStage) {
         switch(garlicStage) {
             case Stage::Top:
                 return VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;

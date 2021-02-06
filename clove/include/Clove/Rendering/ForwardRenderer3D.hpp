@@ -135,8 +135,8 @@ namespace garlic::clove {
 
         //Objects for the final colour render pass
         std::shared_ptr<GhaRenderPass> renderPass;
-        std::shared_ptr<GhaPipelineObject> widgetPipelineObject;
-        std::shared_ptr<GhaPipelineObject> textPipelineObject;
+        std::shared_ptr<GhaGraphicsPipelineObject> widgetPipelineObject;
+        std::shared_ptr<GhaGraphicsPipelineObject> textPipelineObject;
 
         std::shared_ptr<GhaImage> depthImage;
         std::shared_ptr<GhaImageView> depthImageView;

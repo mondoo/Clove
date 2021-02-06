@@ -1,13 +1,13 @@
 #pragma once
 
+#include "Clove/Graphics/GhaBuffer.hpp"
 #include "Clove/Graphics/GhaDescriptorPool.hpp"
 #include "Clove/Graphics/GhaDescriptorSetLayout.hpp"
 #include "Clove/Graphics/GhaFence.hpp"
 #include "Clove/Graphics/GhaFramebuffer.hpp"
-#include "Clove/Graphics/GhaBuffer.hpp"
-#include "Clove/Graphics/GhaImage.hpp"
+#include "Clove/Graphics/GhaGraphicsPipelineObject.hpp"
 #include "Clove/Graphics/GhaGraphicsQueue.hpp"
-#include "Clove/Graphics/GhaPipelineObject.hpp"
+#include "Clove/Graphics/GhaImage.hpp"
 #include "Clove/Graphics/GhaPresentQueue.hpp"
 #include "Clove/Graphics/GhaRenderPass.hpp"
 #include "Clove/Graphics/GhaSampler.hpp"
@@ -55,7 +55,7 @@ namespace garlic::clove {
         virtual Expected<std::unique_ptr<GhaRenderPass>, std::runtime_error> createRenderPass(GhaRenderPass::Descriptor descriptor)                            = 0;
         virtual Expected<std::unique_ptr<GhaDescriptorSetLayout>, std::runtime_error> createDescriptorSetLayout(GhaDescriptorSetLayout::Descriptor descriptor) = 0;
 
-        virtual Expected<std::unique_ptr<GhaPipelineObject>, std::runtime_error> createPipelineObject(GhaPipelineObject::Descriptor descriptor) = 0;
+        virtual Expected<std::unique_ptr<GhaGraphicsPipelineObject>, std::runtime_error> createGraphicsPipelineObject(GhaGraphicsPipelineObject::Descriptor descriptor) = 0;
 
         virtual Expected<std::unique_ptr<GhaFramebuffer>, std::runtime_error> createFramebuffer(GhaFramebuffer::Descriptor descriptor)          = 0;
         virtual Expected<std::unique_ptr<GhaDescriptorPool>, std::runtime_error> createDescriptorPool(GhaDescriptorPool::Descriptor descriptor) = 0;

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Clove/Graphics/GhaGraphicsCommandBuffer.hpp"
-#include "Clove/Graphics/GhaPipelineObject.hpp"
+#include "Clove/Graphics/GhaGraphicsPipelineObject.hpp"
 #include "Clove/Graphics/Queue.hpp"
 
 namespace garlic::clove {
@@ -9,9 +9,9 @@ namespace garlic::clove {
     class GhaSemaphore;
 
     struct GraphicsSubmitInfo {
-        std::vector<std::pair<std::shared_ptr<GhaSemaphore>, GhaPipelineObject::Stage>> waitSemaphores; /**< What semaphores to wait on at what stage */
-        std::vector<std::shared_ptr<GhaGraphicsCommandBuffer>> commandBuffers;                    /**< The command buffers to execute */
-        std::vector<std::shared_ptr<GhaSemaphore>> signalSemaphores;                                 /**< The semaphores that will be signaled when completed */
+        std::vector<std::pair<std::shared_ptr<GhaSemaphore>, GhaGraphicsPipelineObject::Stage>> waitSemaphores; /**< What semaphores to wait on at what stage */
+        std::vector<std::shared_ptr<GhaGraphicsCommandBuffer>> commandBuffers;                                  /**< The command buffers to execute */
+        std::vector<std::shared_ptr<GhaSemaphore>> signalSemaphores;                                            /**< The semaphores that will be signaled when completed */
     };
 }
 

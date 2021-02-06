@@ -6,7 +6,7 @@
 
 #include <Clove/Graphics/GhaFactory.hpp>
 #include <Clove/Graphics/GhaGraphicsCommandBuffer.hpp>
-#include <Clove/Graphics/GhaPipelineObject.hpp>
+#include <Clove/Graphics/GhaGraphicsPipelineObject.hpp>
 #include <Clove/Graphics/GhaRenderPass.hpp>
 
 extern "C" const char constants[];
@@ -56,7 +56,7 @@ namespace garlic::clove {
             .size     = { shadowMapSize, shadowMapSize }
         };
 
-        pipeline = *ghaFactory.createPipelineObject(GhaPipelineObject::Descriptor{
+        pipeline = *ghaFactory.createGraphicsPipelineObject(GhaGraphicsPipelineObject::Descriptor{
             .vertexShader         = *ghaFactory.createShaderFromSource({ animatedmeshshadowmap_v, animatedmeshshadowmap_vLength }, shaderIncludes, "Shadow Map - Animated Mesh (vertex)", GhaShader::Stage::Vertex),
             .fragmentShader       = *ghaFactory.createShaderFromSource({ meshshadowmap_p, meshshadowmap_pLength }, shaderIncludes, "Shadow Map (pixel)", GhaShader::Stage::Pixel),
             .vertexInput          = Vertex::getInputBindingDescriptor(),

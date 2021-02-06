@@ -35,12 +35,14 @@ set(
 		${SOURCE}/Vulkan/VulkanFramebuffer.cpp
 		${INCLUDE}/Vulkan/VulkanGraphicsCommandBuffer.hpp
 		${SOURCE}/Vulkan/VulkanGraphicsCommandBuffer.cpp
+		${INCLUDE}/Vulkan/VulkanGraphicsPipelineObject.hpp
+		${SOURCE}/Vulkan/VulkanGraphicsPipelineObject.cpp
+		${INCLUDE}/Vulkan/VulkanGraphicsQueue.hpp
+		${SOURCE}/Vulkan/VulkanGraphicsQueue.cpp
 		${INCLUDE}/Vulkan/VulkanDevice.hpp
 		${SOURCE}/Vulkan/VulkanDevice.cpp
 		${INCLUDE}/Vulkan/VulkanFactory.hpp
 		${SOURCE}/Vulkan/VulkanFactory.cpp
-		${INCLUDE}/Vulkan/VulkanGraphicsQueue.hpp
-		${SOURCE}/Vulkan/VulkanGraphicsQueue.cpp
 		${INCLUDE}/Vulkan/VulkanResource.hpp
 		${SOURCE}/Vulkan/VulkanResource.cpp
 		${INCLUDE}/Vulkan/VulkanImage.hpp
@@ -51,8 +53,6 @@ set(
 		${SOURCE}/Vulkan/VulkanImageView.cpp
 		${INCLUDE}/Vulkan/VulkanMemoryBarrier.hpp
 		${SOURCE}/Vulkan/VulkanMemoryBarrier.cpp
-		${INCLUDE}/Vulkan/VulkanPipelineObject.hpp
-		${SOURCE}/Vulkan/VulkanPipelineObject.cpp
 		${INCLUDE}/Vulkan/VulkanPresentQueue.hpp
 		${SOURCE}/Vulkan/VulkanPresentQueue.cpp
 		${INCLUDE}/Vulkan/VulkanRenderPass.hpp
@@ -91,10 +91,10 @@ add_library(
 		${INCLUDE}/GhaFence.hpp
 		${INCLUDE}/GhaFramebuffer.hpp
 		${INCLUDE}/GhaGraphicsCommandBuffer.hpp
+		${INCLUDE}/GhaGraphicsPipelineObject.hpp
 		${INCLUDE}/GhaGraphicsQueue.hpp
 		${INCLUDE}/GhaImage.hpp
 		${INCLUDE}/GhaImageView.hpp
-		${INCLUDE}/GhaPipelineObject.hpp
 		${INCLUDE}/GhaPresentQueue.hpp
 		${INCLUDE}/GhaRenderPass.hpp
 		${INCLUDE}/GhaSampler.hpp

@@ -419,8 +419,8 @@ namespace garlic::clove {
         //Submit the colour output to the render target
         GraphicsSubmitInfo submitInfo{
             .waitSemaphores = {
-                { shadowFinishedSemaphores[currentFrame], GhaPipelineObject::Stage::PixelShader },
-                { cubeShadowFinishedSemaphores[currentFrame], GhaPipelineObject::Stage::PixelShader },
+                { shadowFinishedSemaphores[currentFrame], GhaGraphicsPipelineObject::Stage::PixelShader },
+                { cubeShadowFinishedSemaphores[currentFrame], GhaGraphicsPipelineObject::Stage::PixelShader },
             },
             .commandBuffers = { currentImageData.commandBuffer },
         };
@@ -578,8 +578,8 @@ namespace garlic::clove {
         SubpassDependency dependency{
             .sourceSubpass      = SUBPASS_EXTERNAL,
             .destinationSubpass = 0,
-            .sourceStage        = GhaPipelineObject::Stage::ColourAttachmentOutput,
-            .destinationStage   = GhaPipelineObject::Stage::ColourAttachmentOutput,
+            .sourceStage        = GhaGraphicsPipelineObject::Stage::ColourAttachmentOutput,
+            .destinationStage   = GhaGraphicsPipelineObject::Stage::ColourAttachmentOutput,
             .currentAccess      = AccessFlags::None,
             .newAccess          = AccessFlags::ColourAttachmentWrite,
         };
@@ -673,7 +673,7 @@ namespace garlic::clove {
             .size   = sizeof(vec4f),
         };
 
-        GhaPipelineObject::Descriptor pipelineDescriptor{
+        GhaGraphicsPipelineObject::Descriptor pipelineDescriptor{
             .vertexShader         = *graphicsFactory->createShaderFromSource({ ui_v, ui_vLength }, shaderIncludes, "UI (vertex)", GhaShader::Stage::Vertex),
             .fragmentShader       = *graphicsFactory->createShaderFromSource({ widget_p, widget_pLength }, shaderIncludes, "Widget (pixel)", GhaShader::Stage::Pixel),
             .vertexInput          = Vertex::getInputBindingDescriptor(),
@@ -686,11 +686,11 @@ namespace garlic::clove {
             .pushConstants        = { std::move(vertexPushConstant), std::move(pixelPushConstant) },
         };
 
-        widgetPipelineObject = *graphicsFactory->createPipelineObject(pipelineDescriptor);
+        widgetPipelineObject = *graphicsFactory->createGraphicsPipelineObject(pipelineDescriptor);
 
         pipelineDescriptor.fragmentShader = *graphicsFactory->createShaderFromSource({ font_p, font_pLength }, shaderIncludes, "Font (pixel)", GhaShader::Stage::Pixel);
 
-        textPipelineObject = *graphicsFactory->createPipelineObject(std::move(pipelineDescriptor));
+        textPipelineObject = *graphicsFactory->createGraphicsPipelineObject(std::move(pipelineDescriptor));
     }
 
     void ForwardRenderer3D::createRenderTargetFrameBuffers() {

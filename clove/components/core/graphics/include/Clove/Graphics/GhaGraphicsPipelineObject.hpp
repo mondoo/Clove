@@ -60,7 +60,7 @@ namespace garlic::clove {
     /**
      * @brief Represents the state of the current graphics pipeline.
      */
-    class GhaPipelineObject {
+    class GhaGraphicsPipelineObject {
         //TYPES
     public:
         struct Descriptor {
@@ -95,6 +95,6 @@ namespace garlic::clove {
 
         //FUNCTIONS
     public:
-        virtual ~GhaPipelineObject() = default;
+        virtual ~GhaGraphicsPipelineObject() = default;
     };
 }

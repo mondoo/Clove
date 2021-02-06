@@ -6,7 +6,7 @@
 
 namespace garlic::clove {
     class GhaFactory;
-    class GhaPipelineObject;
+    class GhaGraphicsPipelineObject;
     class GhaRenderPass;
 }
 
@@ -14,7 +14,7 @@ namespace garlic::clove {
     class DirectionalLightPass : public GeometryPass {
         //VARIABLES
     private:
-        std::unique_ptr<GhaPipelineObject> pipeline{ nullptr };
+        std::unique_ptr<GhaGraphicsPipelineObject> pipeline{ nullptr };
 
         std::vector<Job> jobs{};
 

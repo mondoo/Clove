@@ -46,7 +46,7 @@ namespace garlic::clove {
         graphicsQueue->submit({ std::move(submission) }, nullptr);
 
         TransferSubmitInfo transferSubmission{
-            .waitSemaphores = { { renderFinishedSemaphore, GhaPipelineObject::Stage::Transfer } },
+            .waitSemaphores = { { renderFinishedSemaphore, GhaGraphicsPipelineObject::Stage::Transfer } },
             .commandBuffers = { transferCommandBuffer },
         };
         transferQueue->submit({ std::move(transferSubmission) }, frameInFlight.get());
@@ -111,7 +111,7 @@ namespace garlic::clove {
         };
 
         transferCommandBuffer->beginRecording(CommandBufferUsage::Default);
-        transferCommandBuffer->imageMemoryBarrier(*renderTargetImage, std::move(layoutTransferInfo), GhaPipelineObject::Stage::Top, GhaPipelineObject::Stage::Transfer);
+        transferCommandBuffer->imageMemoryBarrier(*renderTargetImage, std::move(layoutTransferInfo), GhaGraphicsPipelineObject::Stage::Top, GhaGraphicsPipelineObject::Stage::Transfer);
         transferCommandBuffer->copyImageToBuffer(*renderTargetImage, { 0, 0, 0 }, { imageDescriptor.dimensions, 1 }, *renderTargetBuffer, 0);
         transferCommandBuffer->endRecording();
 

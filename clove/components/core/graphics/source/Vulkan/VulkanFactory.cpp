@@ -7,10 +7,10 @@
 #include "Clove/Graphics/Vulkan/VulkanDescriptorSetLayout.hpp"
 #include "Clove/Graphics/Vulkan/VulkanFence.hpp"
 #include "Clove/Graphics/Vulkan/VulkanFramebuffer.hpp"
+#include "Clove/Graphics/Vulkan/VulkanGraphicsPipelineObject.hpp"
 #include "Clove/Graphics/Vulkan/VulkanGraphicsQueue.hpp"
 #include "Clove/Graphics/Vulkan/VulkanImage.hpp"
 #include "Clove/Graphics/Vulkan/VulkanImageView.hpp"
-#include "Clove/Graphics/Vulkan/VulkanPipelineObject.hpp"
 #include "Clove/Graphics/Vulkan/VulkanPresentQueue.hpp"
 #include "Clove/Graphics/Vulkan/VulkanRenderPass.hpp"
 #include "Clove/Graphics/Vulkan/VulkanResource.hpp"
@@ -453,8 +453,8 @@ namespace garlic::clove {
             dependecies[i] = VkSubpassDependency{
                 .srcSubpass    = descriptor.dependencies[i].sourceSubpass == SUBPASS_EXTERNAL ? VK_SUBPASS_EXTERNAL : descriptor.dependencies[i].sourceSubpass,
                 .dstSubpass    = descriptor.dependencies[i].destinationSubpass == SUBPASS_EXTERNAL ? VK_SUBPASS_EXTERNAL : descriptor.dependencies[i].destinationSubpass,
-                .srcStageMask  = VulkanPipelineObject::convertStage(descriptor.dependencies[i].sourceStage),
-                .dstStageMask  = VulkanPipelineObject::convertStage(descriptor.dependencies[i].destinationStage),
+                .srcStageMask  = VulkanGraphicsPipelineObject::convertStage(descriptor.dependencies[i].sourceStage),
+                .dstStageMask  = VulkanGraphicsPipelineObject::convertStage(descriptor.dependencies[i].destinationStage),
                 .srcAccessMask = convertAccessFlags(descriptor.dependencies[i].currentAccess),
                 .dstAccessMask = convertAccessFlags(descriptor.dependencies[i].newAccess),
             };
@@ -522,7 +522,7 @@ namespace garlic::clove {
         return std::unique_ptr<GhaDescriptorSetLayout>{ std::make_unique<VulkanDescriptorSetLayout>(devicePtr, layout, std::move(descriptor)) };
     }
 
-    Expected<std::unique_ptr<GhaPipelineObject>, std::runtime_error> VulkanFactory::createPipelineObject(GhaPipelineObject::Descriptor descriptor) {
+    Expected<std::unique_ptr<GhaGraphicsPipelineObject>, std::runtime_error> VulkanFactory::createGraphicsPipelineObject(GhaGraphicsPipelineObject::Descriptor descriptor) {
         //Descriptor set layouts
         size_t const descriptorLayoutCount{ std::size(descriptor.descriptorSetLayouts) };
         std::vector<VkDescriptorSetLayout> descriptorLayouts(descriptorLayoutCount);
@@ -714,8 +714,8 @@ namespace garlic::clove {
         VkGraphicsPipelineCreateInfo const pipelineInfo{
             .sType               = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
             .pNext               = nullptr,
-            .stageCount          = std::size(shaderStages),
-            .pStages             = std::data(shaderStages),
+            .stageCount          = shaderStages.size(),
+            .pStages             = shaderStages.data(),
             .pVertexInputState   = &vertexInputInfo,
             .pInputAssemblyState = &inputAssembly,
             .pTessellationState  = nullptr,
@@ -744,7 +744,7 @@ namespace garlic::clove {
             }
         }
 
-        return std::unique_ptr<GhaPipelineObject>{ std::make_unique<VulkanPipelineObject>(devicePtr, pipeline, pipelineLayout) };
+        return std::unique_ptr<GhaGraphicsPipelineObject>{ std::make_unique<VulkanGraphicsPipelineObject>(devicePtr, pipeline, pipelineLayout) };
     }
 
     Expected<std::unique_ptr<GhaFramebuffer>, std::runtime_error> VulkanFactory::createFramebuffer(GhaFramebuffer::Descriptor descriptor) {
