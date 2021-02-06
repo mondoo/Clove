@@ -4,6 +4,7 @@
 #include "Clove/Graphics/Vulkan/MemoryAllocator.hpp"
 #include "Clove/Graphics/Vulkan/VulkanBuffer.hpp"
 #include "Clove/Graphics/Vulkan/VulkanComputePipelineObject.hpp"
+#include "Clove/Graphics/Vulkan/VulkanComputeQueue.hpp"
 #include "Clove/Graphics/Vulkan/VulkanDescriptorPool.hpp"
 #include "Clove/Graphics/Vulkan/VulkanDescriptorSetLayout.hpp"
 #include "Clove/Graphics/Vulkan/VulkanFence.hpp"
@@ -305,6 +306,34 @@ namespace garlic::clove {
         vkGetDeviceQueue(devicePtr.get(), familyIndex, 0, &queue);
 
         return std::unique_ptr<GhaTransferQueue>{ std::make_unique<VulkanTransferQueue>(devicePtr, queue, commandPool, queueFamilyIndices) };
+    }
+
+    Expected<std::unique_ptr<GhaComputeQueue>, std::runtime_error> VulkanFactory::createComputeQueue(CommandQueueDescriptor descriptor) {
+        uint32_t const familyIndex{ *queueFamilyIndices.computeFamily };
+
+        VkCommandPoolCreateInfo const poolInfo{
+            .sType            = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
+            .pNext            = nullptr,
+            .flags            = convertCommandPoolCreateFlags(descriptor.flags),
+            .queueFamilyIndex = familyIndex,
+        };
+
+        VkCommandPool commandPool;
+        if(VkResult const result{ vkCreateCommandPool(devicePtr.get(), &poolInfo, nullptr, &commandPool) }; result != VK_SUCCESS) {
+            switch(result) {
+                case VK_ERROR_OUT_OF_HOST_MEMORY:
+                    return Unexpected{ std::runtime_error{ "Failed to create GhaComputeQueue. Out of host memory" } };
+                case VK_ERROR_OUT_OF_DEVICE_MEMORY:
+                    return Unexpected{ std::runtime_error{ "Failed to create GhaComputeQueue. Out of device memory" } };
+                default:
+                    return Unexpected{ std::runtime_error{ "Failed to create GhaComputeQueue. Reason unkown." } };
+            }
+        }
+
+        VkQueue queue;
+        vkGetDeviceQueue(devicePtr.get(), familyIndex, 0, &queue);
+
+        return std::unique_ptr<GhaComputeQueue>{ std::make_unique<VulkanComputeQueue>(devicePtr, queue, commandPool, queueFamilyIndices) };
     }
 
     Expected<std::unique_ptr<GhaSwapchain>, std::runtime_error> VulkanFactory::createSwapChain(GhaSwapchain::Descriptor descriptor) {

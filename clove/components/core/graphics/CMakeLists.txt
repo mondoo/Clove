@@ -23,6 +23,8 @@ set(
 		${SOURCE}/Vulkan/VulkanCommandBuffer.cpp
 		${INCLUDE}/Vulkan/VulkanComputePipelineObject.hpp
 		${SOURCE}/Vulkan/VulkanComputePipelineObject.cpp
+		${INCLUDE}/Vulkan/VulkanComputeQueue.hpp
+		${SOURCE}/Vulkan/VulkanComputeQueue.cpp
 		${INCLUDE}/Vulkan/VulkanDescriptorPool.hpp
 		${INCLUDE}/Vulkan/VulkanDescriptorPool.inl
 		${SOURCE}/Vulkan/VulkanDescriptorPool.cpp
