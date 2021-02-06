@@ -13,6 +13,8 @@ namespace garlic::clove {
                 return VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
             case PipelineStage::EarlyPixelTest:
                 return VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
+            case PipelineStage::LatePixelTest:
+                return VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
             case PipelineStage::ColourAttachmentOutput:
                 return VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
             default:

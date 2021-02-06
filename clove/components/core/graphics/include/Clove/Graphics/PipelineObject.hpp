@@ -16,6 +16,7 @@ namespace garlic::clove {
         //Graphics stages
         PixelShader,
         EarlyPixelTest,
+        LatePixelTest,
         ColourAttachmentOutput,
     };
 
