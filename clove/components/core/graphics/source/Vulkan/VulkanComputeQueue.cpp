@@ -1,8 +1,7 @@
 #include "Clove/Graphics/Vulkan/VulkanComputeQueue.hpp"
 
+#include "Clove/Graphics/Vulkan/VulkanComputeCommandBuffer.hpp"
 #include "Clove/Graphics/Vulkan/VulkanFence.hpp"
-#include "Clove/Graphics/Vulkan/VulkanGraphicsCommandBuffer.hpp"
-#include "Clove/Graphics/Vulkan/VulkanGraphicsPipelineObject.hpp"
 #include "Clove/Graphics/Vulkan/VulkanPipelineObject.hpp"
 #include "Clove/Graphics/Vulkan/VulkanSemaphore.hpp"
 
@@ -27,7 +26,7 @@ namespace garlic::clove {
     }
 
     std::unique_ptr<GhaComputeCommandBuffer> VulkanComputeQueue::allocateCommandBuffer() {
-        /* VkCommandBuffer commandBuffer;
+        VkCommandBuffer commandBuffer;
 
         VkCommandBufferAllocateInfo allocInfo{
             .sType              = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
@@ -41,18 +40,16 @@ namespace garlic::clove {
             return nullptr;
         }
 
-        return std::make_unique<GhaComputeCommandBuffer>(commandBuffer, queueFamilyIndices); */
-
-        return nullptr;
+        return std::make_unique<VulkanComputeCommandBuffer>(commandBuffer, queueFamilyIndices);
     }
 
     void VulkanComputeQueue::freeCommandBuffer(GhaComputeCommandBuffer &buffer) {
-        /* VkCommandBuffer buffers[] = { polyCast<VulkanGraphicsCommandBuffer>(&buffer)->getCommandBuffer() };
-        vkFreeCommandBuffers(device.get(), commandPool, 1, buffers); */
+        VkCommandBuffer buffers[] = { polyCast<VulkanComputeCommandBuffer>(&buffer)->getCommandBuffer() };
+        vkFreeCommandBuffers(device.get(), commandPool, 1, buffers);
     }
 
     void VulkanComputeQueue::submit(std::vector<ComputeSubmitInfo> const &submissions, GhaFence const *signalFence) {
-        /* auto const submissioncount{ std::size(submissions) };
+        auto const submissioncount{ std::size(submissions) };
         std::vector<VkSubmitInfo> vkSubmissions;
         vkSubmissions.reserve(submissioncount);
 
@@ -76,7 +73,7 @@ namespace garlic::clove {
             size_t const commandBufferCount{ std::size(submissions[i].commandBuffers) };
             commandBuffers[i].resize(commandBufferCount);
             for(size_t j = 0; j < commandBufferCount; ++j) {
-                commandBuffers[i][j] = polyCast<VulkanGraphicsCommandBuffer>(submissions[i].commandBuffers[j].get())->getCommandBuffer();
+                commandBuffers[i][j] = polyCast<VulkanComputeCommandBuffer>(submissions[i].commandBuffers[j].get())->getCommandBuffer();
             }
 
             //Signal semaphores
@@ -89,19 +86,19 @@ namespace garlic::clove {
             vkSubmissions.emplace_back(VkSubmitInfo{
                 .sType                = VK_STRUCTURE_TYPE_SUBMIT_INFO,
                 .waitSemaphoreCount   = static_cast<uint32_t>(waitSemaphoreCount),
-                .pWaitSemaphores      = std::data(waitSemaphores[i]),
-                .pWaitDstStageMask    = std::data(waitStages[i]),
+                .pWaitSemaphores      = waitSemaphores[i].data(),
+                .pWaitDstStageMask    = waitStages[i].data(),
                 .commandBufferCount   = static_cast<uint32_t>(commandBufferCount),
-                .pCommandBuffers      = std::data(commandBuffers[i]),
+                .pCommandBuffers      = commandBuffers[i].data(),
                 .signalSemaphoreCount = static_cast<uint32_t>(signalSemaphoreCount),
-                .pSignalSemaphores    = std::data(signalSemaphores[i]),
+                .pSignalSemaphores    = signalSemaphores[i].data(),
             });
         }
 
         VkFence const vkFence{ signalFence ? polyCast<VulkanFence const>(signalFence)->getFence() : VK_NULL_HANDLE };
 
         if(vkQueueSubmit(queue, vkSubmissions.size(), vkSubmissions.data(), vkFence) != VK_SUCCESS) {
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to submit graphics command buffer(s)");
-        } */
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to submit compute command buffer(s)");
+        }
     }
 }
