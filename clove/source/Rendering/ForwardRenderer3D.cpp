@@ -306,13 +306,21 @@ namespace garlic::clove {
         //DIRECTIONAL LIGHT SHADOWS
         currentImageData.shadowMapCommandBuffer->beginRecording(CommandBufferUsage::OneTimeSubmit);
         for(size_t i = 0; i < MAX_LIGHTS; ++i) {
-            //Make sure to begin the render pass on the images we don't draw to so their layout is transitioned properly
-            currentImageData.shadowMapCommandBuffer->beginRenderPass(*shadowMapRenderPass, *currentImageData.shadowMapFrameBuffers[i], shadowArea, shadowMapClearValues);
             if(i < currentFrameData.bufferData.numLights.numDirectional) {
+                currentImageData.shadowMapCommandBuffer->beginRenderPass(*shadowMapRenderPass, *currentImageData.shadowMapFrameBuffers[i], shadowArea, shadowMapClearValues);
+
                 geometryPassData.currentDirLightTransform = &currentFrameData.bufferData.directionalShadowTransforms[i];
                 geometryPasses[GeometryPass::getId<DirectionalLightPass>()]->execute(*currentImageData.shadowMapCommandBuffer, geometryPassData);
+
+                currentImageData.shadowMapCommandBuffer->endRenderPass();
+            } else {
+                //Make sure transition the layout of the images we don't render to as these get sent to colour pixel shader anyway
+                ImageMemoryBarrierInfo const memoryBarrier{
+                    .currentImageLayout = GhaImage::Layout::Undefined,
+                    .newImageLayout     = GhaImage::Layout::ShaderReadOnlyOptimal,
+                };
+                currentImageData.shadowMapCommandBuffer->imageMemoryBarrier(*currentImageData.shadowMaps[i], memoryBarrier, PipelineStage::ColourAttachmentOutput, PipelineStage::PixelShader);
             }
-            currentImageData.shadowMapCommandBuffer->endRenderPass();
         }
         currentImageData.shadowMapCommandBuffer->endRecording();
         geometryPasses[GeometryPass::getId<DirectionalLightPass>()]->flushJobs();
@@ -328,15 +336,23 @@ namespace garlic::clove {
         currentImageData.cubeShadowMapCommandBuffer->beginRecording(CommandBufferUsage::OneTimeSubmit);
         for(size_t i = 0; i < MAX_LIGHTS; ++i) {
             for(size_t j = 0; j < 6; ++j) {
-                //Make sure to begin the render pass on the images we don't draw to so their layout is transitioned properly
-                currentImageData.cubeShadowMapCommandBuffer->beginRenderPass(*shadowMapRenderPass, *currentImageData.cubeShadowMapFrameBuffers[i][j], shadowArea, shadowMapClearValues);
                 if(i < currentFrameData.bufferData.numLights.numPoint) {
+                    currentImageData.cubeShadowMapCommandBuffer->beginRenderPass(*shadowMapRenderPass, *currentImageData.cubeShadowMapFrameBuffers[i][j], shadowArea, shadowMapClearValues);
+
                     geometryPassData.currentPointLightTransform = &currentFrameData.pointShadowTransforms[i][j];
                     geometryPassData.currentPointLightPosition  = currentFrameData.bufferData.lights.pointLights[i].position;
                     geometryPassData.currentPointLightFarPlane  = currentFrameData.bufferData.lights.pointLights[i].farPlane;
                     geometryPasses[GeometryPass::getId<PointLightPass>()]->execute(*currentImageData.cubeShadowMapCommandBuffer, geometryPassData);
+
+                    currentImageData.cubeShadowMapCommandBuffer->endRenderPass();
+                } else {
+                    //Make sure transition the layout of the images we don't render to as these get sent to colour pixel shader anyway
+                    ImageMemoryBarrierInfo const memoryBarrier{
+                        .currentImageLayout = GhaImage::Layout::Undefined,
+                        .newImageLayout     = GhaImage::Layout::ShaderReadOnlyOptimal,
+                    };
+                    currentImageData.cubeShadowMapCommandBuffer->imageMemoryBarrier(*currentImageData.cubeShadowMaps[i], memoryBarrier, PipelineStage::ColourAttachmentOutput, PipelineStage::PixelShader);
                 }
-                currentImageData.cubeShadowMapCommandBuffer->endRenderPass();
             }
         }
         currentImageData.cubeShadowMapCommandBuffer->endRecording();
