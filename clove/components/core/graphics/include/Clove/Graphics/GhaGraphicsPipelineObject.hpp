@@ -85,14 +85,6 @@ namespace garlic::clove {
             std::vector<PushConstantDescriptor> pushConstants;
         };
 
-        enum class Stage {
-            Top,
-            Transfer,
-            PixelShader,
-            EarlyPixelTest,
-            ColourAttachmentOutput,
-        };
-
         //FUNCTIONS
     public:
         virtual ~GhaGraphicsPipelineObject() = default;

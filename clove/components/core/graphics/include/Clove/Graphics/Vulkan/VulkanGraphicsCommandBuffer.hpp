@@ -46,8 +46,8 @@ namespace garlic::clove {
 
         void drawIndexed(size_t const indexCount) override;
 
-        void bufferMemoryBarrier(GhaBuffer &buffer, BufferMemoryBarrierInfo const &barrierInfo, GhaGraphicsPipelineObject::Stage sourceStage, GhaGraphicsPipelineObject::Stage destinationStage) override;
-        void imageMemoryBarrier(GhaImage &image, ImageMemoryBarrierInfo const &barrierInfo, GhaGraphicsPipelineObject::Stage sourceStage, GhaGraphicsPipelineObject::Stage destinationStage) override;
+        void bufferMemoryBarrier(GhaBuffer &buffer, BufferMemoryBarrierInfo const &barrierInfo, PipelineStage sourceStage, PipelineStage destinationStage) override;
+        void imageMemoryBarrier(GhaImage &image, ImageMemoryBarrierInfo const &barrierInfo, PipelineStage sourceStage, PipelineStage destinationStage) override;
 
         VkCommandBuffer getCommandBuffer() const;
     };

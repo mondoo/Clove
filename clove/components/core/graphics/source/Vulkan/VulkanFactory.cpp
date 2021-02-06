@@ -19,6 +19,7 @@
 #include "Clove/Graphics/Vulkan/VulkanShader.hpp"
 #include "Clove/Graphics/Vulkan/VulkanSwapchain.hpp"
 #include "Clove/Graphics/Vulkan/VulkanTransferQueue.hpp"
+#include "Clove/Graphics/Vulkan/VulkanPipelineObject.hpp"
 
 #include <Clove/Cast.hpp>
 #include <Clove/Log/Log.hpp>
@@ -453,8 +454,8 @@ namespace garlic::clove {
             dependecies[i] = VkSubpassDependency{
                 .srcSubpass    = descriptor.dependencies[i].sourceSubpass == SUBPASS_EXTERNAL ? VK_SUBPASS_EXTERNAL : descriptor.dependencies[i].sourceSubpass,
                 .dstSubpass    = descriptor.dependencies[i].destinationSubpass == SUBPASS_EXTERNAL ? VK_SUBPASS_EXTERNAL : descriptor.dependencies[i].destinationSubpass,
-                .srcStageMask  = VulkanGraphicsPipelineObject::convertStage(descriptor.dependencies[i].sourceStage),
-                .dstStageMask  = VulkanGraphicsPipelineObject::convertStage(descriptor.dependencies[i].destinationStage),
+                .srcStageMask  = convertStage(descriptor.dependencies[i].sourceStage),
+                .dstStageMask  = convertStage(descriptor.dependencies[i].destinationStage),
                 .srcAccessMask = convertAccessFlags(descriptor.dependencies[i].currentAccess),
                 .dstAccessMask = convertAccessFlags(descriptor.dependencies[i].newAccess),
             };

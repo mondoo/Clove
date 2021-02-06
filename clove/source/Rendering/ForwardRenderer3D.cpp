@@ -419,8 +419,8 @@ namespace garlic::clove {
         //Submit the colour output to the render target
         GraphicsSubmitInfo submitInfo{
             .waitSemaphores = {
-                { shadowFinishedSemaphores[currentFrame], GhaGraphicsPipelineObject::Stage::PixelShader },
-                { cubeShadowFinishedSemaphores[currentFrame], GhaGraphicsPipelineObject::Stage::PixelShader },
+                { shadowFinishedSemaphores[currentFrame], PipelineStage::PixelShader },
+                { cubeShadowFinishedSemaphores[currentFrame], PipelineStage::PixelShader },
             },
             .commandBuffers = { currentImageData.commandBuffer },
         };
@@ -578,8 +578,8 @@ namespace garlic::clove {
         SubpassDependency dependency{
             .sourceSubpass      = SUBPASS_EXTERNAL,
             .destinationSubpass = 0,
-            .sourceStage        = GhaGraphicsPipelineObject::Stage::ColourAttachmentOutput,
-            .destinationStage   = GhaGraphicsPipelineObject::Stage::ColourAttachmentOutput,
+            .sourceStage        = PipelineStage::ColourAttachmentOutput,
+            .destinationStage   = PipelineStage::ColourAttachmentOutput,
             .currentAccess      = AccessFlags::None,
             .newAccess          = AccessFlags::ColourAttachmentWrite,
         };

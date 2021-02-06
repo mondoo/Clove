@@ -5,6 +5,7 @@
 #include "Clove/Graphics/Vulkan/VulkanDescriptorSet.hpp"
 #include "Clove/Graphics/Vulkan/VulkanFramebuffer.hpp"
 #include "Clove/Graphics/Vulkan/VulkanGraphicsPipelineObject.hpp"
+#include "Clove/Graphics/Vulkan/VulkanPipelineObject.hpp"
 #include "Clove/Graphics/Vulkan/VulkanImage.hpp"
 #include "Clove/Graphics/Vulkan/VulkanMemoryBarrier.hpp"
 #include "Clove/Graphics/Vulkan/VulkanRenderPass.hpp"
@@ -144,7 +145,7 @@ namespace garlic::clove {
         vkCmdDrawIndexed(commandBuffer, indexCount, 1, 0, 0, 0);
     }
 
-    void VulkanGraphicsCommandBuffer::bufferMemoryBarrier(GhaBuffer &buffer, BufferMemoryBarrierInfo const &barrierInfo, GhaGraphicsPipelineObject::Stage sourceStage, GhaGraphicsPipelineObject::Stage destinationStage) {
+    void VulkanGraphicsCommandBuffer::bufferMemoryBarrier(GhaBuffer &buffer, BufferMemoryBarrierInfo const &barrierInfo, PipelineStage sourceStage, PipelineStage destinationStage) {
         const uint32_t sourceFamilyIndex{ getQueueFamilyIndex(barrierInfo.sourceQueue, queueFamilyIndices) };
         const uint32_t destinationFamilyIndex{ getQueueFamilyIndex(barrierInfo.destinationQueue, queueFamilyIndices) };
 
@@ -160,13 +161,13 @@ namespace garlic::clove {
             .size                = VK_WHOLE_SIZE,
         };
 
-        VkPipelineStageFlags const vkSourceStage{ VulkanGraphicsPipelineObject::convertStage(sourceStage) };
-        VkPipelineStageFlags const vkDestinationStage{ VulkanGraphicsPipelineObject::convertStage(destinationStage) };
+        VkPipelineStageFlags const vkSourceStage{ convertStage(sourceStage) };
+        VkPipelineStageFlags const vkDestinationStage{ convertStage(destinationStage) };
 
         vkCmdPipelineBarrier(commandBuffer, vkSourceStage, vkDestinationStage, 0, 0, nullptr, 1, &barrier, 0, nullptr);
     }
 
-    void VulkanGraphicsCommandBuffer::imageMemoryBarrier(GhaImage &image, ImageMemoryBarrierInfo const &barrierInfo, GhaGraphicsPipelineObject::Stage sourceStage, GhaGraphicsPipelineObject::Stage destinationStage) {
+    void VulkanGraphicsCommandBuffer::imageMemoryBarrier(GhaImage &image, ImageMemoryBarrierInfo const &barrierInfo, PipelineStage sourceStage, PipelineStage destinationStage) {
         uint32_t const sourceFamilyIndex{ getQueueFamilyIndex(barrierInfo.sourceQueue, queueFamilyIndices) };
         uint32_t const destinationFamilyIndex{ getQueueFamilyIndex(barrierInfo.destinationQueue, queueFamilyIndices) };
 
@@ -189,8 +190,8 @@ namespace garlic::clove {
             },
         };
 
-        VkPipelineStageFlags const vkSourceStage{ VulkanGraphicsPipelineObject::convertStage(sourceStage) };
-        VkPipelineStageFlags const vkDestinationStage{ VulkanGraphicsPipelineObject::convertStage(destinationStage) };
+        VkPipelineStageFlags const vkSourceStage{ convertStage(sourceStage) };
+        VkPipelineStageFlags const vkDestinationStage{ convertStage(destinationStage) };
 
         vkCmdPipelineBarrier(commandBuffer, vkSourceStage, vkDestinationStage, 0, 0, nullptr, 0, nullptr, 1, &barrier);
     }

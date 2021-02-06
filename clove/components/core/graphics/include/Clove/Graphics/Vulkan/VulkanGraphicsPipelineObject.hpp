@@ -29,7 +29,5 @@ namespace garlic::clove {
 
         VkPipeline getPipeline() const;
         VkPipelineLayout getLayout() const;
-
-        static VkPipelineStageFlags convertStage(Stage garlicStage);
     };
 }

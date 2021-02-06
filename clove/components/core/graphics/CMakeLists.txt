@@ -53,6 +53,8 @@ set(
 		${SOURCE}/Vulkan/VulkanImageView.cpp
 		${INCLUDE}/Vulkan/VulkanMemoryBarrier.hpp
 		${SOURCE}/Vulkan/VulkanMemoryBarrier.cpp
+		${INCLUDE}/Vulkan/VulkanPipelineObject.hpp
+		${SOURCE}/Vulkan/VulkanPipelineObject.cpp
 		${INCLUDE}/Vulkan/VulkanPresentQueue.hpp
 		${SOURCE}/Vulkan/VulkanPresentQueue.cpp
 		${INCLUDE}/Vulkan/VulkanRenderPass.hpp
@@ -108,6 +110,7 @@ add_library(
 		${SOURCE}/Graphics.cpp
 		${INCLUDE}/GraphicsAPI.hpp
 		${INCLUDE}/MemoryBarrier.hpp
+		${INCLUDE}/PipelineObject.hpp
 		${INCLUDE}/Queue.hpp
 		${INCLUDE}/Resource.hpp
 		${INCLUDE}/Result.hpp

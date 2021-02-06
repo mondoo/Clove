@@ -2,6 +2,7 @@
 
 #include "Clove/Graphics/Vulkan/VulkanFence.hpp"
 #include "Clove/Graphics/Vulkan/VulkanGraphicsPipelineObject.hpp"
+#include "Clove/Graphics/Vulkan/VulkanPipelineObject.hpp"
 #include "Clove/Graphics/Vulkan/VulkanSemaphore.hpp"
 #include "Clove/Graphics/Vulkan/VulkanTransferCommandBuffer.hpp"
 
@@ -68,7 +69,7 @@ namespace garlic::clove {
 
             for(size_t j = 0; j < waitSemaphoreCount; ++j) {
                 waitSemaphores[i][j] = polyCast<VulkanSemaphore>(submissions[i].waitSemaphores[j].first.get())->getSemaphore();
-                waitStages[i][j]     = VulkanGraphicsPipelineObject::convertStage(submissions[i].waitSemaphores[j].second);
+                waitStages[i][j]     = convertStage(submissions[i].waitSemaphores[j].second);
             }
 
             //Command buffers

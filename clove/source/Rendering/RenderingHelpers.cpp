@@ -207,14 +207,14 @@ namespace garlic::clove {
 
         //Change the layout of the image, write the buffer into it and then release the queue ownership
         transferCommandBuffer->beginRecording(CommandBufferUsage::OneTimeSubmit);
-        transferCommandBuffer->imageMemoryBarrier(*image, std::move(layoutTransferInfo), GhaGraphicsPipelineObject::Stage::Top, GhaGraphicsPipelineObject::Stage::Transfer);
+        transferCommandBuffer->imageMemoryBarrier(*image, std::move(layoutTransferInfo), PipelineStage::Top, PipelineStage::Transfer);
         transferCommandBuffer->copyBufferToImage(*transferBuffer, bufferOffset, *image, imageOffset, imageExtent);
-        transferCommandBuffer->imageMemoryBarrier(*image, std::move(transferQueueReleaseInfo), GhaGraphicsPipelineObject::Stage::Transfer, GhaGraphicsPipelineObject::Stage::Transfer);
+        transferCommandBuffer->imageMemoryBarrier(*image, std::move(transferQueueReleaseInfo), PipelineStage::Transfer, PipelineStage::Transfer);
         transferCommandBuffer->endRecording();
 
         //Acquire ownership of the image to a graphics queue
         graphicsCommandBuffer->beginRecording(CommandBufferUsage::OneTimeSubmit);
-        graphicsCommandBuffer->imageMemoryBarrier(*image, std::move(graphicsQueueAcquireInfo), GhaGraphicsPipelineObject::Stage::Transfer, GhaGraphicsPipelineObject::Stage::PixelShader);
+        graphicsCommandBuffer->imageMemoryBarrier(*image, std::move(graphicsQueueAcquireInfo), PipelineStage::Transfer, PipelineStage::PixelShader);
         graphicsCommandBuffer->endRecording();
 
         auto transferQueueFinishedFence{ *factory.createFence({ false }) };
