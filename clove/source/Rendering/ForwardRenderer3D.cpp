@@ -319,7 +319,7 @@ namespace garlic::clove {
                     .currentImageLayout = GhaImage::Layout::Undefined,
                     .newImageLayout     = GhaImage::Layout::ShaderReadOnlyOptimal,
                 };
-                currentImageData.shadowMapCommandBuffer->imageMemoryBarrier(*currentImageData.shadowMaps[i], memoryBarrier, PipelineStage::ColourAttachmentOutput, PipelineStage::PixelShader);
+                currentImageData.shadowMapCommandBuffer->imageMemoryBarrier(*currentImageData.shadowMaps[i], memoryBarrier, PipelineStage::Top, PipelineStage::Top);
             }
         }
         currentImageData.shadowMapCommandBuffer->endRecording();
@@ -351,7 +351,7 @@ namespace garlic::clove {
                         .currentImageLayout = GhaImage::Layout::Undefined,
                         .newImageLayout     = GhaImage::Layout::ShaderReadOnlyOptimal,
                     };
-                    currentImageData.cubeShadowMapCommandBuffer->imageMemoryBarrier(*currentImageData.cubeShadowMaps[i], memoryBarrier, PipelineStage::ColourAttachmentOutput, PipelineStage::PixelShader);
+                    currentImageData.cubeShadowMapCommandBuffer->imageMemoryBarrier(*currentImageData.cubeShadowMaps[i], memoryBarrier, PipelineStage::Top, PipelineStage::Top);
                 }
             }
         }
