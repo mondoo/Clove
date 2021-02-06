@@ -90,14 +90,14 @@ namespace garlic::clove {
     }
 
     Font::Glyph Font::getChar(char ch) const {
-        using namespace garlic::clove;
+        int32_t constexpr shift{ 6 };
 
         FT_Load_Char(face.get(), ch, FT_LOAD_RENDER);
 
         Glyph glyph{
             .size    = { face->glyph->bitmap.width, face->glyph->bitmap.rows },
             .bearing = { face->glyph->bitmap_left, face->glyph->bitmap_top },
-            .advance = { face->glyph->advance.x >> 6, face->glyph->advance.y >> 6 }
+            .advance = { face->glyph->advance.x >> shift, face->glyph->advance.y >> shift },
         };
 
         unsigned char *faceBuffer = face->glyph->bitmap.buffer;

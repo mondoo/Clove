@@ -305,8 +305,9 @@ namespace garlic::clove {
     }
 
     void PhysicsLayer::initialiseRigidBody(Entity entity, RigidBodyComponent const &body) {
+        float constexpr defaultSphereSize{ 0.1f };
         PhysicsProxyComponent proxy{
-            .collisionShape = std::make_unique<btSphereShape>(0.1f),
+            .collisionShape = std::make_unique<btSphereShape>(defaultSphereSize),
         };
 
         btRigidBody *rawBody{ createProxyBody(proxy, body, entity) };

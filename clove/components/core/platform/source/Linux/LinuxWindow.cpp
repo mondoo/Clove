@@ -176,9 +176,9 @@ namespace garlic::clove {
                     break;
 
                 case ButtonPress:
-                    if(xevent.xbutton.button == 4) {
+                    if(xevent.xbutton.button == Button4) {
                         mouseDispatcher.onWheelDelta(CLV_WHEEL_DELTA, xevent.xbutton.x, xevent.xbutton.y);
-                    } else if(xevent.xbutton.button == 5) {
+                    } else if(xevent.xbutton.button == Button5) {
                         mouseDispatcher.onWheelDelta(-CLV_WHEEL_DELTA, xevent.xbutton.x, xevent.xbutton.y);
                     } else {
                         mouseDispatcher.onButtonPressed(static_cast<MouseButton>(xevent.xbutton.button), xevent.xbutton.x, xevent.xbutton.y);

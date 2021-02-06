@@ -58,6 +58,7 @@ namespace garlic::clove {
 
     void Camera::setProjectionMode(ProjectionMode const mode) {
         float constexpr orthographicSize{ 15.0f };
+        float constexpr fov{ 45.0f };
         float const othoZoom{ orthographicSize * zoomLevel };
 
         float const width{ static_cast<float>(viewport.width) };
@@ -72,7 +73,7 @@ namespace garlic::clove {
                 break;
 
             case ProjectionMode::Perspective:
-                projection = createPerspectiveMatrix(45.0f * zoomLevel, aspect, nearPlane, farPlane);
+                projection = createPerspectiveMatrix(fov * zoomLevel, aspect, nearPlane, farPlane);
                 break;
 
             default:

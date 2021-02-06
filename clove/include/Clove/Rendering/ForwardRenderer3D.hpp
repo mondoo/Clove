@@ -47,13 +47,13 @@ namespace garlic::clove {
             //Frame data that directly translates into a UBO
             struct BufferData {
                 //TODO: Get the alignment from vulkan
-                alignas(256) ViewData viewData;
-                alignas(256) vec3f viewPosition;
+                alignas(256) ViewData viewData; //NOLINT
+                alignas(256) vec3f viewPosition; //NOLINT
 
-                alignas(256) LightDataArray lights;
-                alignas(256) DirectionalShadowTransformArray directionalShadowTransforms;
+                alignas(256) LightDataArray lights; //NOLINT
+                alignas(256) DirectionalShadowTransformArray directionalShadowTransforms; //NOLINT
 
-                alignas(256) LightCount numLights;
+                alignas(256) LightCount numLights; //NOLINT
             } bufferData;
 
             std::array<std::array<mat4f, 6>, MAX_LIGHTS> pointShadowTransforms;
@@ -95,8 +95,8 @@ namespace garlic::clove {
 
             std::array<std::shared_ptr<GhaImage>, MAX_LIGHTS> cubeShadowMaps;
             std::array<std::shared_ptr<GhaImageView>, MAX_LIGHTS> cubeShadowMapViews;                   //Views the whole cube
-            std::array<std::array<std::shared_ptr<GhaImageView>, 6>, MAX_LIGHTS> cubeShadowMapFaceViews;//Views each side of the cube. For the frame buffer
-            std::array<std::array<std::shared_ptr<GhaFramebuffer>, 6>, MAX_LIGHTS> cubeShadowMapFrameBuffers;
+            std::array<std::array<std::shared_ptr<GhaImageView>, cubeMapLayerCount>, MAX_LIGHTS> cubeShadowMapFaceViews;//Views each side of the cube. For the frame buffer
+            std::array<std::array<std::shared_ptr<GhaFramebuffer>, cubeMapLayerCount>, MAX_LIGHTS> cubeShadowMapFrameBuffers;
         };
 
         //VARIABLES

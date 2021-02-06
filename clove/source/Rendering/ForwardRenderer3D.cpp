@@ -66,6 +66,7 @@ namespace garlic::clove {
             cubeShadowFinishedSemaphore = graphicsFactory->createSemaphore().getValue();
         }
 
+        float constexpr anisotropy{ 16.0f };
         textureSampler = *graphicsFactory->createSampler(GhaSampler::Descriptor{
             .minFilter        = GhaSampler::Filter::Linear,
             .magFilter        = GhaSampler::Filter::Linear,
@@ -73,7 +74,7 @@ namespace garlic::clove {
             .addressModeV     = GhaSampler::AddressMode::Repeat,
             .addressModeW     = GhaSampler::AddressMode::Repeat,
             .enableAnisotropy = true,
-            .maxAnisotropy    = 16.0f,
+            .maxAnisotropy    = anisotropy,
         });
 
         uiSampler = *graphicsFactory->createSampler(GhaSampler::Descriptor{
@@ -245,9 +246,9 @@ namespace garlic::clove {
         }
 
         struct MeshUBOLayout {
-            alignas(256) ModelData model;
-            alignas(256) vec4f colour;
-            alignas(256) std::array<mat4f, MAX_JOINTS> matrixPallet;
+            alignas(256) ModelData model;                           //NOLINT
+            alignas(256) vec4f colour;                              //NOLINT
+            alignas(256) std::array<mat4f, MAX_JOINTS> matrixPallet;//NOLINT
         };
 
         auto const writeObjectBuffer = [&graphicsFactory = graphicsFactory](std::unique_ptr<GhaBuffer> &buffer, MeshUBOLayout const &layout) {
@@ -326,8 +327,8 @@ namespace garlic::clove {
 
         //POINT LIGHT SHADOWS
         currentImageData.cubeShadowMapCommandBuffer->beginRecording(CommandBufferUsage::OneTimeSubmit);
-        for(size_t i = 0; i < MAX_LIGHTS; ++i) {
-            for(size_t j = 0; j < 6; ++j) {
+        for(size_t i{ 0 }; i < MAX_LIGHTS; ++i) {
+            for(size_t j{ 0 }; j < cubeMapLayerCount; ++j) {
                 //Make sure to begin the render pass on the images we don't draw to so their layout is transitioned properly
                 currentImageData.cubeShadowMapCommandBuffer->beginRenderPass(*shadowMapRenderPass, *currentImageData.cubeShadowMapFrameBuffers[i][j], shadowArea, shadowMapClearValues);
                 if(i < currentFrameData.bufferData.numLights.numPoint) {
@@ -519,10 +520,10 @@ namespace garlic::clove {
                 imageData.cubeShadowMapViews[i] = imageData.cubeShadowMaps[i]->createView(GhaImageView::Descriptor{
                     .type       = GhaImageView::Type::Cube,
                     .layer      = 0,
-                    .layerCount = 6,
+                    .layerCount = cubeMapLayerCount,
                 });
 
-                for(size_t j = 0; j < 6; ++j) {
+                for(size_t j = 0; j < cubeMapLayerCount; ++j) {
                     imageData.cubeShadowMapFaceViews[i][j] = imageData.cubeShadowMaps[i]->createView(GhaImageView::Descriptor{
                         .type       = GhaImageView::Type::_2D,
                         .layer      = static_cast<uint32_t>(j),
