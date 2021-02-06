@@ -13,6 +13,8 @@ namespace garlic::clove {
                 return *indices.graphicsFamily;
             case QueueType::Transfer:
                 return *indices.transferFamily;
+            case QueueType::Compute:
+                return *indices.computeFamily;
             default:
                 CLOVE_ASSERT(false, "{0}: Unkown queue type", CLOVE_FUNCTION_NAME);
                 return VK_QUEUE_FAMILY_IGNORED;

@@ -7,7 +7,8 @@ namespace garlic::clove {
     enum class QueueType {
         None,
         Graphics,
-        Transfer
+        Transfer,
+        Compute
     };
 
     struct BufferMemoryBarrierInfo {
