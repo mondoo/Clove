@@ -364,14 +364,28 @@ namespace garlic::clove {
             //Use the previously created buffer
             skinningDescriptorSet->map(*currentImageData.objectBuffers[index], offsetof(MeshUBOLayout, matrixPallet), sizeof(mat4f) * MAX_JOINTS, DescriptorType::UniformBuffer, 0);
             skinningDescriptorSet->map(*meshInfo.mesh->getVertexBuffer(), 0, meshInfo.mesh->getVertexBufferSize(), DescriptorType::StorageBuffer, 1);
-            skinningDescriptorSet->map(*meshInfo.mesh->getVertexBuffer(), meshInfo.mesh->getVertexOffset(), meshInfo.mesh->getVertexBufferSize(), DescriptorType::StorageBuffer, 2);
+            skinningDescriptorSet->map(*meshInfo.mesh->getCombinedBuffer(), meshInfo.mesh->getVertexOffset(), meshInfo.mesh->getVertexBufferSize(), DescriptorType::StorageBuffer, 2);
 
             ++index;
         }
 
+        //Dispatch all the commands
         currentImageData.skinningCommandBuffer->beginRecording(CommandBufferUsage::OneTimeSubmit);
-        //...
+        currentImageData.skinningCommandBuffer->bindPipelineObject(*skinningPipeline);
+        for(size_t index = 0; auto &meshInfo : currentFrameData.meshes) {
+            currentImageData.skinningCommandBuffer->bindDescriptorSet(*skinningSets[index], 0);
+            currentImageData.skinningCommandBuffer->disptach({ meshInfo.mesh->getVertexCount(), 1, 1 }); //Doing a vertex per thread
+
+            ++index;
+        }
         currentImageData.skinningCommandBuffer->endRecording();
+
+        //Submit the command buffer for the skinning
+        ComputeSubmitInfo skinningSubmitInfo{
+            .commandBuffers   = { currentImageData.skinningCommandBuffer },
+            .signalSemaphores = { skinningFinishedSemaphores[currentFrame] },
+        };
+        computeQueue->submit({ skinningSubmitInfo }, nullptr);
 
         //DIRECTIONAL LIGHT SHADOWS
         currentImageData.shadowMapCommandBuffer->beginRecording(CommandBufferUsage::OneTimeSubmit);
