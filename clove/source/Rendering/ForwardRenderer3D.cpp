@@ -374,7 +374,7 @@ namespace garlic::clove {
         currentImageData.skinningCommandBuffer->bindPipelineObject(*skinningPipeline);
         for(size_t index = 0; auto &meshInfo : currentFrameData.meshes) {
             currentImageData.skinningCommandBuffer->bindDescriptorSet(*skinningSets[index], 0);
-            currentImageData.skinningCommandBuffer->disptach({ meshInfo.mesh->getVertexCount(), 1, 1 }); //Doing a vertex per thread
+            currentImageData.skinningCommandBuffer->disptach({ (meshInfo.mesh->getVertexCount() / AVERAGE_WORK_GROUP_SIZE) +1, 1, 1 });//Doing a vertex per thread
 
             ++index;
         }
