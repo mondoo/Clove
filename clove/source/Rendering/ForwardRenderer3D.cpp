@@ -411,6 +411,9 @@ namespace garlic::clove {
 
         //Submit the command buffer for the directional shadow map
         GraphicsSubmitInfo shadowSubmitInfo{
+            .waitSemaphores = {
+                { skinningFinishedSemaphores[currentFrame], PipelineStage::VertexInput },
+            },
             .commandBuffers   = { currentImageData.shadowMapCommandBuffer },
             .signalSemaphores = { shadowFinishedSemaphores[currentFrame] },
         };
@@ -444,6 +447,9 @@ namespace garlic::clove {
 
         //Submit the command buffer for the point shadow map
         GraphicsSubmitInfo cubeShadowSubmitInfo{
+            .waitSemaphores = {
+                { skinningFinishedSemaphores[currentFrame], PipelineStage::VertexInput },
+            },
             .commandBuffers   = { currentImageData.cubeShadowMapCommandBuffer },
             .signalSemaphores = { cubeShadowFinishedSemaphores[currentFrame] },
         };
