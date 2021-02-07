@@ -23,7 +23,9 @@
 #include <stdio.h>
 #endif
 
-#include <errno.h>
+//GARLIC CHANGE - BEGIN
+#include <errno.h> //NOLINT
+//GARLIC CHANGE - END
 #include <cstdio>
 #include <cstring>
 #include <fstream>
@@ -49,15 +51,19 @@ void OutputFileErrorMessage(int errno_value) {
 namespace shaderc_util {
 
 bool IsAbsolutePath(const std::string& path) {
-  if (path.empty()) return false;
+  //GARLIC CHANGE - BEGIN
+  if (path.empty()) return false; //NOLINT
   // Unix-like OS: /path/to/file
-  if (path.front() == '/') return true;
+  if (path.front() == '/') return true; //NOLINT
+  //GARLIC CHANGE - END
   // Windows: \\server\user\file
   if (path.size() > 1 && path[0] == '\\' && path[1] == '\\') {
     return true;
   }
   // Windows: X:\path\to\file
-  if (path.size() > 2 && ::isalpha(path[0]) && path[1] == ':' &&
+  //GARLIC CHANGE - BEGIN
+  if (path.size() > 2 && ::isalpha(path[0]) && path[1] == ':' && //NOLINT
+  //GARLIC CHANGE - END
       path[2] == '\\') {
     return true;
   }
@@ -118,7 +124,9 @@ std::ostream* GetOutputStream(const string_piece& output_filename,
 }
 
 bool WriteFile(std::ostream* stream, const string_piece& output_data) {
-  if (output_data.size() > 0) {
+  //GARLIC CHANGE - BEGIN
+  if (output_data.size() > 0) { //NOLINT
+  //GARLIC CHANGE - END
     stream->write(output_data.data(), output_data.size());
     if (!stream->good()) {
       return false;

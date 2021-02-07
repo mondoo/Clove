@@ -29,7 +29,9 @@ FileIncluder::~FileIncluder() = default;
 
 shaderc_include_result* FileIncluder::GetInclude(
     const char* requested_source, shaderc_include_type include_type,
-    const char* requesting_source, size_t) {
+    //GARLIC CHNAGE - BEGIN
+    const char* requesting_source, size_t) { //NOLINT
+    //GARLIC CHANGE - END
 
   const std::string full_path =
       (include_type == shaderc_include_type_relative)
@@ -37,14 +39,18 @@ shaderc_include_result* FileIncluder::GetInclude(
                                                       requested_source)
           : file_finder_.FindReadableFilepath(requested_source);
 
-  if (full_path.empty())
+  //GARLIC CHANGE - BEGIN
+  if (full_path.empty()) //NOLINT
     return MakeErrorIncludeResult("Cannot find or open include file.");
+  //GARLIC CHANGE - END
 
   // In principle, several threads could be resolving includes at the same
   // time.  Protect the included_files.
 
   // Read the file and save its full path and contents into stable addresses.
-  FileInfo* new_file_info = new FileInfo{full_path, {}};
+  //GARLIC CHNAGE - BEGIN
+  FileInfo* new_file_info = new FileInfo{full_path, {}}; //NOLINT
+  //GARLIC CHNAGE - END
   if (!shaderc_util::ReadFile(full_path, &(new_file_info->contents))) {
     return MakeErrorIncludeResult("Cannot read file");
   }
@@ -58,7 +64,9 @@ shaderc_include_result* FileIncluder::GetInclude(
 }
 
 void FileIncluder::ReleaseInclude(shaderc_include_result* include_result) {
-  FileInfo* info = static_cast<FileInfo*>(include_result->user_data);
+  //GARLIC CHANGE - BEGIN
+  FileInfo* info = static_cast<FileInfo*>(include_result->user_data); //NOLINT
+  //GARLIC CHANGE - END
   delete info;
   delete include_result;
 }
