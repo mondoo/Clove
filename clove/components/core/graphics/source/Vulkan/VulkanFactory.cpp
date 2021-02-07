@@ -22,6 +22,7 @@
 #include "Clove/Graphics/Vulkan/VulkanShader.hpp"
 #include "Clove/Graphics/Vulkan/VulkanSwapchain.hpp"
 #include "Clove/Graphics/Vulkan/VulkanTransferQueue.hpp"
+#include "Clove/Graphics/Vulkan/VulkanDescriptor.hpp"
 
 #include <Clove/Cast.hpp>
 #include <Clove/Log/Log.hpp>
@@ -99,20 +100,6 @@ namespace garlic::clove {
                 default:
                     CLOVE_ASSERT(false, "{0}: Unkown operation", CLOVE_FUNCTION_NAME);
                     return VK_ATTACHMENT_STORE_OP_DONT_CARE;
-            }
-        }
-
-        VkDescriptorType getDescriptorType(DescriptorType garlicType) {
-            switch(garlicType) {
-                case DescriptorType::UniformBuffer:
-                    return VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-                case DescriptorType::StorageBuffer:
-                    return VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
-                case DescriptorType::CombinedImageSampler:
-                    return VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-                default:
-                    CLOVE_ASSERT(false, "{0}: Unkown type", CLOVE_FUNCTION_NAME);
-                    return VK_DESCRIPTOR_TYPE_MAX_ENUM;
             }
         }
 
