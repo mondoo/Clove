@@ -46,8 +46,9 @@ namespace garlic::clove {
     }
 
     void VulkanTransferQueue::freeCommandBuffer(GhaTransferCommandBuffer &buffer) {
-        VkCommandBuffer buffers[] = { polyCast<VulkanTransferCommandBuffer>(&buffer)->getCommandBuffer() };
-        vkFreeCommandBuffers(device.get(), commandPool, 1, buffers);
+        VkCommandBuffer const vkbuffer{ polyCast<VulkanTransferCommandBuffer>(&buffer)->getCommandBuffer() };
+        
+        vkFreeCommandBuffers(device.get(), commandPool, 1, &vkbuffer);
     }
 
     void VulkanTransferQueue::submit(std::vector<TransferSubmitInfo> const &submissions, GhaFence const *signalFence) {
