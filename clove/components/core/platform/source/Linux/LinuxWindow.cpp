@@ -16,17 +16,17 @@ namespace garlic::clove {
             return;
         }
 
-        screen   = DefaultScreenOfDisplay(display);//Get the screen of the display
-        screenID = DefaultScreen(display);
+        screen   = DefaultScreenOfDisplay(display);//NOLINT Get the screen of the display
+        screenID = DefaultScreen(display);         //NOLINT
 
         windowAttribs                   = {};
-        windowAttribs.border_pixel      = BlackPixel(display, screenID);
-        windowAttribs.background_pixel  = WhitePixel(display, screenID);
+        windowAttribs.border_pixel      = BlackPixel(display, screenID);//NOLINT
+        windowAttribs.background_pixel  = WhitePixel(display, screenID);//NOLINT
         windowAttribs.override_redirect = 1;
-        windowAttribs.colormap          = XCreateColormap(display, RootWindow(display, screenID), screen->root_visual, AllocNone);
+        windowAttribs.colormap          = XCreateColormap(display, RootWindow(display, screenID), screen->root_visual, AllocNone);//NOLINT
         windowAttribs.event_mask        = ExposureMask;
 
-        window = XCreateWindow(display, RootWindow(display, screenID), 0, 0, descriptor.width, descriptor.height, 0, screen->depths[0].depth, InputOutput, screen->root_visual, CWBackPixel | CWColormap | CWBorderPixel | CWEventMask, &windowAttribs);
+        window = XCreateWindow(display, RootWindow(display, screenID), 0, 0, descriptor.width, descriptor.height, 0, screen->depths[0].depth, InputOutput, screen->root_visual, CWBackPixel | CWColormap | CWBorderPixel | CWEventMask, &windowAttribs);//NOLINT
 
         //Remap the delete window message so we can gracefully close the application
         atomWmDeleteWindow = XInternAtom(display, "WM_DELETE_WINDOW", 0);

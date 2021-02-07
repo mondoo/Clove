@@ -5,7 +5,7 @@
 namespace garlic::clove {
     namespace {
         void destroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks *pAllocator) {
-            auto func = (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT");
+            auto func = reinterpret_cast<PFN_vkDestroyDebugUtilsMessengerEXT>(vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT"));
             if(func != nullptr) {
                 func(instance, debugMessenger, pAllocator);
             }
@@ -33,7 +33,7 @@ namespace garlic::clove {
         debugMessenger = other.debugMessenger;
 
         counter = other.counter;
-        if(counter != nullptr){
+        if(counter != nullptr) {
             ++(*counter);
         }
     }
@@ -61,7 +61,7 @@ namespace garlic::clove {
         debugMessenger = other.debugMessenger;
 
         counter = other.counter;
-        if(counter != nullptr){
+        if(counter != nullptr) {
             ++(*counter);
         }
 

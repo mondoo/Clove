@@ -44,7 +44,7 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
 namespace garlic::clove {
     namespace {
         VkResult createDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerCreateInfoEXT const *pCreateInfo, VkAllocationCallbacks const *pAllocator, VkDebugUtilsMessengerEXT *pDebugMessenger) {
-            auto func = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
+            auto func = reinterpret_cast<PFN_vkCreateDebugUtilsMessengerEXT>(vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT"));
             if(func != nullptr) {
                 return func(instance, pCreateInfo, pAllocator, pDebugMessenger);
             } else {
