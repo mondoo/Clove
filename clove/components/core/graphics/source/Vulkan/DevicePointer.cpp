@@ -5,7 +5,7 @@
 namespace garlic::clove {
     namespace {
         void destroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks *pAllocator) {
-            auto func = (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT");
+            auto func = reinterpret_cast<PFN_vkDestroyDebugUtilsMessengerEXT>(vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT"));
             if(func != nullptr) {
                 func(instance, debugMessenger, pAllocator);
             }
@@ -33,17 +33,19 @@ namespace garlic::clove {
         debugMessenger = other.debugMessenger;
 
         counter = other.counter;
-        ++(*counter);
+        if(counter != nullptr) {
+            ++(*counter);
+        }
     }
 
     DevicePointer::DevicePointer(DevicePointer &&other) noexcept {
         release();
 
-        instance       = std::move(other.instance);
-        surface        = std::move(other.surface);
-        physicalDevice = std::move(other.physicalDevice);
-        logicalDevice  = std::move(other.logicalDevice);
-        debugMessenger = std::move(other.debugMessenger);
+        instance       = other.instance;
+        surface        = other.surface;
+        physicalDevice = other.physicalDevice;
+        logicalDevice  = other.logicalDevice;
+        debugMessenger = other.debugMessenger;
 
         counter       = other.counter;
         other.counter = nullptr;
@@ -59,7 +61,9 @@ namespace garlic::clove {
         debugMessenger = other.debugMessenger;
 
         counter = other.counter;
-        ++(*counter);
+        if(counter != nullptr) {
+            ++(*counter);
+        }
 
         return *this;
     }
@@ -67,11 +71,11 @@ namespace garlic::clove {
     DevicePointer &DevicePointer::operator=(DevicePointer &&other) noexcept {
         release();
 
-        instance       = std::move(other.instance);
-        surface        = std::move(other.surface);
-        physicalDevice = std::move(other.physicalDevice);
-        logicalDevice  = std::move(other.logicalDevice);
-        debugMessenger = std::move(other.debugMessenger);
+        instance       = other.instance;
+        surface        = other.surface;
+        physicalDevice = other.physicalDevice;
+        logicalDevice  = other.logicalDevice;
+        debugMessenger = other.debugMessenger;
 
         counter       = other.counter;
         other.counter = nullptr;
@@ -96,6 +100,7 @@ namespace garlic::clove {
             vkDestroyInstance(instance, nullptr);
 
             delete counter;
+            counter = nullptr;
         }
     }
 }

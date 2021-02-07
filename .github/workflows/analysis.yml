@@ -6,7 +6,7 @@ jobs:
   cpp_check:
     runs-on: ubuntu-latest
     container:
-      image: docker.pkg.github.com/agarlicmonkey/garlic/linux_analysis:1.0
+      image: docker.pkg.github.com/agarlicmonkey/garlic/linux_analysis:2.0
       credentials:
         username: ${{ secrets.DOCKER_LOGIN_USERNAME }}
         password: ${{ secrets.DOCKER_LOGIN_TOKEN }}
@@ -14,5 +14,25 @@ jobs:
       - uses: actions/checkout@v2
         with:
           submodules: recursive
-      #Suppress syntax errors as these are causing false positives
+        #Suppress syntax errors as these are causing false positives
       - run: cppcheck -iclove/components/core/graphics/external/shaderc -iclove/external/stb ./ --suppress=syntaxError --error-exitcode=1
+  clang-tidy-linux:
+    runs-on: ubuntu-latest
+    container:
+      image: docker.pkg.github.com/agarlicmonkey/garlic/linux_analysis:2.0
+      credentials:
+        username: ${{ secrets.DOCKER_LOGIN_USERNAME }}
+        password: ${{ secrets.DOCKER_LOGIN_TOKEN }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+      - name: Download clang-tidy.py
+        run: wget https://raw.githubusercontent.com/llvm-mirror/clang-tools-extra/master/clang-tidy/tool/run-clang-tidy.py
+      - name: Configure CMake
+        run: cmake -DCLOVE_ENABLE_ASSERTIONS=ON -DCLOVE_ENABLE_DEBUG_DEFINITION=ON -DCLOVE_ENABLE_PROFILING=OFF -DCLOVE_LOG_LEVEL=2 -DCLOVE_USE_SAFE_CAST=ON -DGAR_BUILD_TESTS=OFF -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=gcc-10 -DCMAKE_CXX_COMPILER=g++-10 -G "Unix Makefiles" .
+      #Build garlic to generate the resource files
+      - name: Build
+        run: cmake --build . 
+      - name: Run clang-tidy
+        run: python3 run-clang-tidy.py

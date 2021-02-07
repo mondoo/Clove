@@ -13,7 +13,7 @@ namespace garlic::clove {
     class Text : public DrawableElement {
         //VARIABLES
     private:
-        std::shared_ptr<garlic::clove::GhaFactory> graphicsFactory;
+        std::shared_ptr<GhaFactory> graphicsFactory;
 
         Font font;
         std::string text;
@@ -31,10 +31,10 @@ namespace garlic::clove {
         Text(Font font);
 
         Text(Text const &other);
-        Text(Text &&other);
+        Text(Text &&other) noexcept;
 
         Text &operator=(Text const &other);
-        Text &operator=(Text &&other);
+        Text &operator=(Text &&other) noexcept;
 
         ~Text();
 

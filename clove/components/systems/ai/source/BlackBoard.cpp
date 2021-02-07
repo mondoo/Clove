@@ -1,8 +1,12 @@
 #include "Clove/AI/BlackBoard.hpp"
 
+namespace {
+    size_t constexpr defaultMemorySize{ 1024 };
+}
+
 namespace garlic::clove {
     BlackBoard::BlackBoard()
-        : BlackBoard(1024) {
+        : BlackBoard(defaultMemorySize) {
     }
 
     BlackBoard::BlackBoard(size_t memorySize)

@@ -68,7 +68,7 @@ namespace garlic::clove {
             .vertexShader         = *ghaFactory.createShaderFromSource({ animatedmesh_v, animatedmesh_vLength }, shaderIncludes, "Animated Mesh (vertex)", GhaShader::Stage::Vertex),
             .fragmentShader       = *ghaFactory.createShaderFromSource({ mesh_p, mesh_pLength }, shaderIncludes, "Mesh (pixel)", GhaShader::Stage::Pixel),
             .vertexInput          = Vertex::getInputBindingDescriptor(),
-            .vertexAttributes     = std::move(vertexAttributes),
+            .vertexAttributes     = vertexAttributes,
             .viewportDescriptor   = viewScissorArea,
             .scissorDescriptor    = viewScissorArea,
             .renderPass           = std::move(ghaRenderPass),

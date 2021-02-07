@@ -27,7 +27,7 @@ namespace garlic::clove {
     VulkanImage::VulkanImage(DevicePointer device, VkImage image, Descriptor descriptor, std::shared_ptr<MemoryAllocator> memoryAllocator)
         : device{ std::move(device) }
         , image{ image }
-        , descriptor{ std::move(descriptor) }
+        , descriptor{ descriptor }
         , memoryAllocator{ std::move(memoryAllocator) } {
         VkMemoryRequirements memoryRequirements{};
         vkGetImageMemoryRequirements(this->device.get(), image, &memoryRequirements);

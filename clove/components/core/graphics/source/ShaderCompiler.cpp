@@ -35,10 +35,10 @@ namespace garlic::clove::ShaderCompiler {
             EmbeddedSourceIncluder &operator=(EmbeddedSourceIncluder const &other) = default;
             EmbeddedSourceIncluder &operator=(EmbeddedSourceIncluder &&other) noexcept = default;
 
-            ~EmbeddedSourceIncluder() = default;
+            ~EmbeddedSourceIncluder() override = default;
 
             shaderc_include_result *GetInclude(const char *requested_source, shaderc_include_type type, const char *requesting_source, size_t include_depth) override {
-                auto result{ new shaderc_include_result };
+                auto *result{ new shaderc_include_result };
 
                 if(includeSources.find(requested_source) != includeSources.end()) {
                     std::string &source{ includeSources[requested_source] };
@@ -141,7 +141,7 @@ namespace garlic::clove::ShaderCompiler {
             //Remap names to semantics
             if(shaderStage == GhaShader::Stage::Vertex) {
                 for(auto &resource : resources.stage_inputs) {
-                    uint32_t const location{ msl.get_decoration(resource.id, spv::DecorationLocation) };
+                    //uint32_t const location{ msl.get_decoration(resource.id, spv::DecorationLocation) };
                     std::string str{ msl.get_decoration_string(resource.id, spv::DecorationUserSemantic) };
 
                     msl.set_name(resource.id, str);

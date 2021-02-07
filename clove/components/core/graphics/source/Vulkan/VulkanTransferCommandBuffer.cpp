@@ -12,7 +12,7 @@
 namespace garlic::clove {
     VulkanTransferCommandBuffer::VulkanTransferCommandBuffer(VkCommandBuffer commandBuffer, QueueFamilyIndices queueFamilyIndices)
         : commandBuffer(commandBuffer)
-        , queueFamilyIndices(std::move(queueFamilyIndices)) {
+        , queueFamilyIndices(queueFamilyIndices) {
     }
 
     VulkanTransferCommandBuffer::VulkanTransferCommandBuffer(VulkanTransferCommandBuffer &&other) noexcept = default;

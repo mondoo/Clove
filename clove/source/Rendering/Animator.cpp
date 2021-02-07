@@ -6,6 +6,7 @@
 #include <Clove/Log/Log.hpp>
 #include <Clove/Maths/MathsHelpers.hpp>
 #include <Clove/Timer.hpp>
+#include <cmath>
 
 namespace garlic::clove {
     namespace {
@@ -65,12 +66,10 @@ namespace garlic::clove {
 
     Animator &Animator::operator=(Animator &&other) noexcept = default;
 
-    Animator::~Animator() = default;
-
-    std::array<mat4f, MAX_JOINTS> Animator::update(DeltaTime const deltaTime) {
+    std::array<mat4f, MAX_JOINTS> Animator::update(DeltaTime const &deltaTime) {
         CLOVE_PROFILE_FUNCTION();
 
-        std::array<mat4f, MAX_JOINTS> skinningMatrix;
+        std::array<mat4f, MAX_JOINTS> skinningMatrix{};
         skinningMatrix.fill(mat4f{ 1.0f });
 
         if(currentClip == nullptr) {
@@ -78,7 +77,7 @@ namespace garlic::clove {
         }
 
         //TODO: single play (current will loop)
-        currentTime = fmod(currentTime + deltaTime, currentClip->duration);
+        currentTime = std::fmod(currentTime + deltaTime, currentClip->duration);
 
         //Get the poses either side of the animation time
         auto const &[prevPose, nextPose] = getPrevNextPose(currentTime);

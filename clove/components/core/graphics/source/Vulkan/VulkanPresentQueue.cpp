@@ -27,16 +27,16 @@ namespace garlic::clove {
             waitSemaphores[i] = polyCast<VulkanSemaphore>(presentInfo.waitSemaphores[i].get())->getSemaphore();
         }
 
-        VkSwapchainKHR swapchains[] = { polyCast<VulkanSwapchain>(presentInfo.swapChain.get())->getSwapchain() };
-        uint32_t imageIndices[]     = { presentInfo.imageIndex };
+        VkSwapchainKHR const swapchain{ polyCast<VulkanSwapchain>(presentInfo.swapChain.get())->getSwapchain() };
+        uint32_t const imageIndex{ presentInfo.imageIndex };
 
         VkPresentInfoKHR vkpresentInfo{
             .sType              = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
             .waitSemaphoreCount = static_cast<uint32_t>(waitSemaphoreCount),
             .pWaitSemaphores    = std::data(waitSemaphores),
             .swapchainCount     = 1,
-            .pSwapchains        = swapchains,
-            .pImageIndices      = imageIndices,
+            .pSwapchains        = &swapchain,
+            .pImageIndices      = &imageIndex,
         };
 
         VkResult const result{ vkQueuePresentKHR(queue, &vkpresentInfo) };

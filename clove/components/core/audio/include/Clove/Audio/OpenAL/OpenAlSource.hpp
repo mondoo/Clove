@@ -8,7 +8,7 @@ namespace garlic::clove {
     class OpenAlSource : public AhaSource {
         //VARIABLES
     private:
-        ALuint source;
+        ALuint source{};
 
         std::vector<std::shared_ptr<AhaBuffer>> bufferQueue;
 
