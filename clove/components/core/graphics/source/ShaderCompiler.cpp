@@ -141,7 +141,7 @@ namespace garlic::clove::ShaderCompiler {
             //Remap names to semantics
             if(shaderStage == GhaShader::Stage::Vertex) {
                 for(auto &resource : resources.stage_inputs) {
-                    uint32_t const location{ msl.get_decoration(resource.id, spv::DecorationLocation) };
+                    //uint32_t const location{ msl.get_decoration(resource.id, spv::DecorationLocation) };
                     std::string str{ msl.get_decoration_string(resource.id, spv::DecorationUserSemantic) };
 
                     msl.set_name(resource.id, str);
