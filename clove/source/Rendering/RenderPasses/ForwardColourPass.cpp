@@ -87,21 +87,13 @@ namespace garlic::clove {
 
     ForwardColourPass::~ForwardColourPass() = default;
 
-    void ForwardColourPass::addJob(Job job) {
-        jobs.emplace_back(std::move(job));
-    }
-
-    void ForwardColourPass::flushJobs() {
-        jobs.clear();
-    }
-
     void ForwardColourPass::execute(GhaGraphicsCommandBuffer &commandBuffer, FrameData const &frameData) {
         commandBuffer.bindPipelineObject(*pipeline);
 
         commandBuffer.bindDescriptorSet(*frameData.viewDescriptorSet, 1);
         commandBuffer.bindDescriptorSet(*frameData.lightingDescriptorSet, 2);
 
-        for(auto &job : jobs) {
+        for(auto const &job : getJobs()) {
             commandBuffer.bindDescriptorSet(*frameData.meshDescriptorSets[job.meshDescriptorIndex], 0);
 
             commandBuffer.bindVertexBuffer(*job.mesh->getCombinedBuffer(), job.mesh->getVertexOffset());
@@ -109,7 +101,5 @@ namespace garlic::clove {
 
             commandBuffer.drawIndexed(job.mesh->getIndexCount());
         }
-
-        jobs.clear();
     }
 }

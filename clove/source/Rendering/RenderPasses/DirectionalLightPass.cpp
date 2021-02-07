@@ -80,18 +80,10 @@ namespace garlic::clove {
 
     DirectionalLightPass::~DirectionalLightPass() = default;
 
-    void DirectionalLightPass::addJob(Job job) {
-        jobs.emplace_back(std::move(job));
-    }
-
-    void DirectionalLightPass::flushJobs() {
-        jobs.clear();
-    }
-
     void DirectionalLightPass::execute(GhaGraphicsCommandBuffer &commandBuffer, FrameData const &frameData) {
         commandBuffer.bindPipelineObject(*pipeline);
 
-        for(auto &job : jobs) {
+        for(auto const &job : getJobs()) {
             mat4f const *pushConstantData{ frameData.currentDirLightTransform };
             size_t const pushConstantSize{ sizeof(mat4f) };
 

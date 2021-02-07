@@ -4,9 +4,9 @@
 
 #include <Clove/Maths/Matrix.hpp>
 #include <memory>
-#include <vector>
 #include <type_traits>
 #include <typeinfo>
+#include <vector>
 
 namespace garlic::clove {
     class GhaDescriptorSet;
@@ -44,29 +44,38 @@ namespace garlic::clove {
          * @brief A single unit of work for a GeometryPass.
          */
         struct Job {
-            size_t meshDescriptorIndex{ 0 }; /**< Index into FrameData::meshDescriptorSets */
-            std::shared_ptr<Mesh> mesh{ nullptr }; //TODO: Move into frame data
+            size_t meshDescriptorIndex{ 0 };      /**< Index into FrameData::meshDescriptorSets */
+            std::shared_ptr<Mesh> mesh{ nullptr };//TODO: Move into frame data
         };
+
+        //VARIABLES
+    private:
+        std::vector<Job> jobs{};
 
         //FUNCTIONS
     public:
-        virtual ~GeometryPass() = default;
+        GeometryPass();
+
+        GeometryPass(GeometryPass const &other);
+        GeometryPass(GeometryPass &&other) noexcept;
+
+        GeometryPass &operator=(GeometryPass const &other);
+        GeometryPass &operator=(GeometryPass &&other) noexcept;
+
+        virtual ~GeometryPass();
 
         template<typename GeometryPassType>
-        static Id getId(){
-            static_assert(std::is_base_of_v<GeometryPass, GeometryPassType>, "Type passed is not derived from GeometryPass!");
-            return typeid(GeometryPassType).hash_code();
-        };
+        static Id getId();
 
         /**
          * @brief Adds a job to this pass' queue.
          */
-        virtual void addJob(Job job) = 0;
+        void addJob(Job job);
 
-        /**
+        /**,
          * @brief Clears the job queue
          */
-        virtual void flushJobs() = 0;
+        void flushJobs();
 
         /**
          * @brief Submits all jobs into the commandBuffer.
@@ -74,5 +83,10 @@ namespace garlic::clove {
          * @param frameData Data that describes the current frame.
          */
         virtual void execute(GhaGraphicsCommandBuffer &commandBuffer, FrameData const &frameData) = 0;
+
+    protected:
+        inline std::vector<Job> const &getJobs() const;
     };
 }
+
+#include "GeometryPass.inl"

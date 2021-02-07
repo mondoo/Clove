@@ -87,14 +87,6 @@ namespace garlic::clove {
 
     PointLightPass::~PointLightPass() = default;
 
-    void PointLightPass::addJob(Job job) {
-        jobs.emplace_back(std::move(job));
-    }
-
-    void PointLightPass::flushJobs() {
-        jobs.clear();
-    }
-
     void PointLightPass::execute(GhaGraphicsCommandBuffer &commandBuffer, FrameData const &frameData) {
         mat4f const *vertPushConstantData{ frameData.currentPointLightTransform };
         size_t const vertPushConstantSize{ sizeof(mat4f) };
@@ -110,7 +102,7 @@ namespace garlic::clove {
         size_t const pixelPushConstantSize{ sizeof(pixelPushConstantData) };
 
         commandBuffer.bindPipelineObject(*pipeline);
-        for(auto &job : jobs) {
+        for(auto const &job : getJobs()) {
             commandBuffer.pushConstant(GhaShader::Stage::Vertex, 0, vertPushConstantSize, vertPushConstantData);
             commandBuffer.pushConstant(GhaShader::Stage::Pixel, pixelPushConstantOffset, pixelPushConstantSize, &pixelPushConstantData);
             commandBuffer.bindDescriptorSet(*frameData.meshDescriptorSets[job.meshDescriptorIndex], 0);

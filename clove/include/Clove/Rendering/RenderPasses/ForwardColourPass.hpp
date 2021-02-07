@@ -16,8 +16,6 @@ namespace garlic::clove {
     private:
         std::unique_ptr<GhaGraphicsPipelineObject> pipeline{ nullptr };
 
-        std::vector<Job> jobs{};
-
         //FUNCTIONS
     public:
         ForwardColourPass() = delete;
@@ -30,9 +28,6 @@ namespace garlic::clove {
         ForwardColourPass &operator=(ForwardColourPass &&other) noexcept;
 
         ~ForwardColourPass();
-
-        void addJob(Job job) override;
-        void flushJobs() override;
 
         void execute(GhaGraphicsCommandBuffer &commandBuffer, FrameData const &frameData) override;
     };
