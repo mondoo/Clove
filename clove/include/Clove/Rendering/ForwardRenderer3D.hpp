@@ -152,6 +152,9 @@ namespace garlic::clove {
         std::array<std::shared_ptr<GhaSemaphore>, maxFramesInFlight> cubeShadowFinishedSemaphores;
         std::array<std::shared_ptr<GhaSemaphore>, maxFramesInFlight> skinningFinishedSemaphores;
 
+        //TEMP: Compute skinning objects -- Put inside a GeometryPass
+        std::shared_ptr<GhaComputePipelineObject> skinningPipeline;
+
         //FUNCTIONS
     public:
         ForwardRenderer3D() = delete;

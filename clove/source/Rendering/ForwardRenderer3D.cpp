@@ -27,6 +27,9 @@ extern "C" const size_t widget_pLength;
 extern "C" const char font_p[];
 extern "C" const size_t font_pLength;
 
+extern "C" const char skinning_c[];
+extern "C" const size_t skinning_cLength;
+
 namespace garlic::clove {
     ForwardRenderer3D::ForwardRenderer3D(GhaDevice *graphicsDevice, std::unique_ptr<RenderTarget> renderTarget)
         : ghaDevice{ graphicsDevice }
@@ -128,6 +131,45 @@ namespace garlic::clove {
         };
 
         uiMesh = std::make_unique<Mesh>(uiVertices, uiIndices);
+
+        //TEMP: Compute skinning objects -- Put inside a GeometryPass
+        DescriptorSetBindingInfo const skeletonBinding{
+            .binding   = 0,
+            .type      = DescriptorType::UniformBuffer,
+            .arraySize = 1,
+            .stage     = GhaShader::Stage::Compute,
+        };
+
+        DescriptorSetBindingInfo const bindPoseBinding{
+            .binding   = 1,
+            .type      = DescriptorType::StorageBuffer,
+            .arraySize = 1,
+            .stage     = GhaShader::Stage::Compute,
+        };
+
+        DescriptorSetBindingInfo const skinedPoseBinding{
+            .binding   = 2,
+            .type      = DescriptorType::StorageBuffer,
+            .arraySize = 1,
+            .stage     = GhaShader::Stage::Compute,
+        };
+
+        std::shared_ptr<GhaDescriptorSetLayout> layout = *ghaFactory->createDescriptorSetLayout(GhaDescriptorSetLayout::Descriptor{
+            .bindings = {
+                skeletonBinding,
+                bindPoseBinding,
+                skinedPoseBinding,
+            },
+        });
+
+        GhaComputePipelineObject::Descriptor const skinningPipelineDescriptor{
+            .shader               = *ghaFactory->createShaderFromSource({ skinning_c, skinning_cLength }, shaderIncludes, "Skinning (compute)", GhaShader::Stage::Compute),
+            .descriptorSetLayouts = {
+                layout,
+            }
+        };
+
+        skinningPipeline = *ghaFactory->createComputePipelineObject(skinningPipelineDescriptor);
     }
 
     //ForwardRenderer3D::ForwardRenderer3D(ForwardRenderer3D&& other) noexcept = default;

@@ -70,6 +70,8 @@ namespace garlic::clove::ShaderCompiler {
                     return shaderc_vertex_shader;
                 case GhaShader::Stage::Pixel:
                     return shaderc_fragment_shader;
+                case GhaShader::Stage::Compute:
+                    return shaderc_compute_shader;
                 default:
                     CLOVE_ASSERT("Unsupported shader stage {0}", CLOVE_FUNCTION_NAME);
                     return shaderc_vertex_shader;
