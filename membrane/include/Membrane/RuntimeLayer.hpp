@@ -27,7 +27,7 @@ namespace garlic::membrane {
         msclr::gcroot<RuntimeLayerMessageProxy ^> proxy;
 
         clove::EntityManager *entityManager{ nullptr };
-        std::vector<clove::Entity> runtimeEntities;
+        std::vector<clove::Entity> runtimeEntities; //TODO: Remove? Keeping just so update transforms etc.
 
         //FUNCTIONS
     public:
