@@ -30,4 +30,4 @@ jobs:
       - name: Configure CMake
         run: cmake -DCLOVE_ENABLE_ASSERTIONS=ON -DCLOVE_ENABLE_DEBUG_DEFINITION=ON -DCLOVE_ENABLE_PROFILING=ON -DCLOVE_LOG_LEVEL=2 -DCLOVE_USE_SAFE_CAST=ON -DGAR_BUILD_TESTS=ON -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -DCMAKE_BUILD_TYPE=Release .
       - name: Run clang-tidy
-        run: python run-clang-tidy.py -header-filter=.*
+        run: python run-clang-tidy.py
