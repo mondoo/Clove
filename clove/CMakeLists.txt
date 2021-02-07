@@ -29,6 +29,8 @@ set(
 		${SOURCE}/Shaders/Widget-p.glsl
 		${SOURCE}/Shaders/Font-p.glsl
 
+		${SOURCE}/Shaders/Skinning-c.glsl
+
 		${ShaderIncludes}
 )
 
@@ -78,6 +80,8 @@ embeddSOURCE("${SOURCE}/Shaders/MeshCubeShadowMap-p.glsl" "r")
 embeddSOURCE("${SOURCE}/Shaders/UI-v.glsl" "r")
 embeddSOURCE("${SOURCE}/Shaders/Widget-p.glsl" "r")
 embeddSOURCE("${SOURCE}/Shaders/Font-p.glsl" "r")
+
+embeddSOURCE("${SOURCE}/Shaders/Skinning-c.glsl" "r")
 
 #Library
 add_library(
