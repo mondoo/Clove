@@ -33,7 +33,9 @@ namespace garlic::clove {
         debugMessenger = other.debugMessenger;
 
         counter = other.counter;
-        ++(*counter);
+        if(counter != nullptr){
+            ++(*counter);
+        }
     }
 
     DevicePointer::DevicePointer(DevicePointer &&other) noexcept {
@@ -59,7 +61,9 @@ namespace garlic::clove {
         debugMessenger = other.debugMessenger;
 
         counter = other.counter;
-        ++(*counter);
+        if(counter != nullptr){
+            ++(*counter);
+        }
 
         return *this;
     }
@@ -96,6 +100,7 @@ namespace garlic::clove {
             vkDestroyInstance(instance, nullptr);
 
             delete counter;
+            counter = nullptr;
         }
     }
 }
