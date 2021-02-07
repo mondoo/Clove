@@ -47,13 +47,13 @@ namespace garlic::clove {
             //Frame data that directly translates into a UBO
             struct BufferData {
                 //TODO: Get the alignment from vulkan
-                alignas(256) ViewData viewData;
-                alignas(256) vec3f viewPosition;
+                alignas(256) ViewData viewData; //NOLINT
+                alignas(256) vec3f viewPosition; //NOLINT
 
-                alignas(256) LightDataArray lights;
-                alignas(256) DirectionalShadowTransformArray directionalShadowTransforms;
+                alignas(256) LightDataArray lights; //NOLINT
+                alignas(256) DirectionalShadowTransformArray directionalShadowTransforms; //NOLINT
 
-                alignas(256) LightCount numLights;
+                alignas(256) LightCount numLights; //NOLINT
             } bufferData;
 
             std::array<std::array<mat4f, 6>, MAX_LIGHTS> pointShadowTransforms;
@@ -95,8 +95,8 @@ namespace garlic::clove {
 
             std::array<std::shared_ptr<GhaImage>, MAX_LIGHTS> cubeShadowMaps;
             std::array<std::shared_ptr<GhaImageView>, MAX_LIGHTS> cubeShadowMapViews;                   //Views the whole cube
-            std::array<std::array<std::shared_ptr<GhaImageView>, 6>, MAX_LIGHTS> cubeShadowMapFaceViews;//Views each side of the cube. For the frame buffer
-            std::array<std::array<std::shared_ptr<GhaFramebuffer>, 6>, MAX_LIGHTS> cubeShadowMapFrameBuffers;
+            std::array<std::array<std::shared_ptr<GhaImageView>, cubeMapLayerCount>, MAX_LIGHTS> cubeShadowMapFaceViews;//Views each side of the cube. For the frame buffer
+            std::array<std::array<std::shared_ptr<GhaFramebuffer>, cubeMapLayerCount>, MAX_LIGHTS> cubeShadowMapFrameBuffers;
         };
 
         //VARIABLES
@@ -157,13 +157,13 @@ namespace garlic::clove {
         //ForwardRenderer3D(ForwardRenderer3D&& other) noexcept;
 
         ForwardRenderer3D &operator=(ForwardRenderer3D const &other) = delete;
-        ForwardRenderer3D &operator                                  =(ForwardRenderer3D &&other) noexcept;
+        ForwardRenderer3D &operator=(ForwardRenderer3D &&other) noexcept;
 
         ~ForwardRenderer3D();
 
         void begin();
 
-        void submitMesh(MeshInfo meshInfo, std::set<GeometryPass::Id> geometryPassIds);
+        void submitMesh(MeshInfo meshInfo, std::set<GeometryPass::Id> const &geometryPassIds);
 
         /**
          * @brief Submit the active camera the renderer will use.
@@ -173,8 +173,8 @@ namespace garlic::clove {
         void submitLight(DirectionalLight const &light);
         void submitLight(PointLight const &light);
 
-        void submitWidget(std::shared_ptr<GhaImageView> const widget, mat4f const modelProjection);
-        void submitText(std::shared_ptr<GhaImageView> const text, mat4f const modelProjection);
+        void submitWidget(std::shared_ptr<GhaImageView> const &widget, mat4f const modelProjection);
+        void submitText(std::shared_ptr<GhaImageView> const &text, mat4f const modelProjection);
 
         void end();
 

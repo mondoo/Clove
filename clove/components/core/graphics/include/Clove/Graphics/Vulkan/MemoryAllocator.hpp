@@ -66,7 +66,7 @@ namespace garlic::clove {
             Block(Block &&other) noexcept;
 
             Block &operator=(Block const &other) = delete;
-            Block &operator                      =(Block &&other) noexcept;
+            Block &operator=(Block &&other) noexcept;
 
             ~Block();
 
@@ -95,7 +95,7 @@ namespace garlic::clove {
         MemoryAllocator(MemoryAllocator &&other) noexcept;
 
         MemoryAllocator &operator=(MemoryAllocator const &other) = delete;
-        MemoryAllocator &operator                                =(MemoryAllocator &&other);
+        MemoryAllocator &operator=(MemoryAllocator &&other) noexcept;
 
         ~MemoryAllocator();
 

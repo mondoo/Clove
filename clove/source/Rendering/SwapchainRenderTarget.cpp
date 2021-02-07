@@ -3,9 +3,9 @@
 #include "Clove/Application.hpp"
 #include "Clove/Surface.hpp"
 
-#include <Clove/Graphics/GhaFence.hpp>
 #include <Clove/Graphics/GhaDevice.hpp>
 #include <Clove/Graphics/GhaFactory.hpp>
+#include <Clove/Graphics/GhaFence.hpp>
 #include <Clove/Graphics/GhaPresentQueue.hpp>
 #include <Clove/Graphics/GhaSemaphore.hpp>
 #include <Clove/Graphics/GhaSwapchain.hpp>
@@ -76,7 +76,7 @@ namespace garlic::clove {
         }
 
         //Inject the sempahores we use to synchronise with the swapchain and present queue
-        submission.waitSemaphores.push_back({ imageAvailableSemaphores[frameId], GhaPipelineObject::Stage::ColourAttachmentOutput });
+        submission.waitSemaphores.emplace_back(imageAvailableSemaphores[frameId], GhaPipelineObject::Stage::ColourAttachmentOutput);
         submission.signalSemaphores.push_back(renderFinishedSemaphores[frameId]);
 
         graphicsQueue->submit({ std::move(submission) }, framesInFlight[frameId].get());
@@ -105,7 +105,7 @@ namespace garlic::clove {
     }
 
     void SwapchainRenderTarget::onSurfaceSizeChanged(vec2ui const &size) {
-        surfaceSize           = size;
+        surfaceSize          = size;
         requiresNewSwapchain = true;
     }
 

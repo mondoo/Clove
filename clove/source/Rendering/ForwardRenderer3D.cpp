@@ -66,6 +66,7 @@ namespace garlic::clove {
             cubeShadowFinishedSemaphore = graphicsFactory->createSemaphore().getValue();
         }
 
+        float constexpr anisotropy{ 16.0f };
         textureSampler = *graphicsFactory->createSampler(GhaSampler::Descriptor{
             .minFilter        = GhaSampler::Filter::Linear,
             .magFilter        = GhaSampler::Filter::Linear,
@@ -73,7 +74,7 @@ namespace garlic::clove {
             .addressModeV     = GhaSampler::AddressMode::Repeat,
             .addressModeW     = GhaSampler::AddressMode::Repeat,
             .enableAnisotropy = true,
-            .maxAnisotropy    = 16.0f,
+            .maxAnisotropy    = anisotropy,
         });
 
         uiSampler = *graphicsFactory->createSampler(GhaSampler::Descriptor{
@@ -122,7 +123,7 @@ namespace garlic::clove {
             1,
         };
 
-        uiMesh = std::make_unique<Mesh>(std::move(uiVertices), std::move(uiIndices));
+        uiMesh = std::make_unique<Mesh>(uiVertices, uiIndices);
     }
 
     //ForwardRenderer3D::ForwardRenderer3D(ForwardRenderer3D&& other) noexcept = default;
@@ -150,7 +151,7 @@ namespace garlic::clove {
         currentFrameData.bufferData.numLights.numPoint       = 0;
     }
 
-    void ForwardRenderer3D::submitMesh(MeshInfo meshInfo, std::set<GeometryPass::Id> geometryPassIds) {
+    void ForwardRenderer3D::submitMesh(MeshInfo meshInfo, std::set<GeometryPass::Id> const &geometryPassIds) {
         currentFrameData.meshes.push_back(std::move(meshInfo));
         for(auto id : geometryPassIds) {
             geometryPasses[id]->addJob({ currentFrameData.meshes.size() - 1, currentFrameData.meshes.back().mesh });
@@ -178,12 +179,12 @@ namespace garlic::clove {
         currentFrameData.pointShadowTransforms[lightIndex]         = light.shadowTransforms;
     }
 
-    void ForwardRenderer3D::submitWidget(std::shared_ptr<GhaImageView> const widget, mat4f const modelProjection) {
-        currentFrameData.widgets.push_back({ std::move(widget), std::move(modelProjection) });
+    void ForwardRenderer3D::submitWidget(std::shared_ptr<GhaImageView> const &widget, mat4f const modelProjection) {
+        currentFrameData.widgets.emplace_back(widget, modelProjection);
     }
 
-    void ForwardRenderer3D::submitText(std::shared_ptr<GhaImageView> const text, mat4f const modelProjection) {
-        currentFrameData.text.push_back({ std::move(text), std::move(modelProjection) });
+    void ForwardRenderer3D::submitText(std::shared_ptr<GhaImageView> const &text, mat4f const modelProjection) {
+        currentFrameData.text.emplace_back(text, modelProjection);
     }
 
     void ForwardRenderer3D::end() {
@@ -245,9 +246,9 @@ namespace garlic::clove {
         }
 
         struct MeshUBOLayout {
-            alignas(256) ModelData model;
-            alignas(256) vec4f colour;
-            alignas(256) std::array<mat4f, MAX_JOINTS> matrixPallet;
+            alignas(256) ModelData model;                           //NOLINT
+            alignas(256) vec4f colour;                              //NOLINT
+            alignas(256) std::array<mat4f, MAX_JOINTS> matrixPallet;//NOLINT
         };
 
         auto const writeObjectBuffer = [&graphicsFactory = graphicsFactory](std::unique_ptr<GhaBuffer> &buffer, MeshUBOLayout const &layout) {
@@ -326,8 +327,8 @@ namespace garlic::clove {
 
         //POINT LIGHT SHADOWS
         currentImageData.cubeShadowMapCommandBuffer->beginRecording(CommandBufferUsage::OneTimeSubmit);
-        for(size_t i = 0; i < MAX_LIGHTS; ++i) {
-            for(size_t j = 0; j < 6; ++j) {
+        for(size_t i{ 0 }; i < MAX_LIGHTS; ++i) {
+            for(size_t j{ 0 }; j < cubeMapLayerCount; ++j) {
                 //Make sure to begin the render pass on the images we don't draw to so their layout is transitioned properly
                 currentImageData.cubeShadowMapCommandBuffer->beginRenderPass(*shadowMapRenderPass, *currentImageData.cubeShadowMapFrameBuffers[i][j], shadowArea, shadowMapClearValues);
                 if(i < currentFrameData.bufferData.numLights.numPoint) {
@@ -519,10 +520,10 @@ namespace garlic::clove {
                 imageData.cubeShadowMapViews[i] = imageData.cubeShadowMaps[i]->createView(GhaImageView::Descriptor{
                     .type       = GhaImageView::Type::Cube,
                     .layer      = 0,
-                    .layerCount = 6,
+                    .layerCount = cubeMapLayerCount,
                 });
 
-                for(size_t j = 0; j < 6; ++j) {
+                for(size_t j = 0; j < cubeMapLayerCount; ++j) {
                     imageData.cubeShadowMapFaceViews[i][j] = imageData.cubeShadowMaps[i]->createView(GhaImageView::Descriptor{
                         .type       = GhaImageView::Type::_2D,
                         .layer      = static_cast<uint32_t>(j),
@@ -586,9 +587,9 @@ namespace garlic::clove {
 
         //Create render pass
         GhaRenderPass::Descriptor renderPassDescriptor{
-            .attachments  = { std::move(colourAttachment), std::move(depthAttachment) },
+            .attachments  = { colourAttachment, depthAttachment },
             .subpasses    = { std::move(subpass) },
-            .dependencies = { std::move(dependency) },
+            .dependencies = { dependency },
         };
 
         renderPass = *graphicsFactory->createRenderPass(std::move(renderPassDescriptor));
@@ -614,7 +615,7 @@ namespace garlic::clove {
         };
 
         GhaRenderPass::Descriptor renderPassDescriptor{
-            .attachments  = { std::move(depthAttachment) },
+            .attachments  = { depthAttachment },
             .subpasses    = { std::move(subpass) },
             .dependencies = {},
         };
@@ -683,7 +684,7 @@ namespace garlic::clove {
             .depthState           = depthState,
             .renderPass           = renderPass,
             .descriptorSetLayouts = { descriptorSetLayouts[DescriptorSetSlots::UI] },
-            .pushConstants        = { std::move(vertexPushConstant), std::move(pixelPushConstant) },
+            .pushConstants        = { vertexPushConstant, pixelPushConstant },
         };
 
         widgetPipelineObject = *graphicsFactory->createPipelineObject(pipelineDescriptor);
@@ -706,6 +707,8 @@ namespace garlic::clove {
 
     std::shared_ptr<GhaDescriptorPool> ForwardRenderer3D::createDescriptorPool(std::unordered_map<DescriptorType, uint32_t> const &bindingCount, uint32_t const setCount) {
         std::vector<DescriptorInfo> poolTypes;
+        poolTypes.reserve(bindingCount.size());
+
         for(auto &&[type, count] : bindingCount) {
             poolTypes.emplace_back(DescriptorInfo{
                 .type  = type,

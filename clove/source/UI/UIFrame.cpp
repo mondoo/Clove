@@ -5,7 +5,7 @@
 
 namespace garlic::clove {
     UIFrame::UIFrame(vec2i size)
-        : size(std::move(size)) {
+        : size(size) {
     }
 
     InputResponse UIFrame::propagateInput(InputEvent const &inputEvent) {

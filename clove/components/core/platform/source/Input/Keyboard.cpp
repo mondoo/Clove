@@ -65,8 +65,6 @@ namespace garlic::clove {
         : dispatcher{ dispatcher } {
     }
 
-    Keyboard::~Keyboard() = default;
-
     bool Keyboard::isKeyPressed(Key key) const {
         if(const auto keyIt = dispatcher.keyStates.find(key); keyIt != dispatcher.keyStates.end()) {
             return keyIt->second;
@@ -81,7 +79,7 @@ namespace garlic::clove {
 
     std::optional<Keyboard::Event> Keyboard::getKeyEvent() {
         if(!isKeyBufferEmpty()) {
-            Keyboard::Event e{ std::move(dispatcher.keyBuffer.front()) };
+            Keyboard::Event e{ dispatcher.keyBuffer.front() };
             dispatcher.keyBuffer.pop();
             return e;
         } else {
@@ -91,7 +89,7 @@ namespace garlic::clove {
 
     std::optional<char> Keyboard::getCharEvent() {
         if(!isCharBufferEmpty()) {
-            char charCode {std::move(dispatcher.charBuffer.front())};
+            char charCode{ dispatcher.charBuffer.front() };
             dispatcher.charBuffer.pop();
             return charCode;
         } else {

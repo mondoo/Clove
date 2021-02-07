@@ -22,7 +22,7 @@ namespace garlic::clove {
 
     OpenAlBuffer::OpenAlBuffer(ALuint buffer, Descriptor descriptor)
         : buffer{ buffer }
-        , descriptor{ std::move(descriptor) } {
+        , descriptor{ descriptor } {
     }
 
     OpenAlBuffer::OpenAlBuffer(OpenAlBuffer &&other) noexcept = default;

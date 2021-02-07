@@ -33,7 +33,7 @@ namespace garlic::clove {
 
     VulkanGraphicsCommandBuffer::VulkanGraphicsCommandBuffer(VkCommandBuffer commandBuffer, QueueFamilyIndices queueFamilyIndices)
         : commandBuffer(commandBuffer)
-        , queueFamilyIndices(std::move(queueFamilyIndices)) {
+        , queueFamilyIndices(queueFamilyIndices) {
     }
 
     VulkanGraphicsCommandBuffer::VulkanGraphicsCommandBuffer(VulkanGraphicsCommandBuffer &&other) noexcept = default;
@@ -120,10 +120,9 @@ namespace garlic::clove {
     }
 
     void VulkanGraphicsCommandBuffer::bindVertexBuffer(GhaBuffer &vertexBuffer, size_t const offset) {
-        VkBuffer buffers[]     = { polyCast<VulkanBuffer>(&vertexBuffer)->getBuffer() };
-        VkDeviceSize offsets[] = { offset };
+        VkBuffer const buffer{ polyCast<VulkanBuffer>(&vertexBuffer)->getBuffer() };
 
-        vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
+        vkCmdBindVertexBuffers(commandBuffer, 0, 1, &buffer, &offset);
     }
 
     void VulkanGraphicsCommandBuffer::bindIndexBuffer(GhaBuffer &indexBuffer, size_t const offset, IndexType indexType) {
@@ -131,9 +130,9 @@ namespace garlic::clove {
     }
 
     void VulkanGraphicsCommandBuffer::bindDescriptorSet(GhaDescriptorSet &descriptorSet, uint32_t const setNum) {
-        VkDescriptorSet sets[] = { polyCast<VulkanDescriptorSet>(&descriptorSet)->getDescriptorSet() };
+        VkDescriptorSet const set{ polyCast<VulkanDescriptorSet>(&descriptorSet)->getDescriptorSet() };
 
-        vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, currentLayout, setNum, 1, sets, 0, nullptr);
+        vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, currentLayout, setNum, 1, &set, 0, nullptr);
     }
 
     void VulkanGraphicsCommandBuffer::pushConstant(GhaShader::Stage const stage, size_t const offset, size_t const size, void const *data) {

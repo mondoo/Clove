@@ -25,11 +25,11 @@ namespace garlic::clove {
 
     Application::~Application() = default;
 
-    std::unique_ptr<Application> Application::create(GraphicsApi graphicsApi, AudioApi audioApi, WindowDescriptor windowDescriptor) {
+    std::unique_ptr<Application> Application::create(GraphicsApi graphicsApi, AudioApi audioApi, WindowDescriptor const &windowDescriptor) {
         //If we're managing our own window then we need to do any platform initialisation
 		Platform::initialise();
 		
-		auto window{ Platform::createWindow(std::move(windowDescriptor)) };
+		auto window{ Platform::createWindow(windowDescriptor) };
 		auto *windowPtr{ window.get() };
 		
 		auto graphicsDevice{ createGraphicsDevice(graphicsApi, window->getNativeWindow()) };
@@ -49,7 +49,7 @@ namespace garlic::clove {
 		auto graphicsDevice{ createGraphicsDevice(graphicsApi, std::any{}) };
 		auto audioDevice{ createAudioDevice(audioApi) };
 		
-		auto renderTarget{ std::make_unique<GraphicsImageRenderTarget>(std::move(renderTargetDescriptor), graphicsDevice->getGraphicsFactory()) };
+		auto renderTarget{ std::make_unique<GraphicsImageRenderTarget>(renderTargetDescriptor, graphicsDevice->getGraphicsFactory()) };
 		auto *renderTargetPtr{ renderTarget.get() };
 		
 		std::unique_ptr<Application> app{ new Application{ std::move(graphicsDevice), std::move(audioDevice), std::move(surface), std::move(renderTarget) } };

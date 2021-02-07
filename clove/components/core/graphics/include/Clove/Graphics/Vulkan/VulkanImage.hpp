@@ -19,7 +19,7 @@ namespace garlic::clove {
 
         VkImage image{ VK_NULL_HANDLE };
 
-        Descriptor descriptor;
+        Descriptor descriptor{};
 
         std::shared_ptr<MemoryAllocator> memoryAllocator;
         const MemoryAllocator::Chunk* allocatedBlock{ nullptr };

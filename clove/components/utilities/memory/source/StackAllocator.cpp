@@ -6,8 +6,7 @@
 
 namespace garlic::clove {
     StackAllocator::StackAllocator(size_t sizeBytes)
-        : stackSize(sizeBytes)
-        , freeMemory(true) {
+        : stackSize(sizeBytes) {
         stack = reinterpret_cast<std::byte *>(malloc(stackSize));
         top   = stack;
     }

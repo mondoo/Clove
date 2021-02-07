@@ -30,7 +30,7 @@ namespace garlic::clove {
     }
 
     AnimatedModel::AnimatedModel(AnimatedModel &&other) noexcept
-        : StaticModel(other)
+        : StaticModel(std::move(other))
         , animator(std::move(other.animator))
         , skeleton(std::move(other.skeleton))
         , animClips(std::move(other.animClips)) {

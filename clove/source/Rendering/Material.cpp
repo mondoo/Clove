@@ -29,7 +29,7 @@ namespace garlic::clove {
                 .sharingMode = SharingMode::Exclusive,
             };
 
-            std::shared_ptr<GhaImage> image = createImageWithData(factory, std::move(imageDescriptor), &white, bytesPerTexel);
+            std::shared_ptr<GhaImage> image = createImageWithData(factory, imageDescriptor, &white, bytesPerTexel);
 
             defaultImage = image;
 
@@ -47,7 +47,7 @@ namespace garlic::clove {
         };
 
         diffuseView  = diffuseImage->createView(viewDescriptor);
-        specularView = specularImage->createView(std::move(viewDescriptor));
+        specularView = specularImage->createView(viewDescriptor);
     }
 
     Material::Material(Material const &other) = default;

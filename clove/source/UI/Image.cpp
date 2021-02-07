@@ -27,7 +27,7 @@ namespace garlic::clove {
             .sharingMode = SharingMode::Exclusive,
         };
 
-        image     = createImageWithData(factory, std::move(imageDescriptor), &white, bytesPerTexel);
+        image     = createImageWithData(factory, imageDescriptor, &white, bytesPerTexel);
         imageView = image->createView(GhaImageView::Descriptor{
             .type       = GhaImageView::Type::_2D,
             .layer      = 0,
@@ -35,8 +35,13 @@ namespace garlic::clove {
         });
     }
 
-    Image::Image(std::shared_ptr<garlic::clove::GhaImage> graphicsImage)
-        : image(std::move(image)) {
+    Image::Image(std::shared_ptr<GhaImage> graphicsImage)
+        : image(std::move(graphicsImage)) {
+        imageView = image->createView(GhaImageView::Descriptor{
+            .type       = GhaImageView::Type::_2D,
+            .layer      = 0,
+            .layerCount = 1,
+        });
     }
 
     Image::Image(Image const &other) = default;

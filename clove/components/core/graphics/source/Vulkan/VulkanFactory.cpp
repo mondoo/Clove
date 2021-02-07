@@ -228,7 +228,7 @@ namespace garlic::clove {
 
     VulkanFactory::VulkanFactory(DevicePointer devicePtr, QueueFamilyIndices queueFamilyIndices)
         : devicePtr{ std::move(devicePtr) }
-        , queueFamilyIndices{ std::move(queueFamilyIndices) } {
+        , queueFamilyIndices{ queueFamilyIndices } {
         memoryAllocator = std::make_shared<MemoryAllocator>(this->devicePtr);
     }
 
@@ -248,7 +248,7 @@ namespace garlic::clove {
             .queueFamilyIndex = familyIndex,
         };
 
-        VkCommandPool commandPool;
+        VkCommandPool commandPool{ nullptr };
         if(VkResult const result{ vkCreateCommandPool(devicePtr.get(), &poolInfo, nullptr, &commandPool) }; result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:
@@ -260,7 +260,7 @@ namespace garlic::clove {
             }
         }
 
-        VkQueue queue;
+        VkQueue queue{ nullptr };
         vkGetDeviceQueue(devicePtr.get(), familyIndex, 0, &queue);
 
         return std::unique_ptr<GhaGraphicsQueue>{ std::make_unique<VulkanGraphicsQueue>(devicePtr, queue, commandPool, queueFamilyIndices) };
@@ -271,7 +271,7 @@ namespace garlic::clove {
             return Unexpected{ std::runtime_error{ "Presentation queue not available. GhaDevice is likely headless" } };
         }
 
-        VkQueue queue;
+        VkQueue queue{ nullptr };
         vkGetDeviceQueue(devicePtr.get(), *queueFamilyIndices.presentFamily, 0, &queue);
 
         return std::unique_ptr<GhaPresentQueue>{ std::make_unique<VulkanPresentQueue>(devicePtr, queue) };
@@ -287,7 +287,7 @@ namespace garlic::clove {
             .queueFamilyIndex = familyIndex,
         };
 
-        VkCommandPool commandPool;
+        VkCommandPool commandPool{ nullptr };
         if(VkResult const result{ vkCreateCommandPool(devicePtr.get(), &poolInfo, nullptr, &commandPool) }; result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:
@@ -299,7 +299,7 @@ namespace garlic::clove {
             }
         }
 
-        VkQueue queue;
+        VkQueue queue{ nullptr };
         vkGetDeviceQueue(devicePtr.get(), familyIndex, 0, &queue);
 
         return std::unique_ptr<GhaTransferQueue>{ std::make_unique<VulkanTransferQueue>(devicePtr, queue, commandPool, queueFamilyIndices) };
@@ -343,7 +343,7 @@ namespace garlic::clove {
             .oldSwapchain          = VK_NULL_HANDLE,
         };
 
-        VkSwapchainKHR swapchain;
+        VkSwapchainKHR swapchain{ nullptr };
         if(VkResult const result{ vkCreateSwapchainKHR(devicePtr.get(), &createInfo, nullptr, &swapchain) }; result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:
@@ -365,7 +365,7 @@ namespace garlic::clove {
             }
         }
 
-        return std::unique_ptr<GhaSwapchain>{ std::make_unique<VulkanSwapchain>(devicePtr, swapchain, surfaceFormat.format, std::move(swapchainExtent)) };
+        return std::unique_ptr<GhaSwapchain>{ std::make_unique<VulkanSwapchain>(devicePtr, swapchain, surfaceFormat.format, swapchainExtent) };
     }
 
     Expected<std::unique_ptr<GhaShader>, std::runtime_error> VulkanFactory::createShaderFromFile(std::filesystem::path const &file, GhaShader::Stage shaderStage) {
@@ -471,7 +471,7 @@ namespace garlic::clove {
             .pDependencies   = std::data(dependecies),
         };
 
-        VkRenderPass renderPass;
+        VkRenderPass renderPass{ nullptr };
         if(VkResult const result{ vkCreateRenderPass(devicePtr.get(), &renderPassInfo, nullptr, &renderPass) }; result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:
@@ -507,7 +507,7 @@ namespace garlic::clove {
             .pBindings    = std::data(layoutBindings),
         };
 
-        VkDescriptorSetLayout layout;
+        VkDescriptorSetLayout layout{ nullptr };
         if(VkResult const result{ vkCreateDescriptorSetLayout(devicePtr.get(), &createInfo, nullptr, &layout) }; result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:
@@ -549,7 +549,7 @@ namespace garlic::clove {
             .pPushConstantRanges    = std::data(vkPushConstantRanges),
         };
 
-        VkPipelineLayout pipelineLayout;
+        VkPipelineLayout pipelineLayout{ nullptr };
         if(VkResult const result{ vkCreatePipelineLayout(devicePtr.get(), &pipelineLayoutInfo, nullptr, &pipelineLayout) }; result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:
@@ -561,7 +561,7 @@ namespace garlic::clove {
             }
         }
 
-        std::array<VkPipelineShaderStageCreateInfo, 2> shaderStages;
+        std::array<VkPipelineShaderStageCreateInfo, 2> shaderStages{};
 
         //Vertex shader
         shaderStages[0] = VkPipelineShaderStageCreateInfo{
@@ -732,7 +732,7 @@ namespace garlic::clove {
             .basePipelineIndex   = -1,
         };
 
-        VkPipeline pipeline;
+        VkPipeline pipeline{ nullptr };
         if(VkResult const result{ vkCreateGraphicsPipelines(devicePtr.get(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &pipeline) }; result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:
@@ -766,7 +766,7 @@ namespace garlic::clove {
             .layers          = 1,
         };
 
-        VkFramebuffer framebuffer;
+        VkFramebuffer framebuffer{ nullptr };
         if(VkResult const result{ vkCreateFramebuffer(devicePtr.get(), &framebufferInfo, nullptr, &framebuffer) }; result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:
@@ -800,7 +800,7 @@ namespace garlic::clove {
             .pPoolSizes    = std::data(poolSizes),
         };
 
-        VkDescriptorPool pool;
+        VkDescriptorPool pool{ nullptr };
         if(VkResult const result{ vkCreateDescriptorPool(devicePtr.get(), &createInfo, nullptr, &pool) }; result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:
@@ -822,7 +822,7 @@ namespace garlic::clove {
             .sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO,
         };
 
-        VkSemaphore semaphore;
+        VkSemaphore semaphore{ nullptr };
         if(VkResult const result{ vkCreateSemaphore(devicePtr.get(), &createInfo, nullptr, &semaphore) }; result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:
@@ -843,7 +843,7 @@ namespace garlic::clove {
             .flags = descriptor.signaled ? VK_FENCE_CREATE_SIGNALED_BIT : static_cast<VkFenceCreateFlags>(0),
         };
 
-        VkFence fence;
+        VkFence fence{ nullptr };
         if(VkResult const result{ vkCreateFence(devicePtr.get(), &createInfo, nullptr, &fence) }; result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:
@@ -873,7 +873,7 @@ namespace garlic::clove {
             .pQueueFamilyIndices   = isExclusive ? nullptr : std::data(sharedQueueIndices),
         };
 
-        VkBuffer buffer;
+        VkBuffer buffer{ nullptr };
         if(VkResult const result{ vkCreateBuffer(devicePtr.get(), &createInfo, nullptr, &buffer) }; result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:
@@ -885,7 +885,7 @@ namespace garlic::clove {
             }
         }
 
-        return std::unique_ptr<GhaBuffer>{ std::make_unique<VulkanBuffer>(devicePtr, buffer, std::move(descriptor), memoryAllocator) };
+        return std::unique_ptr<GhaBuffer>{ std::make_unique<VulkanBuffer>(devicePtr, buffer, descriptor, memoryAllocator) };
     }
 
     Expected<std::unique_ptr<GhaImage>, std::runtime_error> VulkanFactory::createImage(GhaImage::Descriptor descriptor) {
@@ -911,7 +911,7 @@ namespace garlic::clove {
             .initialLayout         = VK_IMAGE_LAYOUT_UNDEFINED,
         };
 
-        VkImage image;
+        VkImage image{ nullptr };
         if(VkResult const result{ vkCreateImage(devicePtr.get(), &createInfo, nullptr, &image) }; result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:
@@ -923,7 +923,7 @@ namespace garlic::clove {
             }
         }
 
-        return std::unique_ptr<GhaImage>{ std::make_unique<VulkanImage>(devicePtr, image, std::move(descriptor), memoryAllocator) };
+        return std::unique_ptr<GhaImage>{ std::make_unique<VulkanImage>(devicePtr, image, descriptor, memoryAllocator) };
     }
 
     Expected<std::unique_ptr<GhaSampler>, std::runtime_error> VulkanFactory::createSampler(GhaSampler::Descriptor descriptor) {
@@ -948,7 +948,7 @@ namespace garlic::clove {
             .unnormalizedCoordinates = VK_FALSE,
         };
 
-        VkSampler sampler;
+        VkSampler sampler{ nullptr };
         if(VkResult const result{ vkCreateSampler(devicePtr.get(), &createInfo, nullptr, &sampler) }; result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:
@@ -972,7 +972,7 @@ namespace garlic::clove {
             .pCode    = std::data(spirvSource),
         };
 
-        VkShaderModule module;
+        VkShaderModule module{ nullptr };
         if(VkResult const result = vkCreateShaderModule(devicePtr.get(), &createInfo, nullptr, &module); result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:

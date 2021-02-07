@@ -18,9 +18,9 @@ namespace garlic::clove {
         Screen *screen{ nullptr };
         int32_t screenID;
 
-        XEvent xevent;
+        XEvent xevent{};
 
-        XSetWindowAttributes windowAttribs;
+        XSetWindowAttributes windowAttribs{};
 
         Atom atomWmDeleteWindow;
 

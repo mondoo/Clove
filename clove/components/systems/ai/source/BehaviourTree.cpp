@@ -1,5 +1,7 @@
 #include "Clove/AI/BehaviourTree.hpp"
 
+#include <utility>
+
 namespace garlic::clove {
     BehaviourTree::BehaviourTree() = default;
 
@@ -19,7 +21,7 @@ namespace garlic::clove {
 
     void BehaviourTree::run(DeltaTime deltaTime) {
         if(rootTask != nullptr) {
-            rootTask->activate(deltaTime, blackboard);
+            rootTask->activate(std::move(deltaTime), blackboard);
         }
     }
 }

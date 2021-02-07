@@ -10,7 +10,7 @@
 
 namespace garlic::clove {
     GraphicsImageRenderTarget::GraphicsImageRenderTarget(GhaImage::Descriptor imageDescriptor, std::shared_ptr<GhaFactory> factory)
-        : imageDescriptor{ std::move(imageDescriptor) }
+        : imageDescriptor{ imageDescriptor }
         , factory{ std::move(factory) } {
 
         //We won't be allocating any buffers from this queue, only using it to submit
@@ -65,7 +65,7 @@ namespace garlic::clove {
     }
 
     void GraphicsImageRenderTarget::resize(vec2ui size) {
-        imageDescriptor.dimensions = std::move(size);
+        imageDescriptor.dimensions = size;
         createImages();
     }
 
@@ -111,7 +111,7 @@ namespace garlic::clove {
         };
 
         transferCommandBuffer->beginRecording(CommandBufferUsage::Default);
-        transferCommandBuffer->imageMemoryBarrier(*renderTargetImage, std::move(layoutTransferInfo), GhaPipelineObject::Stage::Top, GhaPipelineObject::Stage::Transfer);
+        transferCommandBuffer->imageMemoryBarrier(*renderTargetImage, layoutTransferInfo, GhaPipelineObject::Stage::Top, GhaPipelineObject::Stage::Transfer);
         transferCommandBuffer->copyImageToBuffer(*renderTargetImage, { 0, 0, 0 }, { imageDescriptor.dimensions, 1 }, *renderTargetBuffer, 0);
         transferCommandBuffer->endRecording();
 

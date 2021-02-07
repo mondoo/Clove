@@ -56,7 +56,7 @@ namespace garlic::clove::serialiser {
             throw std::runtime_error{ "Node does not contain child nodes." };
         }
 
-        auto &nodes{ std::get<std::vector<Node>>(value) };
+        auto const &nodes{ std::get<std::vector<Node>>(value) };
         for(auto const &node : nodes) {
             if(node.name == nodeName) {
                 return node;
