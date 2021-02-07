@@ -10,7 +10,7 @@
 
 namespace garlic::clove {
     OpenAlSource::OpenAlSource(ALuint source)
-        : source{ source  } {
+        : source{ source } {
     }
 
     OpenAlSource::OpenAlSource(OpenAlSource &&other) noexcept = default;
@@ -22,7 +22,13 @@ namespace garlic::clove {
     }
 
     void OpenAlSource::setBuffer(std::shared_ptr<AhaBuffer> buffer) {
-        OpenAlBuffer const *alBuffer{ polyCast<OpenAlBuffer const>(buffer.get()) };
+        OpenAlBuffer const *const alBuffer{ polyCast<OpenAlBuffer const>(buffer.get()) };
+        
+        if(alBuffer == nullptr){
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0} called with nullptr", CLOVE_FUNCTION_NAME_PRETTY);
+            return;
+        }
+
         alCall(alSourcei(source, AL_BUFFER, alBuffer->getBufferId()));
 
         bufferQueue = { buffer };
@@ -30,24 +36,28 @@ namespace garlic::clove {
 
     void OpenAlSource::queueBuffers(std::vector<std::shared_ptr<AhaBuffer>> buffers) {
         //Get the buffer Id of all of the buffers to placed into the queue
-        std::vector<ALuint> alBuffers(std::size(buffers));
-        for(size_t i = 0; i < std::size(alBuffers); ++i) {
-            OpenAlBuffer const *alBuffer{ polyCast<OpenAlBuffer const>(buffers[i].get()) };
-            alBuffers[i] = alBuffer->getBufferId();
+        std::vector<ALuint> alBuffers(buffers.size());
+        for(size_t i{ 0 }; i < std::size(alBuffers); ++i) {
+            OpenAlBuffer const *const alBuffer{ polyCast<OpenAlBuffer const>(buffers[i].get()) };
+            if(alBuffer != nullptr) {
+                alBuffers[i] = alBuffer->getBufferId();
+            } else {
+                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: Buffer at index {1} is nullptr. Audio playback is likely affected", CLOVE_FUNCTION_NAME_PRETTY, i);
+            }
         }
 
         alCall(alSourceQueueBuffers(source, std::size(alBuffers), alBuffers.data()));
 
-        bufferQueue.insert(std::end(bufferQueue), std::begin(buffers), std::end(buffers));
+        bufferQueue.insert(bufferQueue.end(), buffers.begin(), buffers.end());
     }
 
     std::vector<std::shared_ptr<AhaBuffer>> OpenAlSource::unQueueBuffers(uint32_t const numToUnqueue) {
 #if CLOVE_DEBUG
-        const uint32_t maxAbleToUnQueue = getNumBuffersProcessed();
+        const uint32_t maxAbleToUnQueue{ getNumBuffersProcessed() };
         CLOVE_ASSERT(numToUnqueue <= maxAbleToUnQueue, "{0}, Can't unqueue {1} buffers. Only {2} buffers have been processed", CLOVE_FUNCTION_NAME_PRETTY, numToUnqueue, maxAbleToUnQueue);
 #endif
 
-        auto *buffers = new ALuint[numToUnqueue];
+        auto *buffers{ new ALuint[numToUnqueue] };
         alCall(alSourceUnqueueBuffers(source, numToUnqueue, buffers));
 
         std::set<ALuint> pendingBuffers;
@@ -60,8 +70,14 @@ namespace garlic::clove {
         std::vector<std::shared_ptr<AhaBuffer>> removedBuffers;
         removedBuffers.reserve(numToUnqueue);
 
-        auto removeIter = std::remove_if(std::begin(bufferQueue), std::end(bufferQueue), [&](std::shared_ptr<AhaBuffer> const &buffer) {
-            OpenAlBuffer const *alBuffer{ polyCast<const OpenAlBuffer>(buffer.get()) };
+        auto removeIter = std::remove_if(bufferQueue.begin(), bufferQueue.end(), [&](std::shared_ptr<AhaBuffer> const &buffer) {
+            OpenAlBuffer const *const alBuffer{ polyCast<OpenAlBuffer const>(buffer.get()) };
+
+            if(alBuffer == nullptr) {
+                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Warning, "nullptr buffer found when un queueing buffers");
+                return true;
+            }
+
             ALuint const bufferId{ alBuffer->getBufferId() };
 
             if(pendingBuffers.find(bufferId) != pendingBuffers.end()) {
@@ -72,7 +88,7 @@ namespace garlic::clove {
             return false;
         });
 
-        bufferQueue.erase(removeIter, std::end(bufferQueue));
+        bufferQueue.erase(removeIter, bufferQueue.end());
 
         return removedBuffers;
     }
@@ -106,13 +122,13 @@ namespace garlic::clove {
     }
 
     uint32_t OpenAlSource::getNumBuffersQueued() const {
-        ALint buffersQeued = 0;
+        ALint buffersQeued{ 0 };
         alCall(alGetSourcei(source, AL_BUFFERS_QUEUED, &buffersQeued));
         return static_cast<uint32_t>(buffersQeued);
     }
 
     uint32_t OpenAlSource::getNumBuffersProcessed() const {
-        ALint buffersProcessed = 0;
+        ALint buffersProcessed{ 0 };
         alCall(alGetSourcei(source, AL_BUFFERS_PROCESSED, &buffersProcessed));
         return static_cast<uint32_t>(buffersProcessed);
     }
