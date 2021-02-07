@@ -27,6 +27,9 @@ RUN apt-get install -y wget
 COPY --from=cmake_builder /cmake_install /cmake_install
 ENV PATH "/cmake_install/bin:$PATH"
 
+#Install a compiler
+RUN apt-get install -y clang-10
+
 #Install static analysis tools
 RUN apt-get install -y cppcheck
 RUN apt-get install -y clang-tidy
