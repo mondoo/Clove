@@ -13,7 +13,7 @@ namespace garlic::clove {
 
         GhaFactory &factory{ *Application::get().getGraphicsDevice()->getGraphicsFactory() };
 
-        size_t const vertexBufferSize{ sizeof(Vertex) * std::size(this->vertices) };
+        vertexBufferSize = sizeof(Vertex) * std::size(this->vertices);
         size_t const indexBufferSize{ sizeof(uint16_t) * std::size(this->indices) };
         size_t const totalSize{ vertexBufferSize + indexBufferSize };
 

@@ -27,6 +27,7 @@ namespace garlic::clove {
         std::vector<uint16_t> indices;
 
         size_t vertexOffset{ 0 };
+        size_t vertexBufferSize{ 0 };
         size_t indexOffset{ 0 };
 
         //FUNCTIONS
@@ -60,6 +61,8 @@ namespace garlic::clove {
          * @brief Returns the offset into the combinedBuffer for the vertices.
          */
         inline size_t getVertexOffset() const;
+        inline size_t getVertexBufferSize() const;
+        inline size_t getVertexCount() const;
 
         /**
          * @brief Returns the offset into the combinedBuffer for the indices.

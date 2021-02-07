@@ -11,11 +11,19 @@ namespace garlic::clove {
         return vertexOffset;
     }
 
+    size_t Mesh::getVertexBufferSize() const {
+        return vertexBufferSize;
+    }
+
+    size_t Mesh::getVertexCount() const {
+        return vertices.size();
+    }
+
     size_t Mesh::getIndexOffset() const {
         return indexOffset;
     }
 
     size_t Mesh::getIndexCount() const {
-        return std::size(indices);
+        return indices.size();
     }
 }
