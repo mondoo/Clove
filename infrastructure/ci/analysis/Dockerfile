@@ -22,6 +22,7 @@ RUN apt-get install -y
 RUN apt-get install -y git
 RUN apt-get install -y python3
 RUN apt-get install -y wget
+RUN apt-get install -y make
 
 #Install cmake
 COPY --from=cmake_builder /cmake_install /cmake_install
