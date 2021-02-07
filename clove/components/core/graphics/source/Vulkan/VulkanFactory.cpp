@@ -150,6 +150,9 @@ namespace garlic::clove {
             if((garlicUsageFlags & GhaBuffer::UsageMode::UniformBuffer) != 0) {
                 flags |= VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
             }
+            if((garlicUsageFlags & GhaBuffer::UsageMode::StorageBuffer) != 0) {
+                flags |= VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
+            }
 
             return flags;
         }
