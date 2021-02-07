@@ -29,30 +29,31 @@ extern "C" const size_t font_pLength;
 
 namespace garlic::clove {
     ForwardRenderer3D::ForwardRenderer3D(GhaDevice *graphicsDevice, std::unique_ptr<RenderTarget> renderTarget)
-        : graphicsDevice{ graphicsDevice }
+        : ghaDevice{ graphicsDevice }
         , renderTarget{ std::move(renderTarget) } {
         shaderIncludes["Constants.glsl"] = { constants, constantsLength };
 
         renderTargetPropertyChangedBeginHandle = this->renderTarget->onPropertiesChangedBegin.bind(&ForwardRenderer3D::cleanupRenderTargetResources, this);
         renderTargetPropertyChangedEndHandle   = this->renderTarget->onPropertiesChangedEnd.bind(&ForwardRenderer3D::createRenderTargetResources, this);
 
-        graphicsFactory = graphicsDevice->getGraphicsFactory();
+        ghaFactory = graphicsDevice->getGraphicsFactory();
 
         //Object initialisation
-        graphicsQueue = *graphicsFactory->createGraphicsQueue({ QueueFlags::ReuseBuffers });
+        graphicsQueue = *ghaFactory->createGraphicsQueue({ QueueFlags::ReuseBuffers });
+        computeQueue  = *ghaFactory->createComputeQueue({ QueueFlags::ReuseBuffers });
 
-        descriptorSetLayouts[DescriptorSetSlots::Mesh]     = createMeshDescriptorSetLayout(*graphicsFactory);
-        descriptorSetLayouts[DescriptorSetSlots::View]     = createViewDescriptorSetLayout(*graphicsFactory);
-        descriptorSetLayouts[DescriptorSetSlots::Lighting] = createLightingDescriptorSetLayout(*graphicsFactory);
-        descriptorSetLayouts[DescriptorSetSlots::UI]       = createUiDescriptorSetLayout(*graphicsFactory);
+        descriptorSetLayouts[DescriptorSetSlots::Mesh]     = createMeshDescriptorSetLayout(*ghaFactory);
+        descriptorSetLayouts[DescriptorSetSlots::View]     = createViewDescriptorSetLayout(*ghaFactory);
+        descriptorSetLayouts[DescriptorSetSlots::Lighting] = createLightingDescriptorSetLayout(*ghaFactory);
+        descriptorSetLayouts[DescriptorSetSlots::UI]       = createUiDescriptorSetLayout(*ghaFactory);
 
         createRenderpass();
         createShadowMapRenderpass();
 
         //Create the geometry passes this renderer supports
-        geometryPasses[GeometryPass::getId<ForwardColourPass>()]    = std::make_unique<ForwardColourPass>(*graphicsFactory, renderPass);
-        geometryPasses[GeometryPass::getId<DirectionalLightPass>()] = std::make_unique<DirectionalLightPass>(*graphicsFactory, shadowMapRenderPass);
-        geometryPasses[GeometryPass::getId<PointLightPass>()]       = std::make_unique<PointLightPass>(*graphicsFactory, shadowMapRenderPass);
+        geometryPasses[GeometryPass::getId<ForwardColourPass>()]    = std::make_unique<ForwardColourPass>(*ghaFactory, renderPass);
+        geometryPasses[GeometryPass::getId<DirectionalLightPass>()] = std::make_unique<DirectionalLightPass>(*ghaFactory, shadowMapRenderPass);
+        geometryPasses[GeometryPass::getId<PointLightPass>()]       = std::make_unique<PointLightPass>(*ghaFactory, shadowMapRenderPass);
 
         createUiPipeline();
 
@@ -60,14 +61,17 @@ namespace garlic::clove {
 
         //Create semaphores for frame synchronisation
         for(auto &shadowFinishedSemaphore : shadowFinishedSemaphores) {
-            shadowFinishedSemaphore = graphicsFactory->createSemaphore().getValue();
+            shadowFinishedSemaphore = *ghaFactory->createSemaphore();
         }
         for(auto &cubeShadowFinishedSemaphore : cubeShadowFinishedSemaphores) {
-            cubeShadowFinishedSemaphore = graphicsFactory->createSemaphore().getValue();
+            cubeShadowFinishedSemaphore = *ghaFactory->createSemaphore();
+        }
+        for(auto &skinningFinishedSemaphore : skinningFinishedSemaphores) {
+            skinningFinishedSemaphore = *ghaFactory->createSemaphore();
         }
 
         float constexpr anisotropy{ 16.0f };
-        textureSampler = *graphicsFactory->createSampler(GhaSampler::Descriptor{
+        textureSampler = *ghaFactory->createSampler(GhaSampler::Descriptor{
             .minFilter        = GhaSampler::Filter::Linear,
             .magFilter        = GhaSampler::Filter::Linear,
             .addressModeU     = GhaSampler::AddressMode::Repeat,
@@ -77,7 +81,7 @@ namespace garlic::clove {
             .maxAnisotropy    = anisotropy,
         });
 
-        uiSampler = *graphicsFactory->createSampler(GhaSampler::Descriptor{
+        uiSampler = *ghaFactory->createSampler(GhaSampler::Descriptor{
             .minFilter        = GhaSampler::Filter::Nearest,
             .magFilter        = GhaSampler::Filter::Nearest,
             .addressModeU     = GhaSampler::AddressMode::ClampToBorder,
@@ -86,7 +90,7 @@ namespace garlic::clove {
             .enableAnisotropy = false,
         });
 
-        shadowSampler = *graphicsFactory->createSampler(GhaSampler::Descriptor{
+        shadowSampler = *ghaFactory->createSampler(GhaSampler::Descriptor{
             .minFilter        = GhaSampler::Filter::Linear,
             .magFilter        = GhaSampler::Filter::Linear,
             .addressModeU     = GhaSampler::AddressMode::ClampToBorder,
@@ -132,7 +136,7 @@ namespace garlic::clove {
 
     ForwardRenderer3D::~ForwardRenderer3D() {
         //Wait for an idle device before shutting down so resources aren't freed while in use
-        graphicsDevice->waitForIdleDevice();
+        ghaDevice->waitForIdleDevice();
 
         //Reset these manually as they would fail after the device has been destroyed (how to solve this?)
         textureSampler.reset();
@@ -251,7 +255,7 @@ namespace garlic::clove {
             alignas(256) std::array<mat4f, MAX_JOINTS> matrixPallet;//NOLINT
         };
 
-        auto const writeObjectBuffer = [&graphicsFactory = graphicsFactory](std::unique_ptr<GhaBuffer> &buffer, MeshUBOLayout const &layout) {
+        auto const writeObjectBuffer = [&graphicsFactory = ghaFactory](std::unique_ptr<GhaBuffer> &buffer, MeshUBOLayout const &layout) {
             if(buffer == nullptr) {
                 buffer = *graphicsFactory->createBuffer(GhaBuffer::Descriptor{
                     .size        = sizeof(layout),
@@ -296,13 +300,10 @@ namespace garlic::clove {
             .lightingDescriptorSet = currentImageData.lightingDescriptorSet,
         };
 
-        //Lambda used to draw a mesh
-        auto const drawMesh = [](GhaGraphicsCommandBuffer &commandBuffer, Mesh const &mesh) {
-            commandBuffer.bindVertexBuffer(*mesh.getCombinedBuffer(), mesh.getVertexOffset());
-            commandBuffer.bindIndexBuffer(*mesh.getCombinedBuffer(), mesh.getIndexOffset(), IndexType::Uint16);
-
-            commandBuffer.drawIndexed(mesh.getIndexCount());
-        };
+        //SKINNING
+        currentImageData.skinningCommandBuffer->beginRecording(CommandBufferUsage::OneTimeSubmit);
+        //...
+        currentImageData.skinningCommandBuffer->endRecording();
 
         //DIRECTIONAL LIGHT SHADOWS
         currentImageData.shadowMapCommandBuffer->beginRecording(CommandBufferUsage::OneTimeSubmit);
@@ -386,6 +387,14 @@ namespace garlic::clove {
             uiSets = currentImageData.uiDescriptorPool->allocateDescriptorSets(uiLayouts);
         }
 
+        //Lambda used to draw a mesh
+        auto const drawMesh = [](GhaGraphicsCommandBuffer &commandBuffer, Mesh const &mesh) {
+            commandBuffer.bindVertexBuffer(*mesh.getCombinedBuffer(), mesh.getVertexOffset());
+            commandBuffer.bindIndexBuffer(*mesh.getCombinedBuffer(), mesh.getIndexOffset(), IndexType::Uint16);
+
+            commandBuffer.drawIndexed(mesh.getIndexCount());
+        };
+
         //FINAL COLOUR
         {
             currentImageData.commandBuffer->beginRecording(CommandBufferUsage::OneTimeSubmit);
@@ -438,6 +447,7 @@ namespace garlic::clove {
             .waitSemaphores = {
                 { shadowFinishedSemaphores[currentFrame], PipelineStage::PixelShader },
                 { cubeShadowFinishedSemaphores[currentFrame], PipelineStage::PixelShader },
+                { skinningFinishedSemaphores[currentFrame], PipelineStage::VertexInput },
             },
             .commandBuffers = { currentImageData.commandBuffer },
         };
@@ -447,7 +457,7 @@ namespace garlic::clove {
     }
 
     void ForwardRenderer3D::cleanupRenderTargetResources() {
-        graphicsDevice->waitForIdleDevice();
+        ghaDevice->waitForIdleDevice();
 
         frameBuffers.clear();
 
@@ -479,9 +489,10 @@ namespace garlic::clove {
             imageData.commandBuffer              = graphicsQueue->allocateCommandBuffer();
             imageData.shadowMapCommandBuffer     = graphicsQueue->allocateCommandBuffer();
             imageData.cubeShadowMapCommandBuffer = graphicsQueue->allocateCommandBuffer();
+            imageData.skinningCommandBuffer      = computeQueue->allocateCommandBuffer();
 
             //Create uniform buffers
-            imageData.frameDataBuffer = *graphicsFactory->createBuffer(GhaBuffer::Descriptor{
+            imageData.frameDataBuffer = *ghaFactory->createBuffer(GhaBuffer::Descriptor{
                 .size        = sizeof(FrameData),
                 .usageFlags  = GhaBuffer::UsageMode::UniformBuffer,
                 .sharingMode = SharingMode::Exclusive,
@@ -505,7 +516,7 @@ namespace garlic::clove {
             //Create the shadow maps for each frame
             for(size_t i = 0; i < MAX_LIGHTS; ++i) {
                 //Directional
-                imageData.shadowMaps[i]     = *graphicsFactory->createImage(GhaImage::Descriptor{
+                imageData.shadowMaps[i]     = *ghaFactory->createImage(GhaImage::Descriptor{
                     .type        = GhaImage::Type::_2D,
                     .usageFlags  = GhaImage::UsageMode::Sampled | GhaImage::UsageMode::DepthStencilAttachment,
                     .dimensions  = { shadowMapSize, shadowMapSize },
@@ -518,7 +529,7 @@ namespace garlic::clove {
                     .layerCount = 1,
                 });
 
-                imageData.shadowMapFrameBuffers[i] = *graphicsFactory->createFramebuffer(GhaFramebuffer::Descriptor{
+                imageData.shadowMapFrameBuffers[i] = *ghaFactory->createFramebuffer(GhaFramebuffer::Descriptor{
                     .renderPass  = shadowMapRenderPass,
                     .attachments = { imageData.shadowMapViews[i] },
                     .width       = shadowMapSize,
@@ -526,7 +537,7 @@ namespace garlic::clove {
                 });
 
                 //Point
-                imageData.cubeShadowMaps[i]     = *graphicsFactory->createImage(GhaImage::Descriptor{
+                imageData.cubeShadowMaps[i]     = *ghaFactory->createImage(GhaImage::Descriptor{
                     .type        = GhaImage::Type::Cube,
                     .usageFlags  = GhaImage::UsageMode::Sampled | GhaImage::UsageMode::DepthStencilAttachment,
                     .dimensions  = { shadowMapSize, shadowMapSize },
@@ -546,7 +557,7 @@ namespace garlic::clove {
                         .layerCount = 1,
                     });
 
-                    imageData.cubeShadowMapFrameBuffers[i][j] = *graphicsFactory->createFramebuffer(GhaFramebuffer::Descriptor{
+                    imageData.cubeShadowMapFrameBuffers[i][j] = *ghaFactory->createFramebuffer(GhaFramebuffer::Descriptor{
                         .renderPass  = shadowMapRenderPass,
                         .attachments = { imageData.cubeShadowMapFaceViews[i][j] },
                         .width       = shadowMapSize,
@@ -608,7 +619,7 @@ namespace garlic::clove {
             .dependencies = { dependency },
         };
 
-        renderPass = *graphicsFactory->createRenderPass(std::move(renderPassDescriptor));
+        renderPass = *ghaFactory->createRenderPass(std::move(renderPassDescriptor));
     }
 
     void ForwardRenderer3D::createShadowMapRenderpass() {
@@ -636,11 +647,11 @@ namespace garlic::clove {
             .dependencies = {},
         };
 
-        shadowMapRenderPass = *graphicsFactory->createRenderPass(std::move(renderPassDescriptor));
+        shadowMapRenderPass = *ghaFactory->createRenderPass(std::move(renderPassDescriptor));
     }
 
     void ForwardRenderer3D::createDepthBuffer() {
-        depthImage     = *graphicsFactory->createImage(GhaImage::Descriptor{
+        depthImage     = *ghaFactory->createImage(GhaImage::Descriptor{
             .type        = GhaImage::Type::_2D,
             .usageFlags  = GhaImage::UsageMode::DepthStencilAttachment,
             .dimensions  = renderTarget->getSize(),
@@ -691,8 +702,8 @@ namespace garlic::clove {
         };
 
         GhaGraphicsPipelineObject::Descriptor pipelineDescriptor{
-            .vertexShader         = *graphicsFactory->createShaderFromSource({ ui_v, ui_vLength }, shaderIncludes, "UI (vertex)", GhaShader::Stage::Vertex),
-            .fragmentShader       = *graphicsFactory->createShaderFromSource({ widget_p, widget_pLength }, shaderIncludes, "Widget (pixel)", GhaShader::Stage::Pixel),
+            .vertexShader         = *ghaFactory->createShaderFromSource({ ui_v, ui_vLength }, shaderIncludes, "UI (vertex)", GhaShader::Stage::Vertex),
+            .fragmentShader       = *ghaFactory->createShaderFromSource({ widget_p, widget_pLength }, shaderIncludes, "Widget (pixel)", GhaShader::Stage::Pixel),
             .vertexInput          = Vertex::getInputBindingDescriptor(),
             .vertexAttributes     = vertexAttributes,
             .viewportDescriptor   = viewScissorArea,
@@ -703,16 +714,16 @@ namespace garlic::clove {
             .pushConstants        = { vertexPushConstant, pixelPushConstant },
         };
 
-        widgetPipelineObject = *graphicsFactory->createGraphicsPipelineObject(pipelineDescriptor);
+        widgetPipelineObject = *ghaFactory->createGraphicsPipelineObject(pipelineDescriptor);
 
-        pipelineDescriptor.fragmentShader = *graphicsFactory->createShaderFromSource({ font_p, font_pLength }, shaderIncludes, "Font (pixel)", GhaShader::Stage::Pixel);
+        pipelineDescriptor.fragmentShader = *ghaFactory->createShaderFromSource({ font_p, font_pLength }, shaderIncludes, "Font (pixel)", GhaShader::Stage::Pixel);
 
-        textPipelineObject = *graphicsFactory->createGraphicsPipelineObject(std::move(pipelineDescriptor));
+        textPipelineObject = *ghaFactory->createGraphicsPipelineObject(std::move(pipelineDescriptor));
     }
 
     void ForwardRenderer3D::createRenderTargetFrameBuffers() {
         for(auto &imageView : renderTarget->getImageViews()) {
-            frameBuffers.emplace_back(*graphicsFactory->createFramebuffer(GhaFramebuffer::Descriptor{
+            frameBuffers.emplace_back(*ghaFactory->createFramebuffer(GhaFramebuffer::Descriptor{
                 .renderPass  = renderPass,
                 .attachments = { imageView, depthImageView },
                 .width       = renderTarget->getSize().x,
@@ -738,6 +749,6 @@ namespace garlic::clove {
             .maxSets   = setCount,
         };
 
-        return *graphicsFactory->createDescriptorPool(std::move(poolDescriptor));
+        return *ghaFactory->createDescriptorPool(std::move(poolDescriptor));
     }
 }

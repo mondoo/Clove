@@ -9,6 +9,12 @@ namespace garlic::clove {
                 return VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
             case PipelineStage::Transfer:
                 return VK_PIPELINE_STAGE_TRANSFER_BIT;
+            case PipelineStage::ComputeShader:
+                return VK_PIPELINE_STAGE_COMPUTE_SHADER_BIT;
+            case PipelineStage::VertexInput:
+                return VK_PIPELINE_STAGE_VERTEX_INPUT_BIT;
+            case PipelineStage::VertexShader:
+                return VK_PIPELINE_STAGE_VERTEX_SHADER_BIT;
             case PipelineStage::PixelShader:
                 return VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
             case PipelineStage::EarlyPixelTest:

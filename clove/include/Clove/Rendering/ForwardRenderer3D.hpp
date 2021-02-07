@@ -20,6 +20,7 @@ namespace garlic::clove {
     class Mesh;
     class Material;
     class RenderTarget;
+    class GhaComputeQueue;
 }
 
 namespace garlic::clove {
@@ -77,6 +78,7 @@ namespace garlic::clove {
             std::shared_ptr<GhaGraphicsCommandBuffer> commandBuffer;
             std::shared_ptr<GhaGraphicsCommandBuffer> shadowMapCommandBuffer;
             std::shared_ptr<GhaGraphicsCommandBuffer> cubeShadowMapCommandBuffer;
+            std::shared_ptr<GhaComputeCommandBuffer> skinningCommandBuffer;
 
             std::shared_ptr<GhaBuffer> frameDataBuffer;            /**< Holds data used across all meshes (lighting, camera etc.). */
             std::vector<std::unique_ptr<GhaBuffer>> objectBuffers; /**< Holds the data for each object. */
@@ -114,10 +116,11 @@ namespace garlic::clove {
         //'Square' mesh used to render UI
         std::unique_ptr<Mesh> uiMesh;
 
-        GhaDevice *graphicsDevice;
-        std::shared_ptr<GhaFactory> graphicsFactory;
+        GhaDevice *ghaDevice;
+        std::shared_ptr<GhaFactory> ghaFactory;
 
         std::shared_ptr<GhaGraphicsQueue> graphicsQueue;
+        std::shared_ptr<GhaComputeQueue> computeQueue;
 
         std::unordered_map<DescriptorSetSlots, std::shared_ptr<GhaDescriptorSetLayout>> descriptorSetLayouts;
 
@@ -147,6 +150,7 @@ namespace garlic::clove {
         //Synchronisation obects
         std::array<std::shared_ptr<GhaSemaphore>, maxFramesInFlight> shadowFinishedSemaphores;
         std::array<std::shared_ptr<GhaSemaphore>, maxFramesInFlight> cubeShadowFinishedSemaphores;
+        std::array<std::shared_ptr<GhaSemaphore>, maxFramesInFlight> skinningFinishedSemaphores;
 
         //FUNCTIONS
     public:

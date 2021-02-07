@@ -13,9 +13,11 @@ namespace garlic::clove {
         Transfer,
 
         //Compute stages
-        //...
+        ComputeShader,
 
         //Graphics stages
+        VertexInput,
+        VertexShader,
         PixelShader,
         EarlyPixelTest,
         LatePixelTest,
