@@ -12,10 +12,8 @@
 extern "C" const char constants[];
 extern "C" const size_t constantsLength;
 
-//extern "C" const char staticmeshcubeshadowmap_v[];
-//extern "C" const size_t staticmeshcubeshadowmap_vLength;
-extern "C" const char animatedmeshcubeshadowmap_v[];
-extern "C" const size_t animatedmeshcubeshadowmap_vLength;
+extern "C" const char staticmeshcubeshadowmap_v[];
+extern "C" const size_t staticmeshcubeshadowmap_vLength;
 
 extern "C" const char meshcubeshadowmap_p[];
 extern "C" const size_t meshcubeshadowmap_pLength;
@@ -63,7 +61,7 @@ namespace garlic::clove {
         };
 
         pipeline = *ghaFactory.createGraphicsPipelineObject(GhaGraphicsPipelineObject::Descriptor{
-            .vertexShader         = *ghaFactory.createShaderFromSource({ animatedmeshcubeshadowmap_v, animatedmeshcubeshadowmap_vLength }, shaderIncludes, "Cube Shadow Map - Animated Mesh (vertex)", GhaShader::Stage::Vertex),
+            .vertexShader         = *ghaFactory.createShaderFromSource({ staticmeshcubeshadowmap_v, staticmeshcubeshadowmap_vLength }, shaderIncludes, "Cube Shadow Map - Animated Mesh (vertex)", GhaShader::Stage::Vertex),
             .fragmentShader       = *ghaFactory.createShaderFromSource({ meshcubeshadowmap_p, meshcubeshadowmap_pLength }, shaderIncludes, "Cube Shadow Map (pixel)", GhaShader::Stage::Pixel),
             .vertexInput          = Vertex::getInputBindingDescriptor(),
             .vertexAttributes     = vertexAttributes,
