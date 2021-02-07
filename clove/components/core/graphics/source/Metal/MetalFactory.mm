@@ -1,6 +1,7 @@
 #include "Clove/Graphics/Metal/MetalFactory.hpp"
 
 #include "Clove/Graphics/Metal/MetalBuffer.hpp"
+#include "Clove/Graphics/Metal/MetalShader.hpp"
 
 namespace garlic::clove {
 	MetalFactory::MetalFactory(id<MTLDevice> device)
@@ -93,5 +94,16 @@ namespace garlic::clove {
 
 	Expected<std::unique_ptr<GhaSampler>, std::runtime_error> MetalFactory::createSampler(GhaSampler::Descriptor descriptor) {
 		return Unexpected{ std::runtime_error{ "Not implemented" } };
+	}
+	
+	Expected<std::unique_ptr<GhaShader>, std::runtime_error> MetalFactory::createShaderObject(std::string mslSource) {
+		NSError *libError;
+		id<MTLLibrary> library{ [device newLibraryWithSource:[NSString stringWithCString:mslSource.c_str() encoding:[NSString defaultCStringEncoding]] options:nil error:&libError] };
+		
+		if(libError != nullptr && libError.code != 0){
+			return Unexpected{ std::runtime_error{ [[libError description] cStringUsingEncoding:[NSString defaultCStringEncoding]] } };
+		}
+		
+		return std::unique_ptr<GhaShader>{ std::make_unique<MetalShader>([library newFunctionWithName:@"main"]) };
 	}
 }
