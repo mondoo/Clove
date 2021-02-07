@@ -154,7 +154,7 @@ namespace garlic::clove {
             .stage     = GhaShader::Stage::Compute,
         };
 
-        std::shared_ptr<GhaDescriptorSetLayout> layout = *ghaFactory->createDescriptorSetLayout(GhaDescriptorSetLayout::Descriptor{
+        skinningSetLayout = *ghaFactory->createDescriptorSetLayout(GhaDescriptorSetLayout::Descriptor{
             .bindings = {
                 skeletonBinding,
                 bindPoseBinding,
@@ -165,7 +165,7 @@ namespace garlic::clove {
         GhaComputePipelineObject::Descriptor const skinningPipelineDescriptor{
             .shader               = *ghaFactory->createShaderFromSource({ skinning_c, skinning_cLength }, shaderIncludes, "Skinning (compute)", GhaShader::Stage::Compute),
             .descriptorSetLayouts = {
-                layout,
+                skinningSetLayout,
             }
         };
 
@@ -343,6 +343,32 @@ namespace garlic::clove {
         };
 
         //SKINNING
+        //Create the desciptor sets
+        std::vector<std::shared_ptr<GhaDescriptorSet>> skinningSets;
+        if(meshCount > 0) {
+            if(currentImageData.skinningDescriptorPool == nullptr || currentImageData.skinningDescriptorPool->getDescriptor().maxSets < meshCount) {
+                auto setBindingCount{ countDescriptorBindingTypes(*skinningSetLayout) };
+                for(auto &[key, val] : setBindingCount) {
+                    val *= meshCount;
+                }
+                currentImageData.skinningDescriptorPool = createDescriptorPool(setBindingCount, meshCount);
+            }
+
+            currentImageData.skinningDescriptorPool->reset();
+            std::vector<std::shared_ptr<GhaDescriptorSetLayout>> layouts(meshCount, skinningSetLayout);
+            skinningSets = currentImageData.skinningDescriptorPool->allocateDescriptorSets(layouts);
+        }
+        //Map the descriptor sets
+        for(size_t index = 0; auto &meshInfo : currentFrameData.meshes) {
+            std::shared_ptr<GhaDescriptorSet> &skinningDescriptorSet{ skinningSets[index] };
+            //Use the previously created buffer
+            skinningDescriptorSet->map(*currentImageData.objectBuffers[index], offsetof(MeshUBOLayout, matrixPallet), sizeof(mat4f) * MAX_JOINTS, DescriptorType::UniformBuffer, 0);
+            skinningDescriptorSet->map(*meshInfo.mesh->getVertexBuffer(), 0, meshInfo.mesh->getVertexBufferSize(), DescriptorType::StorageBuffer, 1);
+            skinningDescriptorSet->map(*meshInfo.mesh->getVertexBuffer(), meshInfo.mesh->getVertexOffset(), meshInfo.mesh->getVertexBufferSize(), DescriptorType::StorageBuffer, 2);
+
+            ++index;
+        }
+
         currentImageData.skinningCommandBuffer->beginRecording(CommandBufferUsage::OneTimeSubmit);
         //...
         currentImageData.skinningCommandBuffer->endRecording();

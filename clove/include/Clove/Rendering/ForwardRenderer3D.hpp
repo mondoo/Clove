@@ -86,6 +86,7 @@ namespace garlic::clove {
             std::shared_ptr<GhaDescriptorPool> frameDescriptorPool; /**< Descriptor pool for sets that change per frame. */
             std::shared_ptr<GhaDescriptorPool> meshDescriptorPool;  /**< Descriptor pool for sets that are for a single mesh's material. */
             std::shared_ptr<GhaDescriptorPool> uiDescriptorPool;    /**< Descriptor pool for sets that are for a ui element. */
+            std::shared_ptr<GhaDescriptorPool> skinningDescriptorPool;
 
             std::shared_ptr<GhaDescriptorSet> viewDescriptorSet;
             std::shared_ptr<GhaDescriptorSet> lightingDescriptorSet;
@@ -123,6 +124,7 @@ namespace garlic::clove {
         std::shared_ptr<GhaComputeQueue> computeQueue;
 
         std::unordered_map<DescriptorSetSlots, std::shared_ptr<GhaDescriptorSetLayout>> descriptorSetLayouts;
+        std::shared_ptr<GhaDescriptorSetLayout> skinningSetLayout;
 
         //Frame / image data objects
         FrameData currentFrameData;
