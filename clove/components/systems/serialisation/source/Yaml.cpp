@@ -12,13 +12,13 @@ namespace garlic::clove {
                 return;
             }
 
-            if(auto *floatVal{ std::get_if<float>(&node.value) }) {
+            if(auto const *floatVal{ std::get_if<float>(&node.value) }) {
                 emitterNode[node.name] = *floatVal;
-            } else if(auto *stringVal{ std::get_if<std::string>(&node.value) }) {
+            } else if(auto const *stringVal{ std::get_if<std::string>(&node.value) }) {
                 emitterNode[node.name] = *stringVal;
-            } else if(auto *children{ std::get_if<std::vector<Node>>(&node.value) }; children != nullptr && children->size() > 0) {
+            } else if(auto const *children{ std::get_if<std::vector<Node>>(&node.value) }; children != nullptr && !children->empty()) {
                 YAML::Node childNode{};
-                for(auto &child : *children) {
+                for(auto const &child : *children) {
                     emittNode(childNode, child);
                 }
                 emitterNode[node.name] = childNode;
@@ -51,8 +51,8 @@ namespace garlic::clove {
                 emitterNode["type"]    = "yaml";
                 emitterNode["version"] = 1;
 
-                if(auto *children{ std::get_if<std::vector<Node>>(&rootNode.value) }; children != nullptr) {
-                    for(auto &child : *children) {
+                if(auto const *children{ std::get_if<std::vector<Node>>(&rootNode.value) }; children != nullptr) {
+                    for(auto const &child : *children) {
                         emittNode(emitterNode, child);
                     }
                 }
@@ -77,9 +77,9 @@ namespace garlic::clove {
                     }
 
                     if(it->second.IsScalar()) {
-                        if(it->second.Tag() == "?"){
+                        if(it->second.Tag() == "?") {
                             deserialisedFile[name] = it->second.as<float>();
-                        }else{
+                        } else {
                             deserialisedFile[name] = it->second.as<std::string>();
                         }
                     } else {
