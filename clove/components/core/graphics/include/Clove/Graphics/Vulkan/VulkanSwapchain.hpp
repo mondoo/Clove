@@ -17,7 +17,7 @@ namespace garlic::clove {
         DevicePointer device;
         VkSwapchainKHR swapchain{ VK_NULL_HANDLE };
 
-        VkFormat swapChainImageFormat;
+        VkFormat swapChainImageFormat{};
         VkExtent2D swapChainExtent{};
 
         std::vector<VkImage> images;
