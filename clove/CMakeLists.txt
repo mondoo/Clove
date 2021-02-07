@@ -142,6 +142,8 @@ add_library(
 		${SOURCE}/Rendering/RenderPasses/GeometryPass.cpp
 		${INCLUDE}/Rendering/RenderPasses/PointLightPass.hpp
 		${SOURCE}/Rendering/RenderPasses/PointLightPass.cpp
+		${INCLUDE}/Rendering/RenderPasses/SkinningPass.hpp
+		${SOURCE}/Rendering/RenderPasses/SkinningPass.cpp
 		${INCLUDE}/Rendering/Techniques/ForwardLightingTechnique.hpp
 		${SOURCE}/Rendering/Techniques/ForwardLightingTechnique.cpp
 		${INCLUDE}/Rendering/Techniques/Technique.hpp
