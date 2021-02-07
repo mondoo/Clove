@@ -46,16 +46,6 @@ namespace garlic::clove {
                 .format   = VertexAttributeFormat::R32G32B32_SFLOAT,
                 .offset   = offsetof(Vertex, colour),
             },
-            VertexAttributeDescriptor{
-                .location = 4,
-                .format   = VertexAttributeFormat::R32G32B32A32_SINT,
-                .offset   = offsetof(Vertex, jointIds),
-            },
-            VertexAttributeDescriptor{
-                .location = 5,
-                .format   = VertexAttributeFormat::R32G32B32A32_SFLOAT,
-                .offset   = offsetof(Vertex, weights),
-            }
         };
 
         AreaDescriptor const viewScissorArea{

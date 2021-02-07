@@ -31,16 +31,6 @@ namespace garlic::clove {
                 .format   = VertexAttributeFormat::R32G32B32_SFLOAT,
                 .offset   = offsetof(Vertex, position),
             },
-            VertexAttributeDescriptor{
-                .location = 1,
-                .format   = VertexAttributeFormat::R32G32B32A32_SINT,
-                .offset   = offsetof(Vertex, jointIds),
-            },
-            VertexAttributeDescriptor{
-                .location = 2,
-                .format   = VertexAttributeFormat::R32G32B32A32_SFLOAT,
-                .offset   = offsetof(Vertex, weights),
-            }
         };
 
         PushConstantDescriptor const pushConstant{
