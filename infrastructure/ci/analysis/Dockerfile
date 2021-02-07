@@ -1,3 +1,18 @@
+FROM gcc:10 as cmake_builder
+
+RUN apt-get install -y git
+
+#Get cmake build requirements
+RUN apt-get install -y make
+RUN apt-get install -y libssl-dev
+
+#Build Cmake
+RUN git clone --branch v3.18.3 --depth 1 https://gitlab.kitware.com/cmake/cmake.git
+WORKDIR /cmake/
+RUN ./bootstrap --prefix=/cmake_install
+RUN make 
+RUN make install
+
 FROM ubuntu:20.04
 
 RUN apt-get update -y --fix-missing
@@ -7,6 +22,10 @@ RUN apt-get install -y
 RUN apt-get install -y git
 RUN apt-get install -y python3
 RUN apt-get install -y wget
+
+#Install cmake
+COPY --from=cmake_builder /cmake_install /cmake_install
+ENV PATH "/cmake_install/bin:$PATH"
 
 #Install static analysis tools
 RUN apt-get install -y cppcheck
