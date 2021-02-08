@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Clove/Maths/MathsTypes.hpp>
+#include <Clove/Serialisation/Node.hpp>
 #include <vector>
 
 namespace garlic::clove {
@@ -22,4 +23,24 @@ namespace garlic::clove {
         vec3f getRight() const;
         vec3f getUp() const;
     };
+}
+
+namespace garlic::clove {
+    template<>
+    inline serialiser::Node serialise(TransformComponent const &object) {
+        serialiser::Node node{};
+        node["position"] = object.position;
+        node["rotation"] = object.rotation;
+        node["scale"]    = object.scale;
+        return node;
+    }
+
+    template<>
+    inline TransformComponent deserialise(serialiser::Node const &node) {
+        TransformComponent component{};
+        component.position = node["position"].as<vec3f>();
+        component.rotation = node["rotation"].as<quatf>();
+        component.scale    = node["scale"].as<vec3f>();
+        return component;
+    }
 }
