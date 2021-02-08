@@ -17,6 +17,11 @@ namespace garlic::clove::serialiser {
         return *this;
     }
 
+    Node &Node::operator=(std::string_view string) {
+        *this = string.data();
+        return *this;
+    }
+
     Node &Node::operator=(char const *string){
         value = string;
         return *this;

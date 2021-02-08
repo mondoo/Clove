@@ -29,6 +29,7 @@ namespace garlic::clove::serialiser {
         Node &operator=(T scalar);
 
         Node &operator=(std::string string);
+        Node &operator=(std::string_view string);
         Node &operator=(char const *string);
 
         template<typename T, std::enable_if_t<!std::is_arithmetic_v<T>, int> = 0>
