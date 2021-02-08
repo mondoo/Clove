@@ -49,7 +49,7 @@ namespace garlic::membrane {
         }
 
         void saveScene(Editor_SaveScene ^message){
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, clove::LogLevel::Warning, "Saving not yet handled!");
+            layer->currentWorld.save();
         }
 
         void loadScene(Editor_LoadScene ^message){
@@ -62,7 +62,8 @@ namespace garlic::membrane {
 namespace garlic::membrane {
     RuntimeLayer::RuntimeLayer()
         : clove::Layer{ "Runtime Layer" }
-        , entityManager{ clove::Application::get().getEntityManager() } {
+        , entityManager{ clove::Application::get().getEntityManager() }
+        , currentWorld{ entityManager, "test.yaml" } {
         proxy = gcnew RuntimeLayerMessageProxy(this);
     }
 
@@ -103,7 +104,7 @@ namespace garlic::membrane {
     }
 
     clove::Entity RuntimeLayer::createEntity(std::string_view name) {
-        clove::Entity entity{ entityManager->create() };
+        clove::Entity entity{ currentWorld.createEntity(name) };
         runtimeEntities.push_back(entity);
 
         Engine_OnEntityCreated ^ message { gcnew Engine_OnEntityCreated };
@@ -119,19 +120,19 @@ namespace garlic::membrane {
         switch(componentType) {
             case ComponentType::Transform:
                 if(!entityManager->hasComponent<clove::TransformComponent>(entity)) {
-                    entityManager->addComponent<clove::TransformComponent>(entity);
+                    currentWorld.addComponent<clove::TransformComponent>(entity);
                     added = true;
                 }
                 break;
             case ComponentType::Mesh:
                 if(!entityManager->hasComponent<clove::StaticModelComponent>(entity)) {
-                    entityManager->addComponent<clove::StaticModelComponent>(entity, clove::ModelLoader::loadStaticModel(ASSET_DIR "/cube.obj"));
+                    currentWorld.addComponent<clove::StaticModelComponent>(entity, clove::ModelLoader::loadStaticModel(ASSET_DIR "/cube.obj"));
                     added = true;
                 }
                 break;
             case ComponentType::PointLight:
                 if(!entityManager->hasComponent<clove::PointLightComponent>(entity)) {
-                    entityManager->addComponent<clove::PointLightComponent>(entity);
+                    currentWorld.addComponent<clove::PointLightComponent>(entity);
                     added = true;
                 }
                 break;

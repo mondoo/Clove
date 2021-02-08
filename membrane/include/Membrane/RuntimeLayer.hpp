@@ -5,6 +5,7 @@
 
 #include <Clove/ECS/Entity.hpp>
 #include <Clove/Layer.hpp>
+#include <Clove/World.hpp>
 #include <msclr/gcroot.h>
 #include <string_view>
 #include <vector>
@@ -28,6 +29,9 @@ namespace garlic::membrane {
 
         clove::EntityManager *entityManager{ nullptr };
         std::vector<clove::Entity> runtimeEntities; //TODO: Remove? Keeping just so update transforms etc.
+
+        //TODO: Move to clove::Application It's likely that worlds will be loaded outside of bulb
+        clove::World currentWorld;
 
         //FUNCTIONS
     public:

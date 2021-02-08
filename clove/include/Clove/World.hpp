@@ -25,9 +25,11 @@ namespace garlic::clove {
         void load();
 
         //TODO: Inl
-        Entity createEntity(){
+        Entity createEntity(std::string_view name) {
             Entity entity{ manager->create() };
-            rootNode["entities"][std::to_string(entity)]; //TODO: Handle this conversion?
+            //TODO: Handle string conversion?
+            rootNode["entities"]["id"] = entity;
+            rootNode["entities"]["name"] = name; 
             return entity;
         }
 
