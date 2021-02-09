@@ -7,8 +7,12 @@ namespace garlic::clove {
     LinuxWindow::LinuxWindow(Descriptor const &descriptor)
         : Window(keyboardDispatcher, mouseDispatcher) {
         CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Creating window: {0} ({1}, {2})", descriptor.title, descriptor.width, descriptor.height);
+        CLOVE_ASSERT(window == 0, "Window already exists! Currently only a single window on linux is supported");
 
-        display = XOpenDisplay(nullptr);//makes the connection to the client, where to display the window
+        if(display == nullptr){
+            //Make the connection to the client, where to display the window
+            display = XOpenDisplay(nullptr);
+        }
 
         if(!display) {
             //TODO: Exception
@@ -119,7 +123,7 @@ namespace garlic::clove {
 
     void LinuxWindow::processInput() {
         if(XPending(display) > 0) {
-            KeySym xkeysym = 0;
+            KeySym xkeysym{ 0 };
 
             XNextEvent(display, &xevent);
             switch(xevent.type) {
@@ -195,7 +199,7 @@ namespace garlic::clove {
 
                 //Window
                 case ConfigureNotify: {
-                    XConfigureEvent xce = xevent.xconfigure;
+                    XConfigureEvent xce{ xevent.xconfigure };
                     if(static_cast<uint32_t>(xce.width) != prevConfigureNotifySize.x || static_cast<uint32_t>(xce.height) != prevConfigureNotifySize.y) {
                         const vec2i size{ xce.width, xce.height };
                         prevConfigureNotifySize = size;

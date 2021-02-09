@@ -13,8 +13,6 @@ namespace garlic::clove {
     private:
         bool open{ false };
 
-        Display *display{ nullptr };
-        ::Window window;
         Screen *screen{ nullptr };
         int32_t screenID;
 
