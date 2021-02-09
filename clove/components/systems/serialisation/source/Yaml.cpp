@@ -8,20 +8,18 @@ using namespace garlic::clove::serialiser;
 namespace garlic::clove {
     namespace {
         void emittNode(YAML::Node &emitterNode, Node const &node) {
-            if(node.name.length() <= 0) {
+            if(node.getKey().length() <= 0) {
                 return;
             }
 
-            if(auto const *floatVal{ std::get_if<float>(&node.value) }) {
-                emitterNode[node.name] = *floatVal;
-            } else if(auto const *stringVal{ std::get_if<std::string>(&node.value) }) {
-                emitterNode[node.name] = *stringVal;
-            } else if(auto const *children{ std::get_if<std::vector<Node>>(&node.value) }; children != nullptr && !children->empty()) {
+            if(node.getType() == Node::Type::Scalar) {
+                emitterNode[node.getKey()] = node.as<std::string>();
+            } else {
                 YAML::Node childNode{};
-                for(auto const &child : *children) {
+                for(auto const &child : node) {
                     emittNode(childNode, child);
                 }
-                emitterNode[node.name] = childNode;
+                emitterNode[node.getKey()] = childNode;
             }
         }
 
@@ -31,11 +29,7 @@ namespace garlic::clove {
             for(YAML::const_iterator it{ node.begin() }; it != node.end(); ++it) {
                 std::string const name{ it->first.as<std::string>() };
                 if(it->second.IsScalar()) {
-                    if(it->second.Tag() == "?") {
-                        outNode[name] = it->second.as<float>();
-                    } else {
-                        outNode[name] = it->second.as<std::string>();
-                    }
+                    outNode[name] = it->second.as<std::string>();
                 } else {
                     outNode[name] = buildNode(it->second);
                 }
@@ -51,11 +45,7 @@ namespace garlic::clove {
                 emitterNode["type"]    = "yaml";
                 emitterNode["version"] = 1;
 
-                if(auto const *children{ std::get_if<std::vector<Node>>(&rootNode.value) }; children != nullptr) {
-                    for(auto const &child : *children) {
-                        emittNode(emitterNode, child);
-                    }
-                }
+                emittNode(emitterNode, rootNode);
 
                 YAML::Emitter emitter{};
                 emitter << emitterNode;
