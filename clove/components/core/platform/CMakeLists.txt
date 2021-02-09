@@ -18,6 +18,7 @@ set(
 set(
 	LinuxPlatformFiles
 		${INCLUDE}/Linux/CloveLinux.hpp
+		${SOURCE}/Linux/LinuxMouse.cpp
 		${INCLUDE}/Linux/LinuxWindow.hpp
 		${SOURCE}/Linux/LinuxWindow.cpp
 )

@@ -129,7 +129,7 @@ namespace garlic::clove {
         
         /**
          * @brief Gets the current position of the mouse relative to the window's client rect
-         * @details This the current position at the time of calling this function
+         * @details This is the current position at the time of calling this function
          * and not the position of the last event. This can be useful when setting the position
          * manually and mouse move events need to be ignored.
          */
