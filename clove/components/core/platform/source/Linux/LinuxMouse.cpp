@@ -11,14 +11,14 @@ namespace garlic::clove {
         int mouseY{ 0 };
         unsigned int mask{};
 
-        XQueryPointer(display, window, &rootReturn, &childReturn, &rootX, &rootY, &mouseX, &mouseY, &mask);
+        XQueryPointer(display, XDefaultRootWindow(display), &rootReturn, &childReturn, &rootX, &rootY, &mouseX, &mouseY, &mask);
 
         return { mouseX, mouseY };
     }
 
     void Mouse::setPosition(vec2i const &position) {
         ::Window const sourceWindow{ 0 };
-        ::Window const destWindow{ window };
+        ::Window const destWindow{ XDefaultRootWindow(display) };
 
         int const sourceX{ 0 };
         int const sourceY{ 0 };

@@ -15,6 +15,7 @@ namespace garlic::clove {
 
         Screen *screen{ nullptr };
         int32_t screenID;
+        ::Window window{ 0 };
 
         XEvent xevent;
 

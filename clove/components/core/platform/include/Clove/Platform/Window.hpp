@@ -57,7 +57,7 @@ namespace garlic::clove {
 
         /**
          * @brief Returns the poisition of the window in screen space coordinates.
-         * @param clientArea If true, will return the position relative to the client area of the window (inside borders / captionbar etc.).
+         * @param clientArea If true, will return the position relative to the client area of the window (pos + title bar height and border thickness).
          * @return A vec2i containing the screen space coordinates.
          */
         virtual vec2i getPosition(bool clientArea) const = 0;
