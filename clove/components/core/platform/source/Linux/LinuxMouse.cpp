@@ -1,11 +1,19 @@
 #include "Clove/Platform/Input/Mouse.hpp"
-
 #include "Clove/Platform/Linux/CloveLinux.hpp"
 
 namespace garlic::clove {
     vec2i Mouse::getPosition() const {
-        //XQueryPointer
-        return {0, 0};
+        ::Window rootReturn{};
+        ::Window childReturn{};
+        int rootX{ 0 };//Relative to the root window
+        int rootY{ 0 };//Relative to the root window
+        int mouseX{ 0 };
+        int mouseY{ 0 };
+        unsigned int mask{};
+
+        XQueryPointer(display, window, &rootReturn, &childReturn, &rootX, &rootY, &mouseX, &mouseY, &mask);
+
+        return { mouseX, mouseY };
     }
 
     void Mouse::setPosition(vec2i const &position) {
@@ -21,6 +29,5 @@ namespace garlic::clove {
     }
 
     void Mouse::show(bool shouldShow) {
-        
     }
 }
