@@ -13,13 +13,9 @@ set(
 
 set(
 	ShaderFiles
-		${SOURCE}/Shaders/StaticMesh-v.glsl
-		${SOURCE}/Shaders/StaticMeshShadowMap-v.glsl
-		${SOURCE}/Shaders/StaticMeshCubeShadowMap-v.glsl
-
-		${SOURCE}/Shaders/AnimatedMesh-v.glsl
-		${SOURCE}/Shaders/AnimatedMeshShadowMap-v.glsl
-		${SOURCE}/Shaders/AnimatedMeshCubeShadowMap-v.glsl
+		${SOURCE}/Shaders/Mesh-v.glsl
+		${SOURCE}/Shaders/MeshShadowMap-v.glsl
+		${SOURCE}/Shaders/MeshCubeShadowMap-v.glsl
 
 		${SOURCE}/Shaders/Mesh-p.glsl
 		${SOURCE}/Shaders/MeshShadowMap-p.glsl
@@ -65,13 +61,9 @@ embeddSOURCE("${ASSETS}/fonts/Roboto/Roboto-Black.ttf" "rb")
 embeddSOURCE("${SOURCE}/Shaders/Constants.glsl" "r")
 
 #Shader source
-embeddSOURCE("${SOURCE}/Shaders/StaticMesh-v.glsl" "r")
-embeddSOURCE("${SOURCE}/Shaders/StaticMeshShadowMap-v.glsl" "r")
-embeddSOURCE("${SOURCE}/Shaders/StaticMeshCubeShadowMap-v.glsl" "r")
-
-embeddSOURCE("${SOURCE}/Shaders/AnimatedMesh-v.glsl" "r")
-embeddSOURCE("${SOURCE}/Shaders/AnimatedMeshShadowMap-v.glsl" "r")
-embeddSOURCE("${SOURCE}/Shaders/AnimatedMeshCubeShadowMap-v.glsl" "r")
+embeddSOURCE("${SOURCE}/Shaders/Mesh-v.glsl" "r")
+embeddSOURCE("${SOURCE}/Shaders/MeshShadowMap-v.glsl" "r")
+embeddSOURCE("${SOURCE}/Shaders/MeshCubeShadowMap-v.glsl" "r")
 
 embeddSOURCE("${SOURCE}/Shaders/Mesh-p.glsl" "r")
 embeddSOURCE("${SOURCE}/Shaders/MeshShadowMap-p.glsl" "r")
