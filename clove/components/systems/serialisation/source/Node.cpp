@@ -7,9 +7,25 @@ namespace garlic::clove::serialiser {
 
     Node::Node(Node &&other) noexcept = default;
 
-    Node &Node::operator=(Node const &other) = default;
+    Node &Node::operator=(Node const &other) {
+        if(other.type == Type::None){
+            scalar = other.scalar;
+        }
+        nodes = other.nodes;
+        type  = other.type;
 
-    Node &Node::operator=(Node &&other) noexcept = default;
+        return *this;
+    }
+
+    Node &Node::operator=(Node &&other) noexcept {
+        if(other.type == Type::None) {
+            scalar = std::move(other.scalar);
+        }
+        nodes = std::move(other.nodes);
+        type  = std::move(other.type);
+
+        return *this;
+    }
 
     Node &Node::operator=(char const *string) {
         return operator=<char const *>(string);
