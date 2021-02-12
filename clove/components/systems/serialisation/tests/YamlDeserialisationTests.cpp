@@ -68,7 +68,7 @@ TEST_F(YamlDeserialisationTests, CanLoadNestedValuesFromParentNodes) {
 TEST_F(YamlDeserialisationTests, CannotGetIncorrectType) {
     Node file{ *loadYaml("TestFile.yaml") };
 
-    EXPECT_ANY_THROW(file["IntValue"].as<std::string>());
+    EXPECT_ANY_THROW(file["TestType"].as<std::string>());
 }
 
 TEST_F(YamlDeserialisationTests, ErrorsWhenOpeningNoFile) {
