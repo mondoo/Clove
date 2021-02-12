@@ -1,4 +1,5 @@
 #include <stdexcept>
+#include <sstream>
 
 namespace garlic::clove::serialiser {
     template<typename T>
@@ -48,7 +49,7 @@ namespace garlic::clove::serialiser {
             if(type != Type::Scalar) {
                 throw std::runtime_error{ "Node is not holding a value!" };
             }
-            std::stof(nodes[0].scalar);
+            return std::stof(nodes[0].scalar);
         } else if constexpr(std::is_same_v<std::string, T>) {
             if(type != Type::Scalar) {
                 throw std::runtime_error{ "Node is not holding a value!" };
