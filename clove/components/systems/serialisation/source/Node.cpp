@@ -11,6 +11,10 @@ namespace garlic::clove::serialiser {
 
     Node &Node::operator=(Node &&other) noexcept = default;
 
+    Node &Node::operator=(char const *string) {
+        return operator=<char const *>(string);
+    }
+
     Node::~Node() = default;
 
     Node &Node::operator[](std::string_view nodeName) {

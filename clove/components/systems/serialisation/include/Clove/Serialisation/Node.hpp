@@ -44,6 +44,7 @@ namespace garlic::clove::serialiser {
 
         template<typename T>
         Node &operator=(T const &value);
+        Node &operator=(char const *string);
 
         ~Node();
 
@@ -82,7 +83,13 @@ namespace garlic::clove::serialiser {
         void setValue(T const &value);
 
         template<typename T>
-        static bool constexpr isKeyType();
+        static bool constexpr isKeyType = std::is_same_v<std::string, T> || std::is_same_v<std::string_view, T>;
+
+        template<>
+        static bool constexpr isKeyType<char const *> = true;
+
+        template<size_t N>
+        static bool constexpr isKeyType<char const[N]> = true;
     };
 }
 

@@ -1,10 +1,10 @@
-#include <stdexcept>
 #include <sstream>
+#include <stdexcept>
 
 namespace garlic::clove::serialiser {
     template<typename T>
     Node &Node::operator=(T const &value) {
-        if constexpr(std::is_arithmetic_v<T> || isKeyType<T>()) {
+        if constexpr(std::is_arithmetic_v<T> || isKeyType<T>) {
             type = Type::Scalar;
             nodes.resize(1);
             nodes[0].setValue(value);
@@ -73,15 +73,10 @@ namespace garlic::clove::serialiser {
             stream.precision(std::numeric_limits<T>::max_digits10);
             stream << value;
             scalar = stream.str();
-        } else if constexpr(isKeyType<T>()) {
+        } else if constexpr(isKeyType<T>) {
             scalar = value;
         } else {
             throw std::runtime_error{ "setValue called without a scalar value." };
         }
-    }
-
-    template<typename T>
-    bool constexpr Node::isKeyType() {
-        return std::is_same_v<std::string, T> || std::is_same_v<std::string_view, T> || std::is_same_v<char *, std::decay<T>>;
     }
 }
