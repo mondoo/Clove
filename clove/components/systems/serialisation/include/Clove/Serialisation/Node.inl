@@ -68,7 +68,10 @@ namespace garlic::clove::serialiser {
         nodes.clear();
 
         if constexpr(std::is_arithmetic_v<T>) {
-            scalar = std::to_string(value);
+            std::stringstream stream;
+            stream.precision(std::numeric_limits<T>::max_digits10);
+            stream << value;
+            scalar = stream.str();
         } else if constexpr(isKeyType<T>()) {
             scalar = value;
         } else {
