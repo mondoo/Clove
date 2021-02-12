@@ -55,6 +55,7 @@ namespace garlic::clove::serialiser {
 
         inline Type getType() const;
         inline std::string getKey() const;
+        inline VectorType const &getChildren() const;
 
         inline VectorType::iterator begin();
         inline VectorType::iterator end();

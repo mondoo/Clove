@@ -19,11 +19,11 @@ namespace garlic::clove::serialiser {
 
         for(auto &node : nodes) {
             if(node.scalar == nodeName) {
-                return node.nodes[0];
+                return node;
             }
         }
 
-        return nodes.emplace_back(Node{ nodeName }).nodes[0];
+        return nodes.emplace_back(Node{ nodeName });
     }
 
     Node const &Node::operator[](std::string_view nodeName) const {
@@ -33,7 +33,7 @@ namespace garlic::clove::serialiser {
 
         for(auto const &node : nodes) {
             if(node.scalar == nodeName) {
-                return node.nodes[0];
+                return node;
             }
         }
 

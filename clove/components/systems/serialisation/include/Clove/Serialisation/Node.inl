@@ -22,6 +22,10 @@ namespace garlic::clove::serialiser {
         return scalar;
     }
 
+    Node::VectorType const &Node::getChildren() const {
+        return nodes;
+    }
+
     Node::VectorType::iterator Node::begin() {
         return nodes.begin();
     }

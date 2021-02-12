@@ -8,7 +8,7 @@ using namespace garlic::clove::serialiser;
 namespace garlic::clove {
     namespace {
         void emittNode(YAML::Node &emitterNode, Node const &node) {
-            if(node.getKey().length() <= 0) {
+            if(node.getKey().length() <= 0 && node.getChildren().size() <= 0) {
                 return;
             }
 
@@ -45,7 +45,10 @@ namespace garlic::clove {
                 emitterNode["type"]    = "yaml";
                 emitterNode["version"] = 1;
 
-                emittNode(emitterNode, rootNode);
+                //Loop through the children so the rootNode isn't added to the file
+                for(auto const &child : rootNode) {
+                    emittNode(emitterNode, child);
+                }
 
                 YAML::Emitter emitter{};
                 emitter << emitterNode;
