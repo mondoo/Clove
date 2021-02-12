@@ -47,7 +47,7 @@ namespace garlic::clove::serialiser {
     }
 
     Node const &Node::operator[](std::string_view nodeName) const {
-        if(type != Type::Scalar || type != Type::Map) {
+        if(type == Type::None) {
             throw std::runtime_error{ "Node does not contain child nodes." };
         }
 

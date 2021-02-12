@@ -70,11 +70,7 @@ namespace garlic::clove {
                     }
 
                     if(it->second.IsScalar()) {
-                        if(it->second.Tag() == "?") {
-                            deserialisedFile[name] = it->second.as<float>();
-                        } else {
-                            deserialisedFile[name] = it->second.as<std::string>();
-                        }
+                        deserialisedFile[name] = it->second.as<std::string>();
                     } else {
                         deserialisedFile[name] = buildNode(it->second);
                     }

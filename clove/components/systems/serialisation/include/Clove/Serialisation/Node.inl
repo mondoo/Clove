@@ -56,7 +56,7 @@ namespace garlic::clove::serialiser {
             }
             return nodes[0].scalar;
         } else {
-            if(type != Type::Sequence || type != Type::Map) {
+            if(type != Type::Sequence && type != Type::Map) {
                 throw std::runtime_error{ "Node is not holding any nodes!" };
             }
             return deserialise<T>(*this);
