@@ -336,6 +336,7 @@ namespace garlic::clove {
         currentImageData.skinningCommandBuffer->beginRecording(CommandBufferUsage::OneTimeSubmit);
         geometryPasses[GeometryPass::getId<SkinningPass>()]->execute(*currentImageData.skinningCommandBuffer, geometryPassData);
         currentImageData.skinningCommandBuffer->endRecording();
+        geometryPasses[GeometryPass::getId<SkinningPass>()]->flushJobs();
 
         //Submit the command buffer for the skinning
         ComputeSubmitInfo skinningSubmitInfo{
