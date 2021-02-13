@@ -107,7 +107,7 @@ namespace garlic::clove {
                 }
 
                 //Find a queue family for compute operations
-                if(queueFamily.queueFlags & VK_QUEUE_COMPUTE_BIT){
+                if((queueFamily.queueFlags & VK_QUEUE_COMPUTE_BIT) != 0u){
                     indices.computeFamily = i;
                 }
 
