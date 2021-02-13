@@ -144,6 +144,37 @@ namespace garlic::clove {
         });
     }
 
+    std::unique_ptr<GhaDescriptorSetLayout> createSkinningDescriptorSetLayout(GhaFactory &factory){
+        DescriptorSetBindingInfo const skeletonBinding{
+            .binding   = 0,
+            .type      = DescriptorType::UniformBuffer,
+            .arraySize = 1,
+            .stage     = GhaShader::Stage::Compute,
+        };
+
+        DescriptorSetBindingInfo const bindPoseBinding{
+            .binding   = 1,
+            .type      = DescriptorType::StorageBuffer,
+            .arraySize = 1,
+            .stage     = GhaShader::Stage::Compute,
+        };
+
+        DescriptorSetBindingInfo const skinedPoseBinding{
+            .binding   = 2,
+            .type      = DescriptorType::StorageBuffer,
+            .arraySize = 1,
+            .stage     = GhaShader::Stage::Compute,
+        };
+
+        return *factory.createDescriptorSetLayout(GhaDescriptorSetLayout::Descriptor{
+            .bindings = {
+                skeletonBinding,
+                bindPoseBinding,
+                skinedPoseBinding,
+            },
+        });
+    }
+
     std::unordered_map<DescriptorType, uint32_t> countDescriptorBindingTypes(GhaDescriptorSetLayout const &descriptorSetLayout) {
         std::unordered_map<DescriptorType, uint32_t> counts;
         auto const &descriptor{ descriptorSetLayout.getDescriptor() };
@@ -207,14 +238,14 @@ namespace garlic::clove {
 
         //Change the layout of the image, write the buffer into it and then release the queue ownership
         transferCommandBuffer->beginRecording(CommandBufferUsage::OneTimeSubmit);
-        transferCommandBuffer->imageMemoryBarrier(*image, layoutTransferInfo, GhaPipelineObject::Stage::Top, GhaPipelineObject::Stage::Transfer);
+        transferCommandBuffer->imageMemoryBarrier(*image, layoutTransferInfo, PipelineStage::Top, PipelineStage::Transfer);
         transferCommandBuffer->copyBufferToImage(*transferBuffer, bufferOffset, *image, imageOffset, imageExtent);
-        transferCommandBuffer->imageMemoryBarrier(*image, transferQueueReleaseInfo, GhaPipelineObject::Stage::Transfer, GhaPipelineObject::Stage::Transfer);
+        transferCommandBuffer->imageMemoryBarrier(*image, transferQueueReleaseInfo, PipelineStage::Transfer, PipelineStage::Transfer);
         transferCommandBuffer->endRecording();
 
         //Acquire ownership of the image to a graphics queue
         graphicsCommandBuffer->beginRecording(CommandBufferUsage::OneTimeSubmit);
-        graphicsCommandBuffer->imageMemoryBarrier(*image, graphicsQueueAcquireInfo, GhaPipelineObject::Stage::Transfer, GhaPipelineObject::Stage::PixelShader);
+        graphicsCommandBuffer->imageMemoryBarrier(*image, graphicsQueueAcquireInfo, PipelineStage::Transfer, PipelineStage::PixelShader);
         graphicsCommandBuffer->endRecording();
 
         auto transferQueueFinishedFence{ *factory.createFence({ false }) };

@@ -12,9 +12,9 @@ namespace garlic::clove {
     public:
         using StageType = uint16_t;
         enum class Stage : StageType {
-            Vertex = 1 << 0,
-            Pixel  = 1 << 1,
-            //Geometry //TODO: Implement when feature flags can be checked
+            Vertex  = 1 << 0,
+            Pixel   = 1 << 1,
+            Compute = 1 << 2,
         };
 
         //FUNCTIONS

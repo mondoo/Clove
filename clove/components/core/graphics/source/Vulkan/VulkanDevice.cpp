@@ -106,6 +106,11 @@ namespace garlic::clove {
                     indices.transferFamily = i;
                 }
 
+                //Find a queue family for compute operations
+                if((queueFamily.queueFlags & VK_QUEUE_COMPUTE_BIT) != 0u){
+                    indices.computeFamily = i;
+                }
+
                 bool const requirePresentFamily{ surface != VK_NULL_HANDLE };
                 if(indices.isComplete(requirePresentFamily)) {
                     break;

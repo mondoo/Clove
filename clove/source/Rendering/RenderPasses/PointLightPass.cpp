@@ -6,17 +6,14 @@
 
 #include <Clove/Graphics/GhaFactory.hpp>
 #include <Clove/Graphics/GhaGraphicsCommandBuffer.hpp>
-#include <Clove/Graphics/GhaPipelineObject.hpp>
+#include <Clove/Graphics/GhaGraphicsPipelineObject.hpp>
 #include <Clove/Graphics/GhaRenderPass.hpp>
 
 extern "C" const char constants[];
 extern "C" const size_t constantsLength;
 
-//extern "C" const char staticmeshcubeshadowmap_v[];
-//extern "C" const size_t staticmeshcubeshadowmap_vLength;
-extern "C" const char animatedmeshcubeshadowmap_v[];
-extern "C" const size_t animatedmeshcubeshadowmap_vLength;
-
+extern "C" const char meshcubeshadowmap_v[];
+extern "C" const size_t meshcubeshadowmap_vLength;
 extern "C" const char meshcubeshadowmap_p[];
 extern "C" const size_t meshcubeshadowmap_pLength;
 
@@ -33,16 +30,6 @@ namespace garlic::clove {
                 .format   = VertexAttributeFormat::R32G32B32_SFLOAT,
                 .offset   = offsetof(Vertex, position),
             },
-            VertexAttributeDescriptor{
-                .location = 1,
-                .format   = VertexAttributeFormat::R32G32B32A32_SINT,
-                .offset   = offsetof(Vertex, jointIds),
-            },
-            VertexAttributeDescriptor{
-                .location = 2,
-                .format   = VertexAttributeFormat::R32G32B32A32_SFLOAT,
-                .offset   = offsetof(Vertex, weights),
-            }
         };
 
         PushConstantDescriptor const vertexPushConstant{
@@ -62,8 +49,8 @@ namespace garlic::clove {
             .size     = { shadowMapSize, shadowMapSize }
         };
 
-        pipeline = *ghaFactory.createPipelineObject(GhaPipelineObject::Descriptor{
-            .vertexShader         = *ghaFactory.createShaderFromSource({ animatedmeshcubeshadowmap_v, animatedmeshcubeshadowmap_vLength }, shaderIncludes, "Cube Shadow Map - Animated Mesh (vertex)", GhaShader::Stage::Vertex),
+        pipeline = *ghaFactory.createGraphicsPipelineObject(GhaGraphicsPipelineObject::Descriptor{
+            .vertexShader         = *ghaFactory.createShaderFromSource({ meshcubeshadowmap_v, meshcubeshadowmap_vLength }, shaderIncludes, "Cube Shadow Map - Animated Mesh (vertex)", GhaShader::Stage::Vertex),
             .fragmentShader       = *ghaFactory.createShaderFromSource({ meshcubeshadowmap_p, meshcubeshadowmap_pLength }, shaderIncludes, "Cube Shadow Map (pixel)", GhaShader::Stage::Pixel),
             .vertexInput          = Vertex::getInputBindingDescriptor(),
             .vertexAttributes     = vertexAttributes,
@@ -87,14 +74,6 @@ namespace garlic::clove {
 
     PointLightPass::~PointLightPass() = default;
 
-    void PointLightPass::addJob(Job job) {
-        jobs.emplace_back(std::move(job));
-    }
-
-    void PointLightPass::flushJobs() {
-        jobs.clear();
-    }
-
     void PointLightPass::execute(GhaGraphicsCommandBuffer &commandBuffer, FrameData const &frameData) {
         mat4f const *vertPushConstantData{ frameData.currentPointLightTransform };
         size_t const vertPushConstantSize{ sizeof(mat4f) };
@@ -110,13 +89,13 @@ namespace garlic::clove {
         size_t const pixelPushConstantSize{ sizeof(pixelPushConstantData) };
 
         commandBuffer.bindPipelineObject(*pipeline);
-        for(auto &job : jobs) {
+        for(auto const &job : getJobs()) {
             commandBuffer.pushConstant(GhaShader::Stage::Vertex, 0, vertPushConstantSize, vertPushConstantData);
             commandBuffer.pushConstant(GhaShader::Stage::Pixel, pixelPushConstantOffset, pixelPushConstantSize, &pixelPushConstantData);
             commandBuffer.bindDescriptorSet(*frameData.meshDescriptorSets[job.meshDescriptorIndex], 0);
 
-            commandBuffer.bindVertexBuffer(*job.mesh->getGhaBuffer(), job.mesh->getVertexOffset());
-            commandBuffer.bindIndexBuffer(*job.mesh->getGhaBuffer(), job.mesh->getIndexOffset(), IndexType::Uint16);
+            commandBuffer.bindVertexBuffer(*job.mesh->getCombinedBuffer(), job.mesh->getVertexOffset());
+            commandBuffer.bindIndexBuffer(*job.mesh->getCombinedBuffer(), job.mesh->getIndexOffset(), IndexType::Uint16);
 
             commandBuffer.drawIndexed(job.mesh->getIndexCount());
         }

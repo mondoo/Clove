@@ -6,17 +6,14 @@
 
 #include <Clove/Graphics/GhaFactory.hpp>
 #include <Clove/Graphics/GhaGraphicsCommandBuffer.hpp>
-#include <Clove/Graphics/GhaPipelineObject.hpp>
+#include <Clove/Graphics/GhaGraphicsPipelineObject.hpp>
 #include <Clove/Graphics/GhaRenderPass.hpp>
 
 extern "C" const char constants[];
 extern "C" const size_t constantsLength;
 
-//extern "C" const char staticmesh_v[];
-//extern "C" const size_t staticmesh_vLength;
-extern "C" const char animatedmesh_v[];
-extern "C" const size_t animatedmesh_vLength;
-
+extern "C" const char mesh_v[];
+extern "C" const size_t mesh_vLength;
 extern "C" const char mesh_p[];
 extern "C" const size_t mesh_pLength;
 
@@ -48,24 +45,14 @@ namespace garlic::clove {
                 .format   = VertexAttributeFormat::R32G32B32_SFLOAT,
                 .offset   = offsetof(Vertex, colour),
             },
-            VertexAttributeDescriptor{
-                .location = 4,
-                .format   = VertexAttributeFormat::R32G32B32A32_SINT,
-                .offset   = offsetof(Vertex, jointIds),
-            },
-            VertexAttributeDescriptor{
-                .location = 5,
-                .format   = VertexAttributeFormat::R32G32B32A32_SFLOAT,
-                .offset   = offsetof(Vertex, weights),
-            }
         };
 
         AreaDescriptor const viewScissorArea{
             .state = ElementState::Dynamic,
         };
 
-        pipeline = *ghaFactory.createPipelineObject(GhaPipelineObject::Descriptor{
-            .vertexShader         = *ghaFactory.createShaderFromSource({ animatedmesh_v, animatedmesh_vLength }, shaderIncludes, "Animated Mesh (vertex)", GhaShader::Stage::Vertex),
+        pipeline = *ghaFactory.createGraphicsPipelineObject(GhaGraphicsPipelineObject::Descriptor{
+            .vertexShader         = *ghaFactory.createShaderFromSource({ mesh_v, mesh_vLength }, shaderIncludes, "Animated Mesh (vertex)", GhaShader::Stage::Vertex),
             .fragmentShader       = *ghaFactory.createShaderFromSource({ mesh_p, mesh_pLength }, shaderIncludes, "Mesh (pixel)", GhaShader::Stage::Pixel),
             .vertexInput          = Vertex::getInputBindingDescriptor(),
             .vertexAttributes     = vertexAttributes,
@@ -87,29 +74,19 @@ namespace garlic::clove {
 
     ForwardColourPass::~ForwardColourPass() = default;
 
-    void ForwardColourPass::addJob(Job job) {
-        jobs.emplace_back(std::move(job));
-    }
-
-    void ForwardColourPass::flushJobs() {
-        jobs.clear();
-    }
-
     void ForwardColourPass::execute(GhaGraphicsCommandBuffer &commandBuffer, FrameData const &frameData) {
         commandBuffer.bindPipelineObject(*pipeline);
 
         commandBuffer.bindDescriptorSet(*frameData.viewDescriptorSet, 1);
         commandBuffer.bindDescriptorSet(*frameData.lightingDescriptorSet, 2);
 
-        for(auto &job : jobs) {
+        for(auto const &job : getJobs()) {
             commandBuffer.bindDescriptorSet(*frameData.meshDescriptorSets[job.meshDescriptorIndex], 0);
 
-            commandBuffer.bindVertexBuffer(*job.mesh->getGhaBuffer(), job.mesh->getVertexOffset());
-            commandBuffer.bindIndexBuffer(*job.mesh->getGhaBuffer(), job.mesh->getIndexOffset(), IndexType::Uint16);
+            commandBuffer.bindVertexBuffer(*job.mesh->getCombinedBuffer(), job.mesh->getVertexOffset());
+            commandBuffer.bindIndexBuffer(*job.mesh->getCombinedBuffer(), job.mesh->getIndexOffset(), IndexType::Uint16);
 
             commandBuffer.drawIndexed(job.mesh->getIndexCount());
         }
-
-        jobs.clear();
     }
 }

@@ -6,7 +6,7 @@
 
 namespace garlic::clove {
     class GhaFactory;
-    class GhaPipelineObject;
+    class GhaGraphicsPipelineObject;
     class GhaRenderPass;
 }
 
@@ -14,9 +14,7 @@ namespace garlic::clove {
     class ForwardColourPass : public GeometryPass {
         //VARIABLES
     private:
-        std::unique_ptr<GhaPipelineObject> pipeline{ nullptr };
-
-        std::vector<Job> jobs{};
+        std::unique_ptr<GhaGraphicsPipelineObject> pipeline{ nullptr };
 
         //FUNCTIONS
     public:
@@ -30,9 +28,6 @@ namespace garlic::clove {
         ForwardColourPass &operator=(ForwardColourPass &&other) noexcept;
 
         ~ForwardColourPass();
-
-        void addJob(Job job) override;
-        void flushJobs() override;
 
         void execute(GhaGraphicsCommandBuffer &commandBuffer, FrameData const &frameData) override;
     };

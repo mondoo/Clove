@@ -76,7 +76,7 @@ namespace garlic::clove {
         }
 
         //Inject the sempahores we use to synchronise with the swapchain and present queue
-        submission.waitSemaphores.emplace_back(imageAvailableSemaphores[frameId], GhaPipelineObject::Stage::ColourAttachmentOutput);
+        submission.waitSemaphores.emplace_back(imageAvailableSemaphores[frameId], PipelineStage::ColourAttachmentOutput);
         submission.signalSemaphores.push_back(renderFinishedSemaphores[frameId]);
 
         graphicsQueue->submit({ std::move(submission) }, framesInFlight[frameId].get());
