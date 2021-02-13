@@ -11,9 +11,15 @@ namespace garlic::clove {
             .passIds = std::set<GeometryPass::Id>{
                 GeometryPass::getId<ForwardColourPass>(),
                 GeometryPass::getId<DirectionalLightPass>(),
-                GeometryPass::getId<PointLightPass>(),
-                GeometryPass::getId<SkinningPass>(), //TODO: Only for animated meshes
+                GeometryPass::getId<PointLightPass>()
             },
         };
+    }
+
+    Technique createSkinnedForwardLightingTechnique(){
+        Technique technique{ createForwardLightingTechnique() };
+        technique.passIds.emplace(GeometryPass::getId<SkinningPass>());
+
+        return technique;
     }
 }

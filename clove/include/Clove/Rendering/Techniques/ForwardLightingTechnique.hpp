@@ -4,4 +4,5 @@
 
 namespace garlic::clove {
     Technique createForwardLightingTechnique();
+    Technique createSkinnedForwardLightingTechnique();
 }
