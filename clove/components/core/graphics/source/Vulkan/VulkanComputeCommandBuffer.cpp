@@ -12,7 +12,7 @@
 namespace garlic::clove {
     VulkanComputeCommandBuffer::VulkanComputeCommandBuffer(VkCommandBuffer commandBuffer, QueueFamilyIndices queueFamilyIndices)
         : commandBuffer{ commandBuffer }
-        , queueFamilyIndices{ std::move(queueFamilyIndices) } {
+        , queueFamilyIndices{ queueFamilyIndices } {
     }
 
     VulkanComputeCommandBuffer::VulkanComputeCommandBuffer(VulkanComputeCommandBuffer &&other) noexcept = default;
@@ -48,9 +48,9 @@ namespace garlic::clove {
     }
 
     void VulkanComputeCommandBuffer::bindDescriptorSet(GhaDescriptorSet &descriptorSet, uint32_t const setNum) {
-        VkDescriptorSet sets[] = { polyCast<VulkanDescriptorSet>(&descriptorSet)->getDescriptorSet() };
+        VkDescriptorSet const vkSet{ polyCast<VulkanDescriptorSet>(&descriptorSet)->getDescriptorSet() };
 
-        vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, currentLayout, setNum, 1, sets, 0, nullptr);
+        vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_COMPUTE, currentLayout, setNum, 1, &vkSet, 0, nullptr);
     }
 
     void VulkanComputeCommandBuffer::pushConstant(size_t const offset, size_t const size, void const *data) {

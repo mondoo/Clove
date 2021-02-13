@@ -14,7 +14,7 @@ namespace garlic::clove {
         : device{ std::move(device) }
         , queue{ queue }
         , commandPool{ commandPool }
-        , queueFamilyIndices{ std::move(queueFamilyIndices) } {
+        , queueFamilyIndices{ queueFamilyIndices } {
     }
 
     VulkanComputeQueue::VulkanComputeQueue(VulkanComputeQueue &&other) noexcept = default;
@@ -26,7 +26,7 @@ namespace garlic::clove {
     }
 
     std::unique_ptr<GhaComputeCommandBuffer> VulkanComputeQueue::allocateCommandBuffer() {
-        VkCommandBuffer commandBuffer;
+        VkCommandBuffer commandBuffer{ nullptr };
 
         VkCommandBufferAllocateInfo allocInfo{
             .sType              = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
@@ -44,8 +44,8 @@ namespace garlic::clove {
     }
 
     void VulkanComputeQueue::freeCommandBuffer(GhaComputeCommandBuffer &buffer) {
-        VkCommandBuffer buffers[] = { polyCast<VulkanComputeCommandBuffer>(&buffer)->getCommandBuffer() };
-        vkFreeCommandBuffers(device.get(), commandPool, 1, buffers);
+        VkCommandBuffer const commandBuffer{ polyCast<VulkanComputeCommandBuffer>(&buffer)->getCommandBuffer() };
+        vkFreeCommandBuffers(device.get(), commandPool, 1, &commandBuffer);
     }
 
     void VulkanComputeQueue::submit(std::vector<ComputeSubmitInfo> const &submissions, GhaFence const *signalFence) {
@@ -95,7 +95,7 @@ namespace garlic::clove {
             });
         }
 
-        VkFence const vkFence{ signalFence ? polyCast<VulkanFence const>(signalFence)->getFence() : VK_NULL_HANDLE };
+        VkFence const vkFence{ signalFence != nullptr ? polyCast<VulkanFence const>(signalFence)->getFence() : VK_NULL_HANDLE };
 
         if(vkQueueSubmit(queue, vkSubmissions.size(), vkSubmissions.data(), vkFence) != VK_SUCCESS) {
             CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to submit compute command buffer(s)");

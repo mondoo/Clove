@@ -310,7 +310,7 @@ namespace garlic::clove {
             .queueFamilyIndex = familyIndex,
         };
 
-        VkCommandPool commandPool;
+        VkCommandPool commandPool{ nullptr };
         if(VkResult const result{ vkCreateCommandPool(devicePtr.get(), &poolInfo, nullptr, &commandPool) }; result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:
@@ -322,7 +322,7 @@ namespace garlic::clove {
             }
         }
 
-        VkQueue queue;
+        VkQueue queue{ nullptr };
         vkGetDeviceQueue(devicePtr.get(), familyIndex, 0, &queue);
 
         return std::unique_ptr<GhaComputeQueue>{ std::make_unique<VulkanComputeQueue>(devicePtr, queue, commandPool, queueFamilyIndices) };
@@ -798,7 +798,7 @@ namespace garlic::clove {
             .pPushConstantRanges    = vkPushConstantRanges.data(),
         };
 
-        VkPipelineLayout pipelineLayout;
+        VkPipelineLayout pipelineLayout{ nullptr };
         if(VkResult const result{ vkCreatePipelineLayout(devicePtr.get(), &pipelineLayoutInfo, nullptr, &pipelineLayout) }; result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:
@@ -827,7 +827,7 @@ namespace garlic::clove {
             .layout = pipelineLayout,
         };
 
-        VkPipeline pipeline;
+        VkPipeline pipeline{ nullptr };
         if(VkResult const result{ vkCreateComputePipelines(devicePtr.get(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &pipeline) }; result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:
