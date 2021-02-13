@@ -144,6 +144,37 @@ namespace garlic::clove {
         });
     }
 
+    std::unique_ptr<GhaDescriptorSetLayout> createSkinningDescriptorSetLayout(GhaFactory &factory){
+        DescriptorSetBindingInfo const skeletonBinding{
+            .binding   = 0,
+            .type      = DescriptorType::UniformBuffer,
+            .arraySize = 1,
+            .stage     = GhaShader::Stage::Compute,
+        };
+
+        DescriptorSetBindingInfo const bindPoseBinding{
+            .binding   = 1,
+            .type      = DescriptorType::StorageBuffer,
+            .arraySize = 1,
+            .stage     = GhaShader::Stage::Compute,
+        };
+
+        DescriptorSetBindingInfo const skinedPoseBinding{
+            .binding   = 2,
+            .type      = DescriptorType::StorageBuffer,
+            .arraySize = 1,
+            .stage     = GhaShader::Stage::Compute,
+        };
+
+        return *factory.createDescriptorSetLayout(GhaDescriptorSetLayout::Descriptor{
+            .bindings = {
+                skeletonBinding,
+                bindPoseBinding,
+                skinedPoseBinding,
+            },
+        });
+    }
+
     std::unordered_map<DescriptorType, uint32_t> countDescriptorBindingTypes(GhaDescriptorSetLayout const &descriptorSetLayout) {
         std::unordered_map<DescriptorType, uint32_t> counts;
         auto const &descriptor{ descriptorSetLayout.getDescriptor() };

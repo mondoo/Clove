@@ -13,8 +13,8 @@ namespace garlic::clove {
 
         GhaFactory &factory{ *Application::get().getGraphicsDevice()->getGraphicsFactory() };
 
-        vertexBufferSize = sizeof(Vertex) * std::size(this->vertices);
-        size_t const indexBufferSize{ sizeof(uint16_t) * std::size(this->indices) };
+        vertexBufferSize = sizeof(Vertex) * this->vertices.size();
+        size_t const indexBufferSize{ sizeof(uint16_t) * this->indices.size() };
         size_t const totalSize{ vertexBufferSize + indexBufferSize };
 
         vertexOffset = 0;
@@ -49,8 +49,8 @@ namespace garlic::clove {
         });
 
         //Map the data into system memory
-        stagingBuffer->write(std::data(this->vertices), vertexOffset, vertexBufferSize);
-        stagingBuffer->write(std::data(this->indices), indexOffset, indexBufferSize);
+        stagingBuffer->write(this->vertices.data(), vertexOffset, vertexBufferSize);
+        stagingBuffer->write(this->indices.data(), indexOffset, indexBufferSize);
 
         //Transfer the data to video memory
         transferCommandBuffer->beginRecording(CommandBufferUsage::OneTimeSubmit);

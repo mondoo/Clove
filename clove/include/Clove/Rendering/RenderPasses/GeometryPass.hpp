@@ -11,6 +11,7 @@
 namespace garlic::clove {
     class GhaDescriptorSet;
     class GhaGraphicsCommandBuffer;
+    class GhaComputeCommandBuffer;
     class Mesh;
 }
 
@@ -28,6 +29,7 @@ namespace garlic::clove {
          */
         struct FrameData {
             std::vector<std::shared_ptr<GhaDescriptorSet>> meshDescriptorSets{}; /**< Descriptor set for each mesh submitted for the frame. */
+            std::vector<std::shared_ptr<GhaDescriptorSet>> skinningMeshSets{};
 
             std::shared_ptr<GhaDescriptorSet> viewDescriptorSet{ nullptr };     /**< Descriptor set for view specific data. */
             std::shared_ptr<GhaDescriptorSet> lightingDescriptorSet{ nullptr }; /**< Descriptor set for lighting specific data. */
@@ -82,7 +84,10 @@ namespace garlic::clove {
          * @param commandBuffer GhaGraphicsCommandBuffer to record commands into.
          * @param frameData Data that describes the current frame.
          */
-        virtual void execute(GhaGraphicsCommandBuffer &commandBuffer, FrameData const &frameData) = 0;
+        virtual void execute(GhaGraphicsCommandBuffer &commandBuffer, FrameData const &frameData) {}/* = 0; */
+
+        //TEMP: GeometryPass should really allocate it's own command buffer
+        virtual void execute(GhaComputeCommandBuffer &commandBuffer, FrameData const &frameData) {}/* = 0; */
 
     protected:
         inline std::vector<Job> const &getJobs() const;

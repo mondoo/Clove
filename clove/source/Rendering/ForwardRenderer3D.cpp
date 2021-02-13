@@ -6,6 +6,7 @@
 #include "Clove/Rendering/RenderPasses/DirectionalLightPass.hpp"
 #include "Clove/Rendering/RenderPasses/ForwardColourPass.hpp"
 #include "Clove/Rendering/RenderPasses/PointLightPass.hpp"
+#include "Clove/Rendering/RenderPasses/SkinningPass.hpp"
 #include "Clove/Rendering/RenderTarget.hpp"
 #include "Clove/Rendering/Renderables/Mesh.hpp"
 #include "Clove/Rendering/RenderingHelpers.hpp"
@@ -27,9 +28,6 @@ extern "C" const size_t widget_pLength;
 extern "C" const char font_p[];
 extern "C" const size_t font_pLength;
 
-extern "C" const char skinning_c[];
-extern "C" const size_t skinning_cLength;
-
 namespace garlic::clove {
     ForwardRenderer3D::ForwardRenderer3D(GhaDevice *graphicsDevice, std::unique_ptr<RenderTarget> renderTarget)
         : ghaDevice{ graphicsDevice }
@@ -50,6 +48,8 @@ namespace garlic::clove {
         descriptorSetLayouts[DescriptorSetSlots::Lighting] = createLightingDescriptorSetLayout(*ghaFactory);
         descriptorSetLayouts[DescriptorSetSlots::UI]       = createUiDescriptorSetLayout(*ghaFactory);
 
+        skinningSetLayout = createSkinningDescriptorSetLayout(*ghaFactory);
+
         createRenderpass();
         createShadowMapRenderpass();
 
@@ -57,6 +57,7 @@ namespace garlic::clove {
         geometryPasses[GeometryPass::getId<ForwardColourPass>()]    = std::make_unique<ForwardColourPass>(*ghaFactory, renderPass);
         geometryPasses[GeometryPass::getId<DirectionalLightPass>()] = std::make_unique<DirectionalLightPass>(*ghaFactory, shadowMapRenderPass);
         geometryPasses[GeometryPass::getId<PointLightPass>()]       = std::make_unique<PointLightPass>(*ghaFactory, shadowMapRenderPass);
+        geometryPasses[GeometryPass::getId<SkinningPass>()]         = std::make_unique<SkinningPass>(*ghaFactory);
 
         createUiPipeline();
 
@@ -131,45 +132,6 @@ namespace garlic::clove {
         };
 
         uiMesh = std::make_unique<Mesh>(uiVertices, uiIndices);
-
-        //TEMP: Compute skinning objects -- Put inside a GeometryPass
-        DescriptorSetBindingInfo const skeletonBinding{
-            .binding   = 0,
-            .type      = DescriptorType::UniformBuffer,
-            .arraySize = 1,
-            .stage     = GhaShader::Stage::Compute,
-        };
-
-        DescriptorSetBindingInfo const bindPoseBinding{
-            .binding   = 1,
-            .type      = DescriptorType::StorageBuffer,
-            .arraySize = 1,
-            .stage     = GhaShader::Stage::Compute,
-        };
-
-        DescriptorSetBindingInfo const skinedPoseBinding{
-            .binding   = 2,
-            .type      = DescriptorType::StorageBuffer,
-            .arraySize = 1,
-            .stage     = GhaShader::Stage::Compute,
-        };
-
-        skinningSetLayout = *ghaFactory->createDescriptorSetLayout(GhaDescriptorSetLayout::Descriptor{
-            .bindings = {
-                skeletonBinding,
-                bindPoseBinding,
-                skinedPoseBinding,
-            },
-        });
-
-        GhaComputePipelineObject::Descriptor const skinningPipelineDescriptor{
-            .shader               = *ghaFactory->createShaderFromSource({ skinning_c, skinning_cLength }, shaderIncludes, "Skinning (compute)", GhaShader::Stage::Compute),
-            .descriptorSetLayouts = {
-                skinningSetLayout,
-            }
-        };
-
-        skinningPipeline = *ghaFactory->createComputePipelineObject(skinningPipelineDescriptor);
     }
 
     //ForwardRenderer3D::ForwardRenderer3D(ForwardRenderer3D&& other) noexcept = default;
@@ -329,7 +291,7 @@ namespace garlic::clove {
             meshDescriptorSet->map(*meshInfo.material->diffuseView, *textureSampler, GhaImage::Layout::ShaderReadOnlyOptimal, 0);
             meshDescriptorSet->map(*meshInfo.material->specularView, *textureSampler, GhaImage::Layout::ShaderReadOnlyOptimal, 1);
             meshDescriptorSet->map(*currentImageData.objectBuffers[index], offsetof(MeshUBOLayout, model), sizeof(ModelData), DescriptorType::UniformBuffer, 2);
-            meshDescriptorSet->map(*currentImageData.objectBuffers[index], offsetof(MeshUBOLayout, matrixPallet), sizeof(mat4f) * MAX_JOINTS, DescriptorType::UniformBuffer, 3);
+            //meshDescriptorSet->map(*currentImageData.objectBuffers[index], offsetof(MeshUBOLayout, matrixPallet), sizeof(mat4f) * MAX_JOINTS, DescriptorType::UniformBuffer, 3);
             meshDescriptorSet->map(*currentImageData.objectBuffers[index], offsetof(MeshUBOLayout, colour), sizeof(vec4f), DescriptorType::UniformBuffer, 4);
 
             ++index;
@@ -343,7 +305,7 @@ namespace garlic::clove {
         };
 
         //SKINNING
-        //Create the desciptor sets
+        //TEMP: Create the desciptor sets for the skinning pass
         std::vector<std::shared_ptr<GhaDescriptorSet>> skinningSets;
         if(meshCount > 0) {
             if(currentImageData.skinningDescriptorPool == nullptr || currentImageData.skinningDescriptorPool->getDescriptor().maxSets < meshCount) {
@@ -370,14 +332,9 @@ namespace garlic::clove {
         }
 
         //Dispatch all the commands
+        geometryPassData.skinningMeshSets = skinningSets;
         currentImageData.skinningCommandBuffer->beginRecording(CommandBufferUsage::OneTimeSubmit);
-        currentImageData.skinningCommandBuffer->bindPipelineObject(*skinningPipeline);
-        for(size_t index = 0; auto &meshInfo : currentFrameData.meshes) {
-            currentImageData.skinningCommandBuffer->bindDescriptorSet(*skinningSets[index], 0);
-            currentImageData.skinningCommandBuffer->disptach({ (meshInfo.mesh->getVertexCount() / AVERAGE_WORK_GROUP_SIZE) +1, 1, 1 });//Doing a vertex per thread
-
-            ++index;
-        }
+        geometryPasses[GeometryPass::getId<SkinningPass>()]->execute(*currentImageData.skinningCommandBuffer, geometryPassData);
         currentImageData.skinningCommandBuffer->endRecording();
 
         //Submit the command buffer for the skinning
