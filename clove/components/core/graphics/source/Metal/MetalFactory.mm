@@ -36,11 +36,31 @@ namespace garlic::clove {
 	}
 
 	Expected<std::unique_ptr<GhaShader>, std::runtime_error> MetalFactory::createShaderFromFile(std::filesystem::path const &file, GhaShader::Stage shaderStage) {
-		return Unexpected{ std::runtime_error{ "Not implemented" } };
+		Expected<std::vector<uint32_t>, std::runtime_error> compilationResult{ ShaderCompiler::compileFromFile(file, shaderStage) };
+		if(compilationResult.hasValue()) {
+			Expected<std::string, std::runtime_error> msl{ ShaderCompiler::spirvToMSL(compilationResult.getValue()) };
+			if(msl.hasValue()) {
+				return createShaderObject(std::move(msl.getValue()));
+			} else {
+				return Unexpected{ std::move(msl.getError()) };
+			}
+		} else {
+			return Unexpected{ std::move(compilationResult.getError()) };
+		}
 	}
 	
 	Expected<std::unique_ptr<GhaShader>, std::runtime_error> MetalFactory::createShaderFromSource(std::string_view source, std::unordered_map<std::string, std::string> includeSources, std::string_view shaderName, GhaShader::Stage shaderStage) {
-		return Unexpected{ std::runtime_error{ "Not implemented" } };
+		Expected<std::vector<uint32_t>, std::runtime_error> compilationResult{ ShaderCompiler::compileFromSource(source, std::move(includeSources), shaderName, shaderStage) };
+		if(compilationResult.hasValue()) {
+			Expected<std::string, std::runtime_error> msl{ ShaderCompiler::spirvToMSL(compilationResult.getValue()) };
+			if(msl.hasValue()) {
+				return createShaderObject(std::move(msl.getValue()));
+			} else {
+				return Unexpected{ std::move(msl.getError()) };
+			}
+		} else {
+			return Unexpected{ std::move(compilationResult.getError()) };
+		}
 	}
 
 	Expected<std::unique_ptr<GhaRenderPass>, std::runtime_error> MetalFactory::createRenderPass(GhaRenderPass::Descriptor descriptor) {
