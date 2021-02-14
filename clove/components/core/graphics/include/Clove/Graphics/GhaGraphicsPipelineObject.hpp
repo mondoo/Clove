@@ -60,7 +60,7 @@ namespace garlic::clove {
     public:
         struct Descriptor {
             std::shared_ptr<GhaShader> vertexShader;
-            std::shared_ptr<GhaShader> fragmentShader;
+            std::shared_ptr<GhaShader> pixelShader;
 
             VertexInputBindingDescriptor vertexInput;
             std::vector<VertexAttributeDescriptor> vertexAttributes;

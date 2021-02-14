@@ -598,7 +598,7 @@ namespace garlic::clove {
         shaderStages[1] = VkPipelineShaderStageCreateInfo{
             .sType  = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
             .stage  = VK_SHADER_STAGE_FRAGMENT_BIT,
-            .module = polyCast<VulkanShader>(descriptor.fragmentShader.get())->getModule(),
+            .module = polyCast<VulkanShader>(descriptor.pixelShader.get())->getModule(),
             .pName  = "main",
         };
 
