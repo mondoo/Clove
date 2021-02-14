@@ -25,6 +25,10 @@ namespace garlic::clove {
 	Expected<std::unique_ptr<GhaTransferQueue>, std::runtime_error> MetalFactory::createTransferQueue(CommandQueueDescriptor descriptor) {
 		return Unexpected{ std::runtime_error{ "Not implemented" } };
 	}
+	
+	Expected<std::unique_ptr<GhaComputeQueue>, std::runtime_error> MetalFactory::createComputeQueue(CommandQueueDescriptor descriptor) {
+		return Unexpected{ std::runtime_error{ "Not implemented" } };
+	}
 
 	Expected<std::unique_ptr<GhaSwapchain>, std::runtime_error> MetalFactory::createSwapChain(GhaSwapchain::Descriptor descriptor) {
 		return Unexpected{ std::runtime_error{ "Not implemented" } };
@@ -46,7 +50,11 @@ namespace garlic::clove {
 		return Unexpected{ std::runtime_error{ "Not implemented" } };
 	}
 
-	Expected<std::unique_ptr<GhaPipelineObject>, std::runtime_error> MetalFactory::createPipelineObject(GhaPipelineObject::Descriptor descriptor) {
+	Expected<std::unique_ptr<GhaGraphicsPipelineObject>, std::runtime_error> MetalFactory::createGraphicsPipelineObject(GhaGraphicsPipelineObject::Descriptor descriptor) {
+		return Unexpected{ std::runtime_error{ "Not implemented" } };
+	}
+	
+	Expected<std::unique_ptr<GhaComputePipelineObject>, std::runtime_error> MetalFactory::createComputePipelineObject(GhaComputePipelineObject::Descriptor descriptor) {
 		return Unexpected{ std::runtime_error{ "Not implemented" } };
 	}
 
