@@ -392,7 +392,7 @@ namespace garlic::clove {
     }
 
     Expected<std::unique_ptr<GhaShader>, std::runtime_error> VulkanFactory::createShaderFromFile(std::filesystem::path const &file, GhaShader::Stage shaderStage) {
-        Expected<std::vector<uint32_t>, std::runtime_error> compilationResult{ ShaderCompiler::compileFromFile(file, shaderStage, ShaderType::SPIRV) };
+        Expected<std::vector<uint32_t>, std::runtime_error> compilationResult{ ShaderCompiler::compileFromFile(file, shaderStage) };
         if(compilationResult.hasValue()) {
             std::vector<uint32_t> spirvSource{ std::move(compilationResult.getValue()) };
             return createShaderObject({ spirvSource.begin(), spirvSource.end() });
@@ -402,7 +402,7 @@ namespace garlic::clove {
     }
 
     Expected<std::unique_ptr<GhaShader>, std::runtime_error> VulkanFactory::createShaderFromSource(std::string_view source, std::unordered_map<std::string, std::string> includeSources, std::string_view shaderName, GhaShader::Stage shaderStage) {
-        Expected<std::vector<uint32_t>, std::runtime_error> compilationResult{ ShaderCompiler::compileFromSource(source, std::move(includeSources), shaderName, shaderStage, ShaderType::SPIRV) };
+        Expected<std::vector<uint32_t>, std::runtime_error> compilationResult{ ShaderCompiler::compileFromSource(source, std::move(includeSources), shaderName, shaderStage) };
         if(compilationResult.hasValue()) {
             std::vector<uint32_t> spirvSource{ std::move(compilationResult.getValue()) };
             return createShaderObject({ spirvSource.begin(), spirvSource.end() });
