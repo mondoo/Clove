@@ -1,5 +1,6 @@
 #include "Clove/Graphics/Metal/MetalFactory.hpp"
 
+#include "Clove/Graphics/ShaderCompiler.hpp"
 #include "Clove/Graphics/Metal/MetalBuffer.hpp"
 #include "Clove/Graphics/Metal/MetalShader.hpp"
 
