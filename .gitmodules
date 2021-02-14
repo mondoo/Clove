@@ -1,3 +1,3 @@
 [submodule "reb"]
 	path = clove/external/reb
-	url = https://gitlab.com/digital-vessel/reb.git
+	url = https://github.com/AGarlicMonkey/reb.git

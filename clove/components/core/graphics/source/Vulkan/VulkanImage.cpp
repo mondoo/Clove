@@ -1,7 +1,7 @@
 #include "Clove/Graphics/Vulkan/VulkanImage.hpp"
 
-#include "Clove/Graphics/Vulkan/VulkanResource.hpp"
 #include "Clove/Graphics/Vulkan/VulkanImageView.hpp"
+#include "Clove/Graphics/Vulkan/VulkanResource.hpp"
 
 #include <Clove/Definitions.hpp>
 #include <Clove/Log/Log.hpp>
@@ -27,7 +27,7 @@ namespace garlic::clove {
     VulkanImage::VulkanImage(DevicePointer device, VkImage image, Descriptor descriptor, std::shared_ptr<MemoryAllocator> memoryAllocator)
         : device{ std::move(device) }
         , image{ image }
-        , descriptor{ std::move(descriptor) }
+        , descriptor{ descriptor }
         , memoryAllocator{ std::move(memoryAllocator) } {
         VkMemoryRequirements memoryRequirements{};
         vkGetImageMemoryRequirements(this->device.get(), image, &memoryRequirements);
@@ -46,13 +46,17 @@ namespace garlic::clove {
         memoryAllocator->free(allocatedBlock);
     }
 
+    VulkanImage::Descriptor const &VulkanImage::getDescriptor() const {
+        return descriptor;
+    }
+
     std::unique_ptr<GhaImageView> VulkanImage::createView(GhaImageView::Descriptor viewDescriptor) const {
         {
-            uint32_t const maxLayers = descriptor.type == Type::Cube ? 6 : 1;
+            uint32_t const maxLayers{ descriptor.type == Type::Cube ? 6u : 1u };
             CLOVE_ASSERT(viewDescriptor.layer + viewDescriptor.layerCount <= maxLayers, "{0}: GhaImageView is not compatible!", CLOVE_FUNCTION_NAME_PRETTY);
         }
 
-        VkImageAspectFlags const aspectFlags = descriptor.format == Format::D32_SFLOAT ? VK_IMAGE_ASPECT_DEPTH_BIT : VK_IMAGE_ASPECT_COLOR_BIT;
+        VkImageAspectFlags const aspectFlags{ static_cast<VkImageAspectFlags>(descriptor.format == GhaImage::Format::D32_SFLOAT ? VK_IMAGE_ASPECT_DEPTH_BIT : VK_IMAGE_ASPECT_COLOR_BIT) };
         return std::make_unique<VulkanImageView>(device.get(), VulkanImageView::create(device.get(), image, getImageViewType(viewDescriptor.type), convertFormat(descriptor.format), aspectFlags, viewDescriptor.layer, viewDescriptor.layerCount));
     }
 

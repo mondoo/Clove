@@ -1,12 +1,14 @@
 #include "Clove/Rendering/Renderables/AnimatedModel.hpp"
 
+#include "Clove/Rendering/Techniques/ForwardLightingTechnique.hpp"
+
 #include <Clove/Log/Log.hpp>
 
 namespace garlic::clove {
     AnimatedModel::AnimatedModel(std::vector<std::shared_ptr<Mesh>> meshes, std::shared_ptr<Material> material, std::unique_ptr<Skeleton> skeleton, std::vector<AnimationClip> animClips)
-        : StaticModel(std::move(meshes), std::move(material))
-        , skeleton(std::move(skeleton))
-        , animClips(std::move(animClips)) {
+        : StaticModel{ std::move(meshes), std::move(material), { createSkinnedForwardLightingTechnique() } }
+        , skeleton{ std::move(skeleton) }
+        , animClips{ std::move(animClips) } {
         if(std::size(this->animClips) == 0) {
             CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Warning, "AnimatedModel initialised without any animation clips. Won't be able to play animations");
         } else {
@@ -30,7 +32,7 @@ namespace garlic::clove {
     }
 
     AnimatedModel::AnimatedModel(AnimatedModel &&other) noexcept
-        : StaticModel(other)
+        : StaticModel(std::move(other))
         , animator(std::move(other.animator))
         , skeleton(std::move(other.skeleton))
         , animClips(std::move(other.animClips)) {

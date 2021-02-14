@@ -34,7 +34,7 @@ namespace garlic::clove {
             Type type{ Type::Invalid };
             MouseButton button{ MouseButton::None };
 
-            vec2i pos;
+            vec2i pos{};
 
             //FUNCTIONS
         public:
@@ -59,7 +59,7 @@ namespace garlic::clove {
         private:
             static constexpr uint32_t bufferSize{ 16u };
 
-            vec2i pos;
+            vec2i pos{};
 
             int32_t wheelDelta{ 0 };
 
@@ -112,7 +112,7 @@ namespace garlic::clove {
         Mouse &operator=(Mouse const &other) = delete;
         Mouse &operator=(Mouse &&other) noexcept = delete;
 
-        ~Mouse();
+        ~Mouse() = default;
 
         bool isButtonPressed(MouseButton button) const;
         std::optional<Event> getEvent();

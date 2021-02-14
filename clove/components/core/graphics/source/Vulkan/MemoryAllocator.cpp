@@ -138,7 +138,7 @@ namespace garlic::clove {
 
     MemoryAllocator::MemoryAllocator(MemoryAllocator &&other) noexcept = default;
 
-    MemoryAllocator &MemoryAllocator::operator=(MemoryAllocator &&other) = default;
+    MemoryAllocator &MemoryAllocator::operator=(MemoryAllocator &&other)  noexcept = default;
 
     MemoryAllocator::~MemoryAllocator() = default;
 

@@ -1,25 +1,33 @@
 #include "Clove/Rendering/Renderables/StaticModel.hpp"
 
 #include "Clove/Rendering/Renderables/Mesh.hpp"
+#include "Clove/Rendering/Techniques/ForwardLightingTechnique.hpp"
 
 namespace garlic::clove {
     StaticModel::StaticModel(std::vector<std::shared_ptr<Mesh>> meshes, std::shared_ptr<Material> material)
-        : meshes(std::move(meshes))
-        , material(std::move(material)) {
+        : StaticModel{ std::move(meshes), std::move(material), { createForwardLightingTechnique() } } {
+    }
+
+    StaticModel::StaticModel(std::vector<std::shared_ptr<Mesh>> meshes, std::shared_ptr<Material> material, std::vector<Technique> renderingTechniques)
+        : meshes{ std::move(meshes) }
+        , material{ std::move(material) }
+        , techniques{ std::move(renderingTechniques) } {
     }
 
     StaticModel::StaticModel(StaticModel const &other)
-        : material(std::make_shared<Material>(*other.material)) {
+        : material{ std::make_shared<Material>(*other.material) }
+        , techniques{ other.techniques } {
         meshes.clear();
         for(auto const &mesh : other.meshes) {
             meshes.emplace_back(std::make_shared<Mesh>(*mesh));
         }
     }
 
-    StaticModel::StaticModel(StaticModel &&other) = default;
+    StaticModel::StaticModel(StaticModel &&other) noexcept = default;
 
     StaticModel &StaticModel::operator=(StaticModel const &other) {
         material = std::make_shared<Material>(*other.material);
+        techniques = other.techniques;
         meshes.clear();
         for(auto const &mesh : other.meshes) {
             meshes.emplace_back(std::make_shared<Mesh>(*mesh));
@@ -28,7 +36,7 @@ namespace garlic::clove {
         return *this;
     }
 
-    StaticModel &StaticModel::operator=(StaticModel &&other) = default;
+    StaticModel &StaticModel::operator=(StaticModel &&other) noexcept = default;
 
     StaticModel::~StaticModel() = default;
 }

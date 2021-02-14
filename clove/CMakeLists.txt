@@ -13,13 +13,9 @@ set(
 
 set(
 	ShaderFiles
-		${SOURCE}/Shaders/StaticMesh-v.glsl
-		${SOURCE}/Shaders/StaticMeshShadowMap-v.glsl
-		${SOURCE}/Shaders/StaticMeshCubeShadowMap-v.glsl
-
-		${SOURCE}/Shaders/AnimatedMesh-v.glsl
-		${SOURCE}/Shaders/AnimatedMeshShadowMap-v.glsl
-		${SOURCE}/Shaders/AnimatedMeshCubeShadowMap-v.glsl
+		${SOURCE}/Shaders/Mesh-v.glsl
+		${SOURCE}/Shaders/MeshShadowMap-v.glsl
+		${SOURCE}/Shaders/MeshCubeShadowMap-v.glsl
 
 		${SOURCE}/Shaders/Mesh-p.glsl
 		${SOURCE}/Shaders/MeshShadowMap-p.glsl
@@ -28,6 +24,8 @@ set(
 		${SOURCE}/Shaders/UI-v.glsl
 		${SOURCE}/Shaders/Widget-p.glsl
 		${SOURCE}/Shaders/Font-p.glsl
+
+		${SOURCE}/Shaders/Skinning-c.glsl
 
 		${ShaderIncludes}
 )
@@ -63,13 +61,9 @@ embeddSOURCE("${ASSETS}/fonts/Roboto/Roboto-Black.ttf" "rb")
 embeddSOURCE("${SOURCE}/Shaders/Constants.glsl" "r")
 
 #Shader source
-embeddSOURCE("${SOURCE}/Shaders/StaticMesh-v.glsl" "r")
-embeddSOURCE("${SOURCE}/Shaders/StaticMeshShadowMap-v.glsl" "r")
-embeddSOURCE("${SOURCE}/Shaders/StaticMeshCubeShadowMap-v.glsl" "r")
-
-embeddSOURCE("${SOURCE}/Shaders/AnimatedMesh-v.glsl" "r")
-embeddSOURCE("${SOURCE}/Shaders/AnimatedMeshShadowMap-v.glsl" "r")
-embeddSOURCE("${SOURCE}/Shaders/AnimatedMeshCubeShadowMap-v.glsl" "r")
+embeddSOURCE("${SOURCE}/Shaders/Mesh-v.glsl" "r")
+embeddSOURCE("${SOURCE}/Shaders/MeshShadowMap-v.glsl" "r")
+embeddSOURCE("${SOURCE}/Shaders/MeshCubeShadowMap-v.glsl" "r")
 
 embeddSOURCE("${SOURCE}/Shaders/Mesh-p.glsl" "r")
 embeddSOURCE("${SOURCE}/Shaders/MeshShadowMap-p.glsl" "r")
@@ -78,6 +72,8 @@ embeddSOURCE("${SOURCE}/Shaders/MeshCubeShadowMap-p.glsl" "r")
 embeddSOURCE("${SOURCE}/Shaders/UI-v.glsl" "r")
 embeddSOURCE("${SOURCE}/Shaders/Widget-p.glsl" "r")
 embeddSOURCE("${SOURCE}/Shaders/Font-p.glsl" "r")
+
+embeddSOURCE("${SOURCE}/Shaders/Skinning-c.glsl" "r")
 
 #Library
 add_library(
@@ -129,6 +125,20 @@ add_library(
 		${INCLUDE}/Rendering/Renderables/StaticModel.hpp
 		${INCLUDE}/Rendering/Renderables/StaticModel.inl
 		${SOURCE}/Rendering/Renderables/StaticModel.cpp
+		${INCLUDE}/Rendering/RenderPasses/ForwardColourPass.hpp
+		${SOURCE}/Rendering/RenderPasses/ForwardColourPass.cpp
+		${INCLUDE}/Rendering/RenderPasses/DirectionalLightPass.hpp
+		${SOURCE}/Rendering/RenderPasses/DirectionalLightPass.cpp
+		${INCLUDE}/Rendering/RenderPasses/GeometryPass.hpp
+		${INCLUDE}/Rendering/RenderPasses/GeometryPass.inl
+		${SOURCE}/Rendering/RenderPasses/GeometryPass.cpp
+		${INCLUDE}/Rendering/RenderPasses/PointLightPass.hpp
+		${SOURCE}/Rendering/RenderPasses/PointLightPass.cpp
+		${INCLUDE}/Rendering/RenderPasses/SkinningPass.hpp
+		${SOURCE}/Rendering/RenderPasses/SkinningPass.cpp
+		${INCLUDE}/Rendering/Techniques/ForwardLightingTechnique.hpp
+		${SOURCE}/Rendering/Techniques/ForwardLightingTechnique.cpp
+		${INCLUDE}/Rendering/Techniques/Technique.hpp
 
 		${INCLUDE}/Layers/AudioLayer.hpp
 		${SOURCE}/Layers/AudioLayer.cpp
@@ -203,7 +213,8 @@ target_link_libraries(
  
 		#Systems
 		CloveAI
-		CloveECS 
+		CloveECS
+		CloveSerialisation
 		CloveStateMachine
 		 
 		#Utilities

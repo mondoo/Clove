@@ -19,7 +19,7 @@ namespace garlic::clove {
 
         VkImage image{ VK_NULL_HANDLE };
 
-        Descriptor descriptor;
+        Descriptor descriptor{};
 
         std::shared_ptr<MemoryAllocator> memoryAllocator;
         const MemoryAllocator::Chunk* allocatedBlock{ nullptr };
@@ -36,6 +36,8 @@ namespace garlic::clove {
         VulkanImage& operator=(VulkanImage&& other) noexcept;
 
         ~VulkanImage();
+
+        Descriptor const &getDescriptor() const override;
 
         std::unique_ptr<GhaImageView> createView(GhaImageView::Descriptor viewDescriptor) const override;
 

@@ -6,21 +6,12 @@
 #include <limits>
 
 namespace garlic::clove {
-    /**
-	 * Variables present in Constants.glsl
-	 */
-    inline constexpr uint8_t MAX_LIGHTS{ 10u };
-    inline constexpr uint8_t MAX_JOINTS{ std::numeric_limits<JointIndexType>::max() };
+	//Variables present in Constants.glsl
+    inline uint8_t constexpr MAX_LIGHTS{ 10u };
+    inline uint8_t constexpr MAX_JOINTS{ std::numeric_limits<JointIndexType>::max() };
+    inline uint16_t constexpr AVERAGE_WORK_GROUP_SIZE{ 256u };
 
-    inline constexpr uint32_t shadowMapSize{ 1024u };
-
-    /**
-	 * @brief Defines a mapping between set slots
-	 */
-    enum class DescriptorSetSlots {
-        Mesh     = 0,
-        View     = 1,
-        Lighting = 2,
-        UI       = 3,
-    };
+    //General constants
+    inline uint32_t constexpr shadowMapSize{ 1024u };
+    inline size_t constexpr cubeMapLayerCount{ 6 };
 }

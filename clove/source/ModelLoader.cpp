@@ -99,7 +99,7 @@ namespace garlic::clove::ModelLoader {
 
             aiMatrix4x4 const parentTransformation{ getJointPoseTransform(node->mParent, parentToStopAt, frame, animation, jointNameIdMap) };
 
-            if(!channel) {
+            if(channel == nullptr) {
                 return parentTransformation * node->mTransformation;
             }
 
@@ -330,7 +330,7 @@ namespace garlic::clove::ModelLoader {
             return std::make_shared<Mesh>(std::move(vertices), std::move(indices));
         }
 
-        aiScene const *openFile(std::string_view modelFilePath, Assimp::Importer &importer) {
+        aiScene const *openFile(std::filesystem::path const &modelFilePath, Assimp::Importer &importer) {
             importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_READ_CAMERAS, false);
             importer.SetPropertyBool(AI_CONFIG_IMPORT_FBX_READ_LIGHTS, false);
 
@@ -340,20 +340,20 @@ namespace garlic::clove::ModelLoader {
                 aiProcess_OptimizeGraph
             };
 
-            return importer.ReadFile(modelFilePath.data(), postProcessFlags);
+            return importer.ReadFile(modelFilePath.string(), postProcessFlags);
         }
     }
 
-    StaticModel loadStaticModel(std::string_view modelFilePath) {
+    StaticModel loadStaticModel(std::filesystem::path const &modelFilePath) {
         CLOVE_PROFILE_FUNCTION();
 
-        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Debug, "Loading static model: {0}", modelFilePath);
+        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Debug, "Loading static model: {0}", modelFilePath.string());
 
         std::vector<std::shared_ptr<Mesh>> meshes;
 
         Assimp::Importer importer;
-        const aiScene *scene{ openFile(modelFilePath.data(), importer) };
-        if(scene == nullptr || (scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE) || scene->mRootNode == nullptr) {
+        const aiScene *scene{ openFile(modelFilePath, importer) };
+        if(scene == nullptr || ((scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE) != 0u) || scene->mRootNode == nullptr) {
             CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Assimp Error: {0}", importer.GetErrorString());
             return { meshes, std::make_shared<Material>() };
         }
@@ -363,21 +363,21 @@ namespace garlic::clove::ModelLoader {
             meshes.emplace_back(processMesh(mesh, scene, MeshType::Default));
         }
 
-        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Info, "Finished loading static model: {0}", modelFilePath);
+        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Info, "Finished loading static model: {0}", modelFilePath.string());
         return { meshes, std::make_shared<Material>() };
     }
 
-    AnimatedModel loadAnimatedModel(std::string_view modelFilePath) {
+    AnimatedModel loadAnimatedModel(std::filesystem::path const &modelFilePath) {
         CLOVE_PROFILE_FUNCTION();
 
-        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Debug, "Loading animated model: {0}", modelFilePath);
+        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Debug, "Loading animated model: {0}", modelFilePath.string());
 
         std::vector<std::shared_ptr<Mesh>> meshes;
         std::unique_ptr<Skeleton> skeleton{ std::make_unique<Skeleton>() };//TODO: Support multiple skeletons?
 
         Assimp::Importer importer;
-        const aiScene *scene{ openFile(modelFilePath.data(), importer) };
-        if(scene == nullptr || (scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE) || scene->mRootNode == nullptr) {
+        const aiScene *scene{ openFile(modelFilePath, importer) };
+        if(scene == nullptr || ((scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE) != 0u) || scene->mRootNode == nullptr) {
             CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Assimp Error: {0}", importer.GetErrorString());
             return { meshes, std::make_shared<Material>(), nullptr, {} };
         }
@@ -395,7 +395,7 @@ namespace garlic::clove::ModelLoader {
             if(mesh->mNumBones <= 0) {
                 continue;
             } else if(skeletonSet) {
-                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Warning, "Multiple skeletons detected in {0}. Currently Clove only support one skeleton per model. Animations may be innacrate.", modelFilePath);
+                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Warning, "Multiple skeletons detected in {0}. Currently Clove only support one skeleton per model. Animations may be innacrate.", modelFilePath.string());
                 continue;
             }
 
@@ -421,7 +421,7 @@ namespace garlic::clove::ModelLoader {
         }
 
         if(skeleton->joints.size() > MAX_JOINTS) {
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0} has too many joints (Max supported {1}, current amount {2}). Could not import animations", modelFilePath, MAX_JOINTS, skeleton->joints.size());
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0} has too many joints (Max supported {1}, current amount {2}). Could not import animations", modelFilePath.string(), MAX_JOINTS, skeleton->joints.size());
             return { meshes, std::make_shared<Material>(), nullptr, {} };
         }
 
@@ -432,7 +432,7 @@ namespace garlic::clove::ModelLoader {
             AnimationClip &animClip{ animationClips[animIndex] };
 
             animClip.skeleton = skeleton.get();
-            animClip.duration = animation->mDuration / animation->mTicksPerSecond;//Our clip is in seconds where as the animation is in frames
+            animClip.duration = static_cast<float>(animation->mDuration / animation->mTicksPerSecond);//Our clip is in seconds where as the animation is in frames
 
             //Get all the key frame times for every possible channel. This is required as we want a full skeletal pose for each keyframe.
             std::set<float> frames;
@@ -452,7 +452,7 @@ namespace garlic::clove::ModelLoader {
             //Get each channel's pose at each time
             for(float frame : frames) {
                 AnimationPose animPose{};
-                animPose.timeStamp = frame / animation->mTicksPerSecond;
+                animPose.timeStamp = frame / static_cast<float>(animation->mTicksPerSecond);
                 animPose.poses.resize(skeleton->joints.size());
 
                 for(JointIndexType i{ 0 }; i < skeleton->joints.size(); ++i) {
@@ -476,7 +476,7 @@ namespace garlic::clove::ModelLoader {
             }
         }
 
-        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Info, "Finished loading animated model: {0}", modelFilePath);
+        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Info, "Finished loading animated model: {0}", modelFilePath.string());
         return { meshes, std::make_shared<Material>(), std::move(skeleton), std::move(animationClips) };
     }
 }

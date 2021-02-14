@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Clove/Graphics/GhaImage.hpp"
+#include "Clove/Graphics/PipelineObject.hpp"
 #include "Clove/Graphics/Resource.hpp"
-#include "Clove/Graphics/GhaPipelineObject.hpp"
 
 #include <optional>
 #include <vector>
@@ -12,13 +12,14 @@ namespace garlic::clove {
     inline constexpr uint32_t SUBPASS_EXTERNAL = ~0U;
 
     enum class LoadOperation {
-        DontCare,
+        Load,
         Clear,
+        DontCare,
     };
 
     enum class StoreOperation {
-        DontCare,
         Store,
+        DontCare,
     };
 
     /**
@@ -55,8 +56,8 @@ namespace garlic::clove {
         uint32_t sourceSubpass;      /**< Index of the dependency subpass (inside RenderPassDescriptor::subpasses or SUBPASS_EXTERNAL) */
         uint32_t destinationSubpass; /**< Index of the dependent subpass (inside RenderPassDescriptor::subpasses or SUBPASS_EXTERNAL). Must be higher than sourceSubpass. */
 
-        GhaPipelineObject::Stage sourceStage;      /**< The pipeline stage that gets executed before the dependency in sourceSubpass. */
-        GhaPipelineObject::Stage destinationStage; /**< The pipeline stage executed after the barrier in destinationSubpass that waits for the results of the sourceStage. */
+        PipelineStage sourceStage;      /**< The pipeline stage that gets executed before the dependency in sourceSubpass. */
+        PipelineStage destinationStage; /**< The pipeline stage executed after the barrier in destinationSubpass that waits for the results of the sourceStage. */
 
         AccessFlags currentAccess; /**< How the attachment(s) in the sourceSubpass are currently being accessed. */
         AccessFlags newAccess;     /**< How the attachment(s) in the destinationSubpass will be accessed. */

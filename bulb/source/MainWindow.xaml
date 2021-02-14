@@ -7,77 +7,83 @@
         mc:Ignorable="d"
         Title="MainWindow" Width="1280" Height="720"
 		MouseMove="Window_MouseMove">
-	<Grid>
-		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="*"/>
-			<ColumnDefinition Width="5*"/>
-			<ColumnDefinition Width="*"/>
-		</Grid.ColumnDefinitions>
-		<Grid.RowDefinitions>
-			<RowDefinition Height="3*"/>
-			<RowDefinition Height="*"/>
-		</Grid.RowDefinitions>
-
-		<StackPanel x:Name="SceneView">
-			<Grid>
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="*"/>
-					<ColumnDefinition Width="*"/>
-				</Grid.ColumnDefinitions>
-
-				<TextBlock Grid.Column="0" Text="Scene"/>
-				<Button Grid.Column="1" Content="Create Entity" Command="{Binding Scene.CreateEntityCommand}"/>
-			</Grid>
-
-			<ItemsControl x:Name="EntityList" ItemsSource="{Binding Scene.Entities}">
-				<ItemsControl.ItemTemplate>
-					<DataTemplate>
-						<!-- TODO: Change to a ListBox and ListBoxItem to handle selected / deselected -->
-						<Button Command="{Binding SelectedCommand}">
-							<TextBox Text="{Binding Name, Mode=TwoWay}"/>
-						</Button>
-					</DataTemplate>
-				</ItemsControl.ItemTemplate>
-			</ItemsControl>
+	<DockPanel>
+		<StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+			<Button Content="Load" Command="{Binding LoadSceneCommand}"/>
+			<Button Content="Save" Command="{Binding SaveSceneCommand}"/>
 		</StackPanel>
+		<Grid DockPanel.Dock="Bottom">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*"/>
+				<ColumnDefinition Width="5*"/>
+				<ColumnDefinition Width="*"/>
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="3*"/>
+				<RowDefinition Height="*"/>
+			</Grid.RowDefinitions>
 
-		<!--TODO: Make this user control it's own xaml file-->
-		<UserControl x:Name="EditorViewport" Grid.Column="1"
+			<StackPanel x:Name="SceneView">
+				<Grid>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*"/>
+						<ColumnDefinition Width="*"/>
+					</Grid.ColumnDefinitions>
+
+					<TextBlock Grid.Column="0" Text="Scene"/>
+					<Button Grid.Column="1" Content="Create Entity" Command="{Binding Scene.CreateEntityCommand}"/>
+				</Grid>
+
+				<ItemsControl x:Name="EntityList" ItemsSource="{Binding Scene.Entities}">
+					<ItemsControl.ItemTemplate>
+						<DataTemplate>
+							<!-- TODO: Change to a ListBox and ListBoxItem to handle selected / deselected -->
+							<Button Command="{Binding SelectedCommand}">
+								<TextBox Text="{Binding Name, Mode=TwoWay}"/>
+							</Button>
+						</DataTemplate>
+					</ItemsControl.ItemTemplate>
+				</ItemsControl>
+			</StackPanel>
+
+			<!--TODO: Make this user control it's own xaml file-->
+			<UserControl x:Name="EditorViewport" Grid.Column="1"
 					 Focusable="True" IsTabStop="True"
 					 KeyUp="EditorViewport_Key" KeyDown="EditorViewport_Key"
 					 MouseDown="EditorViewport_MouseButton" MouseUp="EditorViewport_MouseButton">
-			<Image x:Name="RenderArea" Stretch="Fill"/>
-		</UserControl>
-		<ScrollViewer Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1" BorderThickness="0" VerticalScrollBarVisibility="Auto">
-			<TextBlock x:Name="Log" Text="{Binding Log.LogText}" Background="#FF1F1F1F" Foreground="#FFD8D8D8"/>
-		</ScrollViewer>
-		
-		<StackPanel x:Name="EntityView" Grid.Column="2" Visibility="{Binding Scene.EntityViewVisibility}">
-			<TextBox Text="{Binding Scene.SelectedEntity.Name, Mode=TwoWay}"/>
-			<ListBox ItemsSource="{Binding Scene.SelectedEntity.Components}">
-				<ListBox.Resources>
-					<DataTemplate DataType="{x:Type local:TransformComponentViewModel}">
-						<StackPanel>
-							<TextBlock Text="{Binding Name}" FontWeight="Bold"/>
-							<StackPanel Margin="10,0,0,0">
-								<local:Vector3Box Label="Position" LeftFieldText="X" LeftFieldValue="{Binding PositionXValue, Mode=TwoWay}" CenterFieldText="Y" CenterFieldValue="{Binding PositionYValue, Mode=TwoWay}" RightFieldText="Z" RightFieldValue="{Binding PositionZValue, Mode=TwoWay}"/>
-								<local:Vector3Box Label="Rotation" LeftFieldText="X" LeftFieldValue="{Binding RotationXValue, Mode=TwoWay}" CenterFieldText="Y" CenterFieldValue="{Binding RotationYValue, Mode=TwoWay}" RightFieldText="Z" RightFieldValue="{Binding RotationZValue, Mode=TwoWay}"/>
-								<local:Vector3Box Label="Scale" LeftFieldText="X" LeftFieldValue="{Binding ScaleXValue, Mode=TwoWay}" CenterFieldText="Y" CenterFieldValue="{Binding ScaleYValue, Mode=TwoWay}" RightFieldText="Z" RightFieldValue="{Binding ScaleZValue, Mode=TwoWay}"/>
-							</StackPanel>
-						</StackPanel>
-					</DataTemplate>
+				<Image x:Name="RenderArea" Stretch="Fill"/>
+			</UserControl>
+			<ScrollViewer Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1" BorderThickness="0" VerticalScrollBarVisibility="Auto">
+				<TextBlock x:Name="Log" Text="{Binding Log.LogText}" Background="#FF1F1F1F" Foreground="#FFD8D8D8"/>
+			</ScrollViewer>
 
-					<DataTemplate DataType="{x:Type local:ComponentViewModel}">
-						<TextBlock Text="{Binding Name}" FontWeight="Bold"/>
-					</DataTemplate>
-				</ListBox.Resources>
-			</ListBox>
-			<Menu HorizontalAlignment="Center">
-				<MenuItem Header="Add Component">
-					<MenuItem Header="Transform Component" Command="{Binding Scene.AddTransformComponentCommand}"/>
-					<MenuItem Header="Mesh Component" Command="{Binding Scene.AddMeshComponentCommand}"/>
-				</MenuItem>
-			</Menu>
-		</StackPanel>
-	</Grid>
+			<StackPanel x:Name="EntityView" Grid.Column="2" Visibility="{Binding Scene.EntityViewVisibility}">
+				<TextBox Text="{Binding Scene.SelectedEntity.Name, Mode=TwoWay}"/>
+				<ListBox ItemsSource="{Binding Scene.SelectedEntity.Components}">
+					<ListBox.Resources>
+						<DataTemplate DataType="{x:Type local:TransformComponentViewModel}">
+							<StackPanel>
+								<TextBlock Text="{Binding Name}" FontWeight="Bold"/>
+								<StackPanel Margin="10,0,0,0">
+									<local:Vector3Box Label="Position" LeftFieldText="X" LeftFieldValue="{Binding PositionXValue, Mode=TwoWay}" CenterFieldText="Y" CenterFieldValue="{Binding PositionYValue, Mode=TwoWay}" RightFieldText="Z" RightFieldValue="{Binding PositionZValue, Mode=TwoWay}"/>
+									<local:Vector3Box Label="Rotation" LeftFieldText="X" LeftFieldValue="{Binding RotationXValue, Mode=TwoWay}" CenterFieldText="Y" CenterFieldValue="{Binding RotationYValue, Mode=TwoWay}" RightFieldText="Z" RightFieldValue="{Binding RotationZValue, Mode=TwoWay}"/>
+									<local:Vector3Box Label="Scale" LeftFieldText="X" LeftFieldValue="{Binding ScaleXValue, Mode=TwoWay}" CenterFieldText="Y" CenterFieldValue="{Binding ScaleYValue, Mode=TwoWay}" RightFieldText="Z" RightFieldValue="{Binding ScaleZValue, Mode=TwoWay}"/>
+								</StackPanel>
+							</StackPanel>
+						</DataTemplate>
+
+						<DataTemplate DataType="{x:Type local:ComponentViewModel}">
+							<TextBlock Text="{Binding Name}" FontWeight="Bold"/>
+						</DataTemplate>
+					</ListBox.Resources>
+				</ListBox>
+				<Menu HorizontalAlignment="Center">
+					<MenuItem Header="Add Component">
+						<MenuItem Header="Transform Component" Command="{Binding Scene.AddTransformComponentCommand}"/>
+						<MenuItem Header="Mesh Component" Command="{Binding Scene.AddMeshComponentCommand}"/>
+					</MenuItem>
+				</Menu>
+			</StackPanel>
+		</Grid>
+	</DockPanel>
 </Window>

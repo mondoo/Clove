@@ -12,11 +12,11 @@ namespace garlic::clove {
 
     Text::Text(Text const &other) = default;
 
-    Text::Text(Text &&other) = default;
+    Text::Text(Text &&other)  noexcept = default;
 
     Text &Text::operator=(Text const &other) = default;
 
-    Text &Text::operator=(Text &&other) = default;
+    Text &Text::operator=(Text &&other)  noexcept = default;
 
     Text::~Text() = default;
 
@@ -36,7 +36,7 @@ namespace garlic::clove {
                 uint32_t const height{ glyph.size.y };
 
                 float const xpos{ cursorPos.x + glyph.bearing.x };
-                float const ypos{ cursorPos.y - (height - glyph.bearing.y) };
+                float const ypos{ cursorPos.y - (static_cast<float>(height) - glyph.bearing.y) };
 
                 mat4f model{ translate(mat4f{ 1.0f }, { xpos, ypos, 0.0f }) };
                 model *= scale(mat4f{ 1.0f }, { width, height, 0.0f });
@@ -57,8 +57,8 @@ namespace garlic::clove {
 
     void Text::buildGlyphs() {
         characters.clear();
-        for(size_t i = 0; i < text.length(); ++i) {
-            characters.emplace_back(font.getChar(text[i]));
+        for(char i : text) {
+            characters.emplace_back(font.getChar(i));
         }
         isBufferDirty = false;
     }

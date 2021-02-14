@@ -9,7 +9,7 @@ namespace garlic::clove {
     class VulkanGraphicsCommandBuffer : public GhaGraphicsCommandBuffer {
         //VARIABLES
     private:
-        VkCommandBuffer commandBuffer = VK_NULL_HANDLE;
+        VkCommandBuffer commandBuffer{ VK_NULL_HANDLE };
 
         VkPipelineLayout currentLayout{};
 
@@ -34,7 +34,10 @@ namespace garlic::clove {
         void beginRenderPass(GhaRenderPass &renderPass, GhaFramebuffer &frameBuffer, RenderArea const &renderArea, std::span<ClearValue> clearValues) override;
         void endRenderPass() override;
 
-        void bindPipelineObject(GhaPipelineObject &pipelineObject) override;
+        void setViewport(vec2i position, vec2ui size) override;
+        void setScissor(vec2i position, vec2ui size) override;
+
+        void bindPipelineObject(GhaGraphicsPipelineObject &pipelineObject) override;
         void bindVertexBuffer(GhaBuffer &vertexBuffer, size_t const offset) override;
         void bindIndexBuffer(GhaBuffer &indexBuffer, size_t const offset, IndexType indexType) override;
         void bindDescriptorSet(GhaDescriptorSet &descriptorSet, uint32_t const setNum) override;
@@ -43,8 +46,8 @@ namespace garlic::clove {
 
         void drawIndexed(size_t const indexCount) override;
 
-        void bufferMemoryBarrier(GhaBuffer &buffer, BufferMemoryBarrierInfo const &barrierInfo, GhaPipelineObject::Stage sourceStage, GhaPipelineObject::Stage destinationStage) override;
-        void imageMemoryBarrier(GhaImage &image, ImageMemoryBarrierInfo const &barrierInfo, GhaPipelineObject::Stage sourceStage, GhaPipelineObject::Stage destinationStage) override;
+        void bufferMemoryBarrier(GhaBuffer &buffer, BufferMemoryBarrierInfo const &barrierInfo, PipelineStage sourceStage, PipelineStage destinationStage) override;
+        void imageMemoryBarrier(GhaImage &image, ImageMemoryBarrierInfo const &barrierInfo, PipelineStage sourceStage, PipelineStage destinationStage) override;
 
         VkCommandBuffer getCommandBuffer() const;
     };

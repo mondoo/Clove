@@ -4,6 +4,7 @@
 #include "Clove/Graphics/Vulkan/VulkanImage.hpp"
 #include "Clove/Graphics/Vulkan/VulkanImageView.hpp"
 #include "Clove/Graphics/Vulkan/VulkanSampler.hpp"
+#include "Clove/Graphics/Vulkan/VulkanDescriptor.hpp"
 
 #include <Clove/Cast.hpp>
 
@@ -19,7 +20,7 @@ namespace garlic::clove {
 
     VulkanDescriptorSet::~VulkanDescriptorSet() = default;
 
-    void VulkanDescriptorSet::map(GhaBuffer const &buffer, size_t const offset, size_t const range, uint32_t const bindingSlot) {
+    void VulkanDescriptorSet::map(GhaBuffer const &buffer, size_t const offset, size_t const range, DescriptorType const descriptorType, uint32_t const bindingSlot) {
         auto const *vkBuffer = polyCast<VulkanBuffer const>(&buffer);
 
         VkDescriptorBufferInfo bufferInfo{
@@ -35,7 +36,7 @@ namespace garlic::clove {
             .dstBinding       = bindingSlot,
             .dstArrayElement  = 0,
             .descriptorCount  = 1,
-            .descriptorType   = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+            .descriptorType   = getDescriptorType(descriptorType),
             .pImageInfo       = nullptr,
             .pBufferInfo      = &bufferInfo,
             .pTexelBufferView = nullptr,
@@ -80,7 +81,7 @@ namespace garlic::clove {
                 .imageView   = polyCast<const VulkanImageView>(imageViews[i].get())->getImageView(),
                 .imageLayout = VulkanImage::convertLayout(layout),
             };
-            imageInfos[i] = std::move(imageInfo);
+            imageInfos[i] = imageInfo;
         }
 
         VkWriteDescriptorSet writeInfo{

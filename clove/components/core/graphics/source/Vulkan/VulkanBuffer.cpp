@@ -22,7 +22,7 @@ namespace garlic::clove {
     VulkanBuffer::VulkanBuffer(DevicePointer device, VkBuffer buffer, Descriptor descriptor, std::shared_ptr<MemoryAllocator> memoryAllocator)
         : device{ std::move(device) }
         , buffer{ buffer }
-        , descriptor{ std::move(descriptor) }
+        , descriptor{ descriptor }
         , memoryAllocator{ std::move(memoryAllocator) } {
         VkMemoryRequirements memoryRequirements{};
         vkGetBufferMemoryRequirements(this->device.get(), buffer, &memoryRequirements);

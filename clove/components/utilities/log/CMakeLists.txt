@@ -27,10 +27,9 @@ target_link_libraries(
     CloveLog
 
     PUBLIC
-        CONAN_PKG::spdlog
-
-    PRIVATE
-        CloveDefinitions
+		CloveDefinitions
+		
+		CONAN_PKG::spdlog
 )
 
 #Preprocessor
