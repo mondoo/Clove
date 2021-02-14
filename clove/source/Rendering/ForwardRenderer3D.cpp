@@ -749,7 +749,7 @@ namespace garlic::clove {
 
         GhaGraphicsPipelineObject::Descriptor pipelineDescriptor{
             .vertexShader         = *ghaFactory->createShaderFromSource({ ui_v, ui_vLength }, shaderIncludes, "UI (vertex)", GhaShader::Stage::Vertex),
-            .fragmentShader       = *ghaFactory->createShaderFromSource({ widget_p, widget_pLength }, shaderIncludes, "Widget (pixel)", GhaShader::Stage::Pixel),
+            .pixelShader          = *ghaFactory->createShaderFromSource({ widget_p, widget_pLength }, shaderIncludes, "Widget (pixel)", GhaShader::Stage::Pixel),
             .vertexInput          = Vertex::getInputBindingDescriptor(),
             .vertexAttributes     = vertexAttributes,
             .viewportDescriptor   = viewScissorArea,
@@ -762,7 +762,7 @@ namespace garlic::clove {
 
         widgetPipelineObject = *ghaFactory->createGraphicsPipelineObject(pipelineDescriptor);
 
-        pipelineDescriptor.fragmentShader = *ghaFactory->createShaderFromSource({ font_p, font_pLength }, shaderIncludes, "Font (pixel)", GhaShader::Stage::Pixel);
+        pipelineDescriptor.pixelShader = *ghaFactory->createShaderFromSource({ font_p, font_pLength }, shaderIncludes, "Font (pixel)", GhaShader::Stage::Pixel);
 
         textPipelineObject = *ghaFactory->createGraphicsPipelineObject(std::move(pipelineDescriptor));
     }
