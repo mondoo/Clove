@@ -9,7 +9,7 @@ namespace garlic::clove {
         CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Creating window: {0} ({1}, {2})", descriptor.title, descriptor.width, descriptor.height);
         CLOVE_ASSERT(window == 0, "Window already exists! Currently only a single window on linux is supported");
 
-        if(display == nullptr){
+        if(display == nullptr) {
             //Make the connection to the client, where to display the window
             display = XOpenDisplay(nullptr);
         }
@@ -68,37 +68,24 @@ namespace garlic::clove {
     }
 
     vec2i LinuxWindow::getPosition(bool clientArea) const {
-        ::Window rootWindow;
-        int32_t posX;
-        int32_t posY;
-        uint32_t width;
-        uint32_t height;
-        uint32_t borderWidth;
-        uint32_t depth;
+        int32_t x{ 0 };
+        int32_t y{ 0 };
+        ::Window child{};
+        XTranslateCoordinates(display, window, XRootWindowOfScreen(screen), 0, 0, &x, &y, &child);
 
-        if(XGetGeometry(display, window, &rootWindow, &posX, &posY, &width, &height, &borderWidth, &depth) != 0) {
-            return { posX, posY };
+        if(clientArea) {
+            return { x, y };
         } else {
-            CLOVE_ASSERT(false, "Could not get window geometry");
-            return { 0, 0 };
+            XWindowAttributes attribs{};
+            XGetWindowAttributes(display, window, &attribs);
+            return { x - attribs.x, y - attribs.y };
         }
     }
 
     vec2i LinuxWindow::getSize() const {
-        ::Window rootWindow;
-        int32_t posX;
-        int32_t posY;
-        uint32_t width;
-        uint32_t height;
-        uint32_t borderWidth;
-        uint32_t depth;
-
-        if(XGetGeometry(display, window, &rootWindow, &posX, &posY, &width, &height, &borderWidth, &depth) != 0) {
-            return { width, height };
-        } else {
-            CLOVE_ASSERT(false, "Could not get window geometry");
-            return { 0, 0 };
-        }
+        XWindowAttributes attribs{};
+        XGetWindowAttributes(display, window, &attribs);
+        return { attribs.width, attribs.height };
     }
 
     void LinuxWindow::moveWindow(vec2i const &position) {
