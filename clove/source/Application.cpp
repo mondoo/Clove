@@ -77,10 +77,6 @@ namespace garlic::clove {
         //Process input first incase we get a close event.
         surface->processInput();
 
-        if(currentState != State::Running) {
-            return;
-        }
-
         auto const currFrameTime{ std::chrono::system_clock::now() };
         std::chrono::duration<float> const deltaSeonds{ currFrameTime - prevFrameTime };
         prevFrameTime = currFrameTime;
@@ -119,8 +115,6 @@ namespace garlic::clove {
 
     void Application::shutdown() {
         currentState = State::Stopped;
-        graphicsDevice->waitForIdleDevice();
-        surface.reset();
     }
 
     Application::Application(std::unique_ptr<GhaDevice> graphicsDevice, std::unique_ptr<AudioDevice> audioDevice, std::unique_ptr<Surface> surface, std::unique_ptr<RenderTarget> renderTarget)

@@ -54,7 +54,6 @@ namespace garlic::clove {
     }
 
     LinuxWindow::~LinuxWindow() {
-        XDestroyWindow(display, window);
         XCloseDisplay(display);
     }
 
@@ -104,7 +103,7 @@ namespace garlic::clove {
             onWindowCloseDelegate.broadcast();
         }
         open = false;
-        XCloseDisplay(display);
+        XDestroyWindow(display, window);
     }
 
     void LinuxWindow::processInput() {
@@ -115,14 +114,14 @@ namespace garlic::clove {
             switch(xevent.type) {
                 case ClientMessage:
                     if(xevent.xclient.data.l[0] == atomWmDeleteWindow) {
-                        close();
+                        if(onWindowCloseDelegate.isBound()) {
+                            onWindowCloseDelegate.broadcast();
+                        }
+                        open = false;
+                        //Need to use the window from the event here.
+                        XDestroyWindow(display, xevent.xclient.window);
+                        
                     }
-                    break;
-                case DestroyNotify:
-                    if(onWindowCloseDelegate.isBound()) {
-                        onWindowCloseDelegate.broadcast();
-                    }
-                    open = false;
                     break;
 
                 case FocusOut:
