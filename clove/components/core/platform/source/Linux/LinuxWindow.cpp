@@ -133,12 +133,7 @@ namespace garlic::clove {
                     XRefreshKeyboardMapping(&xevent.xmapping);
                     break;
 
-                case KeyPress:
-                    xkeysym = XLookupKeysym(&xevent.xkey, 0);
-                    keyboardDispatcher.onKeyPressed(static_cast<Key>(xkeysym));
-                    break;
-
-                case KeyRelease: {
+                case KeyPress: {
                     bool isRepeat = false;
 
                     if(XEventsQueued(display, QueuedAlready)) {
@@ -154,9 +149,14 @@ namespace garlic::clove {
 
                     if(!isRepeat || keyboard.isAutoRepeatEnabled()) {
                         xkeysym = XLookupKeysym(&xevent.xkey, 0);
-                        keyboardDispatcher.onKeyReleased(static_cast<Key>(xkeysym));
+                        keyboardDispatcher.onKeyPressed(static_cast<Key>(xkeysym));
                     }
                 } break;
+
+                case KeyRelease: 
+                    xkeysym = XLookupKeysym(&xevent.xkey, 0);
+                    keyboardDispatcher.onKeyReleased(static_cast<Key>(xkeysym));
+                    break;
 
                     //TODO: Char (I don't think Xlib has a 'typed' event)
 
