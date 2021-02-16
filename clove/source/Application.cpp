@@ -74,8 +74,12 @@ namespace garlic::clove {
     }
 
     void Application::tick() {
-        //Process input first incase we get a close event.
         surface->processInput();
+
+        //If the previous processInput call closed the window we don't want to run the rest of the function.
+        if(currentState != State::Running) {
+            return;
+        }
 
         auto const currFrameTime{ std::chrono::system_clock::now() };
         std::chrono::duration<float> const deltaSeonds{ currFrameTime - prevFrameTime };
