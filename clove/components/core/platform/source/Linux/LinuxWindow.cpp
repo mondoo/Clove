@@ -23,12 +23,13 @@ namespace garlic::clove {
         screen   = DefaultScreenOfDisplay(display);//Get the screen of the display
         screenID = DefaultScreen(display);
 
-        windowAttribs                   = {};
-        windowAttribs.border_pixel      = BlackPixel(display, screenID);
-        windowAttribs.background_pixel  = WhitePixel(display, screenID);
-        windowAttribs.override_redirect = true;
-        windowAttribs.colormap          = XDefaultColormap(display, screenID);
-        windowAttribs.event_mask        = ExposureMask;
+        XSetWindowAttributes windowAttribs {
+            .background_pixel  = WhitePixel(display, screenID),
+            .border_pixel      = BlackPixel(display, screenID),
+            .event_mask        = ExposureMask,
+            .override_redirect = true,
+            .colormap          = XDefaultColormap(display, screenID),
+        };
 
         window = XCreateWindow(display, RootWindow(display, screenID), 0, 0, descriptor.width, descriptor.height, 0, screen->depths[0].depth, InputOutput, screen->root_visual, CWBackPixel | CWColormap | CWBorderPixel | CWEventMask, &windowAttribs);
 
@@ -107,10 +108,10 @@ namespace garlic::clove {
     }
 
     void LinuxWindow::processInput() {
-        if(XPending(display) > 0) {
-            KeySym xkeysym{ 0 };
-
+        while(XPending(display) > 0) {
+            XEvent xevent{};
             XNextEvent(display, &xevent);
+
             switch(xevent.type) {
                 case ClientMessage:
                     if(xevent.xclient.data.l[0] == atomWmDeleteWindow) {
