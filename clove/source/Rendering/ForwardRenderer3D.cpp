@@ -137,7 +137,10 @@ namespace garlic::clove {
         textureSampler.reset();
         for(auto &imageData : inFlightImageData) {
             imageData.frameDataBuffer.reset();
+
             graphicsQueue->freeCommandBuffer(*imageData.commandBuffer);
+            graphicsQueue->freeCommandBuffer(*imageData.shadowMapCommandBuffer);
+            graphicsQueue->freeCommandBuffer(*imageData.cubeShadowMapCommandBuffer);
         }
     }
 
