@@ -37,11 +37,11 @@ namespace garlic::clove {
         atomWmDeleteWindow = XInternAtom(display, "WM_DELETE_WINDOW", false);
         XSetWMProtocols(display, window, &atomWmDeleteWindow, 1);
 
-        XSync(display, false);//Passing true here flushes the event queue
+        bool constexpr flushEventQueue{ false };
+        XSync(display, flushEventQueue);
 
-        long const keyboardMask{ KeyPressMask | KeyReleaseMask | KeymapStateMask };
-        long const mouseMask{ PointerMotionMask | ButtonPressMask | ButtonReleaseMask | EnterWindowMask | LeaveWindowMask };
-
+        long constexpr keyboardMask{ KeyPressMask | KeyReleaseMask | KeymapStateMask };
+        long constexpr mouseMask{ PointerMotionMask | ButtonPressMask | ButtonReleaseMask | EnterWindowMask | LeaveWindowMask };
         XSelectInput(display, window, keyboardMask | mouseMask | StructureNotifyMask);
 
         XStoreName(display, window, descriptor.title.c_str());
@@ -100,11 +100,7 @@ namespace garlic::clove {
     }
 
     void LinuxWindow::close() {
-        if(onWindowCloseDelegate.isBound()) {
-            onWindowCloseDelegate.broadcast();
-        }
-        open = false;
-        XDestroyWindow(display, window);
+        closeWindow(window);
     }
 
     void LinuxWindow::processInput() {
@@ -115,13 +111,10 @@ namespace garlic::clove {
             switch(xevent.type) {
                 case ClientMessage:
                     if(xevent.xclient.data.l[0] == atomWmDeleteWindow) {
-                        if(onWindowCloseDelegate.isBound()) {
-                            onWindowCloseDelegate.broadcast();
-                        }
-                        open = false;
                         //Need to use the window from the event here.
-                        XDestroyWindow(display, xevent.xclient.window);
-                        
+                        closeWindow(xevent.xclient.window);
+                        //Flush the output buffer before exiting. Not doing this step causes the whole OS to freeze.
+                        XSync(display, true);
                     }
                     break;
 
@@ -149,15 +142,15 @@ namespace garlic::clove {
                     }
 
                     if(!isRepeat || keyboard.isAutoRepeatEnabled()) {
-                        xkeysym = XLookupKeysym(&xevent.xkey, 0);
+                        KeySym xkeysym{ XLookupKeysym(&xevent.xkey, 0) };
                         keyboardDispatcher.onKeyPressed(static_cast<Key>(xkeysym));
                     }
                 } break;
 
-                case KeyRelease: 
-                    xkeysym = XLookupKeysym(&xevent.xkey, 0);
+                case KeyRelease: {
+                    KeySym xkeysym{ XLookupKeysym(&xevent.xkey, 0) };
                     keyboardDispatcher.onKeyReleased(static_cast<Key>(xkeysym));
-                    break;
+                } break;
 
                     //TODO: Char (I don't think Xlib has a 'typed' event)
 
@@ -194,5 +187,13 @@ namespace garlic::clove {
                 } break;
             }
         }
+    }
+
+    void LinuxWindow::closeWindow(::Window window){
+        if(onWindowCloseDelegate.isBound()) {
+            onWindowCloseDelegate.broadcast();
+        }
+        open = false;
+        XDestroyWindow(display, window);
     }
 }

@@ -51,5 +51,7 @@ namespace garlic::clove {
 
     protected:
         void processInput() override;
+
+        void closeWindow(::Window window);
     };
 }
