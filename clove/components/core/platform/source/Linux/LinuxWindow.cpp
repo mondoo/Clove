@@ -118,6 +118,7 @@ namespace garlic::clove {
                     }
                     break;
 
+                //Keyboard
                 case FocusOut:
                     keyboardDispatcher.clearState();
                     break;
@@ -154,6 +155,11 @@ namespace garlic::clove {
 
                     //TODO: Char (I don't think Xlib has a 'typed' event)
 
+                //Mouse
+                case MotionNotify:
+                    mouseDispatcher.onMouseMove(vec2i{ xevent.xbutton.x, xevent.xbutton.y });
+                    break;
+                    
                 case EnterNotify:
                     mouseDispatcher.onMouseEnter();
                     break;
