@@ -153,3 +153,23 @@ TEST(YamlSerialisationTests, CanAddANestedSerialisableStruct) {
 
     EXPECT_EQ(emittYaml(root), "type: yaml\nversion: 1\ntestStruct:\n  memberOne: 1\n  memberTwo:\n    memberOne: 1\n    memberTwo: 2\n    memberThree: 3");
 }
+
+TEST(YamlSerialisationTests, CanAddASerialisedSequenceNode) {
+    TestStruct test1{
+        .memberOne   = 1,
+        .memberTwo   = 2,
+        .memberThree = 32.5f,
+    };
+
+    TestStruct test2 {
+        .memberOne   = 4,
+        .memberTwo   = 5,
+        .memberThree = 64.5f,
+    };
+
+    Node root{};
+    root["Sequence"].pushBack(test1);
+    root["Sequence"].pushBack(test2);
+
+    EXPECT_EQ(emittYaml(root), "type: yaml\nversion: 1\nSequence:\n  - memberOne: 1\n    memberTwo: 2\n    memberThree: 32.5\n  - memberOne: 4\n    memberTwo: 5\n    memberThree: 64.5");
+}
