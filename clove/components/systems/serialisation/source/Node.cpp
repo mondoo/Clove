@@ -34,16 +34,27 @@ namespace garlic::clove::serialiser {
     Node::~Node() = default;
 
     Node &Node::operator[](std::string_view nodeName) {
-        //TODO: Seq -> Map conversion
-        type = Type::Map;
-
-        for(auto &node : nodes) {
-            if(node.scalar == nodeName) {
-                return node;
+        if(type == Type::None) {
+            type = Type::Map;
+            nodes.clear();
+        } else if(type == Type::Sequence) {
+            type = Type::Map;
+            for(size_t i{ 0 }; i < nodes.size(); ++i){
+                nodes[i].scalar = std::to_string(i);
             }
         }
 
-        return nodes.emplace_back(Node{ nodeName });
+        if(type == Type::Map) {
+            for(auto &node : nodes) {
+                if(node.scalar == nodeName) {
+                    return node;
+                }
+            }
+
+            return nodes.emplace_back(Node{ nodeName });
+        } else {
+            throw std::runtime_error{ "Cannot pushBack onto a non-sequence type node." };
+        }
     }
 
     Node const &Node::operator[](std::string_view nodeName) const {

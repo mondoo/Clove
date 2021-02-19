@@ -19,6 +19,7 @@ namespace garlic::clove::serialiser {
     void Node::pushBack(T const &scalar) {
         if(type == Type::None){
             type = Type::Sequence;
+            nodes.clear();
         }
 
         if(type == Type::Sequence) {
@@ -26,7 +27,7 @@ namespace garlic::clove::serialiser {
             node = scalar;
             nodes.push_back(std::move(node));
         } else if(type == Type::Map) {
-            size_t const index{ nodes.size() - 1 };
+            size_t const index{ nodes.size() };
             (*this)[std::to_string(index)] = scalar;
         } else {
             throw std::runtime_error{ "Cannot pushBack onto a non-sequence type node." };

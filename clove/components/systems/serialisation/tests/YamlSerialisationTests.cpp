@@ -161,7 +161,7 @@ TEST(YamlSerialisationTests, CanAddASerialisedSequenceNode) {
         .memberThree = 32.5f,
     };
 
-    TestStruct test2 {
+    TestStruct test2{
         .memberOne   = 4,
         .memberTwo   = 5,
         .memberThree = 64.5f,
@@ -182,6 +182,20 @@ TEST(YamlSerialisationTests, CannotConvertAScalarIntoASequence) {
     EXPECT_EQ(emittYaml(root), "type: yaml\nversion: 1\nScalarToSequence: 1");
 
     EXPECT_ANY_THROW(root["ScalarToSequence"].pushBack(2));
+}
+
+TEST(YamlSerialisationTests, CanConvertASequenceIntoAMap) {
+    Node root{};
+    root["SeqToMap"].pushBack(1);
+    root["SeqToMap"].pushBack(2);
+
+    ASSERT_EQ(root["SeqToMap"].getType(), Node::Type::Sequence);
+    EXPECT_EQ(emittYaml(root), "type: yaml\nversion: 1\nSeqToMap:\n  - 1\n  - 2");
+
+    root["SeqToMap"]["Key"] = 100;
+
+    EXPECT_EQ(root["SeqToMap"].getType(), Node::Type::Map);
+    EXPECT_EQ(emittYaml(root), "type: yaml\nversion: 1\nSeqToMap:\n  0: 1\n  1: 2\n  Key: 100");
 }
 
 TEST(YamlSerialisationTests, CanPushBackOntoAMapNode) {
