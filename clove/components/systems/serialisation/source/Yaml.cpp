@@ -35,12 +35,24 @@ namespace garlic::clove {
         Node buildNode(YAML::Node const &node) {
             Node outNode{};
 
-            for(YAML::const_iterator it{ node.begin() }; it != node.end(); ++it) {
-                std::string const name{ it->first.as<std::string>() };
-                if(it->second.IsScalar()) {
-                    outNode[name] = it->second.as<std::string>();
-                } else {
-                    outNode[name] = buildNode(it->second);
+            if(node.IsSequence()) {
+                //Sequence iterator
+                for(YAML::const_iterator it{ node.begin() }; it != node.end(); ++it) {
+                    if(it->IsScalar()) {
+                        outNode.pushBack(it->as<std::string>());
+                    } else {
+                        outNode.pushBack(buildNode(*it));
+                    }
+                }
+            } else {
+                //Map iterator
+                for(YAML::const_iterator it{ node.begin() }; it != node.end(); ++it) {
+                    std::string const name{ it->first.as<std::string>() };
+                    if(it->second.IsScalar()) {
+                        outNode[name] = it->second.as<std::string>();
+                    } else {
+                        outNode[name] = buildNode(it->second);
+                    }
                 }
             }
 

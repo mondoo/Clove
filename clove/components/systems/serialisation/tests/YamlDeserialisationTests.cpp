@@ -29,6 +29,11 @@ protected:
             testFile << "    memberOne: 100" << std::endl;
             testFile << "    memberTwo: 200" << std::endl;
             testFile << "  memberTwo: 99" << std::endl;
+            testFile << "TestSequence:" << std::endl;
+            testFile << "  - 1" << std::endl;
+            testFile << "  - 2" << std::endl;
+            testFile << "  - Val: 99" << std::endl;
+            testFile << "    Num: 100" << std::endl;
         }
 
         {
@@ -155,4 +160,25 @@ TEST_F(YamlDeserialisationTests, CanLoadSerialisableParentTypeFromFile) {
     EXPECT_EQ(type.memberOne.memberOne, 100);
     EXPECT_EQ(type.memberOne.memberTwo, 200);
     EXPECT_EQ(type.memberTwo, 99);
+}
+
+TEST_F(YamlDeserialisationTests, CanLoadASequenceFromFile) {
+    Node file{ *loadYaml("TestFile.yaml") };
+
+    Node sequence{ file["TestSequence"] };
+    for(size_t index{ 0 }; Node &child : sequence){
+        if(index == 0){
+            EXPECT_EQ(child.getType(), Node::Type::Scalar);
+            EXPECT_EQ(child.as<int32_t>(), 1);
+        } else if(index == 1) {
+            EXPECT_EQ(child.getType(), Node::Type::Scalar);
+            EXPECT_EQ(child.as<int32_t>(), 2);
+        } else if(index == 2) {
+            EXPECT_EQ(child.getType(), Node::Type::Map);
+            EXPECT_EQ(child["Val"].as<int32_t>(), 99);
+            EXPECT_EQ(child["Num"].as<int32_t>(), 100);
+        }
+
+        ++index;
+    }
 }
