@@ -27,16 +27,27 @@ namespace garlic::clove {
         //TODO: Inl
         Entity createEntity(std::string_view name) {
             Entity entity{ manager->create() };
-            //TODO: Handle string conversion?
-            rootNode["entities"]["id"] = entity;
-            rootNode["entities"]["name"] = name; 
+
+            serialiser::Node entityNode{};
+            entityNode["id"] = entity;
+            entityNode["name"] = name;
+            rootNode["entities"].pushBack(entityNode);
+            
             return entity;
         }
 
         template<typename ComponentType, typename... ConstructArgs>
         ComponentType &addComponent(Entity entity, ConstructArgs &&... args) {
             ComponentType &component{ manager->addComponent<ComponentType>(entity, std::forward<ConstructArgs>(args)...) };
-            rootNode["entities"][std::to_string(entity)]["components"][std::to_string(typeid(ComponentType).hash_code())] = component;
+            for(serialiser::Node &entityNode : rootNode["entities"]){
+                if(entityNode["id"].as<Entity>() == entity){
+                    serialiser::Node componentNode{};
+                    componentNode["id"] = std::to_string(typeid(ComponentType).hash_code());
+                    componentNode["data"] = component;
+                    entityNode["components"].pushBack(componentNode);
+                }
+            }
+            
             return component;
         }
     };
