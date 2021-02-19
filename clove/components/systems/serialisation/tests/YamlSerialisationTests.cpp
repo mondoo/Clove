@@ -173,3 +173,27 @@ TEST(YamlSerialisationTests, CanAddASerialisedSequenceNode) {
 
     EXPECT_EQ(emittYaml(root), "type: yaml\nversion: 1\nSequence:\n  - memberOne: 1\n    memberTwo: 2\n    memberThree: 32.5\n  - memberOne: 4\n    memberTwo: 5\n    memberThree: 64.5");
 }
+
+TEST(YamlSerialisationTests, CannotConvertAScalarIntoASequence) {
+    Node root{};
+    root["ScalarToSequence"] = 1;
+
+    ASSERT_EQ(root["ScalarToSequence"].getType(), Node::Type::Scalar);
+    EXPECT_EQ(emittYaml(root), "type: yaml\nversion: 1\nScalarToSequence: 1");
+
+    EXPECT_ANY_THROW(root["ScalarToSequence"].pushBack(2));
+}
+
+TEST(YamlSerialisationTests, CanPushBackOntoAMapNode) {
+    Node root{};
+    root["Map"]["Val"] = 1;
+    root["Map"]["Num"] = 2;
+
+    ASSERT_EQ(root["Map"].getType(), Node::Type::Map);
+    EXPECT_EQ(emittYaml(root), "type: yaml\nversion: 1\nMap:\n  Val: 1\n  Num: 2");
+
+    root["Map"].pushBack(3);
+
+    EXPECT_EQ(root["Map"].getType(), Node::Type::Map);
+    EXPECT_EQ(emittYaml(root), "type: yaml\nversion: 1\nMap:\n  Val: 1\n  Num: 2\n  2: 3");
+}

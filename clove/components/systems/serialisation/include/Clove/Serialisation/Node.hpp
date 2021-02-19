@@ -19,9 +19,10 @@ namespace garlic::clove::serialiser {
          * @brief Dictates what the child / children of this node are.
          */
         enum class Type {
-            None,     /**< Is a leaf node. It's scalar member will be a value. */
-            Scalar,   /**< Node is a value. Has a single node of Type::None that contains the value. */
-            Sequence, /**< Node is a series of values. Has multiple nodes of Type::None that contain values. */
+            None,     /**< Node is empty and has not been assigned anything.*/
+            Leaf,     /**< Node is a leaf node. It's scalar member will be a value. */
+            Scalar,   /**< Node is a value. Has a single node of Type::Leaf that contains the value. */
+            Sequence, /**< Node is a series of values. Has multiple nodes of Type::Leaf that contain values. */
             Map,      /**< Node is a series of key - value pairs. Has multiple nodes of Type::Scalar that contain values. */
         };
 

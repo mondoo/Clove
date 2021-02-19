@@ -17,15 +17,20 @@ namespace garlic::clove::serialiser {
 
     template<typename T>
     void Node::pushBack(T const &scalar) {
-        if(type != Type::Sequence) {
-            //TODO: Handle lossless conversion
-            nodes.clear();
+        if(type == Type::None){
             type = Type::Sequence;
         }
 
-        Node node{};
-        node = scalar;
-        nodes.push_back(std::move(node));
+        if(type == Type::Sequence) {
+            Node node{};
+            node = scalar;
+            nodes.push_back(std::move(node));
+        } else if(type == Type::Map) {
+            size_t const index{ nodes.size() - 1 };
+            (*this)[std::to_string(index)] = scalar;
+        } else {
+            throw std::runtime_error{ "Cannot pushBack onto a non-sequence type node." };
+        }
     }
 
     Node::Type Node::getType() const {
@@ -78,7 +83,7 @@ namespace garlic::clove::serialiser {
 
     template<typename T>
     void Node::setValue(T const &value) {
-        type = Type::None;
+        type = Type::Leaf;
         nodes.clear();
 
         if constexpr(std::is_arithmetic_v<T>) {

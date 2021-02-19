@@ -8,7 +8,7 @@ namespace garlic::clove::serialiser {
     Node::Node(Node &&other) noexcept = default;
 
     Node &Node::operator=(Node const &other) {
-        if(other.type == Type::None){
+        if(other.type == Type::Leaf) {
             scalar = other.scalar;
         }
         nodes = other.nodes;
@@ -18,7 +18,7 @@ namespace garlic::clove::serialiser {
     }
 
     Node &Node::operator=(Node &&other) noexcept {
-        if(other.type == Type::None) {
+        if(other.type == Type::Leaf) {
             scalar = std::move(other.scalar);
         }
         nodes = std::move(other.nodes);
@@ -47,8 +47,8 @@ namespace garlic::clove::serialiser {
     }
 
     Node const &Node::operator[](std::string_view nodeName) const {
-        if(type == Type::None) {
-            throw std::runtime_error{ "Node does not contain child nodes." };
+        if(type != Type::Map) {
+            throw std::runtime_error{ "Node is const and is not of type Map. Cannot perform any valid conversion" };
         }
 
         for(auto const &node : nodes) {
