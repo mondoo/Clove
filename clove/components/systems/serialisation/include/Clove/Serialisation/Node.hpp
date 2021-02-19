@@ -51,8 +51,8 @@ namespace garlic::clove::serialiser {
         /**
          * @brief Pushes a value onto this node. Turning it into a sequence.
          */
-        template<typename T, std::enable_if_t<std::is_arithmetic_v<T>, int> = 0>
-        Node &operator=(T scalar);
+        template<typename T>
+        void pushBack(T scalar);
 
         inline Type getType() const;
         inline std::string getKey() const;

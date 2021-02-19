@@ -64,6 +64,15 @@ TEST(YamlSerialisationTests, CanAddANodeAsAChildNode) {
     EXPECT_EQ(emittYaml(root), "type: yaml\nversion: 1\nParentNode:\n  value1: 42\n  value2: 100\nOtherNode: 3");
 }
 
+TEST(YamlSerialisationTests, CanAddABasicSequenceNode) {
+    Node root{};
+    root["Sequence"].pushBack(1);
+    root["Sequence"].pushBack(2);
+    root["Sequence"].pushBack(3);
+
+    EXPECT_EQ(emittYaml(root), "type: yaml\nversion: 1\nSequence:\n  - 1\n  - 2\n  - 3");
+}
+
 struct TestStruct {
     int32_t memberOne;
     int32_t memberTwo;

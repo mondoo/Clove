@@ -13,7 +13,11 @@ namespace garlic::clove {
             }
 
             if(node.getType() == Node::Type::Scalar) {
-                emitterNode[node.getKey()] = node.as<std::string>();
+                if(node.getKey() != ""){
+                    emitterNode[node.getKey()] = node.as<std::string>();
+                }else{
+                    emitterNode.push_back(node.as<std::string>());
+                }
             } else {
                 YAML::Node childNode{};
                 for(auto const &child : node) {
