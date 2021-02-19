@@ -73,6 +73,24 @@ TEST(YamlSerialisationTests, CanAddABasicSequenceNode) {
     EXPECT_EQ(emittYaml(root), "type: yaml\nversion: 1\nSequence:\n  - 1\n  - 2\n  - 3");
 }
 
+TEST(YamlSerialisationTests, CanAddANestedSequenceNode) {
+    Node node1{};
+    node1["Val1"] = 1;
+    Node node2{};
+    node2["Val1"] = 1;
+    node2["Val2"] = 2;
+
+    Node root{};
+    root["Sequence"].pushBack(node1);
+    root["Sequence"].pushBack(node2);
+
+    EXPECT_EQ(emittYaml(root), "type: yaml\nversion: 1\nSequence:\n  - Val1: 1\n  - Val1: 1\n    Val2: 2");
+
+    root["Sequence"].pushBack(32);
+
+    EXPECT_EQ(emittYaml(root), "type: yaml\nversion: 1\nSequence:\n  - Val1: 1\n  - Val1: 1\n    Val2: 2\n  - 32");
+}
+
 struct TestStruct {
     int32_t memberOne;
     int32_t memberTwo;

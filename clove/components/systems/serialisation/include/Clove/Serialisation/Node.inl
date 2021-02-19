@@ -16,20 +16,16 @@ namespace garlic::clove::serialiser {
     }
 
     template<typename T>
-    void Node::pushBack(T scalar) {
+    void Node::pushBack(T const &scalar) {
         if(type != Type::Sequence) {
             //TODO: Handle lossless conversion
             nodes.clear();
             type = Type::Sequence;
         }
 
-        if constexpr(std::is_arithmetic_v<T> || isKeyType<T>) {
-            Node scalarNode{};
-            scalarNode = scalar;
-            nodes.push_back(std::move(scalarNode));
-        } else if constexpr(std::is_same_v<T, Node>) {
-        } else {
-        }
+        Node node{};
+        node = scalar;
+        nodes.push_back(std::move(node));
     }
 
     Node::Type Node::getType() const {

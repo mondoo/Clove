@@ -52,7 +52,7 @@ namespace garlic::clove::serialiser {
          * @brief Pushes a value onto this node. Turning it into a sequence.
          */
         template<typename T>
-        void pushBack(T scalar);
+        void pushBack(T const &scalar);
 
         inline Type getType() const;
         inline std::string getKey() const;
