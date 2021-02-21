@@ -5,6 +5,7 @@
 #include "Clove/Graphics/Vulkan/VulkanBuffer.hpp"
 #include "Clove/Graphics/Vulkan/VulkanComputePipelineObject.hpp"
 #include "Clove/Graphics/Vulkan/VulkanComputeQueue.hpp"
+#include "Clove/Graphics/Vulkan/VulkanDescriptor.hpp"
 #include "Clove/Graphics/Vulkan/VulkanDescriptorPool.hpp"
 #include "Clove/Graphics/Vulkan/VulkanDescriptorSetLayout.hpp"
 #include "Clove/Graphics/Vulkan/VulkanFence.hpp"
@@ -22,7 +23,6 @@
 #include "Clove/Graphics/Vulkan/VulkanShader.hpp"
 #include "Clove/Graphics/Vulkan/VulkanSwapchain.hpp"
 #include "Clove/Graphics/Vulkan/VulkanTransferQueue.hpp"
-#include "Clove/Graphics/Vulkan/VulkanDescriptor.hpp"
 
 #include <Clove/Cast.hpp>
 #include <Clove/Log/Log.hpp>
@@ -612,9 +612,9 @@ namespace garlic::clove {
         size_t const vertexAttributeCount{ std::size(descriptor.vertexAttributes) };
         std::vector<VkVertexInputAttributeDescription> vertexAttributes(vertexAttributeCount);
         for(size_t i = 0; i < vertexAttributeCount; ++i) {
-            auto const &attribute = descriptor.vertexAttributes[i];
-            vertexAttributes[i]   = VkVertexInputAttributeDescription{
-                .location = attribute.location,
+            auto const &attribute{ descriptor.vertexAttributes[i] };
+            vertexAttributes[i] = VkVertexInputAttributeDescription{
+                .location = static_cast<uint32_t>(i),
                 .binding  = 0,
                 .format   = convertAttributeFormat(attribute.format),
                 .offset   = attribute.offset,

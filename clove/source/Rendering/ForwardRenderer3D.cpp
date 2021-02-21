@@ -717,12 +717,10 @@ namespace garlic::clove {
         vertexAttributes.reserve(totalAttributes);
 
         vertexAttributes.emplace_back(VertexAttributeDescriptor{
-            .location = 0,
             .format   = VertexAttributeFormat::R32G32B32_SFLOAT,
             .offset   = offsetof(Vertex, position),
         });
         vertexAttributes.emplace_back(VertexAttributeDescriptor{
-            .location = 1,
             .format   = VertexAttributeFormat::R32G32B32_SFLOAT,
             .offset   = offsetof(Vertex, texCoord),
         });
