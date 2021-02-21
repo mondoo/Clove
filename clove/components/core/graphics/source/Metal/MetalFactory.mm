@@ -3,8 +3,30 @@
 #include "Clove/Graphics/ShaderCompiler.hpp"
 #include "Clove/Graphics/Metal/MetalBuffer.hpp"
 #include "Clove/Graphics/Metal/MetalShader.hpp"
+#include "Clove/Graphics/Metal/MetalGraphicsPipelineObject.hpp"
+
+#include <Clove/Cast.hpp>
 
 namespace garlic::clove {
+	namespace {
+		MTLVertexFormat convertAttributeFormat(VertexAttributeFormat garlicFormat) {
+			switch(garlicFormat) {
+				case VertexAttributeFormat::R32_SFLOAT:
+					return MTLVertexFormatFloat;
+				case VertexAttributeFormat::R32G32_SFLOAT:
+					return MTLVertexFormatFloat2;
+				case VertexAttributeFormat::R32G32B32_SFLOAT:
+					return MTLVertexFormatFloat3;
+				case VertexAttributeFormat::R32G32B32A32_SFLOAT:
+					return MTLVertexFormatFloat4;
+				case VertexAttributeFormat::R32G32B32A32_SINT:
+					return MTLVertexFormatInt4;
+				default:
+					CLOVE_ASSERT(false, "{0}: Unkown format passed", CLOVE_FUNCTION_NAME_PRETTY);
+					return MTLVertexFormatFloat;
+			}
+		}
+	}
 	MetalFactory::MetalFactory(id<MTLDevice> device)
 		: device{ device }{
 	}
@@ -72,7 +94,58 @@ namespace garlic::clove {
 	}
 
 	Expected<std::unique_ptr<GhaGraphicsPipelineObject>, std::runtime_error> MetalFactory::createGraphicsPipelineObject(GhaGraphicsPipelineObject::Descriptor descriptor) {
-		return Unexpected{ std::runtime_error{ "Not implemented" } };
+		MetalRenderPass *metalRenderPass{ polyCast<MetalRenderPass>(descriptor.renderPass.get()) };
+		
+		//Vertex shader
+		id<MTLFunction> vertexFunction{ polyCast<MetalShader>(descriptor.vertexShader.get())->getFunction() };
+		
+		//Pixel shader
+		id<MTLFunction> fragmentFunction{ polyCast<MetalShader>(descriptor.pixelShader.get())->getFunction() };
+		
+		//Vertex input
+		MTLVertexDescriptor *vertexDescriptor{ [[MTLVertexDescriptor alloc] init] };
+		vertexDescriptor.layouts[0].stride = descriptor.vertexInput.stride;
+		for(size_t i{0}; i < descriptor.vertexAttributes.size(); ++i){
+			auto const &attribute{ descriptor.vertexAttributes[i] };
+			vertexDescriptor.attributes[i].bufferIndex = 0;
+			vertexDescriptor.attributes[i].format = convertAttributeFormat(attribute.format);
+			vertexDescriptor.attributes[i].offset = attribute.offset;
+		}
+		
+		//View / scissor
+		//TODO:
+		
+		//Rasteriser
+		//TODO:
+		
+		//Depth state
+		//TODO:
+		
+		//Blending
+		//TODO:
+		
+		//Render pass
+		//TODO:
+		
+		//Descriptors
+		//TODO:
+		
+		//Push constants
+		//TODO:
+		
+		MTLRenderPipelineDescriptor *pipelineDesc{ [[MTLRenderPipelineDescriptor alloc] init] };
+		pipelineDesc.vertexFunction = vertexFunction;
+		pipelineDesc.fragmentFunction = fragmentFunction;
+		pipelineDesc.vertexDescriptor = vertexDescriptor;
+		
+		NSError *error{ nullptr };
+		id<MTLRenderPipelineState> pipelineState = [device newRenderPipelineStateWithDescriptor:pipelineDesc error:&error];
+		
+		if(error != nullptr && error.code != 0){
+			return Unexpected{ std::runtime_error{ [[error description] cStringUsingEncoding:[NSString defaultCStringEncoding]] } };
+		}
+		
+		return std::unique_ptr<GhaGraphicsPipelineObject>{ std::make_unique<MetalGraphicsPipelineObject>(pipelineState) };
 	}
 	
 	Expected<std::unique_ptr<GhaComputePipelineObject>, std::runtime_error> MetalFactory::createComputePipelineObject(GhaComputePipelineObject::Descriptor descriptor) {
