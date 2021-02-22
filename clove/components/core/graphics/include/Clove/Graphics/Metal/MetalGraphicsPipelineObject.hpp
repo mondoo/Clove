@@ -9,11 +9,12 @@ namespace garlic::clove{
 		//VARIABLES
 	private:
 		id<MTLRenderPipelineState> pipeline;
+		id<MTLDepthStencilState> depthStencil;
 		
 		//FUNCTIONS
 	public:
 		MetalGraphicsPipelineObject() = delete;
-		MetalGraphicsPipelineObject(id<MTLRenderPipelineState> pipeline);
+		MetalGraphicsPipelineObject(id<MTLRenderPipelineState> pipeline, id<MTLDepthStencilState> depthStencil);
 		
 		MetalGraphicsPipelineObject(MetalGraphicsPipelineObject const &other) = delete;
 		MetalGraphicsPipelineObject(MetalGraphicsPipelineObject &&other) noexcept;

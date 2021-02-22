@@ -1,8 +1,9 @@
 #include "Clove/Graphics/Metal/MetalGraphicsPipelineObject.hpp"
 
 namespace garlic::clove {
-	MetalGraphicsPipelineObject::MetalGraphicsPipelineObject(id<MTLRenderPipelineState> pipeline)
-		: pipeline{ std::move(pipeline) }{
+	MetalGraphicsPipelineObject::MetalGraphicsPipelineObject(id<MTLRenderPipelineState> pipeline, id<MTLDepthStencilState> depthStencil)
+		: pipeline{ std::move(pipeline) }
+		, depthStencil{ std::move(depthStencil) }{
 	}
 	
 	MetalGraphicsPipelineObject::MetalGraphicsPipelineObject(MetalGraphicsPipelineObject &&other) noexcept = default;

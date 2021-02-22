@@ -113,17 +113,19 @@ namespace garlic::clove {
 		//Topology
 		MTLPrimitiveTopologyClass const topology{ MTLPrimitiveTopologyClassTriangle };
 		
-		//View / scissor
-		//TODO:
-		
-		//Rasteriser
-		//TODO:
-		
 		//Depth state
-		//TODO:
+		MTLDepthStencilDescriptor *depthStencil{ [[MTLDepthStencilDescriptor alloc] init]};
+		depthStencil.depthWriteEnabled = descriptor.depthState.depthWrite;
+		if(descriptor.depthState.depthTest){
+			depthStencil.depthCompareFunction = MTLCompareFunctionLess;
+		}else{
+			depthStencil.depthCompareFunction = MTLCompareFunctionAlways;
+		}
+		
+		id<MTLDepthStencilState> depthStencilState{ [device newDepthStencilStateWithDescriptor:depthStencil] };
 		
 		//Blending
-		//TODO:
+		//TODO: Needs to be set into the attachment?
 		
 		//Render pass
 		//TODO:
@@ -138,15 +140,15 @@ namespace garlic::clove {
 		pipelineDesc.vertexFunction = vertexFunction;
 		pipelineDesc.fragmentFunction = fragmentFunction;
 		pipelineDesc.vertexDescriptor = vertexDescriptor;
+		pipelineDesc.inputPrimitiveTopology = topology;
 		
 		NSError *error{ nullptr };
-		id<MTLRenderPipelineState> pipelineState = [device newRenderPipelineStateWithDescriptor:pipelineDesc error:&error];
-		
+		id<MTLRenderPipelineState> pipelineState{ [device newRenderPipelineStateWithDescriptor:pipelineDesc error:&error] };
 		if(error != nullptr && error.code != 0){
 			return Unexpected{ std::runtime_error{ [[error description] cStringUsingEncoding:[NSString defaultCStringEncoding]] } };
 		}
 		
-		return std::unique_ptr<GhaGraphicsPipelineObject>{ std::make_unique<MetalGraphicsPipelineObject>(pipelineState) };
+		return std::unique_ptr<GhaGraphicsPipelineObject>{ std::make_unique<MetalGraphicsPipelineObject>(pipelineState, depthStencilState) };
 	}
 	
 	Expected<std::unique_ptr<GhaComputePipelineObject>, std::runtime_error> MetalFactory::createComputePipelineObject(GhaComputePipelineObject::Descriptor descriptor) {
