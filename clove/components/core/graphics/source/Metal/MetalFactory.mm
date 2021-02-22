@@ -94,8 +94,6 @@ namespace garlic::clove {
 	}
 
 	Expected<std::unique_ptr<GhaGraphicsPipelineObject>, std::runtime_error> MetalFactory::createGraphicsPipelineObject(GhaGraphicsPipelineObject::Descriptor descriptor) {
-		MetalRenderPass *metalRenderPass{ polyCast<MetalRenderPass>(descriptor.renderPass.get()) };
-		
 		//Vertex shader
 		id<MTLFunction> vertexFunction{ polyCast<MetalShader>(descriptor.vertexShader.get())->getFunction() };
 		
@@ -111,6 +109,9 @@ namespace garlic::clove {
 			vertexDescriptor.attributes[i].format = convertAttributeFormat(attribute.format);
 			vertexDescriptor.attributes[i].offset = attribute.offset;
 		}
+		
+		//Topology
+		MTLPrimitiveTopologyClass const topology{ MTLPrimitiveTopologyClassTriangle };
 		
 		//View / scissor
 		//TODO:
