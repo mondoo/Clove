@@ -78,7 +78,7 @@ namespace garlic::clove {
         }
 
         QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface) {
-            QueueFamilyIndices indices;
+            QueueFamilyIndices indices{};
 
             uint32_t queueFamilyCount{ 0 };
             vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
@@ -287,14 +287,23 @@ namespace garlic::clove {
         //Pick physical device
         VkPhysicalDevice physicalDevice{ nullptr };
         {
-            uint32_t deviceCount = 0;
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Searching for a suitable physical device...");
+
+            uint32_t deviceCount{ 0 };
             vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
             if(deviceCount == 0) {
-                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "failed to find GPUs with Vulkan support!");
+                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to find GPUs with Vulkan support!");
                 return;
             }
             std::vector<VkPhysicalDevice> devices(deviceCount);
             vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
+
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Found {0} potential devices:", deviceCount);
+            for(auto const &device : devices) {
+                VkPhysicalDeviceProperties devicePoperties;
+                vkGetPhysicalDeviceProperties(device, &devicePoperties);
+                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "\t{0}", devicePoperties.deviceName);
+            }
 
             for(auto const &device : devices) {
                 if(isDeviceSuitable(device, surface, deviceExtensions)) {
@@ -304,7 +313,7 @@ namespace garlic::clove {
             }
 
             if(physicalDevice == VK_NULL_HANDLE) {
-                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "failed to find a suitable GPU!");
+                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to find a suitable GPU!");
                 return;
             } else {
                 VkPhysicalDeviceProperties devicePoperties;
@@ -324,7 +333,8 @@ namespace garlic::clove {
         {
             std::set<uint32_t> uniqueQueueFamilies{
                 *queueFamilyIndices.graphicsFamily,
-                *queueFamilyIndices.transferFamily
+                *queueFamilyIndices.transferFamily,
+                *queueFamilyIndices.computeFamily,
             };
             if(queueFamilyIndices.presentFamily.has_value()) {
                 uniqueQueueFamilies.emplace(*queueFamilyIndices.presentFamily);
@@ -349,8 +359,8 @@ namespace garlic::clove {
 
             VkDeviceCreateInfo createInfo {
                 .sType                = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
-                .queueCreateInfoCount = static_cast<uint32_t>(std::size(queueCreateInfos)),
-                .pQueueCreateInfos    = std::data(queueCreateInfos),
+                .queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size()),
+                .pQueueCreateInfos    = queueCreateInfos.data(),
 
 #if CLOVE_DEBUG
                 //We don't need to do this as device specific validation layers are no more. But seeing as it's the same data we can reuse them to support older versions
@@ -359,8 +369,8 @@ namespace garlic::clove {
 #else
                 .enabledLayerCount = 0,
 #endif
-                .enabledExtensionCount   = static_cast<uint32_t>(std::size(deviceExtensions)),
-                .ppEnabledExtensionNames = std::data(deviceExtensions),
+                .enabledExtensionCount   = static_cast<uint32_t>(deviceExtensions.size()),
+                .ppEnabledExtensionNames = deviceExtensions.data(),
                 .pEnabledFeatures        = &deviceFeatures,
             };
 
