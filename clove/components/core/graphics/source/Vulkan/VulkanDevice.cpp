@@ -395,15 +395,30 @@ namespace garlic::clove {
     }
 
     void VulkanDevice::waitForIdleDevice() {
-        vkDeviceWaitIdle(devicePtr.get());
+        if(VkResult const result{ vkDeviceWaitIdle(devicePtr.get()) }; result != VK_SUCCESS) {
+            switch(result) {
+                case VK_ERROR_OUT_OF_HOST_MEMORY:
+                    CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Error while waiting for device. Out of host memory.");
+                    break;
+                case VK_ERROR_OUT_OF_DEVICE_MEMORY:
+                    CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Error while waiting for device. Out of device memory.");
+                    break;
+                case VK_ERROR_DEVICE_LOST:
+                    CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Error while waiting for device. Device lost.");
+                    break;
+                default:
+                    CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Unknown error while waiting for device.");
+                    break;
+            }
+        }
     }
 
     GhaDevice::Limits VulkanDevice::getLimits() const {
         VkPhysicalDeviceProperties devicePoperties;
         vkGetPhysicalDeviceProperties(devicePtr.getPhysical(), &devicePoperties);
 
-        return {
-            devicePoperties.limits.minUniformBufferOffsetAlignment
+        return Limits{
+            .minUniformBufferOffsetAlignment = devicePoperties.limits.minUniformBufferOffsetAlignment
         };
     }
 }
