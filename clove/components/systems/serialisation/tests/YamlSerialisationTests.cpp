@@ -11,7 +11,7 @@ TEST(YamlSerialisationTests, CanEmittDefaultInformation) {
     EXPECT_EQ(emittYaml(node), "type: yaml\nversion: 1");
 }
 
-TEST(YamlSerialisationTests, CanAddAChildNode) {
+TEST(YamlSerialisationTests, CanEmittAChildNode) {
     Node root{};
 
     root["Start"] = 0;
@@ -23,7 +23,7 @@ TEST(YamlSerialisationTests, CanAddAChildNode) {
     EXPECT_EQ(emittYaml(root), "type: yaml\nversion: 1\nStart: 0\nNode: 0");
 }
 
-TEST(YamlSerialisationTests, CanAddAChildNodeWithAValue) {
+TEST(YamlSerialisationTests, CanEmittAChildNodeWithAValue) {
     Node root{};
 
     float f{ 99.0f };
@@ -48,7 +48,7 @@ TEST(YamlSerialisationTests, CanAddAChildNodeWithAValue) {
     EXPECT_EQ(emittYaml(root), "type: yaml\nversion: 1\nvalue1: 5\nvalue2: 3\nfloat: 99\nint32_t: 100\nuint32_t: 200\nint16_t: 16\nuint16_t: 1600\nstring1: Hello\nstring2: there\nstring3: world!");
 }
 
-TEST(YamlSerialisationTests, CanAddANodeAsAChildNode) {
+TEST(YamlSerialisationTests, CanEmittANodeAsAChildNode) {
     Node root{};
 
     Node parentNode{};
@@ -64,7 +64,7 @@ TEST(YamlSerialisationTests, CanAddANodeAsAChildNode) {
     EXPECT_EQ(emittYaml(root), "type: yaml\nversion: 1\nParentNode:\n  value1: 42\n  value2: 100\nOtherNode: 3");
 }
 
-TEST(YamlSerialisationTests, CanAddABasicSequenceNode) {
+TEST(YamlSerialisationTests, CanEmittABasicSequenceNode) {
     Node root{};
     root["Sequence"].pushBack(1);
     root["Sequence"].pushBack(2);
@@ -73,7 +73,7 @@ TEST(YamlSerialisationTests, CanAddABasicSequenceNode) {
     EXPECT_EQ(emittYaml(root), "type: yaml\nversion: 1\nSequence:\n  - 1\n  - 2\n  - 3");
 }
 
-TEST(YamlSerialisationTests, CanAddANestedSequenceNode) {
+TEST(YamlSerialisationTests, CanEmittANestedSequenceNode) {
     Node node1{};
     node1["Val1"] = 1;
     Node node2{};
@@ -108,7 +108,7 @@ namespace garlic::clove {
     }
 }
 
-TEST(YamlSerialisationTests, CanAddASerialisableStruct) {
+TEST(YamlSerialisationTests, CanEmittASerialisableStruct) {
     Node root{};
 
     TestStruct testStruct{
@@ -137,7 +137,7 @@ namespace garlic::clove {
     }
 }
 
-TEST(YamlSerialisationTests, CanAddANestedSerialisableStruct) {
+TEST(YamlSerialisationTests, CanEmittANestedSerialisableStruct) {
     Node root{};
 
     NestedTestStruct testStruct{
@@ -154,7 +154,7 @@ TEST(YamlSerialisationTests, CanAddANestedSerialisableStruct) {
     EXPECT_EQ(emittYaml(root), "type: yaml\nversion: 1\ntestStruct:\n  memberOne: 1\n  memberTwo:\n    memberOne: 1\n    memberTwo: 2\n    memberThree: 3");
 }
 
-TEST(YamlSerialisationTests, CanAddASerialisedSequenceNode) {
+TEST(YamlSerialisationTests, CanEmittASerialisedSequenceNode) {
     TestStruct test1{
         .memberOne   = 1,
         .memberTwo   = 2,
@@ -174,17 +174,7 @@ TEST(YamlSerialisationTests, CanAddASerialisedSequenceNode) {
     EXPECT_EQ(emittYaml(root), "type: yaml\nversion: 1\nSequence:\n  - memberOne: 1\n    memberTwo: 2\n    memberThree: 32.5\n  - memberOne: 4\n    memberTwo: 5\n    memberThree: 64.5");
 }
 
-TEST(YamlSerialisationTests, CannotConvertAScalarIntoASequence) {
-    Node root{};
-    root["ScalarToSequence"] = 1;
-
-    ASSERT_EQ(root["ScalarToSequence"].getType(), Node::Type::Scalar);
-    EXPECT_EQ(emittYaml(root), "type: yaml\nversion: 1\nScalarToSequence: 1");
-
-    EXPECT_ANY_THROW(root["ScalarToSequence"].pushBack(2));
-}
-
-TEST(YamlSerialisationTests, CanConvertASequenceIntoAMap) {
+TEST(YamlSerialisationTests, CanEmittAConvertedMapFromSequence) {
     Node root{};
     root["SeqToMap"].pushBack(1);
     root["SeqToMap"].pushBack(2);
@@ -198,7 +188,7 @@ TEST(YamlSerialisationTests, CanConvertASequenceIntoAMap) {
     EXPECT_EQ(emittYaml(root), "type: yaml\nversion: 1\nSeqToMap:\n  0: 1\n  1: 2\n  Key: 100");
 }
 
-TEST(YamlSerialisationTests, CanPushBackOntoAMapNode) {
+TEST(YamlSerialisationTests, CanEmittAMapThatIsPushedBack) {
     Node root{};
     root["Map"]["Val"] = 1;
     root["Map"]["Num"] = 2;

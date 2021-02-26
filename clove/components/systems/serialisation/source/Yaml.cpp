@@ -8,7 +8,7 @@ using namespace garlic::clove::serialiser;
 namespace garlic::clove {
     namespace {
         void emittNode(YAML::Node &emitterNode, Node const &node) {
-            if(node.getKey().length() <= 0 && node.getChildren().size() <= 0) {
+            if(node.getKey().length() <= 0 && node.numChildren() <= 0) {
                 return;
             }
 

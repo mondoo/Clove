@@ -42,8 +42,8 @@ namespace garlic::clove::serialiser {
         return scalar;
     }
 
-    Node::VectorType const &Node::getChildren() const {
-        return nodes;
+    size_t Node::numChildren() const {
+        return nodes.size();
     }
 
     Node::VectorType::iterator Node::begin() {
@@ -60,6 +60,14 @@ namespace garlic::clove::serialiser {
 
     Node::VectorType::const_iterator Node::end() const {
         return nodes.end();
+    }
+
+    Node &Node::operator[](size_t index) {
+        return nodes[index];
+    }
+
+    Node const &Node::operator[](size_t index) const {
+        return nodes[index];
     }
 
     template<typename T>
