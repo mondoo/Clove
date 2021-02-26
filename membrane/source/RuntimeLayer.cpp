@@ -53,7 +53,7 @@ namespace garlic::membrane {
         }
 
         void loadScene(Editor_LoadScene ^message){
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, clove::LogLevel::Warning, "Loading not yet handled!");
+            layer->currentWorld.load();
         }
     };
     // clang-format on
