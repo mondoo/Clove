@@ -1,7 +1,8 @@
 #pragma once
 
+#include "Clove/SerialisationCommon.hpp"
+
 #include <Clove/Maths/MathsTypes.hpp>
-#include <Clove/Serialisation/Node.hpp>
 #include <vector>
 
 namespace garlic::clove {

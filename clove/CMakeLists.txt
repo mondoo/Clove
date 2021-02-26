@@ -174,6 +174,8 @@ add_library(
 		${INCLUDE}/ModelLoader.hpp
 		${SOURCE}/ModelLoader.cpp
 
+		${INCLUDE}/SerialisationCommon.hpp
+
 		${INCLUDE}/SoundFile.hpp
 		${SOURCE}/SoundFile.cpp
 
