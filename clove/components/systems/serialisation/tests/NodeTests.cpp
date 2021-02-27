@@ -11,6 +11,25 @@ TEST(NodeTests, CanDefaultInitialiseNode) {
     EXPECT_EQ(node.numChildren(), 0);
 }
 
+TEST(NodeTests, CanSetAndGetAValueOnANode) {
+    Node node{};
+
+    node = 5;
+    EXPECT_EQ(node.getType(), Node::Type::Scalar);
+    EXPECT_EQ(node.numChildren(), 1);
+    EXPECT_EQ(node.as<uint32_t>(), 5);
+
+    uint64_t max64{ ~0u };
+    node = max64;
+    EXPECT_EQ(node.as<uint64_t>(), max64);
+
+    node = 3.5555f;
+    EXPECT_FLOAT_EQ(node.as<float>(), 3.5555f);
+
+    node = "test";
+    EXPECT_EQ(node.as<std::string>(), "test");
+}
+
 TEST(NodeTests, CanAddNamedChildOntoNode) {
     Node node{};
 

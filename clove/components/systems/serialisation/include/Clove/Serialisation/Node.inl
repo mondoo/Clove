@@ -76,7 +76,14 @@ namespace garlic::clove::serialiser {
             if(type != Type::Scalar) {
                 throw std::runtime_error{ "Node is not holding a value!" };
             }
-            return std::stof(nodes[0].scalar);
+            std::stringstream stream{};
+            stream.precision(std::numeric_limits<T>::max_digits10);
+            stream.str(nodes[0].scalar);
+
+            T value{};
+            stream >> value;
+
+            return value;
         } else if constexpr(std::is_same_v<std::string, T>) {
             if(type != Type::Scalar) {
                 throw std::runtime_error{ "Node is not holding a value!" };
@@ -96,7 +103,7 @@ namespace garlic::clove::serialiser {
         nodes.clear();
 
         if constexpr(std::is_arithmetic_v<T>) {
-            std::stringstream stream;
+            std::stringstream stream{};
             stream.precision(std::numeric_limits<T>::max_digits10);
             stream << value;
             scalar = stream.str();
