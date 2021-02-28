@@ -22,6 +22,7 @@
 #include <Clove/Definitions.hpp>
 #include <Clove/Log/Log.hpp>
 #include <set>
+#include <unordered_set>
 
 CLOVE_DECLARE_LOG_CATEGORY(VULKAN)
 
@@ -78,46 +79,76 @@ namespace garlic::clove {
         }
 
         QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface) {
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Generating queue family indicies...");
+
             QueueFamilyIndices indices{};
+            std::set<size_t> graphicsFamilyIndices{};
+            std::set<size_t> presentFamilyIndices{};
+            std::set<size_t> transferFamilyIndices{};
+            std::set<size_t> computeFamilyIndices{};
 
             uint32_t queueFamilyCount{ 0 };
             vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
 
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "{0} queue families available", queueFamilyCount);
+
             std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
             vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
 
-            for(int i{ 0 }; auto const &queueFamily : queueFamilies) {
-                //Make sure we have the queue family that'll let us render graphics
-                if((queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) != 0u) {
-                    indices.graphicsFamily = i;
-                }
-
+            for(size_t i{ 0 }; auto const &queueFamily : queueFamilies) {
                 //If we have a surface, check if we have presentation support. Otherwise we're running headless
                 if(surface != VK_NULL_HANDLE) {
                     VkBool32 presentSupport{ VK_FALSE };
                     vkGetPhysicalDeviceSurfaceSupportKHR(device, i, surface, &presentSupport);
                     if(presentSupport == VK_TRUE) {
-                        indices.presentFamily = i;
+                        presentFamilyIndices.emplace(i);
                     }
                 }
 
-                //Find a transfer queue family that specifically doesn't support graphics
-                if(((queueFamily.queueFlags & VK_QUEUE_TRANSFER_BIT) != 0u) && ((queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) == 0u)) {
-                    indices.transferFamily = i;
+                if((queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) != 0u) {
+                    graphicsFamilyIndices.emplace(i);
                 }
-
-                //Find a queue family for compute operations
-                if((queueFamily.queueFlags & VK_QUEUE_COMPUTE_BIT) != 0u){
-                    indices.computeFamily = i;
+                if((queueFamily.queueFlags & VK_QUEUE_TRANSFER_BIT) != 0u) {
+                    transferFamilyIndices.emplace(i);
                 }
-
-                bool const requirePresentFamily{ surface != VK_NULL_HANDLE };
-                if(indices.isComplete(requirePresentFamily)) {
-                    break;
+                if((queueFamily.queueFlags & VK_QUEUE_COMPUTE_BIT) != 0u) {
+                    computeFamilyIndices.emplace(i);
                 }
 
                 ++i;
             }
+
+            if(presentFamilyIndices.empty() || graphicsFamilyIndices.empty() || transferFamilyIndices.empty() || computeFamilyIndices.empty()) {
+                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Some queue types are unsupported. {0} failed.", CLOVE_FUNCTION_NAME);
+            }
+
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Distributing family types. Aiming for a unique family per queue type...");
+            //Just taking the first one available for now. Not forcing the present queue to be unique for now.
+            //TODO: Should just make graphics and present the same one?
+            if(surface != VK_NULL_HANDLE) {
+                indices.presentFamily = *presentFamilyIndices.begin();
+            }
+
+            indices.graphicsFamily = *graphicsFamilyIndices.begin();
+            if(transferFamilyIndices.size() > 1) {
+                transferFamilyIndices.erase(*indices.graphicsFamily);
+            }
+            if(computeFamilyIndices.size() > 1) {
+                computeFamilyIndices.erase(*indices.graphicsFamily);
+            }
+
+            indices.transferFamily = *transferFamilyIndices.begin();
+            if(computeFamilyIndices.size() > 1) {
+                computeFamilyIndices.erase(*indices.transferFamily);
+            }
+
+            indices.computeFamily = *computeFamilyIndices.begin();
+
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Debug, "Vulkan queue types successfully distributed!");
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "\tPresent:\tid: {0}, count: {1}", *indices.presentFamily, queueFamilies[*indices.presentFamily].queueCount);
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "\tGraphics:\tid: {0}, count: {1}", *indices.graphicsFamily, queueFamilies[*indices.graphicsFamily].queueCount);
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "\tTransfer:\tid: {0}, count: {1}", *indices.transferFamily, queueFamilies[*indices.transferFamily].queueCount);
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "\tCompute:\tid: {0}, count: {1}", *indices.computeFamily, queueFamilies[*indices.computeFamily].queueCount);
 
             return indices;
         }
