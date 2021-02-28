@@ -148,8 +148,11 @@ namespace garlic::clove {
         }
 
         bool isDeviceSuitable(VkPhysicalDevice device, VkSurfaceKHR surface, std::vector<char const *> const &extensions) {
-            VkPhysicalDeviceFeatures deviceFeatures;
+            VkPhysicalDeviceFeatures deviceFeatures{};
             vkGetPhysicalDeviceFeatures(device, &deviceFeatures);
+
+            VkPhysicalDeviceProperties devicePoperties{};
+            vkGetPhysicalDeviceProperties(device, &devicePoperties);
 
             QueueFamilyIndices indices{ findQueueFamilies(device, surface) };
             bool const extentionsAreSupported{ checkDeviceExtensionsSupport(device, extensions) };
@@ -167,7 +170,7 @@ namespace garlic::clove {
             }
 
             bool const requirePresentFamily{ surface != VK_NULL_HANDLE };
-            return indices.isComplete(requirePresentFamily) && extentionsAreSupported && surfaceIsAdequate.value_or(true) && (deviceFeatures.samplerAnisotropy != 0u);
+            return indices.isComplete(requirePresentFamily) && extentionsAreSupported && surfaceIsAdequate.value_or(true) && (deviceFeatures.samplerAnisotropy != 0u) && devicePoperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU;
         }
     }
 
@@ -285,7 +288,7 @@ namespace garlic::clove {
         }
 
         //Pick physical device
-        VkPhysicalDevice physicalDevice{ nullptr };
+        VkPhysicalDevice physicalDevice{ VK_NULL_HANDLE };
         {
             CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Searching for a suitable physical device...");
 
@@ -300,7 +303,7 @@ namespace garlic::clove {
 
             CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Found {0} potential devices:", deviceCount);
             for(auto const &device : devices) {
-                VkPhysicalDeviceProperties devicePoperties;
+                VkPhysicalDeviceProperties devicePoperties{};
                 vkGetPhysicalDeviceProperties(device, &devicePoperties);
                 CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "\t{0}", devicePoperties.deviceName);
             }
