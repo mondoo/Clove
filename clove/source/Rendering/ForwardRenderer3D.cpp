@@ -205,7 +205,7 @@ namespace garlic::clove {
 
         size_t const imageIndex{ result.getValue() };
 
-        ImageData &currentImageData = inFlightImageData[imageIndex];
+        ImageData &currentImageData{ inFlightImageData[imageIndex] };
 
         //Rendering constants / globals
         RenderArea renderArea{
@@ -343,7 +343,13 @@ namespace garlic::clove {
             .commandBuffers   = { currentImageData.skinningCommandBuffer },
             .signalSemaphores = { skinningFinishedSemaphores[currentFrame] },
         };
-        computeQueue->submit({ skinningSubmitInfo }, nullptr);
+        computeQueue->submit({ std::move(skinningSubmitInfo) }, nullptr);
+
+        //As all of the following graphics commands require this skinning pass. Make the queue wait on it before starting any more work
+        GraphicsSubmitInfo waitSubmit{
+            .waitSemaphores = { { skinningFinishedSemaphores[currentFrame], PipelineStage::Top } },
+        };
+        graphicsQueue->submit({ std::move(waitSubmit) }, nullptr);
 
         //DIRECTIONAL LIGHT SHADOWS
         currentImageData.shadowMapCommandBuffer->beginRecording(CommandBufferUsage::OneTimeSubmit);
@@ -369,9 +375,6 @@ namespace garlic::clove {
 
         //Submit the command buffer for the directional shadow map
         GraphicsSubmitInfo shadowSubmitInfo{
-            .waitSemaphores = {
-                { skinningFinishedSemaphores[currentFrame], PipelineStage::VertexInput },
-            },
             .commandBuffers   = { currentImageData.shadowMapCommandBuffer },
             .signalSemaphores = { shadowFinishedSemaphores[currentFrame] },
         };
@@ -405,9 +408,6 @@ namespace garlic::clove {
 
         //Submit the command buffer for the point shadow map
         GraphicsSubmitInfo cubeShadowSubmitInfo{
-            .waitSemaphores = {
-                { skinningFinishedSemaphores[currentFrame], PipelineStage::VertexInput },
-            },
             .commandBuffers   = { currentImageData.cubeShadowMapCommandBuffer },
             .signalSemaphores = { cubeShadowFinishedSemaphores[currentFrame] },
         };
@@ -493,7 +493,6 @@ namespace garlic::clove {
             .waitSemaphores = {
                 { shadowFinishedSemaphores[currentFrame], PipelineStage::PixelShader },
                 { cubeShadowFinishedSemaphores[currentFrame], PipelineStage::PixelShader },
-                { skinningFinishedSemaphores[currentFrame], PipelineStage::VertexInput },
             },
             .commandBuffers = { currentImageData.commandBuffer },
         };
@@ -509,6 +508,9 @@ namespace garlic::clove {
 
         for(auto &imageData : inFlightImageData) {
             graphicsQueue->freeCommandBuffer(*imageData.commandBuffer);
+            graphicsQueue->freeCommandBuffer(*imageData.shadowMapCommandBuffer);
+            graphicsQueue->freeCommandBuffer(*imageData.cubeShadowMapCommandBuffer);
+            computeQueue->freeCommandBuffer(*imageData.skinningCommandBuffer);
         }
     }
 
