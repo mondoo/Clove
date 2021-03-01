@@ -89,7 +89,7 @@ namespace garlic::clove{
 	}
 	
 	void MacWindow::resizeWindow(vec2i const &size){
-		vec2i const position{ getPosition() };
+		vec2i const position{ getPosition(false) };
 		[windowProxy setFrame:NSMakeRect(position.x, position.x, size.x, size.y) display:YES];
 	}
 	
@@ -126,48 +126,48 @@ namespace garlic::clove{
 				break;
 			
 			case NSEventTypeMouseMoved:
-				mouseDispatcher.onMouseMove(mouseLoc.x, mouseLoc.y);
+				mouseDispatcher.onMouseMove(mouseLoc);
 				break;
 			
 			case NSEventTypeLeftMouseDown:
-				mouseDispatcher.onButtonPressed(MouseButton::_1, mouseLoc.x, mouseLoc.y);
+				mouseDispatcher.onButtonPressed(MouseButton::_1, mouseLoc);
 				break;
 			
 			case NSEventTypeLeftMouseUp:
-				mouseDispatcher.onButtonReleased(MouseButton::_1, mouseLoc.x, mouseLoc.y);
+				mouseDispatcher.onButtonReleased(MouseButton::_1, mouseLoc);
 				break;
 			
 			case NSEventTypeRightMouseDown:
-				mouseDispatcher.onButtonPressed(MouseButton::_2, mouseLoc.x, mouseLoc.y);
+				mouseDispatcher.onButtonPressed(MouseButton::_2, mouseLoc);
 				break;
 			
 			case NSEventTypeRightMouseUp:
-				mouseDispatcher.onButtonReleased(MouseButton::_2, mouseLoc.x, mouseLoc.y);
+				mouseDispatcher.onButtonReleased(MouseButton::_2, mouseLoc);
 				break;
 			
 			case NSEventTypeOtherMouseDown:
 				if(([NSEvent pressedMouseButtons] & static_cast<NSUInteger>(MouseButton::_3)) != 0){
-					mouseDispatcher.onButtonPressed(MouseButton::_3, mouseLoc.x, mouseLoc.y);
+					mouseDispatcher.onButtonPressed(MouseButton::_3, mouseLoc);
 				}else if(([NSEvent pressedMouseButtons] & static_cast<NSUInteger>(MouseButton::_4)) != 0){
-					mouseDispatcher.onButtonPressed(MouseButton::_4, mouseLoc.x, mouseLoc.y);
+					mouseDispatcher.onButtonPressed(MouseButton::_4, mouseLoc);
 				}else if(([NSEvent pressedMouseButtons] & static_cast<NSUInteger>(MouseButton::_5)) != 0){
-					mouseDispatcher.onButtonPressed(MouseButton::_5, mouseLoc.x, mouseLoc.y);
+					mouseDispatcher.onButtonPressed(MouseButton::_5, mouseLoc);
 				}
 				break;
 			
 			case NSEventTypeOtherMouseUp:
 				if(([NSEvent pressedMouseButtons] & static_cast<NSUInteger>(MouseButton::_3)) != 0){
-					mouseDispatcher.onButtonReleased(MouseButton::_3, mouseLoc.x, mouseLoc.y);
+					mouseDispatcher.onButtonReleased(MouseButton::_3, mouseLoc);
 				}else if(([NSEvent pressedMouseButtons] & static_cast<NSUInteger>(MouseButton::_4)) != 0){
-					mouseDispatcher.onButtonReleased(MouseButton::_4, mouseLoc.x, mouseLoc.y);
+					mouseDispatcher.onButtonReleased(MouseButton::_4, mouseLoc);
 				}else if(([NSEvent pressedMouseButtons] & static_cast<NSUInteger>(MouseButton::_5)) != 0){
-					mouseDispatcher.onButtonReleased(MouseButton::_5, mouseLoc.x, mouseLoc.y);
+					mouseDispatcher.onButtonReleased(MouseButton::_5, mouseLoc);
 				}
 				break;
 			
 			
 			case NSEventTypeScrollWheel:
-				mouseDispatcher.onWheelDelta(static_cast<int32_t>([event scrollingDeltaY]), mouseLoc.x, mouseLoc.y);
+				mouseDispatcher.onWheelDelta(static_cast<int32_t>([event scrollingDeltaY]), mouseLoc);
 				break;
 				
 			default:
