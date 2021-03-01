@@ -1,6 +1,8 @@
 #include "Clove/Platform/Input/Mouse.hpp"
 #include "Clove/Platform/Linux/CloveLinux.hpp"
 
+#include <X11/cursorfont.h>
+
 namespace garlic::clove {
     vec2i Mouse::getPosition() const {
         ::Window rootReturn{};
@@ -29,5 +31,31 @@ namespace garlic::clove {
     }
 
     void Mouse::show(bool shouldShow) {
+        static char data[1] = { 0 };
+        static bool cursorSet{ false };
+
+        if(shouldShow) {
+            if(cursorSet) {
+                XUndefineCursor(display, XDefaultRootWindow(display));
+
+                Cursor cursor{ XCreateFontCursor(display, XC_arrow) };
+                XDefineCursor(display, XDefaultRootWindow(display), cursor);
+                XFreeCursor(display, cursor);
+
+                cursorSet = false;
+            }
+        } else {
+            if(!cursorSet) {
+                Pixmap blank{ XCreateBitmapFromData(display, XDefaultRootWindow(display), data, 1, 1) };
+                XColor dummy{};
+                Cursor cursor{ XCreatePixmapCursor(display, blank, blank, &dummy, &dummy, 0, 0) };
+
+                XDefineCursor(display, XDefaultRootWindow(display), cursor);
+                XFreeCursor(display, cursor);
+                XFreePixmap(display, blank);
+
+                cursorSet = true;
+            }
+        }
     }
 }
