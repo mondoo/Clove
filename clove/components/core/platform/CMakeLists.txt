@@ -26,6 +26,7 @@ set(
 set(
 	MacOSPlatformFiles
 		${INCLUDE}/Mac/CloveMac.hpp
+		${SOURCE}/Mac/MacMouse.mm
 		${INCLUDE}/Mac/MacWindow.hpp
 		${SOURCE}/Mac/MacWindow.mm
 )
