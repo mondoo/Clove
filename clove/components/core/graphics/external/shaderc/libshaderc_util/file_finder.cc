@@ -36,9 +36,11 @@ std::string FileFinder::FindReadableFilepath(
   static const auto for_reading = std::ios_base::in;
   std::filebuf opener;
   for (const auto& prefix : search_path_) {
+    //GARLIC CHANGE - BEGIN
     const std::string prefixed_filename =
-        prefix + MaybeSlash(prefix) + filename;
-    if (opener.open(prefixed_filename, for_reading)) return prefixed_filename;
+        prefix + MaybeSlash(prefix) + filename; //NOLINT
+    if (opener.open(prefixed_filename, for_reading)) return prefixed_filename; //NOLINT
+    //GARLIC CHANGE - END
   }
   return "";
 }
@@ -63,7 +65,9 @@ std::string FileFinder::FindRelativeReadableFilepath(
   std::filebuf opener;
   const std::string relative_filename =
       dir_name.str() + MaybeSlash(dir_name) + filename;
-  if (opener.open(relative_filename, for_reading)) return relative_filename;
+  //GARLIC CHANGE - BEGIN
+  if (opener.open(relative_filename, for_reading)) return relative_filename; //NOLINT
+  //GARLIC CHANGE - END
 
   return FindReadableFilepath(filename);
 }

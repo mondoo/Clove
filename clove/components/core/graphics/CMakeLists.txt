@@ -22,6 +22,14 @@ set(
 		${SOURCE}/Vulkan/VulkanBuffer.cpp
 		${INCLUDE}/Vulkan/VulkanCommandBuffer.hpp
 		${SOURCE}/Vulkan/VulkanCommandBuffer.cpp
+		${INCLUDE}/Vulkan/VulkanComputeCommandBuffer.hpp
+		${SOURCE}/Vulkan/VulkanComputeCommandBuffer.cpp
+		${INCLUDE}/Vulkan/VulkanComputePipelineObject.hpp
+		${SOURCE}/Vulkan/VulkanComputePipelineObject.cpp
+		${INCLUDE}/Vulkan/VulkanComputeQueue.hpp
+		${SOURCE}/Vulkan/VulkanComputeQueue.cpp
+		${INCLUDE}/Vulkan/VulkanDescriptor.hpp
+		${SOURCE}/Vulkan/VulkanDescriptor.cpp
 		${INCLUDE}/Vulkan/VulkanDescriptorPool.hpp
 		${INCLUDE}/Vulkan/VulkanDescriptorPool.inl
 		${SOURCE}/Vulkan/VulkanDescriptorPool.cpp
@@ -36,12 +44,14 @@ set(
 		${SOURCE}/Vulkan/VulkanFramebuffer.cpp
 		${INCLUDE}/Vulkan/VulkanGraphicsCommandBuffer.hpp
 		${SOURCE}/Vulkan/VulkanGraphicsCommandBuffer.cpp
+		${INCLUDE}/Vulkan/VulkanGraphicsPipelineObject.hpp
+		${SOURCE}/Vulkan/VulkanGraphicsPipelineObject.cpp
+		${INCLUDE}/Vulkan/VulkanGraphicsQueue.hpp
+		${SOURCE}/Vulkan/VulkanGraphicsQueue.cpp
 		${INCLUDE}/Vulkan/VulkanDevice.hpp
 		${SOURCE}/Vulkan/VulkanDevice.cpp
 		${INCLUDE}/Vulkan/VulkanFactory.hpp
 		${SOURCE}/Vulkan/VulkanFactory.cpp
-		${INCLUDE}/Vulkan/VulkanGraphicsQueue.hpp
-		${SOURCE}/Vulkan/VulkanGraphicsQueue.cpp
 		${INCLUDE}/Vulkan/VulkanResource.hpp
 		${SOURCE}/Vulkan/VulkanResource.cpp
 		${INCLUDE}/Vulkan/VulkanImage.hpp
@@ -82,6 +92,9 @@ add_library(
 		${INCLUDE}/CommandBuffer.hpp
 		${INCLUDE}/Descriptor.hpp
 		${INCLUDE}/GhaBuffer.hpp
+		${INCLUDE}/GhaComputeCommandBuffer.hpp
+		${INCLUDE}/GhaComputePipelineObject.hpp
+		${INCLUDE}/GhaComputeQueue.hpp
 		${INCLUDE}/GhaDescriptorPool.hpp
 		${INCLUDE}/GhaDescriptorSet.hpp
 		${INCLUDE}/GhaDescriptorSetLayout.hpp
@@ -90,10 +103,10 @@ add_library(
 		${INCLUDE}/GhaFence.hpp
 		${INCLUDE}/GhaFramebuffer.hpp
 		${INCLUDE}/GhaGraphicsCommandBuffer.hpp
+		${INCLUDE}/GhaGraphicsPipelineObject.hpp
 		${INCLUDE}/GhaGraphicsQueue.hpp
 		${INCLUDE}/GhaImage.hpp
 		${INCLUDE}/GhaImageView.hpp
-		${INCLUDE}/GhaPipelineObject.hpp
 		${INCLUDE}/GhaPresentQueue.hpp
 		${INCLUDE}/GhaRenderPass.hpp
 		${INCLUDE}/GhaSampler.hpp
@@ -106,6 +119,7 @@ add_library(
 		${SOURCE}/Graphics.cpp
 		${INCLUDE}/GraphicsAPI.hpp
 		${INCLUDE}/MemoryBarrier.hpp
+		${INCLUDE}/PipelineObject.hpp
 		${INCLUDE}/Queue.hpp
 		${INCLUDE}/Resource.hpp
 		${INCLUDE}/Result.hpp

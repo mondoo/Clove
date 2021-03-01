@@ -30,6 +30,9 @@ namespace garlic::clove {
         if((stage & GhaShader::Stage::Pixel) != 0) {
             vkStage |= VK_SHADER_STAGE_FRAGMENT_BIT;
         }
+        if((stage & GhaShader::Stage::Compute) != 0) {
+            vkStage |= VK_SHADER_STAGE_COMPUTE_BIT;
+        }
         return vkStage;
     }
 }

@@ -50,11 +50,11 @@ namespace garlic::clove {
 
         return *factory.createDescriptorSetLayout(GhaDescriptorSetLayout::Descriptor{
             .bindings = {
-                std::move(diffuseTextureBinding),
-                std::move(specularTextureBinding),
-                std::move(modelBinding),
-                std::move(skeletonBinding),
-                std::move(colourBinding),
+                diffuseTextureBinding,
+                specularTextureBinding,
+                modelBinding,
+                skeletonBinding,
+                colourBinding,
             },
         });
     }
@@ -76,8 +76,8 @@ namespace garlic::clove {
 
         return *factory.createDescriptorSetLayout(GhaDescriptorSetLayout::Descriptor{
             .bindings = {
-                std::move(viewDataBinding),
-                std::move(viewPosBinding),
+                viewDataBinding,
+                viewPosBinding,
             },
         });
     }
@@ -120,11 +120,11 @@ namespace garlic::clove {
 
         return *factory.createDescriptorSetLayout(GhaDescriptorSetLayout::Descriptor{
             .bindings = {
-                std::move(lightDataBinding),
-                std::move(numLightBinding),
-                std::move(directionalShadowTransformBinding),
-                std::move(directionalShadowMapBinding),
-                std::move(pointShadowMapBinding),
+                lightDataBinding,
+                numLightBinding,
+                directionalShadowTransformBinding,
+                directionalShadowMapBinding,
+                pointShadowMapBinding,
             },
         });
     }
@@ -139,7 +139,38 @@ namespace garlic::clove {
 
         return *factory.createDescriptorSetLayout(GhaDescriptorSetLayout::Descriptor{
             .bindings = {
-                std::move(textureBinding),
+                textureBinding,
+            },
+        });
+    }
+
+    std::unique_ptr<GhaDescriptorSetLayout> createSkinningDescriptorSetLayout(GhaFactory &factory){
+        DescriptorSetBindingInfo const skeletonBinding{
+            .binding   = 0,
+            .type      = DescriptorType::UniformBuffer,
+            .arraySize = 1,
+            .stage     = GhaShader::Stage::Compute,
+        };
+
+        DescriptorSetBindingInfo const bindPoseBinding{
+            .binding   = 1,
+            .type      = DescriptorType::StorageBuffer,
+            .arraySize = 1,
+            .stage     = GhaShader::Stage::Compute,
+        };
+
+        DescriptorSetBindingInfo const skinedPoseBinding{
+            .binding   = 2,
+            .type      = DescriptorType::StorageBuffer,
+            .arraySize = 1,
+            .stage     = GhaShader::Stage::Compute,
+        };
+
+        return *factory.createDescriptorSetLayout(GhaDescriptorSetLayout::Descriptor{
+            .bindings = {
+                skeletonBinding,
+                bindPoseBinding,
+                skinedPoseBinding,
             },
         });
     }
@@ -147,7 +178,7 @@ namespace garlic::clove {
     std::unordered_map<DescriptorType, uint32_t> countDescriptorBindingTypes(GhaDescriptorSetLayout const &descriptorSetLayout) {
         std::unordered_map<DescriptorType, uint32_t> counts;
         auto const &descriptor{ descriptorSetLayout.getDescriptor() };
-        for(auto &binding : descriptor.bindings) {
+        for(auto const &binding : descriptor.bindings) {
             counts[binding.type] += binding.arraySize;
         }
 
@@ -195,7 +226,7 @@ namespace garlic::clove {
         std::shared_ptr<GhaTransferCommandBuffer> transferCommandBuffer{ transferQueue->allocateCommandBuffer() };
         std::shared_ptr<GhaGraphicsCommandBuffer> graphicsCommandBuffer{ graphicsQueue->allocateCommandBuffer() };
 
-        auto image{ *factory.createImage(std::move(imageDescriptor)) };
+        auto image{ *factory.createImage(imageDescriptor) };
 
         auto transferBuffer = *factory.createBuffer(GhaBuffer::Descriptor{
             .size        = dataSize,
@@ -207,14 +238,14 @@ namespace garlic::clove {
 
         //Change the layout of the image, write the buffer into it and then release the queue ownership
         transferCommandBuffer->beginRecording(CommandBufferUsage::OneTimeSubmit);
-        transferCommandBuffer->imageMemoryBarrier(*image, std::move(layoutTransferInfo), GhaPipelineObject::Stage::Top, GhaPipelineObject::Stage::Transfer);
+        transferCommandBuffer->imageMemoryBarrier(*image, layoutTransferInfo, PipelineStage::Top, PipelineStage::Transfer);
         transferCommandBuffer->copyBufferToImage(*transferBuffer, bufferOffset, *image, imageOffset, imageExtent);
-        transferCommandBuffer->imageMemoryBarrier(*image, std::move(transferQueueReleaseInfo), GhaPipelineObject::Stage::Transfer, GhaPipelineObject::Stage::Transfer);
+        transferCommandBuffer->imageMemoryBarrier(*image, transferQueueReleaseInfo, PipelineStage::Transfer, PipelineStage::Transfer);
         transferCommandBuffer->endRecording();
 
         //Acquire ownership of the image to a graphics queue
         graphicsCommandBuffer->beginRecording(CommandBufferUsage::OneTimeSubmit);
-        graphicsCommandBuffer->imageMemoryBarrier(*image, std::move(graphicsQueueAcquireInfo), GhaPipelineObject::Stage::Transfer, GhaPipelineObject::Stage::PixelShader);
+        graphicsCommandBuffer->imageMemoryBarrier(*image, graphicsQueueAcquireInfo, PipelineStage::Transfer, PipelineStage::PixelShader);
         graphicsCommandBuffer->endRecording();
 
         auto transferQueueFinishedFence{ *factory.createFence({ false }) };
@@ -245,6 +276,6 @@ namespace garlic::clove {
 
         size_t const size{ textureData.dimensions.x * textureData.dimensions.y * textureData.channels };
 
-        return createImageWithData(factory, std::move(textureDesc), textureData.buffer.get(), size);
+        return createImageWithData(factory, textureDesc, textureData.buffer.get(), size);
     }
 }

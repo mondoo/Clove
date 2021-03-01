@@ -44,7 +44,7 @@ namespace garlic::clove {
 		auto graphicsDevice{ createGraphicsDevice(graphicsApi, std::any{}) };
 		auto audioDevice{ createAudioDevice(audioApi) };
 		
-		auto renderTarget{ std::make_unique<GraphicsImageRenderTarget>(std::move(renderTargetDescriptor), graphicsDevice->getGraphicsFactory()) };
+		auto renderTarget{ std::make_unique<GraphicsImageRenderTarget>(renderTargetDescriptor, graphicsDevice->getGraphicsFactory()) };
 		auto *renderTargetPtr{ renderTarget.get() };
 		
 		std::unique_ptr<Application> app{ new Application{ std::move(graphicsDevice), std::move(audioDevice), std::move(surface), std::move(renderTarget) } };
@@ -121,7 +121,7 @@ namespace garlic::clove {
         currentState = State::Stopped;
     }
 
-    Application::Application(std::unique_ptr<GhaDevice> graphicsDevice, std::unique_ptr<AudioDevice> audioDevice, std::unique_ptr<Surface> surface, std::unique_ptr<RenderTarget> renderTarget)
+    Application::Application(std::unique_ptr<GhaDevice> graphicsDevice, std::unique_ptr<AhaDevice> audioDevice, std::unique_ptr<Surface> surface, std::unique_ptr<RenderTarget> renderTarget)
 		: graphicsDevice{ std::move(graphicsDevice) }
 		, audioDevice{ std::move(audioDevice) }
 		, surface{ std::move(surface) }{

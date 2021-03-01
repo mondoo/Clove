@@ -27,7 +27,7 @@ namespace garlic::clove {
 
         std::list<Header *> list;
 
-        bool freeMemory = true;
+        bool freeMemory{ true };
 
         //FUNCTIONS
     public:

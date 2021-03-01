@@ -37,7 +37,7 @@ namespace garlic::clove {
             Type type{ Type::Invalid };
             MouseButton button{ MouseButton::None };
 
-            vec2i pos;
+            vec2i pos{};
 
             //FUNCTIONS
         public:
@@ -117,7 +117,7 @@ namespace garlic::clove {
         Mouse &operator=(Mouse const &other) = delete;
         Mouse &operator=(Mouse &&other) noexcept = delete;
 
-        ~Mouse();
+        ~Mouse() = default;
 
         /**
          * @brief Pops an event off of the buffer and returns it.

@@ -14,14 +14,14 @@ namespace garlic::clove {
             display = XOpenDisplay(nullptr);
         }
 
-        if(!display) {
+        if(display == nullptr) {
             //TODO: Exception
             CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Could not open display");
             return;
         }
 
-        screen   = DefaultScreenOfDisplay(display);//Get the screen of the display
-        screenID = DefaultScreen(display);
+        screen   = DefaultScreenOfDisplay(display);//NOLINT Get the screen of the display
+        screenID = DefaultScreen(display);         //NOLINT
 
         XSetWindowAttributes windowAttribs {
             .background_pixel  = WhitePixel(display, screenID),
@@ -31,10 +31,10 @@ namespace garlic::clove {
             .colormap          = XDefaultColormap(display, screenID),
         };
 
-        window = XCreateWindow(display, RootWindow(display, screenID), 0, 0, descriptor.width, descriptor.height, 0, screen->depths[0].depth, InputOutput, screen->root_visual, CWBackPixel | CWColormap | CWBorderPixel | CWEventMask, &windowAttribs);
+        window = XCreateWindow(display, RootWindow(display, screenID), 0, 0, descriptor.width, descriptor.height, 0, screen->depths[0].depth, InputOutput, screen->root_visual, CWBackPixel | CWColormap | CWBorderPixel | CWEventMask, &windowAttribs);//NOLINT
 
         //Remap the delete window message so we can gracefully close the application
-        atomWmDeleteWindow = XInternAtom(display, "WM_DELETE_WINDOW", false);
+        atomWmDeleteWindow = XInternAtom(display, "WM_DELETE_WINDOW", 0);
         XSetWMProtocols(display, window, &atomWmDeleteWindow, 1);
 
         bool constexpr flushEventQueue{ false };
@@ -131,7 +131,7 @@ namespace garlic::clove {
                 case KeyPress: {
                     bool isRepeat = false;
 
-                    if(XEventsQueued(display, QueuedAlready)) {
+                    if(XEventsQueued(display, QueuedAlready) != 0) {
                         XEvent nextEvent;
                         XPeekEvent(display, &nextEvent);
 
@@ -169,9 +169,9 @@ namespace garlic::clove {
                     break;
 
                 case ButtonPress:
-                    if(xevent.xbutton.button == 4) {
+                    if(xevent.xbutton.button == Button4) {
                         mouseDispatcher.onWheelDelta(CLV_WHEEL_DELTA, vec2i{ xevent.xbutton.x, xevent.xbutton.y });
-                    } else if(xevent.xbutton.button == 5) {
+                    } else if(xevent.xbutton.button == Button5) {
                         mouseDispatcher.onWheelDelta(-CLV_WHEEL_DELTA, vec2i{ xevent.xbutton.x, xevent.xbutton.y });
                     } else {
                         mouseDispatcher.onButtonPressed(static_cast<MouseButton>(xevent.xbutton.button), vec2i{ xevent.xbutton.x, xevent.xbutton.y });

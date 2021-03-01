@@ -1,13 +1,15 @@
 #pragma once
 
+#include "Clove/Graphics/GhaBuffer.hpp"
+#include "Clove/Graphics/GhaComputePipelineObject.hpp"
+#include "Clove/Graphics/GhaComputeQueue.hpp"
 #include "Clove/Graphics/GhaDescriptorPool.hpp"
 #include "Clove/Graphics/GhaDescriptorSetLayout.hpp"
 #include "Clove/Graphics/GhaFence.hpp"
 #include "Clove/Graphics/GhaFramebuffer.hpp"
-#include "Clove/Graphics/GhaBuffer.hpp"
-#include "Clove/Graphics/GhaImage.hpp"
+#include "Clove/Graphics/GhaGraphicsPipelineObject.hpp"
 #include "Clove/Graphics/GhaGraphicsQueue.hpp"
-#include "Clove/Graphics/GhaPipelineObject.hpp"
+#include "Clove/Graphics/GhaImage.hpp"
 #include "Clove/Graphics/GhaPresentQueue.hpp"
 #include "Clove/Graphics/GhaRenderPass.hpp"
 #include "Clove/Graphics/GhaSampler.hpp"
@@ -15,6 +17,7 @@
 #include "Clove/Graphics/GhaShader.hpp"
 #include "Clove/Graphics/GhaSwapchain.hpp"
 #include "Clove/Graphics/GhaTransferQueue.hpp"
+#include "Clove/Graphics/Queue.hpp"
 
 #include <Clove/Expected.hpp>
 #include <filesystem>
@@ -34,6 +37,7 @@ namespace garlic::clove {
         virtual Expected<std::unique_ptr<GhaGraphicsQueue>, std::runtime_error> createGraphicsQueue(CommandQueueDescriptor descriptor) = 0;
         virtual Expected<std::unique_ptr<GhaPresentQueue>, std::runtime_error> createPresentQueue()                                    = 0;
         virtual Expected<std::unique_ptr<GhaTransferQueue>, std::runtime_error> createTransferQueue(CommandQueueDescriptor descriptor) = 0;
+        virtual Expected<std::unique_ptr<GhaComputeQueue>, std::runtime_error> createComputeQueue(CommandQueueDescriptor descriptor)   = 0;
 
         virtual Expected<std::unique_ptr<GhaSwapchain>, std::runtime_error> createSwapChain(GhaSwapchain::Descriptor descriptor) = 0;
 
@@ -55,12 +59,13 @@ namespace garlic::clove {
         virtual Expected<std::unique_ptr<GhaRenderPass>, std::runtime_error> createRenderPass(GhaRenderPass::Descriptor descriptor)                            = 0;
         virtual Expected<std::unique_ptr<GhaDescriptorSetLayout>, std::runtime_error> createDescriptorSetLayout(GhaDescriptorSetLayout::Descriptor descriptor) = 0;
 
-        virtual Expected<std::unique_ptr<GhaPipelineObject>, std::runtime_error> createPipelineObject(GhaPipelineObject::Descriptor descriptor) = 0;
+        virtual Expected<std::unique_ptr<GhaGraphicsPipelineObject>, std::runtime_error> createGraphicsPipelineObject(GhaGraphicsPipelineObject::Descriptor descriptor) = 0;
+        virtual Expected<std::unique_ptr<GhaComputePipelineObject>, std::runtime_error> createComputePipelineObject(GhaComputePipelineObject::Descriptor descriptor)    = 0;
 
         virtual Expected<std::unique_ptr<GhaFramebuffer>, std::runtime_error> createFramebuffer(GhaFramebuffer::Descriptor descriptor)          = 0;
         virtual Expected<std::unique_ptr<GhaDescriptorPool>, std::runtime_error> createDescriptorPool(GhaDescriptorPool::Descriptor descriptor) = 0;
 
-        virtual Expected<std::unique_ptr<GhaSemaphore>, std::runtime_error> createSemaphore()                     = 0;
+        virtual Expected<std::unique_ptr<GhaSemaphore>, std::runtime_error> createSemaphore()                        = 0;
         virtual Expected<std::unique_ptr<GhaFence>, std::runtime_error> createFence(GhaFence::Descriptor descriptor) = 0;
 
         virtual Expected<std::unique_ptr<GhaBuffer>, std::runtime_error> createBuffer(GhaBuffer::Descriptor descriptor) = 0;

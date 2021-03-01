@@ -1,7 +1,7 @@
 #include "Clove/Graphics/Vulkan/VulkanRenderPass.hpp"
 
+#include "Clove/Graphics/Vulkan/VulkanGraphicsPipelineObject.hpp"
 #include "Clove/Graphics/Vulkan/VulkanImage.hpp"
-#include "Clove/Graphics/Vulkan/VulkanPipelineObject.hpp"
 
 #include <Clove/Definitions.hpp>
 #include <Clove/Log/Log.hpp>

@@ -27,9 +27,12 @@ namespace garlic::clove {
 
         id        = other.id;
         container = other.container;
-        container->handles.push_back(this);
 
-        container->handles.erase(std::find(container->handles.begin(), container->handles.end(), &other));
+        if(container != nullptr){
+            container->handles.push_back(this);
+            container->handles.erase(std::find(container->handles.begin(), container->handles.end(), &other));
+        }
+
         other.clear();
 
         return *this;

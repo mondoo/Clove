@@ -11,10 +11,10 @@ namespace garlic::clove {
         , indices(std::move(indices)) {
         using namespace garlic::clove;
 
-        garlic::clove::GhaFactory &factory = *Application::get().getGraphicsDevice()->getGraphicsFactory();
+        GhaFactory &factory{ *Application::get().getGraphicsDevice()->getGraphicsFactory() };
 
-        size_t const vertexBufferSize{ sizeof(Vertex) * std::size(this->vertices) };
-        size_t const indexBufferSize{ sizeof(uint16_t) * std::size(this->indices) };
+        vertexBufferSize = sizeof(Vertex) * this->vertices.size();
+        size_t const indexBufferSize{ sizeof(uint16_t) * this->indices.size() };
         size_t const totalSize{ vertexBufferSize + indexBufferSize };
 
         vertexOffset = 0;
@@ -22,7 +22,7 @@ namespace garlic::clove {
 
         auto transferQueue{ *factory.createTransferQueue({ QueueFlags::Transient }) };
 
-        std::shared_ptr<GhaTransferCommandBuffer> transferCommandBuffer = transferQueue->allocateCommandBuffer();
+        std::shared_ptr<GhaTransferCommandBuffer> transferCommandBuffer{ transferQueue->allocateCommandBuffer() };
 
         //Staging buffer
         auto stagingBuffer = *factory.createBuffer(GhaBuffer::Descriptor{
@@ -32,21 +32,30 @@ namespace garlic::clove {
             .memoryType  = MemoryType::SystemMemory,
         });
 
-        //Buffer
-        buffer = *factory.createBuffer(GhaBuffer::Descriptor{
+        //VertexBuffer
+        vertexBuffer = *factory.createBuffer(GhaBuffer::Descriptor{
+            .size        = vertexBufferSize,
+            .usageFlags  = GhaBuffer::UsageMode::TransferDestination | GhaBuffer::UsageMode::StorageBuffer | GhaBuffer::UsageMode::VertexBuffer,
+            .sharingMode = SharingMode::Concurrent,
+            .memoryType  = MemoryType::VideoMemory,
+        });
+
+        //Combined Buffer
+        combinedBuffer = *factory.createBuffer(GhaBuffer::Descriptor{
             .size        = totalSize,
-            .usageFlags  = GhaBuffer::UsageMode::TransferDestination | GhaBuffer::UsageMode::VertexBuffer | GhaBuffer::UsageMode::IndexBuffer,
+            .usageFlags  = GhaBuffer::UsageMode::TransferDestination | GhaBuffer::UsageMode::StorageBuffer | GhaBuffer::UsageMode::VertexBuffer | GhaBuffer::UsageMode::IndexBuffer,
             .sharingMode = SharingMode::Concurrent,
             .memoryType  = MemoryType::VideoMemory,
         });
 
         //Map the data into system memory
-        stagingBuffer->write(std::data(this->vertices), vertexOffset, vertexBufferSize);
-        stagingBuffer->write(std::data(this->indices), indexOffset, indexBufferSize);
+        stagingBuffer->write(this->vertices.data(), vertexOffset, vertexBufferSize);
+        stagingBuffer->write(this->indices.data(), indexOffset, indexBufferSize);
 
         //Transfer the data to video memory
         transferCommandBuffer->beginRecording(CommandBufferUsage::OneTimeSubmit);
-        transferCommandBuffer->copyBufferToBuffer(*stagingBuffer, 0, *buffer, 0, totalSize);
+        transferCommandBuffer->copyBufferToBuffer(*stagingBuffer, 0, *vertexBuffer, 0, vertexBufferSize);
+        transferCommandBuffer->copyBufferToBuffer(*stagingBuffer, 0, *combinedBuffer, 0, totalSize);
         transferCommandBuffer->endRecording();
 
         auto transferQueueFinishedFence{ *factory.createFence({ false }) };

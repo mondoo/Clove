@@ -13,7 +13,7 @@ namespace garlic::clove {
         , swapchain{ swapchain }
         , swapChainImageFormat{ swapChainImageFormat }
         , swapChainExtent{ swapChainExtent } {
-        uint32_t imageCount;
+        uint32_t imageCount{ 0 };
         vkGetSwapchainImagesKHR(this->device.get(), swapchain, &imageCount, nullptr);
         images.resize(imageCount);
         vkGetSwapchainImagesKHR(this->device.get(), swapchain, &imageCount, images.data());
@@ -34,7 +34,7 @@ namespace garlic::clove {
 
     std::pair<uint32_t, Result> VulkanSwapchain::aquireNextImage(GhaSemaphore const *availableSemaphore) {
         uint32_t outImageIndex{ 0 };
-        VkSemaphore vkSemaphore{ availableSemaphore ? polyCast<const VulkanSemaphore>(availableSemaphore)->getSemaphore() : VK_NULL_HANDLE };
+        VkSemaphore vkSemaphore{ availableSemaphore != nullptr ? polyCast<const VulkanSemaphore>(availableSemaphore)->getSemaphore() : VK_NULL_HANDLE };
         VkResult const result{ vkAcquireNextImageKHR(device.get(), swapchain, UINT64_MAX, vkSemaphore, VK_NULL_HANDLE, &outImageIndex) };
 
         return { outImageIndex, convertResult(result) };

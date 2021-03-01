@@ -6,7 +6,7 @@ namespace garlic::clove {
     Mouse::Event::Event(Type type, MouseButton button, vec2i pos)
         : type{ type }
         , button{ button }
-        , pos{ std::move(pos) } {
+        , pos{ pos } {
     }
 
     Mouse::Event::Type Mouse::Event::getType() const {
@@ -116,8 +116,6 @@ namespace garlic::clove {
         : dispatcher{ dispatcher } {
     }
 
-    Mouse::~Mouse() = default;
-
     bool Mouse::isButtonPressed(MouseButton button) const {
         if(const auto buttonIt = dispatcher.buttonStates.find(button); buttonIt != dispatcher.buttonStates.end()) {
             return buttonIt->second;
@@ -128,7 +126,7 @@ namespace garlic::clove {
 
     std::optional<Mouse::Event> Mouse::getEvent() {
         if(!isBufferEmpty()) {
-            Mouse::Event e{ std::move(dispatcher.buffer.front()) };
+            Mouse::Event e{ dispatcher.buffer.front() };
             dispatcher.buffer.pop();
             return e;
         } else {

@@ -13,10 +13,14 @@ namespace garlic::clove {
 }
 
 namespace garlic::clove {
+    //Graphics sets
     std::unique_ptr<GhaDescriptorSetLayout> createMeshDescriptorSetLayout(GhaFactory &factory);
     std::unique_ptr<GhaDescriptorSetLayout> createViewDescriptorSetLayout(GhaFactory &factory);
     std::unique_ptr<GhaDescriptorSetLayout> createLightingDescriptorSetLayout(GhaFactory &factory);
     std::unique_ptr<GhaDescriptorSetLayout> createUiDescriptorSetLayout(GhaFactory &factory);
+
+    //Compute sets
+    std::unique_ptr<GhaDescriptorSetLayout> createSkinningDescriptorSetLayout(GhaFactory &factory);
 
     /**
      * @brief Counts the different binding types in a DescriptorSetLayout.

@@ -1,6 +1,7 @@
 #include "Clove/Graphics/Vulkan/VulkanTransferQueue.hpp"
 
 #include "Clove/Graphics/Vulkan/VulkanFence.hpp"
+#include "Clove/Graphics/Vulkan/VulkanGraphicsPipelineObject.hpp"
 #include "Clove/Graphics/Vulkan/VulkanPipelineObject.hpp"
 #include "Clove/Graphics/Vulkan/VulkanSemaphore.hpp"
 #include "Clove/Graphics/Vulkan/VulkanTransferCommandBuffer.hpp"
@@ -14,7 +15,7 @@ namespace garlic::clove {
         : device{ std::move(device) }
         , queue{ queue }
         , commandPool{ commandPool }
-        , queueFamilyIndices{ std::move(queueFamilyIndices) } {
+        , queueFamilyIndices{ queueFamilyIndices } {
     }
 
     VulkanTransferQueue::VulkanTransferQueue(VulkanTransferQueue &&other) noexcept = default;
@@ -28,7 +29,7 @@ namespace garlic::clove {
     std::unique_ptr<GhaTransferCommandBuffer> VulkanTransferQueue::allocateCommandBuffer() {
         //TODO: Multiple command buffer allocation
 
-        VkCommandBuffer commandBuffer;
+        VkCommandBuffer commandBuffer{ nullptr };
 
         VkCommandBufferAllocateInfo allocInfo{
             .sType              = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
@@ -46,8 +47,9 @@ namespace garlic::clove {
     }
 
     void VulkanTransferQueue::freeCommandBuffer(GhaTransferCommandBuffer &buffer) {
-        VkCommandBuffer buffers[] = { polyCast<VulkanTransferCommandBuffer>(&buffer)->getCommandBuffer() };
-        vkFreeCommandBuffers(device.get(), commandPool, 1, buffers);
+        VkCommandBuffer const vkbuffer{ polyCast<VulkanTransferCommandBuffer>(&buffer)->getCommandBuffer() };
+        
+        vkFreeCommandBuffers(device.get(), commandPool, 1, &vkbuffer);
     }
 
     void VulkanTransferQueue::submit(std::vector<TransferSubmitInfo> const &submissions, GhaFence const *signalFence) {
@@ -68,7 +70,7 @@ namespace garlic::clove {
 
             for(size_t j = 0; j < waitSemaphoreCount; ++j) {
                 waitSemaphores[i][j] = polyCast<VulkanSemaphore>(submissions[i].waitSemaphores[j].first.get())->getSemaphore();
-                waitStages[i][j]     = VulkanPipelineObject::convertStage(submissions[i].waitSemaphores[j].second);
+                waitStages[i][j]     = convertStage(submissions[i].waitSemaphores[j].second);
             }
 
             //Command buffers
@@ -97,7 +99,7 @@ namespace garlic::clove {
             });
         }
 
-        VkFence const vkFence{ signalFence ? polyCast<VulkanFence const>(signalFence)->getFence() : VK_NULL_HANDLE };
+        VkFence const vkFence{ signalFence != nullptr ? polyCast<VulkanFence const>(signalFence)->getFence() : VK_NULL_HANDLE };
 
         if(vkQueueSubmit(queue, std::size(vkSubmissions), std::data(vkSubmissions), vkFence) != VK_SUCCESS) {
             CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to submit graphics command buffer(s)");

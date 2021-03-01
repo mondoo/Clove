@@ -22,7 +22,7 @@ namespace garlic::clove {
     class SwapchainRenderTarget : public RenderTarget {
         //VARIABLES
     private:
-        GhaDevice *graphicsDevice;
+        GhaDevice *graphicsDevice{ nullptr };
         std::shared_ptr<GhaFactory> graphicsFactory;
 
         std::shared_ptr<GhaSwapchain> swapchain;

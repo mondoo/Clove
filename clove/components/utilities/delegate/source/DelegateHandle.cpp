@@ -15,7 +15,7 @@ namespace garlic::clove {
             reset();
         }
 
-        id    = std::move(other.id);
+        id    = other.id;
         proxy = std::move(other.proxy);
         return *this;
     }

@@ -24,7 +24,7 @@ namespace garlic::clove {
     class GraphicsImageRenderTarget : public RenderTarget {
         //VARIABLES
     private:
-        GhaImage::Descriptor imageDescriptor;
+        GhaImage::Descriptor imageDescriptor{};
 
         std::shared_ptr<GhaFactory> factory;
 

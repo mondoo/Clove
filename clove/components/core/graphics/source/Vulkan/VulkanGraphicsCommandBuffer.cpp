@@ -4,11 +4,9 @@
 #include "Clove/Graphics/Vulkan/VulkanCommandBuffer.hpp"
 #include "Clove/Graphics/Vulkan/VulkanDescriptorSet.hpp"
 #include "Clove/Graphics/Vulkan/VulkanFramebuffer.hpp"
+#include "Clove/Graphics/Vulkan/VulkanGraphicsPipelineObject.hpp"
 #include "Clove/Graphics/Vulkan/VulkanImage.hpp"
-#include "Clove/Graphics/Vulkan/VulkanMemoryBarrier.hpp"
-#include "Clove/Graphics/Vulkan/VulkanPipelineObject.hpp"
 #include "Clove/Graphics/Vulkan/VulkanRenderPass.hpp"
-#include "Clove/Graphics/Vulkan/VulkanResource.hpp"
 #include "Clove/Graphics/Vulkan/VulkanShader.hpp"
 
 #include <Clove/Cast.hpp>
@@ -33,7 +31,7 @@ namespace garlic::clove {
 
     VulkanGraphicsCommandBuffer::VulkanGraphicsCommandBuffer(VkCommandBuffer commandBuffer, QueueFamilyIndices queueFamilyIndices)
         : commandBuffer(commandBuffer)
-        , queueFamilyIndices(std::move(queueFamilyIndices)) {
+        , queueFamilyIndices(queueFamilyIndices) {
     }
 
     VulkanGraphicsCommandBuffer::VulkanGraphicsCommandBuffer(VulkanGraphicsCommandBuffer &&other) noexcept = default;
@@ -111,8 +109,8 @@ namespace garlic::clove {
         vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
     }
 
-    void VulkanGraphicsCommandBuffer::bindPipelineObject(GhaPipelineObject &pipelineObject) {
-        auto const *pipeline = polyCast<VulkanPipelineObject>(&pipelineObject);
+    void VulkanGraphicsCommandBuffer::bindPipelineObject(GhaGraphicsPipelineObject &pipelineObject) {
+        auto const *pipeline{ polyCast<VulkanGraphicsPipelineObject>(&pipelineObject) };
 
         currentLayout = pipeline->getLayout();
 
@@ -120,10 +118,9 @@ namespace garlic::clove {
     }
 
     void VulkanGraphicsCommandBuffer::bindVertexBuffer(GhaBuffer &vertexBuffer, size_t const offset) {
-        VkBuffer buffers[]     = { polyCast<VulkanBuffer>(&vertexBuffer)->getBuffer() };
-        VkDeviceSize offsets[] = { offset };
+        VkBuffer const buffer{ polyCast<VulkanBuffer>(&vertexBuffer)->getBuffer() };
 
-        vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
+        vkCmdBindVertexBuffers(commandBuffer, 0, 1, &buffer, &offset);
     }
 
     void VulkanGraphicsCommandBuffer::bindIndexBuffer(GhaBuffer &indexBuffer, size_t const offset, IndexType indexType) {
@@ -131,9 +128,9 @@ namespace garlic::clove {
     }
 
     void VulkanGraphicsCommandBuffer::bindDescriptorSet(GhaDescriptorSet &descriptorSet, uint32_t const setNum) {
-        VkDescriptorSet sets[] = { polyCast<VulkanDescriptorSet>(&descriptorSet)->getDescriptorSet() };
+        VkDescriptorSet const set{ polyCast<VulkanDescriptorSet>(&descriptorSet)->getDescriptorSet() };
 
-        vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, currentLayout, setNum, 1, sets, 0, nullptr);
+        vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, currentLayout, setNum, 1, &set, 0, nullptr);
     }
 
     void VulkanGraphicsCommandBuffer::pushConstant(GhaShader::Stage const stage, size_t const offset, size_t const size, void const *data) {
@@ -144,55 +141,12 @@ namespace garlic::clove {
         vkCmdDrawIndexed(commandBuffer, indexCount, 1, 0, 0, 0);
     }
 
-    void VulkanGraphicsCommandBuffer::bufferMemoryBarrier(GhaBuffer &buffer, BufferMemoryBarrierInfo const &barrierInfo, GhaPipelineObject::Stage sourceStage, GhaPipelineObject::Stage destinationStage) {
-        const uint32_t sourceFamilyIndex{ getQueueFamilyIndex(barrierInfo.sourceQueue, queueFamilyIndices) };
-        const uint32_t destinationFamilyIndex{ getQueueFamilyIndex(barrierInfo.destinationQueue, queueFamilyIndices) };
-
-        VkBufferMemoryBarrier barrier{
-            .sType               = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER,
-            .pNext               = nullptr,
-            .srcAccessMask       = convertAccessFlags(barrierInfo.currentAccess),
-            .dstAccessMask       = convertAccessFlags(barrierInfo.newAccess),
-            .srcQueueFamilyIndex = sourceFamilyIndex,
-            .dstQueueFamilyIndex = destinationFamilyIndex,
-            .buffer              = polyCast<VulkanBuffer>(&buffer)->getBuffer(),
-            .offset              = 0,
-            .size                = VK_WHOLE_SIZE,
-        };
-
-        VkPipelineStageFlags const vkSourceStage{ VulkanPipelineObject::convertStage(sourceStage) };
-        VkPipelineStageFlags const vkDestinationStage{ VulkanPipelineObject::convertStage(destinationStage) };
-
-        vkCmdPipelineBarrier(commandBuffer, vkSourceStage, vkDestinationStage, 0, 0, nullptr, 1, &barrier, 0, nullptr);
+    void VulkanGraphicsCommandBuffer::bufferMemoryBarrier(GhaBuffer &buffer, BufferMemoryBarrierInfo const &barrierInfo, PipelineStage sourceStage, PipelineStage destinationStage) {
+        createBufferMemoryBarrier(commandBuffer, queueFamilyIndices, buffer, barrierInfo, sourceStage, destinationStage);
     }
 
-    void VulkanGraphicsCommandBuffer::imageMemoryBarrier(GhaImage &image, ImageMemoryBarrierInfo const &barrierInfo, GhaPipelineObject::Stage sourceStage, GhaPipelineObject::Stage destinationStage) {
-        uint32_t const sourceFamilyIndex{ getQueueFamilyIndex(barrierInfo.sourceQueue, queueFamilyIndices) };
-        uint32_t const destinationFamilyIndex{ getQueueFamilyIndex(barrierInfo.destinationQueue, queueFamilyIndices) };
-
-        VkImageMemoryBarrier barrier{
-            .sType               = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
-            .pNext               = nullptr,
-            .srcAccessMask       = convertAccessFlags(barrierInfo.currentAccess),
-            .dstAccessMask       = convertAccessFlags(barrierInfo.newAccess),
-            .oldLayout           = VulkanImage::convertLayout(barrierInfo.currentImageLayout),
-            .newLayout           = VulkanImage::convertLayout(barrierInfo.newImageLayout),
-            .srcQueueFamilyIndex = sourceFamilyIndex,
-            .dstQueueFamilyIndex = destinationFamilyIndex,
-            .image               = polyCast<VulkanImage>(&image)->getImage(),
-            .subresourceRange    = {
-                .aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT,//TODO: Handle other aspect mask,
-                .baseMipLevel   = 0,
-                .levelCount     = 1,
-                .baseArrayLayer = 0,
-                .layerCount     = 1,
-            },
-        };
-
-        VkPipelineStageFlags const vkSourceStage{ VulkanPipelineObject::convertStage(sourceStage) };
-        VkPipelineStageFlags const vkDestinationStage{ VulkanPipelineObject::convertStage(destinationStage) };
-
-        vkCmdPipelineBarrier(commandBuffer, vkSourceStage, vkDestinationStage, 0, 0, nullptr, 0, nullptr, 1, &barrier);
+    void VulkanGraphicsCommandBuffer::imageMemoryBarrier(GhaImage &image, ImageMemoryBarrierInfo const &barrierInfo, PipelineStage sourceStage, PipelineStage destinationStage) {
+        createImageMemoryBarrier(commandBuffer, queueFamilyIndices, image, barrierInfo, sourceStage, destinationStage);
     }
 
     VkCommandBuffer VulkanGraphicsCommandBuffer::getCommandBuffer() const {

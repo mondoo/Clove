@@ -2,8 +2,8 @@
 
 #include "Clove/Rendering/RenderingConstants.hpp"
 
-#include <Clove/Maths/Matrix.hpp>
 #include <Clove/DeltaTime.hpp>
+#include <Clove/Maths/Matrix.hpp>
 #include <array>
 
 namespace garlic::clove {
@@ -32,14 +32,14 @@ namespace garlic::clove {
         Animator &operator=(Animator const &other);
         Animator &operator=(Animator &&other) noexcept;
 
-        ~Animator();
+        ~Animator() = default;
 
         /**
          * @brief Updates the Animator, generating a matrix palette.
          * @param deltaTime Time since last frame.
          * @returns The matrix palette for a given frame.
          */
-        std::array<mat4f, MAX_JOINTS> update(DeltaTime const deltaTime);
+        std::array<mat4f, MAX_JOINTS> update(DeltaTime const &deltaTime);
 
         /**
          * @brief Sets the current clip the Animator will use

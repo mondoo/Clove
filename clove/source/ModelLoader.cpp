@@ -99,7 +99,7 @@ namespace garlic::clove::ModelLoader {
 
             aiMatrix4x4 const parentTransformation{ getJointPoseTransform(node->mParent, parentToStopAt, frame, animation, jointNameIdMap) };
 
-            if(!channel) {
+            if(channel == nullptr) {
                 return parentTransformation * node->mTransformation;
             }
 
@@ -353,7 +353,7 @@ namespace garlic::clove::ModelLoader {
 
         Assimp::Importer importer;
         const aiScene *scene{ openFile(modelFilePath, importer) };
-        if(scene == nullptr || (scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE) || scene->mRootNode == nullptr) {
+        if(scene == nullptr || ((scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE) != 0u) || scene->mRootNode == nullptr) {
             CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Assimp Error: {0}", importer.GetErrorString());
             return { meshes, std::make_shared<Material>() };
         }
@@ -377,7 +377,7 @@ namespace garlic::clove::ModelLoader {
 
         Assimp::Importer importer;
         const aiScene *scene{ openFile(modelFilePath, importer) };
-        if(scene == nullptr || (scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE) || scene->mRootNode == nullptr) {
+        if(scene == nullptr || ((scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE) != 0u) || scene->mRootNode == nullptr) {
             CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Assimp Error: {0}", importer.GetErrorString());
             return { meshes, std::make_shared<Material>(), nullptr, {} };
         }
@@ -432,7 +432,7 @@ namespace garlic::clove::ModelLoader {
             AnimationClip &animClip{ animationClips[animIndex] };
 
             animClip.skeleton = skeleton.get();
-            animClip.duration = animation->mDuration / animation->mTicksPerSecond;//Our clip is in seconds where as the animation is in frames
+            animClip.duration = static_cast<float>(animation->mDuration / animation->mTicksPerSecond);//Our clip is in seconds where as the animation is in frames
 
             //Get all the key frame times for every possible channel. This is required as we want a full skeletal pose for each keyframe.
             std::set<float> frames;
@@ -452,7 +452,7 @@ namespace garlic::clove::ModelLoader {
             //Get each channel's pose at each time
             for(float frame : frames) {
                 AnimationPose animPose{};
-                animPose.timeStamp = frame / animation->mTicksPerSecond;
+                animPose.timeStamp = frame / static_cast<float>(animation->mTicksPerSecond);
                 animPose.poses.resize(skeleton->joints.size());
 
                 for(JointIndexType i{ 0 }; i < skeleton->joints.size(); ++i) {

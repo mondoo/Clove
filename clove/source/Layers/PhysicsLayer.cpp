@@ -143,7 +143,7 @@ namespace garlic::clove {
 
         //Apply any updates to the rigid body
         entityManager->forEach([&](RigidBodyComponent &body, PhysicsProxyComponent const &proxy) {
-            auto *btBody{ static_cast<btRigidBody*>(proxy.collisionObject.get()) };
+            auto *btBody{ static_cast<btRigidBody*>(proxy.collisionObject.get()) }; //NOLINT
 
             if(body.appliedVelocity.has_value()) {
                 btBody->setLinearVelocity(toBt(*body.appliedVelocity));
@@ -193,7 +193,7 @@ namespace garlic::clove {
             transform.rotation = quatf{ rot.getW(), rot.getX(), rot.getY(), rot.getZ() };
         });
         entityManager->forEach([](RigidBodyComponent &body, PhysicsProxyComponent const &proxy) {
-            auto *btBody{ static_cast<btRigidBody*>(proxy.collisionObject.get()) };
+            auto *btBody{ static_cast<btRigidBody*>(proxy.collisionObject.get()) }; //NOLINT
             body.currentVelocity = toGar(btBody->getLinearVelocity());
         });
 
@@ -305,8 +305,9 @@ namespace garlic::clove {
     }
 
     void PhysicsLayer::initialiseRigidBody(Entity entity, RigidBodyComponent const &body) {
+        float constexpr defaultSphereSize{ 0.1f };
         PhysicsProxyComponent proxy{
-            .collisionShape = std::make_unique<btSphereShape>(0.1f),
+            .collisionShape = std::make_unique<btSphereShape>(defaultSphereSize),
         };
 
         btRigidBody *rawBody{ createProxyBody(proxy, body, entity) };

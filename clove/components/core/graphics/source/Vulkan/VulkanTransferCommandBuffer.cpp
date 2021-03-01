@@ -2,10 +2,8 @@
 
 #include "Clove/Graphics/Vulkan/VulkanBuffer.hpp"
 #include "Clove/Graphics/Vulkan/VulkanCommandBuffer.hpp"
-#include "Clove/Graphics/Vulkan/VulkanResource.hpp"
+#include "Clove/Graphics/Vulkan/VulkanGraphicsPipelineObject.hpp"
 #include "Clove/Graphics/Vulkan/VulkanImage.hpp"
-#include "Clove/Graphics/Vulkan/VulkanMemoryBarrier.hpp"
-#include "Clove/Graphics/Vulkan/VulkanPipelineObject.hpp"
 
 #include <Clove/Cast.hpp>
 #include <Clove/Definitions.hpp>
@@ -14,7 +12,7 @@
 namespace garlic::clove {
     VulkanTransferCommandBuffer::VulkanTransferCommandBuffer(VkCommandBuffer commandBuffer, QueueFamilyIndices queueFamilyIndices)
         : commandBuffer(commandBuffer)
-        , queueFamilyIndices(std::move(queueFamilyIndices)) {
+        , queueFamilyIndices(queueFamilyIndices) {
     }
 
     VulkanTransferCommandBuffer::VulkanTransferCommandBuffer(VulkanTransferCommandBuffer &&other) noexcept = default;
@@ -87,29 +85,11 @@ namespace garlic::clove {
         vkCmdCopyImageToBuffer(commandBuffer, polyCast<VulkanImage>(&source)->getImage(), VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, polyCast<VulkanBuffer>(&destination)->getBuffer(), 1, &copyRegion);
     }
 
-    void VulkanTransferCommandBuffer::bufferMemoryBarrier(GhaBuffer &buffer, BufferMemoryBarrierInfo const &barrierInfo, GhaPipelineObject::Stage sourceStage, GhaPipelineObject::Stage destinationStage) {
-        uint32_t const sourceFamilyIndex{ getQueueFamilyIndex(barrierInfo.sourceQueue, queueFamilyIndices) };
-        uint32_t const destinationFamilyIndex{ getQueueFamilyIndex(barrierInfo.destinationQueue, queueFamilyIndices) };
-
-        VkBufferMemoryBarrier barrier{
-            .sType               = VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER,
-            .pNext               = nullptr,
-            .srcAccessMask       = convertAccessFlags(barrierInfo.currentAccess),
-            .dstAccessMask       = convertAccessFlags(barrierInfo.newAccess),
-            .srcQueueFamilyIndex = sourceFamilyIndex,
-            .dstQueueFamilyIndex = destinationFamilyIndex,
-            .buffer              = polyCast<VulkanBuffer>(&buffer)->getBuffer(),
-            .offset              = 0,
-            .size                = VK_WHOLE_SIZE,
-        };
-
-        VkPipelineStageFlags const vkSourceStage{ VulkanPipelineObject::convertStage(sourceStage) };
-        VkPipelineStageFlags const vkDestinationStage{ VulkanPipelineObject::convertStage(destinationStage) };
-
-        vkCmdPipelineBarrier(commandBuffer, vkSourceStage, vkDestinationStage, 0, 0, nullptr, 1, &barrier, 0, nullptr);
+    void VulkanTransferCommandBuffer::bufferMemoryBarrier(GhaBuffer &buffer, BufferMemoryBarrierInfo const &barrierInfo, PipelineStage sourceStage, PipelineStage destinationStage) {
+        createBufferMemoryBarrier(commandBuffer, queueFamilyIndices, buffer, barrierInfo, sourceStage, destinationStage);
     }
 
-    void VulkanTransferCommandBuffer::imageMemoryBarrier(GhaImage &image, ImageMemoryBarrierInfo const &barrierInfo, GhaPipelineObject::Stage sourceStage, GhaPipelineObject::Stage destinationStage) {
+    void VulkanTransferCommandBuffer::imageMemoryBarrier(GhaImage &image, ImageMemoryBarrierInfo const &barrierInfo, PipelineStage sourceStage, PipelineStage destinationStage) {
         bool const isValidLayout =
             barrierInfo.newImageLayout != GhaImage::Layout::ShaderReadOnlyOptimal &&
             barrierInfo.newImageLayout != GhaImage::Layout::ColourAttachmentOptimal &&
@@ -121,32 +101,7 @@ namespace garlic::clove {
             return;
         }
 
-        uint32_t const sourceFamilyIndex{ getQueueFamilyIndex(barrierInfo.sourceQueue, queueFamilyIndices) };
-        uint32_t const destinationFamilyIndex{ getQueueFamilyIndex(barrierInfo.destinationQueue, queueFamilyIndices) };
-
-        VkImageMemoryBarrier barrier{
-            .sType               = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER,
-            .pNext               = nullptr,
-            .srcAccessMask       = convertAccessFlags(barrierInfo.currentAccess),
-            .dstAccessMask       = convertAccessFlags(barrierInfo.newAccess),
-            .oldLayout           = VulkanImage::convertLayout(barrierInfo.currentImageLayout),
-            .newLayout           = VulkanImage::convertLayout(barrierInfo.newImageLayout),
-            .srcQueueFamilyIndex = sourceFamilyIndex,
-            .dstQueueFamilyIndex = destinationFamilyIndex,
-            .image               = polyCast<VulkanImage>(&image)->getImage(),
-            .subresourceRange    = {
-                .aspectMask     = VK_IMAGE_ASPECT_COLOR_BIT,//TODO: Handle other aspect masks
-                .baseMipLevel   = 0,
-                .levelCount     = 1,
-                .baseArrayLayer = 0,
-                .layerCount     = 1,
-            },
-        };
-
-        VkPipelineStageFlags const vkSourceStage{ VulkanPipelineObject::convertStage(sourceStage) };
-        VkPipelineStageFlags const vkDestinationStage{ VulkanPipelineObject::convertStage(destinationStage) };
-
-        vkCmdPipelineBarrier(commandBuffer, vkSourceStage, vkDestinationStage, 0, 0, nullptr, 0, nullptr, 1, &barrier);
+        createImageMemoryBarrier(commandBuffer, queueFamilyIndices, image, barrierInfo, sourceStage, destinationStage);
     }
 
     VkCommandBuffer VulkanTransferCommandBuffer::getCommandBuffer() const {

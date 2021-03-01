@@ -4,13 +4,14 @@
 
 #include <Clove/Maths/Matrix.hpp>
 #include <memory>
-#include <vector>
 #include <type_traits>
 #include <typeinfo>
+#include <vector>
 
 namespace garlic::clove {
     class GhaDescriptorSet;
     class GhaGraphicsCommandBuffer;
+    class GhaComputeCommandBuffer;
     class Mesh;
 }
 
@@ -28,6 +29,7 @@ namespace garlic::clove {
          */
         struct FrameData {
             std::vector<std::shared_ptr<GhaDescriptorSet>> meshDescriptorSets{}; /**< Descriptor set for each mesh submitted for the frame. */
+            std::vector<std::shared_ptr<GhaDescriptorSet>> skinningMeshSets{};
 
             std::shared_ptr<GhaDescriptorSet> viewDescriptorSet{ nullptr };     /**< Descriptor set for view specific data. */
             std::shared_ptr<GhaDescriptorSet> lightingDescriptorSet{ nullptr }; /**< Descriptor set for lighting specific data. */
@@ -44,35 +46,52 @@ namespace garlic::clove {
          * @brief A single unit of work for a GeometryPass.
          */
         struct Job {
-            size_t meshDescriptorIndex{ 0 }; /**< Index into FrameData::meshDescriptorSets */
-            std::shared_ptr<Mesh> mesh{ nullptr }; //TODO: Move into frame data
+            size_t meshDescriptorIndex{ 0 };      /**< Index into FrameData::meshDescriptorSets */
+            std::shared_ptr<Mesh> mesh{ nullptr };//TODO: Move into frame data
         };
+
+        //VARIABLES
+    private:
+        std::vector<Job> jobs{};
 
         //FUNCTIONS
     public:
-        virtual ~GeometryPass() = default;
+        GeometryPass();
+
+        GeometryPass(GeometryPass const &other);
+        GeometryPass(GeometryPass &&other) noexcept;
+
+        GeometryPass &operator=(GeometryPass const &other);
+        GeometryPass &operator=(GeometryPass &&other) noexcept;
+
+        virtual ~GeometryPass();
 
         template<typename GeometryPassType>
-        static Id getId(){
-            static_assert(std::is_base_of_v<GeometryPass, GeometryPassType>, "Type passed is not derived from GeometryPass!");
-            return typeid(GeometryPassType).hash_code();
-        };
+        static Id getId();
 
         /**
          * @brief Adds a job to this pass' queue.
          */
-        virtual void addJob(Job job) = 0;
+        void addJob(Job job);
 
-        /**
+        /**,
          * @brief Clears the job queue
          */
-        virtual void flushJobs() = 0;
+        void flushJobs();
 
         /**
          * @brief Submits all jobs into the commandBuffer.
          * @param commandBuffer GhaGraphicsCommandBuffer to record commands into.
          * @param frameData Data that describes the current frame.
          */
-        virtual void execute(GhaGraphicsCommandBuffer &commandBuffer, FrameData const &frameData) = 0;
+        virtual void execute(GhaGraphicsCommandBuffer &commandBuffer, FrameData const &frameData) {}/* = 0; */
+
+        //TEMP: GeometryPass should really allocate it's own command buffer
+        virtual void execute(GhaComputeCommandBuffer &commandBuffer, FrameData const &frameData) {}/* = 0; */
+
+    protected:
+        inline std::vector<Job> const &getJobs() const;
     };
 }
+
+#include "GeometryPass.inl"

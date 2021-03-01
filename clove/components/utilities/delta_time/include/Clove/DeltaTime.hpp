@@ -17,7 +17,7 @@ namespace garlic::clove {
         DeltaTime &operator=(DeltaTime const &other);
         DeltaTime &operator=(DeltaTime &&other) noexcept;
 
-        ~DeltaTime();
+        ~DeltaTime() = default;
 
         float getDeltaSeconds() const;
 
