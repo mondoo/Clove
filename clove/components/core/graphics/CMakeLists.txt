@@ -98,6 +98,7 @@ set(
 		${INCLUDE}/Metal/MetalGraphicsPipelineObject.hpp
 		${SOURCE}/Metal/MetalGraphicsPipelineObject.mm
 		${INCLUDE}/Metal/MetalRenderPass.hpp
+		${INCLUDE}/Metal/MetalRenderPass.inl
 		${SOURCE}/Metal/MetalRenderPass.mm
 		${INCLUDE}/Metal/MetalShader.hpp
 		${SOURCE}/Metal/MetalShader.mm

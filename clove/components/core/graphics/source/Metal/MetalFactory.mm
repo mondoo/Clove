@@ -4,6 +4,7 @@
 #include "Clove/Graphics/Metal/MetalBuffer.hpp"
 #include "Clove/Graphics/Metal/MetalShader.hpp"
 #include "Clove/Graphics/Metal/MetalGraphicsPipelineObject.hpp"
+#include "Clove/Graphics/Metal/MetalRenderPass.hpp"
 
 #include <Clove/Cast.hpp>
 
@@ -84,9 +85,37 @@ namespace garlic::clove {
 			return Unexpected{ std::move(compilationResult.getError()) };
 		}
 	}
+	
+	//TODO: Move this into MetalImage when available
+	MTLPixelFormat convertFormat(GhaImage::Format format){
+		switch(format) {
+			case GhaImage::Format::Unkown:
+				return MTLPixelFormatInvalid;
+			case GhaImage::Format::R8_UNORM:
+				return MTLPixelFormatR8Unorm;
+			case GhaImage::Format::R8G8B8A8_SRGB:
+				return MTLPixelFormatRGBA8Unorm_sRGB;
+			case GhaImage::Format::B8G8R8A8_SRGB:
+				return MTLPixelFormatBGRA8Unorm_sRGB;
+			case GhaImage::Format::B8G8R8A8_UNORM:
+				return MTLPixelFormatBGRA8Unorm;
+			case GhaImage::Format::D32_SFLOAT:
+				return MTLPixelFormatDepth32Float;
+			default:
+				CLOVE_ASSERT(false, "{0}: Unkown format", CLOVE_FUNCTION_NAME);
+				return MTLPixelFormatInvalid;
+		}
+	}
 
 	Expected<std::unique_ptr<GhaRenderPass>, std::runtime_error> MetalFactory::createRenderPass(GhaRenderPass::Descriptor descriptor) {
-		return Unexpected{ std::runtime_error{ "Not implemented" } };
+		MTLRenderPipelineColorAttachmentDescriptorArray* colourAttachments{};
+		for(size_t i{ 0 }; i < descriptor.colourAttachments.size(); ++i){
+			colourAttachments[i].pixelFormat = convertFormat(descriptor.colourAttachments[i].format);
+		}
+		
+		MTLPixelFormat depthPixelFormat{ convertFormat(descriptor.depthAttachment.format) };
+		
+		return std::unique_ptr<GhaRenderPass>{ std::make_unique<MetalRenderPass>(std::move(colourAttachments), std::move(depthPixelFormat), std::move(descriptor)) };
 	}
 	
 	Expected<std::unique_ptr<GhaDescriptorSetLayout>, std::runtime_error> MetalFactory::createDescriptorSetLayout(GhaDescriptorSetLayout::Descriptor descriptor) {
@@ -124,11 +153,11 @@ namespace garlic::clove {
 		
 		id<MTLDepthStencilState> depthStencilState{ [device newDepthStencilStateWithDescriptor:depthStencil] };
 		
-		//Blending
-		//TODO: Needs to be set into the attachment?
-		
 		//Render pass
-		//TODO:
+		MetalRenderPass const *const renderPass{ polyCast<MetalRenderPass>(descriptor.renderPass.get()) };
+		size_t const colourAttachmentCount{ renderPass->getDescriptor().colourAttachments.size() };
+		MTLRenderPipelineColorAttachmentDescriptorArray* colourAttachments{ renderPass->getColourAttachments() };
+		MTLPixelFormat const depthPixelFormat{ renderPass->getDepthPixelFormat() };
 		
 		//Descriptors
 		//TODO:
@@ -141,6 +170,19 @@ namespace garlic::clove {
 		pipelineDesc.fragmentFunction = fragmentFunction;
 		pipelineDesc.vertexDescriptor = vertexDescriptor;
 		pipelineDesc.inputPrimitiveTopology = topology;
+		for(size_t i{ 0 }; i < colourAttachmentCount; ++i){
+			pipelineDesc.colorAttachments[i] = colourAttachments[i];
+			
+			//Blending
+			pipelineDesc.colorAttachments[i].blendingEnabled = descriptor.enableBlending;
+			pipelineDesc.colorAttachments[i].sourceRGBBlendFactor = MTLBlendFactorSourceAlpha;
+			pipelineDesc.colorAttachments[i].destinationRGBBlendFactor = MTLBlendFactorOneMinusSourceAlpha;
+			pipelineDesc.colorAttachments[i].rgbBlendOperation = MTLBlendOperationAdd;
+			pipelineDesc.colorAttachments[i].sourceAlphaBlendFactor = MTLBlendFactorOne;
+			pipelineDesc.colorAttachments[i].destinationAlphaBlendFactor = MTLBlendFactorZero;
+			pipelineDesc.colorAttachments[i].alphaBlendOperation = MTLBlendOperationAdd;
+		}
+		pipelineDesc.depthAttachmentPixelFormat = depthPixelFormat;
 		
 		NSError *error{ nullptr };
 		id<MTLRenderPipelineState> pipelineState{ [device newRenderPipelineStateWithDescriptor:pipelineDesc error:&error] };
