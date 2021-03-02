@@ -618,81 +618,45 @@ namespace garlic::clove {
 
     void ForwardRenderer3D::createRenderpass() {
         //Define what attachments we have
-        AttachmentDescriptor colourAttachment{
+        AttachmentDescriptor const colourAttachment{
             .format         = renderTarget->getImageFormat(),
             .loadOperation  = LoadOperation::Clear,
             .storeOperation = StoreOperation::Store,
             .initialLayout  = GhaImage::Layout::Undefined,
+            .usedLayout     = GhaImage::Layout::ColourAttachmentOptimal,
             .finalLayout    = GhaImage::Layout::Present,
         };
 
-        AttachmentDescriptor depthAttachment{
+        AttachmentDescriptor constexpr depthAttachment{
             .format         = GhaImage::Format::D32_SFLOAT,
             .loadOperation  = LoadOperation::Clear,
             .storeOperation = StoreOperation::DontCare,
             .initialLayout  = GhaImage::Layout::Undefined,
+            .usedLayout     = GhaImage::Layout::DepthStencilAttachmentOptimal,
             .finalLayout    = GhaImage::Layout::DepthStencilAttachmentOptimal,
         };
 
-        //Define attachment references so the subpass knows which slot each attachment will be in
-        AttachmentReference colourReference{
-            .attachmentIndex = 0,
-            .layout          = GhaImage::Layout::ColourAttachmentOptimal,
-        };
-
-        AttachmentReference depthReference{
-            .attachmentIndex = 1,
-            .layout          = GhaImage::Layout::DepthStencilAttachmentOptimal,
-        };
-
-        SubpassDescriptor subpass{
-            .colourAttachments = { colourReference },
-            .depthAttachment   = depthReference,
-        };
-
-        //Wait on the implicit subpass at the start. This is so the subpass can transition the layout at the right time
-        SubpassDependency dependency{
-            .sourceSubpass      = SUBPASS_EXTERNAL,
-            .destinationSubpass = 0,
-            .sourceStage        = PipelineStage::ColourAttachmentOutput,
-            .destinationStage   = PipelineStage::ColourAttachmentOutput,
-            .currentAccess      = AccessFlags::None,
-            .newAccess          = AccessFlags::ColourAttachmentWrite,
-        };
-
         //Create render pass
-        GhaRenderPass::Descriptor renderPassDescriptor{
-            .attachments  = { colourAttachment, depthAttachment },
-            .subpasses    = { std::move(subpass) },
-            .dependencies = { dependency },
+        GhaRenderPass::Descriptor const renderPassDescriptor{
+            .colourAttachments = { colourAttachment },
+            .depthAttachment   = depthAttachment,
         };
 
         renderPass = *ghaFactory->createRenderPass(std::move(renderPassDescriptor));
     }
 
     void ForwardRenderer3D::createShadowMapRenderpass() {
-        AttachmentDescriptor depthAttachment{
+        AttachmentDescriptor constexpr depthAttachment{
             .format         = GhaImage::Format::D32_SFLOAT,
             .loadOperation  = LoadOperation::Clear,
             .storeOperation = StoreOperation::Store,
             .initialLayout  = GhaImage::Layout::Undefined,
+            .usedLayout     = GhaImage::Layout::DepthStencilAttachmentOptimal,
             .finalLayout    = GhaImage::Layout::ShaderReadOnlyOptimal,
         };
 
-        AttachmentReference depthReference{
-            .attachmentIndex = 0,
-            .layout          = GhaImage::Layout::DepthStencilAttachmentOptimal,
-        };
-
-        SubpassDescriptor subpass{
-            .colourAttachments = {},
-            .depthAttachment   = depthReference,
-        };
-
-        GhaRenderPass::Descriptor renderPassDescriptor{
-            .attachments  = { depthAttachment },
-            .subpasses    = { std::move(subpass) },
-            .dependencies = {},
+        GhaRenderPass::Descriptor const renderPassDescriptor{
+            .depthAttachment = depthAttachment,
         };
 
         shadowMapRenderPass = *ghaFactory->createRenderPass(std::move(renderPassDescriptor));
@@ -719,12 +683,12 @@ namespace garlic::clove {
         vertexAttributes.reserve(totalAttributes);
 
         vertexAttributes.emplace_back(VertexAttributeDescriptor{
-            .format   = VertexAttributeFormat::R32G32B32_SFLOAT,
-            .offset   = offsetof(Vertex, position),
+            .format = VertexAttributeFormat::R32G32B32_SFLOAT,
+            .offset = offsetof(Vertex, position),
         });
         vertexAttributes.emplace_back(VertexAttributeDescriptor{
-            .format   = VertexAttributeFormat::R32G32B32_SFLOAT,
-            .offset   = offsetof(Vertex, texCoord),
+            .format = VertexAttributeFormat::R32G32B32_SFLOAT,
+            .offset = offsetof(Vertex, texCoord),
         });
 
         AreaDescriptor viewScissorArea{
