@@ -16,6 +16,8 @@ namespace garlic::clove {
         , sceneFile{ std::move(saveData) } {
     }
 
+    World::~World() = default;
+
     void World::save() {
         serialiser::Node rootNode{};
         for(Entity entity : knownEntities) {
@@ -79,5 +81,11 @@ namespace garlic::clove {
 
             knownEntities.push_back(entity);
         }
+    }
+
+    Entity World::createEntity(std::string_view name) {
+        Entity entity{ manager->create() };
+        knownEntities.push_back(entity);
+        return entity;
     }
 }

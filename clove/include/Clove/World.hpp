@@ -16,27 +16,26 @@ namespace garlic::clove {
 
         //FUNCTIONS
     public:
-        //TODO: Ctors
         World() = delete;
         World(EntityManager *manager, std::filesystem::path saveData);
+
+        World(World const &other)     = delete;
+        World(World &&other) noexcept = delete;
+
+        World &operator=(World const &other) = delete;
+        World &operator=(World &&other) noexcept = delete;
+
+        ~World();
 
         void save();
         void load();
 
-        //TODO: Inl
-        Entity createEntity(std::string_view name) {//TODO: Add name component on Bulb side instead?
-            Entity entity{ manager->create() };
-            knownEntities.push_back(entity);
-            return entity;
-        }
+        //TODO: Add name component on Bulb side instead?
+        Entity createEntity(std::string_view name);
 
         template<typename ComponentType, typename... ConstructArgs>
-        ComponentType &addComponent(Entity entity, ConstructArgs &&... args) {
-            ComponentType &component{ manager->addComponent<ComponentType>(entity, std::forward<ConstructArgs>(args)...) };
-            
-            //TODO: Track components?
-            
-            return component;
-        }
+        ComponentType &addComponent(Entity entity, ConstructArgs &&...args);
     };
 }
+
+#include "World.inl"
