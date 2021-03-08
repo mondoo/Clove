@@ -3,10 +3,13 @@
 #include "Clove/Graphics/ShaderCompiler.hpp"
 #include "Clove/Graphics/Vulkan/MemoryAllocator.hpp"
 #include "Clove/Graphics/Vulkan/VulkanBuffer.hpp"
+#include "Clove/Graphics/Vulkan/VulkanComputePipelineObject.hpp"
+#include "Clove/Graphics/Vulkan/VulkanComputeQueue.hpp"
 #include "Clove/Graphics/Vulkan/VulkanDescriptorPool.hpp"
 #include "Clove/Graphics/Vulkan/VulkanDescriptorSetLayout.hpp"
 #include "Clove/Graphics/Vulkan/VulkanFence.hpp"
 #include "Clove/Graphics/Vulkan/VulkanFramebuffer.hpp"
+#include "Clove/Graphics/Vulkan/VulkanGraphicsPipelineObject.hpp"
 #include "Clove/Graphics/Vulkan/VulkanGraphicsQueue.hpp"
 #include "Clove/Graphics/Vulkan/VulkanImage.hpp"
 #include "Clove/Graphics/Vulkan/VulkanImageView.hpp"
@@ -19,6 +22,7 @@
 #include "Clove/Graphics/Vulkan/VulkanShader.hpp"
 #include "Clove/Graphics/Vulkan/VulkanSwapchain.hpp"
 #include "Clove/Graphics/Vulkan/VulkanTransferQueue.hpp"
+#include "Clove/Graphics/Vulkan/VulkanDescriptor.hpp"
 
 #include <Clove/Cast.hpp>
 #include <Clove/Log/Log.hpp>
@@ -99,18 +103,6 @@ namespace garlic::clove {
             }
         }
 
-        VkDescriptorType getDescriptorType(DescriptorType garlicType) {
-            switch(garlicType) {
-                case DescriptorType::UniformBuffer:
-                    return VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-                case DescriptorType::CombinedImageSampler:
-                    return VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-                default:
-                    CLOVE_ASSERT(false, "{0}: Unkown type", CLOVE_FUNCTION_NAME);
-                    return VK_DESCRIPTOR_TYPE_MAX_ENUM;
-            }
-        }
-
         VkFormat convertAttributeFormat(VertexAttributeFormat garlicFormat) {
             switch(garlicFormat) {
                 case VertexAttributeFormat::R32_SFLOAT:
@@ -157,6 +149,9 @@ namespace garlic::clove {
             }
             if((garlicUsageFlags & GhaBuffer::UsageMode::UniformBuffer) != 0) {
                 flags |= VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
+            }
+            if((garlicUsageFlags & GhaBuffer::UsageMode::StorageBuffer) != 0) {
+                flags |= VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
             }
 
             return flags;
@@ -303,6 +298,34 @@ namespace garlic::clove {
         vkGetDeviceQueue(devicePtr.get(), familyIndex, 0, &queue);
 
         return std::unique_ptr<GhaTransferQueue>{ std::make_unique<VulkanTransferQueue>(devicePtr, queue, commandPool, queueFamilyIndices) };
+    }
+
+    Expected<std::unique_ptr<GhaComputeQueue>, std::runtime_error> VulkanFactory::createComputeQueue(CommandQueueDescriptor descriptor) {
+        uint32_t const familyIndex{ *queueFamilyIndices.computeFamily };
+
+        VkCommandPoolCreateInfo const poolInfo{
+            .sType            = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
+            .pNext            = nullptr,
+            .flags            = convertCommandPoolCreateFlags(descriptor.flags),
+            .queueFamilyIndex = familyIndex,
+        };
+
+        VkCommandPool commandPool{ nullptr };
+        if(VkResult const result{ vkCreateCommandPool(devicePtr.get(), &poolInfo, nullptr, &commandPool) }; result != VK_SUCCESS) {
+            switch(result) {
+                case VK_ERROR_OUT_OF_HOST_MEMORY:
+                    return Unexpected{ std::runtime_error{ "Failed to create GhaComputeQueue. Out of host memory" } };
+                case VK_ERROR_OUT_OF_DEVICE_MEMORY:
+                    return Unexpected{ std::runtime_error{ "Failed to create GhaComputeQueue. Out of device memory" } };
+                default:
+                    return Unexpected{ std::runtime_error{ "Failed to create GhaComputeQueue. Reason unkown." } };
+            }
+        }
+
+        VkQueue queue{ nullptr };
+        vkGetDeviceQueue(devicePtr.get(), familyIndex, 0, &queue);
+
+        return std::unique_ptr<GhaComputeQueue>{ std::make_unique<VulkanComputeQueue>(devicePtr, queue, commandPool, queueFamilyIndices) };
     }
 
     Expected<std::unique_ptr<GhaSwapchain>, std::runtime_error> VulkanFactory::createSwapChain(GhaSwapchain::Descriptor descriptor) {
@@ -453,8 +476,8 @@ namespace garlic::clove {
             dependecies[i] = VkSubpassDependency{
                 .srcSubpass    = descriptor.dependencies[i].sourceSubpass == SUBPASS_EXTERNAL ? VK_SUBPASS_EXTERNAL : descriptor.dependencies[i].sourceSubpass,
                 .dstSubpass    = descriptor.dependencies[i].destinationSubpass == SUBPASS_EXTERNAL ? VK_SUBPASS_EXTERNAL : descriptor.dependencies[i].destinationSubpass,
-                .srcStageMask  = VulkanPipelineObject::convertStage(descriptor.dependencies[i].sourceStage),
-                .dstStageMask  = VulkanPipelineObject::convertStage(descriptor.dependencies[i].destinationStage),
+                .srcStageMask  = convertStage(descriptor.dependencies[i].sourceStage),
+                .dstStageMask  = convertStage(descriptor.dependencies[i].destinationStage),
                 .srcAccessMask = convertAccessFlags(descriptor.dependencies[i].currentAccess),
                 .dstAccessMask = convertAccessFlags(descriptor.dependencies[i].newAccess),
             };
@@ -522,7 +545,7 @@ namespace garlic::clove {
         return std::unique_ptr<GhaDescriptorSetLayout>{ std::make_unique<VulkanDescriptorSetLayout>(devicePtr, layout, std::move(descriptor)) };
     }
 
-    Expected<std::unique_ptr<GhaPipelineObject>, std::runtime_error> VulkanFactory::createPipelineObject(GhaPipelineObject::Descriptor descriptor) {
+    Expected<std::unique_ptr<GhaGraphicsPipelineObject>, std::runtime_error> VulkanFactory::createGraphicsPipelineObject(GhaGraphicsPipelineObject::Descriptor descriptor) {
         //Descriptor set layouts
         size_t const descriptorLayoutCount{ std::size(descriptor.descriptorSetLayouts) };
         std::vector<VkDescriptorSetLayout> descriptorLayouts(descriptorLayoutCount);
@@ -543,21 +566,21 @@ namespace garlic::clove {
         //Pipeline Layout
         VkPipelineLayoutCreateInfo const pipelineLayoutInfo{
             .sType                  = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
-            .setLayoutCount         = static_cast<uint32_t>(std::size(descriptorLayouts)),
-            .pSetLayouts            = std::data(descriptorLayouts),
-            .pushConstantRangeCount = static_cast<uint32_t>(std::size(vkPushConstantRanges)),
-            .pPushConstantRanges    = std::data(vkPushConstantRanges),
+            .setLayoutCount         = static_cast<uint32_t>(descriptorLayouts.size()),
+            .pSetLayouts            = descriptorLayouts.data(),
+            .pushConstantRangeCount = static_cast<uint32_t>(vkPushConstantRanges.size()),
+            .pPushConstantRanges    = vkPushConstantRanges.data(),
         };
 
         VkPipelineLayout pipelineLayout{ nullptr };
         if(VkResult const result{ vkCreatePipelineLayout(devicePtr.get(), &pipelineLayoutInfo, nullptr, &pipelineLayout) }; result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:
-                    return Unexpected{ std::runtime_error{ "Failed to create PipelineObject's layout. Out of host memory" } };
+                    return Unexpected{ std::runtime_error{ "Failed to create GraphicsPipelineObject's layout. Out of host memory" } };
                 case VK_ERROR_OUT_OF_DEVICE_MEMORY:
-                    return Unexpected{ std::runtime_error{ "Failed to create PipelineObject's layout. Out of device memory" } };
+                    return Unexpected{ std::runtime_error{ "Failed to create GraphicsPipelineObject's layout. Out of device memory" } };
                 default:
-                    return Unexpected{ std::runtime_error{ "Failed to create PipelineObject's layout. Reason unkown." } };
+                    return Unexpected{ std::runtime_error{ "Failed to create GraphicsPipelineObject's layout. Reason unkown." } };
             }
         }
 
@@ -575,7 +598,7 @@ namespace garlic::clove {
         shaderStages[1] = VkPipelineShaderStageCreateInfo{
             .sType  = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
             .stage  = VK_SHADER_STAGE_FRAGMENT_BIT,
-            .module = polyCast<VulkanShader>(descriptor.fragmentShader.get())->getModule(),
+            .module = polyCast<VulkanShader>(descriptor.pixelShader.get())->getModule(),
             .pName  = "main",
         };
 
@@ -714,8 +737,9 @@ namespace garlic::clove {
         VkGraphicsPipelineCreateInfo const pipelineInfo{
             .sType               = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
             .pNext               = nullptr,
-            .stageCount          = std::size(shaderStages),
-            .pStages             = std::data(shaderStages),
+            .flags               = 0,
+            .stageCount          = shaderStages.size(),
+            .pStages             = shaderStages.data(),
             .pVertexInputState   = &vertexInputInfo,
             .pInputAssemblyState = &inputAssembly,
             .pTessellationState  = nullptr,
@@ -736,15 +760,86 @@ namespace garlic::clove {
         if(VkResult const result{ vkCreateGraphicsPipelines(devicePtr.get(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &pipeline) }; result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:
-                    return Unexpected{ std::runtime_error{ "Failed to create PipelineObject. Out of host memory" } };
+                    return Unexpected{ std::runtime_error{ "Failed to create GraphicsPipelineObject. Out of host memory" } };
                 case VK_ERROR_OUT_OF_DEVICE_MEMORY:
-                    return Unexpected{ std::runtime_error{ "Failed to create PipelineObject. Out of device memory" } };
+                    return Unexpected{ std::runtime_error{ "Failed to create GraphicsPipelineObject. Out of device memory" } };
                 default:
-                    return Unexpected{ std::runtime_error{ "Failed to create PipelineObject. Reason unkown." } };
+                    return Unexpected{ std::runtime_error{ "Failed to create GraphicsPipelineObject. Reason unkown." } };
             }
         }
 
-        return std::unique_ptr<GhaPipelineObject>{ std::make_unique<VulkanPipelineObject>(devicePtr, pipeline, pipelineLayout) };
+        return std::unique_ptr<GhaGraphicsPipelineObject>{ std::make_unique<VulkanGraphicsPipelineObject>(devicePtr, pipeline, pipelineLayout) };
+    }
+
+    Expected<std::unique_ptr<GhaComputePipelineObject>, std::runtime_error> VulkanFactory::createComputePipelineObject(GhaComputePipelineObject::Descriptor descriptor) {
+        //Descriptor set layouts
+        size_t const descriptorLayoutCount{ std::size(descriptor.descriptorSetLayouts) };
+        std::vector<VkDescriptorSetLayout> descriptorLayouts(descriptorLayoutCount);
+        for(size_t i = 0; i < descriptorLayoutCount; ++i) {
+            descriptorLayouts[i] = polyCast<VulkanDescriptorSetLayout>(descriptor.descriptorSetLayouts[i].get())->getLayout();
+        }
+
+        //Push constants
+        std::vector<VkPushConstantRange> vkPushConstantRanges(std::size(descriptor.pushConstants));
+        for(size_t i = 0; i < std::size(vkPushConstantRanges); ++i) {
+            vkPushConstantRanges[i] = VkPushConstantRange{
+                .stageFlags = VulkanShader::convertStage(descriptor.pushConstants[i].stage),
+                .offset     = static_cast<uint32_t>(descriptor.pushConstants[i].offset),
+                .size       = static_cast<uint32_t>(descriptor.pushConstants[i].size),
+            };
+        }
+
+        //Pipeline Layout
+        VkPipelineLayoutCreateInfo const pipelineLayoutInfo{
+            .sType                  = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
+            .setLayoutCount         = static_cast<uint32_t>(descriptorLayouts.size()),
+            .pSetLayouts            = descriptorLayouts.data(),
+            .pushConstantRangeCount = static_cast<uint32_t>(vkPushConstantRanges.size()),
+            .pPushConstantRanges    = vkPushConstantRanges.data(),
+        };
+
+        VkPipelineLayout pipelineLayout{ nullptr };
+        if(VkResult const result{ vkCreatePipelineLayout(devicePtr.get(), &pipelineLayoutInfo, nullptr, &pipelineLayout) }; result != VK_SUCCESS) {
+            switch(result) {
+                case VK_ERROR_OUT_OF_HOST_MEMORY:
+                    return Unexpected{ std::runtime_error{ "Failed to create ComputePipelineObject's layout. Out of host memory" } };
+                case VK_ERROR_OUT_OF_DEVICE_MEMORY:
+                    return Unexpected{ std::runtime_error{ "Failed to create ComputePipelineObject's layout. Out of device memory" } };
+                default:
+                    return Unexpected{ std::runtime_error{ "Failed to create ComputePipelineObject's layout. Reason unkown." } };
+            }
+        }
+
+        //Shader
+        VkPipelineShaderStageCreateInfo const shaderStage{
+            .sType  = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+            .stage  = VK_SHADER_STAGE_COMPUTE_BIT,
+            .module = polyCast<VulkanShader>(descriptor.shader.get())->getModule(),
+            .pName  = "main",
+        };
+
+        //Pipeline
+        VkComputePipelineCreateInfo const pipelineInfo{
+            .sType  = VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO,
+            .pNext  = nullptr,
+            .flags  = 0,
+            .stage  = shaderStage,
+            .layout = pipelineLayout,
+        };
+
+        VkPipeline pipeline{ nullptr };
+        if(VkResult const result{ vkCreateComputePipelines(devicePtr.get(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &pipeline) }; result != VK_SUCCESS) {
+            switch(result) {
+                case VK_ERROR_OUT_OF_HOST_MEMORY:
+                    return Unexpected{ std::runtime_error{ "Failed to create ComputePipelineObject. Out of host memory" } };
+                case VK_ERROR_OUT_OF_DEVICE_MEMORY:
+                    return Unexpected{ std::runtime_error{ "Failed to create ComputePipelineObject. Out of device memory" } };
+                default:
+                    return Unexpected{ std::runtime_error{ "Failed to create ComputePipelineObject. Reason unkown." } };
+            }
+        }
+
+        return std::unique_ptr<GhaComputePipelineObject>{ std::make_unique<VulkanComputePipelineObject>(devicePtr, pipeline, pipelineLayout) };
     }
 
     Expected<std::unique_ptr<GhaFramebuffer>, std::runtime_error> VulkanFactory::createFramebuffer(GhaFramebuffer::Descriptor descriptor) {
@@ -859,7 +954,7 @@ namespace garlic::clove {
     }
 
     Expected<std::unique_ptr<GhaBuffer>, std::runtime_error> VulkanFactory::createBuffer(GhaBuffer::Descriptor descriptor) {
-        std::array const sharedQueueIndices{ *queueFamilyIndices.graphicsFamily, *queueFamilyIndices.transferFamily };
+        std::array const sharedQueueIndices{ *queueFamilyIndices.graphicsFamily, *queueFamilyIndices.transferFamily, *queueFamilyIndices.computeFamily };
         bool const isExclusive{ descriptor.sharingMode == SharingMode::Exclusive };
 
         VkBufferCreateInfo const createInfo{
@@ -889,7 +984,7 @@ namespace garlic::clove {
     }
 
     Expected<std::unique_ptr<GhaImage>, std::runtime_error> VulkanFactory::createImage(GhaImage::Descriptor descriptor) {
-        std::array const sharedQueueIndices{ *queueFamilyIndices.graphicsFamily, *queueFamilyIndices.transferFamily };
+        std::array const sharedQueueIndices{ *queueFamilyIndices.graphicsFamily, *queueFamilyIndices.transferFamily, *queueFamilyIndices.computeFamily };
         bool const isExclusive{ descriptor.sharingMode == SharingMode::Exclusive };
         bool const isCube{ descriptor.type == GhaImage::Type::Cube };
 

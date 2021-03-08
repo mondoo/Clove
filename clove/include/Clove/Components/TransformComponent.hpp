@@ -3,7 +3,6 @@
 #include "Clove/SerialisationCommon.hpp"
 
 #include <Clove/Maths/MathsTypes.hpp>
-#include <vector>
 
 namespace garlic::clove {
     /**

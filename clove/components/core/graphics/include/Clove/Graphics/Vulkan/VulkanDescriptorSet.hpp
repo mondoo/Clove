@@ -25,7 +25,7 @@ namespace garlic::clove {
 
         ~VulkanDescriptorSet();
 
-        void map(GhaBuffer const &buffer, size_t const offset, size_t const range, uint32_t const bindingSlot) override;
+        void map(GhaBuffer const &buffer, size_t const offset, size_t const range, DescriptorType const descriptorType, uint32_t const bindingSlot) override;
 
         void map(GhaImageView const &imageView, GhaSampler const &sampler, GhaImage::Layout const layout, uint32_t const bindingSlot) override;
         void map(std::span<std::shared_ptr<GhaImageView>> imageViews, GhaSampler const &sampler, GhaImage::Layout const layout, uint32_t const bindingSlot) override;

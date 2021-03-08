@@ -22,6 +22,7 @@
 #include <Clove/Definitions.hpp>
 #include <Clove/Log/Log.hpp>
 #include <set>
+#include <unordered_set>
 
 CLOVE_DECLARE_LOG_CATEGORY(VULKAN)
 
@@ -78,41 +79,76 @@ namespace garlic::clove {
         }
 
         QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface) {
-            QueueFamilyIndices indices;
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Generating queue family indicies...");
+
+            QueueFamilyIndices indices{};
+            std::set<size_t> graphicsFamilyIndices{};
+            std::set<size_t> presentFamilyIndices{};
+            std::set<size_t> transferFamilyIndices{};
+            std::set<size_t> computeFamilyIndices{};
 
             uint32_t queueFamilyCount{ 0 };
             vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
 
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "{0} queue families available", queueFamilyCount);
+
             std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
             vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
 
-            for(int i{ 0 }; auto const &queueFamily : queueFamilies) {
-                //Make sure we have the queue family that'll let us render graphics
-                if((queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) != 0u) {
-                    indices.graphicsFamily = i;
-                }
-
+            for(size_t i{ 0 }; auto const &queueFamily : queueFamilies) {
                 //If we have a surface, check if we have presentation support. Otherwise we're running headless
                 if(surface != VK_NULL_HANDLE) {
                     VkBool32 presentSupport{ VK_FALSE };
                     vkGetPhysicalDeviceSurfaceSupportKHR(device, i, surface, &presentSupport);
                     if(presentSupport == VK_TRUE) {
-                        indices.presentFamily = i;
+                        presentFamilyIndices.emplace(i);
                     }
                 }
 
-                //Find a transfer queue family that specifically doesn't support graphics
-                if(((queueFamily.queueFlags & VK_QUEUE_TRANSFER_BIT) != 0u) && ((queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) == 0u)) {
-                    indices.transferFamily = i;
+                if((queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) != 0u) {
+                    graphicsFamilyIndices.emplace(i);
                 }
-
-                bool const requirePresentFamily{ surface != VK_NULL_HANDLE };
-                if(indices.isComplete(requirePresentFamily)) {
-                    break;
+                if((queueFamily.queueFlags & VK_QUEUE_TRANSFER_BIT) != 0u) {
+                    transferFamilyIndices.emplace(i);
+                }
+                if((queueFamily.queueFlags & VK_QUEUE_COMPUTE_BIT) != 0u) {
+                    computeFamilyIndices.emplace(i);
                 }
 
                 ++i;
             }
+
+            if(presentFamilyIndices.empty() || graphicsFamilyIndices.empty() || transferFamilyIndices.empty() || computeFamilyIndices.empty()) {
+                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Some queue types are unsupported. {0} failed.", CLOVE_FUNCTION_NAME);
+            }
+
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Distributing family types. Aiming for a unique family per queue type...");
+            //Just taking the first one available for now. Not forcing the present queue to be unique for now.
+            //TODO: Should just make graphics and present the same one?
+            if(surface != VK_NULL_HANDLE) {
+                indices.presentFamily = *presentFamilyIndices.begin();
+            }
+
+            indices.graphicsFamily = *graphicsFamilyIndices.begin();
+            if(transferFamilyIndices.size() > 1) {
+                transferFamilyIndices.erase(*indices.graphicsFamily);
+            }
+            if(computeFamilyIndices.size() > 1) {
+                computeFamilyIndices.erase(*indices.graphicsFamily);
+            }
+
+            indices.transferFamily = *transferFamilyIndices.begin();
+            if(computeFamilyIndices.size() > 1) {
+                computeFamilyIndices.erase(*indices.transferFamily);
+            }
+
+            indices.computeFamily = *computeFamilyIndices.begin();
+
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Debug, "Vulkan queue types successfully distributed!");
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "\tPresent:\tid: {0}, count: {1}", *indices.presentFamily, queueFamilies[*indices.presentFamily].queueCount);
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "\tGraphics:\tid: {0}, count: {1}", *indices.graphicsFamily, queueFamilies[*indices.graphicsFamily].queueCount);
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "\tTransfer:\tid: {0}, count: {1}", *indices.transferFamily, queueFamilies[*indices.transferFamily].queueCount);
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "\tCompute:\tid: {0}, count: {1}", *indices.computeFamily, queueFamilies[*indices.computeFamily].queueCount);
 
             return indices;
         }
@@ -143,8 +179,11 @@ namespace garlic::clove {
         }
 
         bool isDeviceSuitable(VkPhysicalDevice device, VkSurfaceKHR surface, std::vector<char const *> const &extensions) {
-            VkPhysicalDeviceFeatures deviceFeatures;
+            VkPhysicalDeviceFeatures deviceFeatures{};
             vkGetPhysicalDeviceFeatures(device, &deviceFeatures);
+
+            VkPhysicalDeviceProperties devicePoperties{};
+            vkGetPhysicalDeviceProperties(device, &devicePoperties);
 
             QueueFamilyIndices indices{ findQueueFamilies(device, surface) };
             bool const extentionsAreSupported{ checkDeviceExtensionsSupport(device, extensions) };
@@ -162,7 +201,7 @@ namespace garlic::clove {
             }
 
             bool const requirePresentFamily{ surface != VK_NULL_HANDLE };
-            return indices.isComplete(requirePresentFamily) && extentionsAreSupported && surfaceIsAdequate.value_or(true) && (deviceFeatures.samplerAnisotropy != 0u);
+            return indices.isComplete(requirePresentFamily) && extentionsAreSupported && surfaceIsAdequate.value_or(true) && (deviceFeatures.samplerAnisotropy != 0u) && devicePoperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU;
         }
     }
 
@@ -210,7 +249,7 @@ namespace garlic::clove {
 #if CLOVE_DEBUG
             VkDebugUtilsMessengerCreateInfoEXT debugMessengerCreateInfo{
                 .sType           = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT,
-                .messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT,
+                .messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT,
                 .messageType     = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT,
                 .pfnUserCallback = debugCallback,
                 .pUserData       = nullptr,
@@ -280,16 +319,25 @@ namespace garlic::clove {
         }
 
         //Pick physical device
-        VkPhysicalDevice physicalDevice{ nullptr };
+        VkPhysicalDevice physicalDevice{ VK_NULL_HANDLE };
         {
-            uint32_t deviceCount = 0;
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Searching for a suitable physical device...");
+
+            uint32_t deviceCount{ 0 };
             vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
             if(deviceCount == 0) {
-                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "failed to find GPUs with Vulkan support!");
+                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to find GPUs with Vulkan support!");
                 return;
             }
             std::vector<VkPhysicalDevice> devices(deviceCount);
             vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
+
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Found {0} potential devices:", deviceCount);
+            for(auto const &device : devices) {
+                VkPhysicalDeviceProperties devicePoperties{};
+                vkGetPhysicalDeviceProperties(device, &devicePoperties);
+                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "\t{0}", devicePoperties.deviceName);
+            }
 
             for(auto const &device : devices) {
                 if(isDeviceSuitable(device, surface, deviceExtensions)) {
@@ -299,7 +347,7 @@ namespace garlic::clove {
             }
 
             if(physicalDevice == VK_NULL_HANDLE) {
-                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "failed to find a suitable GPU!");
+                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to find a suitable GPU!");
                 return;
             } else {
                 VkPhysicalDeviceProperties devicePoperties;
@@ -319,7 +367,8 @@ namespace garlic::clove {
         {
             std::set<uint32_t> uniqueQueueFamilies{
                 *queueFamilyIndices.graphicsFamily,
-                *queueFamilyIndices.transferFamily
+                *queueFamilyIndices.transferFamily,
+                *queueFamilyIndices.computeFamily,
             };
             if(queueFamilyIndices.presentFamily.has_value()) {
                 uniqueQueueFamilies.emplace(*queueFamilyIndices.presentFamily);
@@ -344,8 +393,8 @@ namespace garlic::clove {
 
             VkDeviceCreateInfo createInfo {
                 .sType                = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
-                .queueCreateInfoCount = static_cast<uint32_t>(std::size(queueCreateInfos)),
-                .pQueueCreateInfos    = std::data(queueCreateInfos),
+                .queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size()),
+                .pQueueCreateInfos    = queueCreateInfos.data(),
 
 #if CLOVE_DEBUG
                 //We don't need to do this as device specific validation layers are no more. But seeing as it's the same data we can reuse them to support older versions
@@ -354,8 +403,8 @@ namespace garlic::clove {
 #else
                 .enabledLayerCount = 0,
 #endif
-                .enabledExtensionCount   = static_cast<uint32_t>(std::size(deviceExtensions)),
-                .ppEnabledExtensionNames = std::data(deviceExtensions),
+                .enabledExtensionCount   = static_cast<uint32_t>(deviceExtensions.size()),
+                .ppEnabledExtensionNames = deviceExtensions.data(),
                 .pEnabledFeatures        = &deviceFeatures,
             };
 
@@ -380,15 +429,30 @@ namespace garlic::clove {
     }
 
     void VulkanDevice::waitForIdleDevice() {
-        vkDeviceWaitIdle(devicePtr.get());
+        if(VkResult const result{ vkDeviceWaitIdle(devicePtr.get()) }; result != VK_SUCCESS) {
+            switch(result) {
+                case VK_ERROR_OUT_OF_HOST_MEMORY:
+                    CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Error while waiting for device. Out of host memory.");
+                    break;
+                case VK_ERROR_OUT_OF_DEVICE_MEMORY:
+                    CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Error while waiting for device. Out of device memory.");
+                    break;
+                case VK_ERROR_DEVICE_LOST:
+                    CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Error while waiting for device. Device lost.");
+                    break;
+                default:
+                    CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Unknown error while waiting for device.");
+                    break;
+            }
+        }
     }
 
     GhaDevice::Limits VulkanDevice::getLimits() const {
         VkPhysicalDeviceProperties devicePoperties;
         vkGetPhysicalDeviceProperties(devicePtr.getPhysical(), &devicePoperties);
 
-        return {
-            devicePoperties.limits.minUniformBufferOffsetAlignment
+        return Limits{
+            .minUniformBufferOffsetAlignment = devicePoperties.limits.minUniformBufferOffsetAlignment
         };
     }
 }

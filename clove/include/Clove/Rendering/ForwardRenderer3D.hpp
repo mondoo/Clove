@@ -20,6 +20,7 @@ namespace garlic::clove {
     class Mesh;
     class Material;
     class RenderTarget;
+    class GhaComputeQueue;
 }
 
 namespace garlic::clove {
@@ -48,12 +49,12 @@ namespace garlic::clove {
             struct BufferData {
                 //TODO: Get the alignment from vulkan
                 alignas(256) ViewData viewData; //NOLINT
-                alignas(256) vec3f viewPosition; //NOLINT
+                alignas(256) vec3f viewPosition;//NOLINT
 
-                alignas(256) LightDataArray lights; //NOLINT
-                alignas(256) DirectionalShadowTransformArray directionalShadowTransforms; //NOLINT
+                alignas(256) LightDataArray lights;                                      //NOLINT
+                alignas(256) DirectionalShadowTransformArray directionalShadowTransforms;//NOLINT
 
-                alignas(256) LightCount numLights; //NOLINT
+                alignas(256) LightCount numLights;//NOLINT
             } bufferData;
 
             std::array<std::array<mat4f, 6>, MAX_LIGHTS> pointShadowTransforms;
@@ -77,6 +78,7 @@ namespace garlic::clove {
             std::shared_ptr<GhaGraphicsCommandBuffer> commandBuffer;
             std::shared_ptr<GhaGraphicsCommandBuffer> shadowMapCommandBuffer;
             std::shared_ptr<GhaGraphicsCommandBuffer> cubeShadowMapCommandBuffer;
+            std::shared_ptr<GhaComputeCommandBuffer> skinningCommandBuffer;
 
             std::shared_ptr<GhaBuffer> frameDataBuffer;            /**< Holds data used across all meshes (lighting, camera etc.). */
             std::vector<std::unique_ptr<GhaBuffer>> objectBuffers; /**< Holds the data for each object. */
@@ -84,6 +86,7 @@ namespace garlic::clove {
             std::shared_ptr<GhaDescriptorPool> frameDescriptorPool; /**< Descriptor pool for sets that change per frame. */
             std::shared_ptr<GhaDescriptorPool> meshDescriptorPool;  /**< Descriptor pool for sets that are for a single mesh's material. */
             std::shared_ptr<GhaDescriptorPool> uiDescriptorPool;    /**< Descriptor pool for sets that are for a ui element. */
+            std::shared_ptr<GhaDescriptorPool> skinningDescriptorPool;
 
             std::shared_ptr<GhaDescriptorSet> viewDescriptorSet;
             std::shared_ptr<GhaDescriptorSet> lightingDescriptorSet;
@@ -94,7 +97,7 @@ namespace garlic::clove {
             std::array<std::shared_ptr<GhaFramebuffer>, MAX_LIGHTS> shadowMapFrameBuffers;
 
             std::array<std::shared_ptr<GhaImage>, MAX_LIGHTS> cubeShadowMaps;
-            std::array<std::shared_ptr<GhaImageView>, MAX_LIGHTS> cubeShadowMapViews;                   //Views the whole cube
+            std::array<std::shared_ptr<GhaImageView>, MAX_LIGHTS> cubeShadowMapViews;                                   //Views the whole cube
             std::array<std::array<std::shared_ptr<GhaImageView>, cubeMapLayerCount>, MAX_LIGHTS> cubeShadowMapFaceViews;//Views each side of the cube. For the frame buffer
             std::array<std::array<std::shared_ptr<GhaFramebuffer>, cubeMapLayerCount>, MAX_LIGHTS> cubeShadowMapFrameBuffers;
         };
@@ -114,12 +117,14 @@ namespace garlic::clove {
         //'Square' mesh used to render UI
         std::unique_ptr<Mesh> uiMesh;
 
-        GhaDevice *graphicsDevice;
-        std::shared_ptr<GhaFactory> graphicsFactory;
+        GhaDevice *ghaDevice;
+        std::shared_ptr<GhaFactory> ghaFactory;
 
         std::shared_ptr<GhaGraphicsQueue> graphicsQueue;
+        std::shared_ptr<GhaComputeQueue> computeQueue;
 
         std::unordered_map<DescriptorSetSlots, std::shared_ptr<GhaDescriptorSetLayout>> descriptorSetLayouts;
+        std::shared_ptr<GhaDescriptorSetLayout> skinningSetLayout;
 
         //Frame / image data objects
         FrameData currentFrameData;
@@ -135,8 +140,8 @@ namespace garlic::clove {
 
         //Objects for the final colour render pass
         std::shared_ptr<GhaRenderPass> renderPass;
-        std::shared_ptr<GhaPipelineObject> widgetPipelineObject;
-        std::shared_ptr<GhaPipelineObject> textPipelineObject;
+        std::shared_ptr<GhaGraphicsPipelineObject> widgetPipelineObject;
+        std::shared_ptr<GhaGraphicsPipelineObject> textPipelineObject;
 
         std::shared_ptr<GhaImage> depthImage;
         std::shared_ptr<GhaImageView> depthImageView;
@@ -147,6 +152,10 @@ namespace garlic::clove {
         //Synchronisation obects
         std::array<std::shared_ptr<GhaSemaphore>, maxFramesInFlight> shadowFinishedSemaphores;
         std::array<std::shared_ptr<GhaSemaphore>, maxFramesInFlight> cubeShadowFinishedSemaphores;
+        std::array<std::shared_ptr<GhaSemaphore>, maxFramesInFlight> skinningFinishedSemaphores;
+
+        //TEMP: Compute skinning objects -- Put inside a GeometryPass
+        std::shared_ptr<GhaComputePipelineObject> skinningPipeline;
 
         //FUNCTIONS
     public:
@@ -157,7 +166,7 @@ namespace garlic::clove {
         //ForwardRenderer3D(ForwardRenderer3D&& other) noexcept;
 
         ForwardRenderer3D &operator=(ForwardRenderer3D const &other) = delete;
-        ForwardRenderer3D &operator=(ForwardRenderer3D &&other) noexcept;
+        ForwardRenderer3D &operator                                  =(ForwardRenderer3D &&other) noexcept;
 
         ~ForwardRenderer3D();
 

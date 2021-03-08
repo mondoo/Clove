@@ -17,7 +17,7 @@ namespace garlic::clove {
     };
 
     /**
-     * @brief Describes the layout of an entire GhaDescriptorSet that will be bound into a GhaPipelineObject.
+     * @brief Describes the layout of an entire GhaDescriptorSet that will be bound into a pipeline object.
      * @details A 'set' is defined in the shader by: layout(set = 0, binding = 1). This
      * layout describes the type of binding in each binding slot for a given set. The index
      * of the set is defined in the array of DescriptorSetLayouts given to the 
