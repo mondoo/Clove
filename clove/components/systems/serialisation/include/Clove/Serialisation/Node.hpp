@@ -1,11 +1,11 @@
 #pragma once
 
+#include <Clove/Log/Log.hpp>
 #include <string>
 #include <string_view>
 #include <type_traits>
 #include <variant>
 #include <vector>
-#include <Clove/Log/Log.hpp>
 
 namespace garlic::clove::serialiser {
     /**
@@ -86,15 +86,6 @@ namespace garlic::clove::serialiser {
          */
         template<typename T>
         void setValue(T const &value);
-
-        template<typename T>
-        static bool constexpr isKeyType = std::is_same_v<std::string, T> || std::is_same_v<std::string_view, T>;
-
-        template<>
-        static bool constexpr isKeyType<char const *> = true;
-
-        template<size_t N>
-        static bool constexpr isKeyType<char const[N]> = true;
     };
 }
 

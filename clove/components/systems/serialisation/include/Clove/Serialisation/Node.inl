@@ -2,9 +2,20 @@
 #include <stdexcept>
 
 namespace garlic::clove::serialiser {
+    namespace detail {
+        template<typename T>
+        bool constexpr isKeyType = std::is_same_v<std::string, T> || std::is_same_v<std::string_view, T>;
+
+        template<>
+        bool constexpr isKeyType<char const *> = true;
+
+        template<size_t N>
+        bool constexpr isKeyType<char const[N]> = true;
+    }
+    
     template<typename T>
     Node &Node::operator=(T const &value) {
-        if constexpr(std::is_arithmetic_v<T> || isKeyType<T>) {
+        if constexpr(std::is_arithmetic_v<T> || detail::isKeyType<T>) {
             type = Type::Scalar;
             nodes.resize(1);
             nodes[0].setValue(value);
@@ -107,7 +118,7 @@ namespace garlic::clove::serialiser {
             stream.precision(std::numeric_limits<T>::max_digits10);
             stream << value;
             scalar = stream.str();
-        } else if constexpr(isKeyType<T>) {
+        } else if constexpr(detail::isKeyType<T>) {
             scalar = value;
         } else {
             throw std::runtime_error{ "setValue called without a scalar value." };
