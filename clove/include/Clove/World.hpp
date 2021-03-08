@@ -2,9 +2,8 @@
 
 #include <Clove/ECS/EntityManager.hpp>
 #include <filesystem>
+#include <unordered_map>
 #include <vector>
-
-//TEMP: Move the serialisation functions to their classes
 
 namespace garlic::clove {
     class World {
@@ -25,9 +24,9 @@ namespace garlic::clove {
         void load();
 
         //TODO: Inl
-        Entity createEntity(std::string_view name) { //TODO: Add name component on Bulb side instead?
+        Entity createEntity(std::string_view name) {//TODO: Add name component on Bulb side instead?
             Entity entity{ manager->create() };
-            knownEntities.push_back(entity);            
+            knownEntities.push_back(entity);
             return entity;
         }
 
@@ -41,4 +40,3 @@ namespace garlic::clove {
         }
     };
 }
-

@@ -20,7 +20,7 @@ namespace garlic::clove {
         serialiser::Node rootNode{};
         for(Entity entity : knownEntities) {
             serialiser::Node entityNode{};
-            entityNode["id"]   = entity; //TODO: is this needed?
+            entityNode["id"]   = entity;
             entityNode["name"] = "Unkown here - needs component?";
 
             //TODO: Tracking components manually - how to do this more programatically?
@@ -28,20 +28,20 @@ namespace garlic::clove {
                 auto const &comp{ manager->getComponent<TransformComponent>(entity) };
 
                 serialiser::Node componentNode{ serialise(comp) };
-                componentNode["id"]       = typeid(comp).hash_code();
+                componentNode["id"] = typeid(comp).hash_code();
                 entityNode["components"].pushBack(componentNode);
             }
             if(manager->hasComponent<StaticModelComponent>(entity)) {
                 auto &comp{ manager->getComponent<StaticModelComponent>(entity) };
 
-                serialiser::Node componentNode{};
+                serialiser::Node componentNode{ serialise(comp) };
                 componentNode["id"] = typeid(comp).hash_code();
                 entityNode["components"].pushBack(componentNode);
             }
             if(manager->hasComponent<PointLightComponent>(entity)) {
                 auto &comp{ manager->getComponent<PointLightComponent>(entity) };
 
-                serialiser::Node componentNode{};
+                serialiser::Node componentNode{ serialise(comp) };
                 componentNode["id"] = typeid(comp).hash_code();
                 entityNode["components"].pushBack(componentNode);
             }
@@ -70,12 +70,10 @@ namespace garlic::clove {
                     auto &comp{ manager->addComponent<TransformComponent>(entity, componentNode.as<TransformComponent>()) };
                 }
                 if(componentNode["id"].as<size_t>() == typeid(StaticModelComponent).hash_code()) {
-                    //Always loading a cube for now
-                    CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Warning, "Using absolute path to load in model.");
-                    auto &comp{ manager->addComponent<StaticModelComponent>(entity, clove::ModelLoader::loadStaticModel("F:/garlic/membrane/assets/cube.obj")) };
+                    auto &comp{ manager->addComponent<StaticModelComponent>(entity, componentNode.as<StaticModelComponent>()) };
                 }
                 if(componentNode["id"].as<size_t>() == typeid(PointLightComponent).hash_code()) {
-                    auto &comp{ manager->addComponent<PointLightComponent>(entity) };
+                    auto &comp{ manager->addComponent<PointLightComponent>(entity, componentNode.as<PointLightComponent>()) };
                 }
             }
 
