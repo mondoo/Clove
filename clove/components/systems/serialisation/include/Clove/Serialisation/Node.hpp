@@ -5,6 +5,7 @@
 #include <type_traits>
 #include <variant>
 #include <vector>
+#include <Clove/Log/Log.hpp>
 
 namespace garlic::clove::serialiser {
     /**
@@ -100,11 +101,13 @@ namespace garlic::clove::serialiser {
 namespace garlic::clove {
     template<typename UnkownType>
     serialiser::Node serialise(UnkownType const &object) {
+        CLOVE_ASSERT(false, "No template specialisation provided");
         return {};
     }
 
     template<typename UnkownType>
     UnkownType deserialise(serialiser::Node const &node) {
+        CLOVE_ASSERT(false, "No template specialisation provided");
         return {};
     }
 }
