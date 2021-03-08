@@ -23,14 +23,20 @@ namespace Garlic.Bulb {
 		public LogViewModel Log { get; } = new LogViewModel();
 
 		public EditorSessionViewModel() {
+			//Bind to messages
+			Membrane.MessageHandler.bindToMessage<Membrane.Engine_OnSceneLoaded>(OnSceneLoaded);
+
+			//Set up commands
 			LoadSceneCommand = new RelayCommand(() => { 
-				Membrane.Log.write(Membrane.LogLevel.Debug, "Load command sent");
 				Membrane.MessageHandler.sendMessage(new Membrane.Editor_LoadScene());
 			});
 			SaveSceneCommand = new RelayCommand(() => {
-				Membrane.Log.write(Membrane.LogLevel.Debug, "Save command sent");
 				Membrane.MessageHandler.sendMessage(new Membrane.Editor_SaveScene());
 			});
+		}
+
+		private void OnSceneLoaded(Membrane.Engine_OnSceneLoaded message) {
+			Scene = new SceneViewModel(message.entities);
 		}
 	}
 }

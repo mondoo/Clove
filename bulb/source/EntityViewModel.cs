@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
@@ -5,101 +6,96 @@ using System.Windows.Input;
 
 using Membrane = garlic.membrane;
 
-namespace Garlic.Bulb
-{
-    public class EntityViewModel : ViewModel
-    {
-        public uint EntityId { get; set; }
+namespace Garlic.Bulb {
+	public class EntityViewModel : ViewModel {
+		public uint EntityId { get; set; }
 
-        public string Name
-        {
-            get { return name; }
-            set
-            {
-                name = value;
-                OnPropertyChanged(nameof(Name));
-            }
-        }
-        private string name = "New Entity";
+		public string Name {
+			get { return name; }
+			set {
+				name = value;
+				OnPropertyChanged(nameof(Name));
+			}
+		}
+		private string name = "New Entity";
 
-        public ObservableCollection<ComponentViewModel> Components { get; } = new ObservableCollection<ComponentViewModel>();
+		public ObservableCollection<ComponentViewModel> Components { get; } = new ObservableCollection<ComponentViewModel>();
 
-        public ICommand SelectedCommand { get; }
+		public ICommand SelectedCommand { get; }
 
-        public delegate void SelectionHandler(EntityViewModel viewModel);
-        public SelectionHandler OnSelected;
+		public delegate void SelectionHandler(EntityViewModel viewModel);
+		public SelectionHandler OnSelected;
 
-        public EntityViewModel()
-        {
-            //Bind to messages
-            Membrane.MessageHandler.bindToMessage<Membrane.Engine_OnComponentCreated>(OnComponentCreated);
-            Membrane.MessageHandler.bindToMessage<Membrane.Engine_OnTransformChanged>(OnTransformChanged);
+		public EntityViewModel() {
+			//Bind to messages
+			Membrane.MessageHandler.bindToMessage<Membrane.Engine_OnComponentCreated>(OnComponentCreated);
+			Membrane.MessageHandler.bindToMessage<Membrane.Engine_OnTransformChanged>(OnTransformChanged);
 
-            //Set up commands
-            SelectedCommand = new RelayCommand(() => OnSelected?.Invoke(this));
-        }
+			//Set up commands
+			SelectedCommand = new RelayCommand(() => OnSelected?.Invoke(this));
+		}
 
-        public void AddComponent(Membrane.ComponentType type)
-        {
-            var message = new Membrane.Editor_CreateComponent();
-            message.entity = EntityId;
-            message.componentType = type;
+		public EntityViewModel(List<Membrane.ComponentType> components) : this() {
+			foreach (var componentType in components) {
+				Components.Add(CreateComponentViewModel(componentType));
+			}
+		}
 
-            Membrane.MessageHandler.sendMessage(message);
-        }
+		public void AddComponent(Membrane.ComponentType type) {
+			var message = new Membrane.Editor_CreateComponent();
+			message.entity = EntityId;
+			message.componentType = type;
 
-        private void OnComponentCreated(Membrane.Engine_OnComponentCreated message)
-        {
-            if (EntityId == message.entity)
-            {
-                ComponentViewModel componentVm;
+			Membrane.MessageHandler.sendMessage(message);
+		}
 
-                switch (message.componentType)
-                {
-                    case Membrane.ComponentType.Transform:
-                        {
-                            var transformComp = new TransformComponentViewModel();
-                            transformComp.OnTransformChanged = UpdateTransform;
+		private void OnComponentCreated(Membrane.Engine_OnComponentCreated message) {
+			if(EntityId == message.entity) {
+				Components.Add(CreateComponentViewModel(message.componentType));
+			}
+		}
 
-                            componentVm = transformComp;
-                        }
-                        break;
-                    default:
-                        componentVm = new ComponentViewModel();
-                        break;
-                }
+		private ComponentViewModel CreateComponentViewModel(Membrane.ComponentType type) {
+			ComponentViewModel componentVm;
 
-                componentVm.Name = $"{message.componentType}";
+			switch(type) {
+				case Membrane.ComponentType.Transform: {
+					var transformComp = new TransformComponentViewModel();
+					transformComp.OnTransformChanged = UpdateTransform;
 
-                Components.Add(componentVm);
-            }
-        }
+					componentVm = transformComp;
+				}
+				break;
+				default:
+					componentVm = new ComponentViewModel();
+					break;
+			}
 
-        private void UpdateTransform(Membrane.Vector3 position, Membrane.Vector3 rotation, Membrane.Vector3 scale)
-        {
-            var message = new Membrane.Editor_UpdateTransform();
-            message.entity = EntityId;
-            message.position = position;
-            message.rotation = rotation;
-            message.scale = scale;
+			componentVm.Name = $"{type}";
 
-            Membrane.MessageHandler.sendMessage(message);
-        }
+			return componentVm;
+		}
 
-        private void OnTransformChanged(Membrane.Engine_OnTransformChanged message)
-        {
-            if (EntityId == message.entity)
-            {
-                foreach (ComponentViewModel comp in Components)
-                {
-                    if (comp.GetType() == typeof(TransformComponentViewModel))
-                    {
-                        var transform = (TransformComponentViewModel)comp;
-                        transform.Update(message.position, message.rotation, message.scale);
-                        break;
-                    }
-                }
-            }
-        }
-    }
+		private void UpdateTransform(Membrane.Vector3 position, Membrane.Vector3 rotation, Membrane.Vector3 scale) {
+			var message = new Membrane.Editor_UpdateTransform();
+			message.entity = EntityId;
+			message.position = position;
+			message.rotation = rotation;
+			message.scale = scale;
+
+			Membrane.MessageHandler.sendMessage(message);
+		}
+
+		private void OnTransformChanged(Membrane.Engine_OnTransformChanged message) {
+			if(EntityId == message.entity) {
+				foreach(ComponentViewModel comp in Components) {
+					if(comp.GetType() == typeof(TransformComponentViewModel)) {
+						var transform = (TransformComponentViewModel)comp;
+						transform.Update(message.position, message.rotation, message.scale);
+						break;
+					}
+				}
+			}
+		}
+	}
 }

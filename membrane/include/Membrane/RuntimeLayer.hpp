@@ -41,6 +41,9 @@ namespace garlic::membrane {
         void onDetach() override;
 
     private:
+        void saveScene();
+        void loadScene();
+
         clove::Entity createEntity(std::string_view name = "New Entity");
         void createComponent(clove::Entity entity, ComponentType componentType);
 

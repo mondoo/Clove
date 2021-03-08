@@ -65,6 +65,16 @@ namespace garlic::membrane {
 
     public ref class Editor_SaveScene{};
 
+    public ref struct Entity{
+        System::UInt32 id;
+        System::String ^name;
+        System::Collections::Generic::List<ComponentType> ^components;
+    };
+
     public ref class Editor_LoadScene{};
+    public ref class Engine_OnSceneLoaded{
+    public:
+        System::Collections::Generic::List<Entity^> ^entities;
+    };
     // clang-format on
 }
