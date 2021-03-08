@@ -27,11 +27,8 @@ namespace garlic::clove {
             if(manager->hasComponent<TransformComponent>(entity)) {
                 auto const &comp{ manager->getComponent<TransformComponent>(entity) };
 
-                serialiser::Node componentNode{};
+                serialiser::Node componentNode{ serialise(comp) };
                 componentNode["id"]       = typeid(comp).hash_code();
-                componentNode["position"] = comp.position;
-                componentNode["rotation"] = comp.rotation;
-                componentNode["scale"]    = comp.scale;
                 entityNode["components"].pushBack(componentNode);
             }
             if(manager->hasComponent<StaticModelComponent>(entity)) {
@@ -70,10 +67,7 @@ namespace garlic::clove {
             Entity entity{ manager->create() };
             for(auto const &componentNode : entityNode["components"]) {
                 if(componentNode["id"].as<size_t>() == typeid(TransformComponent).hash_code()) {
-                    auto &comp{ manager->addComponent<TransformComponent>(entity) };
-                    comp.position = componentNode["position"].as<vec3f>();
-                    comp.rotation = componentNode["rotation"].as<quatf>();
-                    comp.scale    = componentNode["scale"].as<vec3f>();
+                    auto &comp{ manager->addComponent<TransformComponent>(entity, componentNode.as<TransformComponent>()) };
                 }
                 if(componentNode["id"].as<size_t>() == typeid(StaticModelComponent).hash_code()) {
                     //Always loading a cube for now
