@@ -1,24 +1,25 @@
-#include "Clove/World.hpp"
+#include "Membrane/Scene.hpp"
 
-#include "Clove/Components/PointLightComponent.hpp"
-#include "Clove/Components/StaticModelComponent.hpp"
-#include "Clove/Components/TransformComponent.hpp"
-#include "Clove/ModelLoader.hpp"
-
+#include <Clove/Components/PointLightComponent.hpp>
+#include <Clove/Components/StaticModelComponent.hpp>
+#include <Clove/Components/TransformComponent.hpp>
+#include <Clove/ModelLoader.hpp>
 #include <Clove/Serialisation/Node.hpp>
 #include <Clove/Serialisation/Yaml.hpp>
 #include <fstream>
 #include <typeinfo>
 
-namespace garlic::clove {
-    World::World(EntityManager *manager, std::filesystem::path saveData)
+using namespace garlic::clove;
+
+namespace garlic::membrane {
+    Scene::Scene(EntityManager *manager, std::filesystem::path saveData)
         : manager{ manager }
         , sceneFile{ std::move(saveData) } {
     }
 
-    World::~World() = default;
+    Scene::~Scene() = default;
 
-    void World::save() {
+    void Scene::save() {
         serialiser::Node rootNode{};
         for(Entity entity : knownEntities) {
             serialiser::Node entityNode{};
@@ -55,7 +56,7 @@ namespace garlic::clove {
         fileStream << emittYaml(rootNode);
     }
 
-    void World::load() {
+    void Scene::load() {
         //Only destroy known entities to avoid deleting meta ones (such as the camera)
         for(Entity entity : knownEntities) {
             manager->destroy(entity);
@@ -83,7 +84,7 @@ namespace garlic::clove {
         }
     }
 
-    Entity World::createEntity(std::string_view name) {
+    Entity Scene::createEntity(std::string_view name) {
         Entity entity{ manager->create() };
         knownEntities.push_back(entity);
         return entity;

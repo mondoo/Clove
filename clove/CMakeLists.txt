@@ -186,10 +186,6 @@ add_library(
 		${INCLUDE}/WindowSurface.hpp
 		${SOURCE}/WindowSurface.cpp
 
-		${INCLUDE}/World.hpp
-		${INCLUDE}/World.inl
-		${SOURCE}/World.cpp
-
 		${ShaderFiles}
 
 		${ResourceBinaries}

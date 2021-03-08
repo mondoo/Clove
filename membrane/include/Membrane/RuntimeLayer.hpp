@@ -2,10 +2,10 @@
 
 #include "Membrane/EditorTypes.hpp"
 #include "Membrane/MessageHandler.hpp"
+#include "Membrane/Scene.hpp"
 
 #include <Clove/ECS/Entity.hpp>
 #include <Clove/Layer.hpp>
-#include <Clove/World.hpp>
 #include <msclr/gcroot.h>
 #include <string_view>
 #include <vector>
@@ -28,10 +28,9 @@ namespace garlic::membrane {
         msclr::gcroot<RuntimeLayerMessageProxy ^> proxy;
 
         clove::EntityManager *entityManager{ nullptr };
-        std::vector<clove::Entity> runtimeEntities; //TODO: Remove? Keeping just so update transforms etc.
+        std::vector<clove::Entity> runtimeEntities;//TODO: Remove? Keeping just so update transforms etc.
 
-        //TODO: Move to clove::Application It's likely that worlds will be loaded outside of bulb
-        clove::World currentWorld;
+        Scene currentScene;
 
         //FUNCTIONS
     public:

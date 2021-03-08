@@ -23,6 +23,10 @@ add_library(
         
         ${INCLUDE}/ViewportSurface.hpp
         ${SOURCE}/ViewportSurface.cpp
+
+        ${INCLUDE}/Scene.hpp
+		${INCLUDE}/Scene.inl
+		${SOURCE}/Scene.cpp
 )
 
 #Include
