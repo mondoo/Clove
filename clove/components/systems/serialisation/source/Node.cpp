@@ -22,13 +22,14 @@ namespace garlic::clove::serialiser {
             scalar = std::move(other.scalar);
         }
         nodes = std::move(other.nodes);
-        type  = std::move(other.type);
+        type  = other.type;
 
         return *this;
     }
 
     Node &Node::operator=(char const *string) {
-        return operator=<char const *>(string);
+        *this = operator=<char const *>(string);
+        return *this;
     }
 
     Node::~Node() = default;
@@ -39,7 +40,7 @@ namespace garlic::clove::serialiser {
             nodes.clear();
         } else if(type == Type::Sequence) {
             type = Type::Map;
-            for(size_t i{ 0 }; i < nodes.size(); ++i){
+            for(size_t i{ 0 }; i < nodes.size(); ++i) {
                 nodes[i].scalar = std::to_string(i);
             }
         }

@@ -13,7 +13,7 @@ namespace garlic::clove {
             }
 
             if(node.getType() == Node::Type::Scalar) {
-                if(node.getKey() != "") {
+                if(!node.getKey().empty()) {
                     emitterNode[node.getKey()] = node.as<std::string>();
                 } else {
                     emitterNode.push_back(node.as<std::string>());
@@ -24,7 +24,7 @@ namespace garlic::clove {
                     emittNode(childNode, child);
                 }
 
-                if(node.getKey() != "") {
+                if(!node.getKey().empty()) {
                     emitterNode[node.getKey()] = childNode;
                 } else {
                     emitterNode.push_back(childNode);
