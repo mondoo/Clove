@@ -4,13 +4,13 @@
 namespace garlic::clove::serialiser {
     namespace detail {
         template<typename T>
-        bool constexpr isKeyType = std::is_same_v<std::string, T> || std::is_same_v<std::string_view, T>;
+        inline bool constexpr isKeyType = std::is_same_v<std::string, T> || std::is_same_v<std::string_view, T>;
 
         template<>
-        bool constexpr isKeyType<char const *> = true;
+        inline bool constexpr isKeyType<char const *> = true;
 
         template<size_t N>
-        bool constexpr isKeyType<char const[N]> = true;
+        inline bool constexpr isKeyType<char const[N]> = true;
     }
     
     template<typename T>
