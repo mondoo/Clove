@@ -118,7 +118,7 @@ namespace garlic::clove {
                 ++i;
             }
 
-            if(presentFamilyIndices.empty() || graphicsFamilyIndices.empty() || transferFamilyIndices.empty() || computeFamilyIndices.empty()) {
+            if((presentFamilyIndices.empty() && surface != VK_NULL_HANDLE) || graphicsFamilyIndices.empty() || transferFamilyIndices.empty() || computeFamilyIndices.empty()) {
                 CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Some queue types are unsupported. {0} failed.", CLOVE_FUNCTION_NAME);
             }
 
@@ -145,7 +145,9 @@ namespace garlic::clove {
             indices.computeFamily = *computeFamilyIndices.begin();
 
             CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Debug, "Vulkan queue types successfully distributed!");
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "\tPresent:\tid: {0}, count: {1}", *indices.presentFamily, queueFamilies[*indices.presentFamily].queueCount);
+            if(surface != VK_NULL_HANDLE) {
+                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "\tPresent:\tid: {0}, count: {1}", *indices.presentFamily, queueFamilies[*indices.presentFamily].queueCount);
+            }
             CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "\tGraphics:\tid: {0}, count: {1}", *indices.graphicsFamily, queueFamilies[*indices.graphicsFamily].queueCount);
             CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "\tTransfer:\tid: {0}, count: {1}", *indices.transferFamily, queueFamilies[*indices.transferFamily].queueCount);
             CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "\tCompute:\tid: {0}, count: {1}", *indices.computeFamily, queueFamilies[*indices.computeFamily].queueCount);
