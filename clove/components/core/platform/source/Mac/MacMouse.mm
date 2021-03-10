@@ -3,7 +3,8 @@
 
 namespace garlic::clove {
 	vec2i Mouse::getPosition() const {
-		return {};
+		//There currently doesn't seem to be a way to get the mouse position outside of the events with cocoa
+		return dispatcher.lastPos;
 	}
 
 	void Mouse::setPosition(vec2i const &position) {
