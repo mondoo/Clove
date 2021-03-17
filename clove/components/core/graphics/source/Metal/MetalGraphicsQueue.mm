@@ -1,5 +1,7 @@
 #include "Clove/Graphics/Metal/MetalGraphicsQueue.hpp"
 
+#include "Clove/Graphics/Metal/MetalGraphicsCommandBuffer.hpp"
+
 namespace garlic::clove {
 	MetalGraphicsQueue::MetalGraphicsQueue(id<MTLCommandQueue> commandQueue)
 		: commandQueue{ commandQueue }{
@@ -12,14 +14,19 @@ namespace garlic::clove {
 	MetalGraphicsQueue::~MetalGraphicsQueue() = default;
 	
 	std::unique_ptr<GhaGraphicsCommandBuffer> MetalGraphicsQueue::allocateCommandBuffer() {
-		//TODO
+		return std::make_unique<MetalGraphicsCommandBuffer>([commandQueue commandBuffer]);
 	}
 	
 	void MetalGraphicsQueue::freeCommandBuffer(GhaGraphicsCommandBuffer &buffer) {
-		//TODO
+		//TODO: noop?
 	}
 
 	void MetalGraphicsQueue::submit(std::vector<GraphicsSubmitInfo> const &submissions, GhaFence const *signalFence) {
-		//TODO
+		//TODO: Fences / semahpores
+		//TODO: How to submit the buffer?
+		/* i.e
+			[commandBuffer presentDrawable: view.currentDrawable];
+			[commandBuffer commit];
+		 */
 	}
 }

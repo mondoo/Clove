@@ -14,7 +14,16 @@ namespace garlic::clove {
 		
 		//FUNCTIONS
 	public:
-		//TODO: Ctors
+		MetalGraphicsCommandBuffer() = delete;
+		MetalGraphicsCommandBuffer(id<MTLCommandBuffer> commandBuffer);
+		
+		MetalGraphicsCommandBuffer(MetalGraphicsCommandBuffer const &other) = delete;
+		MetalGraphicsCommandBuffer(MetalGraphicsCommandBuffer &&other) noexcept;
+		
+		MetalGraphicsCommandBuffer& operator=(MetalGraphicsCommandBuffer const &other) = delete;
+		MetalGraphicsCommandBuffer& operator=(MetalGraphicsCommandBuffer &&other) noexcept;
+		
+		~MetalGraphicsCommandBuffer();
 		
 		void beginRecording(CommandBufferUsage usageFlag) override;
 		void endRecording() override;

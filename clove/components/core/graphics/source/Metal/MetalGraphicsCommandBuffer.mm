@@ -1,6 +1,16 @@
 #include "Clove/Graphics/Metal/MetalGraphicsCommandBuffer.hpp"
 
 namespace garlic::clove {
+	MetalGraphicsCommandBuffer::MetalGraphicsCommandBuffer(id<MTLCommandBuffer> commandBuffer)
+		: commandBuffer{ commandBuffer }{
+	}
+	
+	MetalGraphicsCommandBuffer::MetalGraphicsCommandBuffer(MetalGraphicsCommandBuffer &&other) noexcept = default;
+	
+	MetalGraphicsCommandBuffer& MetalGraphicsCommandBuffer::operator=(MetalGraphicsCommandBuffer &&other) noexcept = default;
+	
+	MetalGraphicsCommandBuffer::~MetalGraphicsCommandBuffer() = default;
+	
 	void MetalGraphicsCommandBuffer::beginRecording(CommandBufferUsage usageFlag) {
 		//TODO: noop?
 	}
