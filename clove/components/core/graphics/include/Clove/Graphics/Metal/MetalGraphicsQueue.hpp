@@ -12,8 +12,16 @@ namespace garlic::clove {
 
 		//FUNCTIONS
 	public:
-		//TODO: Ctors
-		//~MetalGraphicsQueue();
+		MetalGraphicsQueue() = delete;
+		MetalGraphicsQueue(id<MTLCommandQueue> commandQueue);
+		
+		MetalGraphicsQueue(MetalGraphicsQueue const &other) = delete;
+		MetalGraphicsQueue(MetalGraphicsQueue &&other) noexcept;
+		
+		MetalGraphicsQueue& operator=(MetalGraphicsQueue const &other) = delete;
+		MetalGraphicsQueue& operator=(MetalGraphicsQueue &&other) noexcept;
+		
+		~MetalGraphicsQueue();
 
 		std::unique_ptr<GhaGraphicsCommandBuffer> allocateCommandBuffer() override;
 		void freeCommandBuffer(GhaGraphicsCommandBuffer &buffer) override;

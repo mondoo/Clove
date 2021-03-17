@@ -4,6 +4,7 @@
 #include "Clove/Graphics/Metal/MetalBuffer.hpp"
 #include "Clove/Graphics/Metal/MetalShader.hpp"
 #include "Clove/Graphics/Metal/MetalGraphicsPipelineObject.hpp"
+#include "Clove/Graphics/Metal/MetalGraphicsQueue.hpp"
 #include "Clove/Graphics/Metal/MetalRenderPass.hpp"
 
 #include <Clove/Cast.hpp>
@@ -39,7 +40,7 @@ namespace garlic::clove {
 	MetalFactory::~MetalFactory() = default;
 
 	Expected<std::unique_ptr<GhaGraphicsQueue>, std::runtime_error> MetalFactory::createGraphicsQueue(CommandQueueDescriptor descriptor) {
-		return Unexpected{ std::runtime_error{ "Not implemented" } };
+		return std::unique_ptr<GhaGraphicsQueue>{ std::make_unique<MetalGraphicsQueue>([device newCommandQueue]) };
 	}
 	
 	Expected<std::unique_ptr<GhaPresentQueue>, std::runtime_error> MetalFactory::createPresentQueue() {
