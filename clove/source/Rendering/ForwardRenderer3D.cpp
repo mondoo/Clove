@@ -637,7 +637,7 @@ namespace garlic::clove {
         };
 
         //Create render pass
-        GhaRenderPass::Descriptor const renderPassDescriptor{
+        GhaRenderPass::Descriptor renderPassDescriptor{
             .colourAttachments = { colourAttachment },
             .depthAttachment   = depthAttachment,
         };
@@ -655,7 +655,7 @@ namespace garlic::clove {
             .finalLayout    = GhaImage::Layout::ShaderReadOnlyOptimal,
         };
 
-        GhaRenderPass::Descriptor const renderPassDescriptor{
+        GhaRenderPass::Descriptor renderPassDescriptor{
             .depthAttachment = depthAttachment,
         };
 
