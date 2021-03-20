@@ -110,9 +110,30 @@ namespace garlic::membrane {
     void RuntimeLayer::loadScene() {
         currentScene.load();
 
-        //TEMP: Sending an empty message for now 
-        Engine_OnSceneLoaded ^ loadMessage{ gcnew Engine_OnSceneLoaded };
-        loadMessage->entities = gcnew System::Collections::Generic::List<Entity^>{};
+        runtimeEntities = currentScene.getKnownEntities();
+
+        Engine_OnSceneLoaded ^ loadMessage { gcnew Engine_OnSceneLoaded };
+        loadMessage->entities = gcnew System::Collections::Generic::List<Entity ^>{};
+        for(auto entity : runtimeEntities) {
+            Entity ^ editorEntity { gcnew Entity };
+            editorEntity->id         = entity;
+            editorEntity->name       = gcnew System::String("Unkown name");
+            editorEntity->components = gcnew System::Collections::Generic::List<ComponentType>{};
+
+            //Add all of the component types for an entity
+            if(entityManager->hasComponent<clove::TransformComponent>(entity)) {
+                editorEntity->components->Add(ComponentType::Transform);
+            }
+            if(entityManager->hasComponent<clove::StaticModelComponent>(entity)) {
+                editorEntity->components->Add(ComponentType::Mesh);
+            }
+            if(entityManager->hasComponent<clove::PointLightComponent>(entity)) {
+                editorEntity->components->Add(ComponentType::PointLight);
+            }
+
+            loadMessage->entities->Add(editorEntity);
+        }
+
         MessageHandler::sendMessage(loadMessage);
     }
 
@@ -163,7 +184,7 @@ namespace garlic::membrane {
         if(entityManager->hasComponent<clove::TransformComponent>(entity)) {
             entityManager->getComponent<clove::TransformComponent>(entity).position = position;
             entityManager->getComponent<clove::TransformComponent>(entity).rotation = rotation;
-            entityManager->getComponent<clove::TransformComponent>(entity).scale = scale;
+            entityManager->getComponent<clove::TransformComponent>(entity).scale    = scale;
         }
     }
 }

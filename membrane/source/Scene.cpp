@@ -26,7 +26,6 @@ namespace garlic::membrane {
             entityNode["id"]   = entity;
             entityNode["name"] = "Unkown here - needs component?";
 
-            //TODO: Tracking components manually - how to do this more programatically?
             if(manager->hasComponent<TransformComponent>(entity)) {
                 auto const &comp{ manager->getComponent<TransformComponent>(entity) };
 
