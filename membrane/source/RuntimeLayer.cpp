@@ -70,7 +70,7 @@ namespace garlic::membrane {
 namespace garlic::membrane {
     RuntimeLayer::RuntimeLayer()
         : clove::Layer{ "Runtime Layer" }
-        , currentScene{ clove::Application::get().getEntityManager(), "test.yaml" } {
+        , currentScene{ clove::Application::get().getEntityManager(), "scene.yaml" } {
         proxy = gcnew RuntimeLayerMessageProxy(this);
     }
 
