@@ -44,6 +44,7 @@ namespace Garlic.Bulb {
 		}
 
 		public SceneViewModel(List<Membrane.Entity> entities) : this() {
+			//TODO: Move to function
 			foreach (var entity in entities){
 				var entityVm = new EntityViewModel(entity.components);
 				entityVm.EntityId = entity.id;

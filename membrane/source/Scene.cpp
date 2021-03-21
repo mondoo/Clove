@@ -79,10 +79,4 @@ namespace garlic::membrane {
             knownEntities.push_back(entity);
         }
     }
-
-    Entity Scene::createEntity() {
-        Entity entity{ manager->create() };
-        knownEntities.push_back(entity);
-        return entity;
-    }
 }

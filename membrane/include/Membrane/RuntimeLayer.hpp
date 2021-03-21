@@ -26,9 +26,7 @@ namespace garlic::membrane {
         //VARIABLES
     private:
         msclr::gcroot<RuntimeLayerMessageProxy ^> proxy;
-
-        clove::EntityManager *entityManager{ nullptr };
-
+        
         Scene currentScene;
 
         //FUNCTIONS

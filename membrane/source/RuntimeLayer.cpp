@@ -70,8 +70,7 @@ namespace garlic::membrane {
 namespace garlic::membrane {
     RuntimeLayer::RuntimeLayer()
         : clove::Layer{ "Runtime Layer" }
-        , entityManager{ clove::Application::get().getEntityManager() }
-        , currentScene{ entityManager, "test.yaml" } {
+        , currentScene{ clove::Application::get().getEntityManager(), "test.yaml" } {
         proxy = gcnew RuntimeLayerMessageProxy(this);
     }
 
@@ -80,7 +79,7 @@ namespace garlic::membrane {
         createComponent(lightEnt, ComponentType::Transform);
         createComponent(lightEnt, ComponentType::PointLight);
 
-        entityManager->getComponent<clove::TransformComponent>(lightEnt).position = clove::vec3f{ 5.0f, 0.0f, 0.0f };
+        currentScene.getComponent<clove::TransformComponent>(lightEnt).position = clove::vec3f{ 5.0f, 0.0f, 0.0f };
     }
 
     void RuntimeLayer::onUpdate(clove::DeltaTime const deltaTime) {
@@ -88,10 +87,10 @@ namespace garlic::membrane {
         time += deltaTime;
 
         for(auto &entity : currentScene.getKnownEntities()) {
-            if(entityManager->hasComponent<clove::TransformComponent>(entity)) {
-                auto const &pos{ entityManager->getComponent<clove::TransformComponent>(entity).position };
-                auto const &rot{ clove::quaternionToEuler(entityManager->getComponent<clove::TransformComponent>(entity).rotation) };
-                auto const &scale{ entityManager->getComponent<clove::TransformComponent>(entity).scale };
+            if(currentScene.hasComponent<clove::TransformComponent>(entity)) {
+                auto const &pos{ currentScene.getComponent<clove::TransformComponent>(entity).position };
+                auto const &rot{ clove::quaternionToEuler(currentScene.getComponent<clove::TransformComponent>(entity).rotation) };
+                auto const &scale{ currentScene.getComponent<clove::TransformComponent>(entity).scale };
 
                 Engine_OnTransformChanged ^ message { gcnew Engine_OnTransformChanged };
                 message->entity   = entity;
@@ -104,9 +103,7 @@ namespace garlic::membrane {
     }
 
     void RuntimeLayer::onDetach() {
-        for(auto &entity : currentScene.getKnownEntities()) {
-            entityManager->destroy(entity);
-        }
+        currentScene.destroyAllEntities();
     }
 
     void RuntimeLayer::saveScene() {
@@ -121,17 +118,17 @@ namespace garlic::membrane {
         for(auto entity : currentScene.getKnownEntities()) {
             Entity ^ editorEntity { gcnew Entity };
             editorEntity->id         = entity;
-            editorEntity->name       = gcnew System::String(entityManager->getComponent<NameComponent>(entity).name.c_str());
+            editorEntity->name       = gcnew System::String(currentScene.getComponent<NameComponent>(entity).name.c_str());
             editorEntity->components = gcnew System::Collections::Generic::List<ComponentType>{};
 
             //Add all of the component types for an entity
-            if(entityManager->hasComponent<clove::TransformComponent>(entity)) {
+            if(currentScene.hasComponent<clove::TransformComponent>(entity)) {
                 editorEntity->components->Add(ComponentType::Transform);
             }
-            if(entityManager->hasComponent<clove::StaticModelComponent>(entity)) {
+            if(currentScene.hasComponent<clove::StaticModelComponent>(entity)) {
                 editorEntity->components->Add(ComponentType::Mesh);
             }
-            if(entityManager->hasComponent<clove::PointLightComponent>(entity)) {
+            if(currentScene.hasComponent<clove::PointLightComponent>(entity)) {
                 editorEntity->components->Add(ComponentType::PointLight);
             }
 
@@ -157,19 +154,19 @@ namespace garlic::membrane {
         bool added{ false };
         switch(componentType) {
             case ComponentType::Transform:
-                if(!entityManager->hasComponent<clove::TransformComponent>(entity)) {
+                if(!currentScene.hasComponent<clove::TransformComponent>(entity)) {
                     currentScene.addComponent<clove::TransformComponent>(entity);
                     added = true;
                 }
                 break;
             case ComponentType::Mesh:
-                if(!entityManager->hasComponent<clove::StaticModelComponent>(entity)) {
+                if(!currentScene.hasComponent<clove::StaticModelComponent>(entity)) {
                     currentScene.addComponent<clove::StaticModelComponent>(entity, clove::ModelLoader::loadStaticModel(ASSET_DIR "/cube.obj"));
                     added = true;
                 }
                 break;
             case ComponentType::PointLight:
-                if(!entityManager->hasComponent<clove::PointLightComponent>(entity)) {
+                if(!currentScene.hasComponent<clove::PointLightComponent>(entity)) {
                     currentScene.addComponent<clove::PointLightComponent>(entity);
                     added = true;
                 }
@@ -185,8 +182,8 @@ namespace garlic::membrane {
     }
 
     void RuntimeLayer::updateTransform(clove::Entity entity, clove::vec3f position, clove::vec3f rotation, clove::vec3f scale) {
-        if(entityManager->hasComponent<clove::TransformComponent>(entity)) {
-            auto &transform{ entityManager->getComponent<clove::TransformComponent>(entity) };
+        if(currentScene.hasComponent<clove::TransformComponent>(entity)) {
+            auto &transform{ currentScene.getComponent<clove::TransformComponent>(entity) };
             transform.position = position;
             transform.rotation = rotation;
             transform.scale    = scale;
@@ -194,8 +191,8 @@ namespace garlic::membrane {
     }
 
     void RuntimeLayer::updateName(clove::Entity entity, std::string name) {
-        if(entityManager->hasComponent<NameComponent>(entity)) {
-            entityManager->getComponent<NameComponent>(entity).name = std::move(name);
+        if(currentScene.hasComponent<NameComponent>(entity)) {
+            currentScene.getComponent<NameComponent>(entity).name = std::move(name);
         }
     }
 }
