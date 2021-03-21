@@ -39,6 +39,13 @@ namespace garlic::membrane {
         Vector3 scale;
     };
 
+    public ref class Editor_UpdateName{
+    public:
+        System::UInt32 entity;
+
+        System::String^ name;
+    };
+
     public ref class Editor_ViewportKeyEvent{
     public:
         enum class Type{

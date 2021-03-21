@@ -1,6 +1,7 @@
 #include "Membrane/RuntimeLayer.hpp"
 
 #include "Membrane/Messages.hpp"
+#include "Membrane/NameComponent.hpp"
 
 #include <Clove/Application.hpp>
 #include <Clove/Components/PointLightComponent.hpp>
@@ -8,6 +9,7 @@
 #include <Clove/Components/TransformComponent.hpp>
 #include <Clove/ECS/EntityManager.hpp>
 #include <Clove/ModelLoader.hpp>
+#include <msclr/marshal_cppstd.h>
 
 namespace garlic::membrane {
     // clang-format off
@@ -26,6 +28,7 @@ namespace garlic::membrane {
             MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_CreateEntity ^>(this, &RuntimeLayerMessageProxy::createEntity));
             MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_CreateComponent ^>(this, &RuntimeLayerMessageProxy::createComponent));
             MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_UpdateTransform ^>(this, &RuntimeLayerMessageProxy::updateTransform));
+            MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_UpdateName ^>(this, &RuntimeLayerMessageProxy::updateName));
 
             MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_SaveScene ^>(this, &RuntimeLayerMessageProxy::saveScene));
             MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_LoadScene ^>(this, &RuntimeLayerMessageProxy::loadScene));
@@ -46,6 +49,11 @@ namespace garlic::membrane {
             clove::vec3f scale{message->scale.x, message->scale.y, message->scale.z};
 
             layer->updateTransform(message->entity, pos, rot, scale);
+        }
+
+        void updateName(Editor_UpdateName ^ message){
+            System::String ^name{ message->name };
+            layer->updateName(message->entity, msclr::interop::marshal_as<std::string>(name));
         }
 
         void saveScene(Editor_SaveScene ^message){
@@ -73,15 +81,13 @@ namespace garlic::membrane {
         createComponent(lightEnt, ComponentType::PointLight);
 
         entityManager->getComponent<clove::TransformComponent>(lightEnt).position = clove::vec3f{ 5.0f, 0.0f, 0.0f };
-
-        runtimeEntities.push_back(lightEnt);
     }
 
     void RuntimeLayer::onUpdate(clove::DeltaTime const deltaTime) {
         static float time{ 0.0f };
         time += deltaTime;
 
-        for(auto &entity : runtimeEntities) {
+        for(auto &entity : currentScene.getKnownEntities()) {
             if(entityManager->hasComponent<clove::TransformComponent>(entity)) {
                 auto const &pos{ entityManager->getComponent<clove::TransformComponent>(entity).position };
                 auto const &rot{ clove::quaternionToEuler(entityManager->getComponent<clove::TransformComponent>(entity).rotation) };
@@ -98,7 +104,7 @@ namespace garlic::membrane {
     }
 
     void RuntimeLayer::onDetach() {
-        for(auto &entity : runtimeEntities) {
+        for(auto &entity : currentScene.getKnownEntities()) {
             entityManager->destroy(entity);
         }
     }
@@ -110,14 +116,12 @@ namespace garlic::membrane {
     void RuntimeLayer::loadScene() {
         currentScene.load();
 
-        runtimeEntities = currentScene.getKnownEntities();
-
         Engine_OnSceneLoaded ^ loadMessage { gcnew Engine_OnSceneLoaded };
         loadMessage->entities = gcnew System::Collections::Generic::List<Entity ^>{};
-        for(auto entity : runtimeEntities) {
+        for(auto entity : currentScene.getKnownEntities()) {
             Entity ^ editorEntity { gcnew Entity };
             editorEntity->id         = entity;
-            editorEntity->name       = gcnew System::String("Unkown name");
+            editorEntity->name       = gcnew System::String(entityManager->getComponent<NameComponent>(entity).name.c_str());
             editorEntity->components = gcnew System::Collections::Generic::List<ComponentType>{};
 
             //Add all of the component types for an entity
@@ -138,8 +142,8 @@ namespace garlic::membrane {
     }
 
     clove::Entity RuntimeLayer::createEntity(std::string_view name) {
-        clove::Entity entity{ currentScene.createEntity(name) };
-        runtimeEntities.push_back(entity);
+        clove::Entity entity{ currentScene.createEntity() };
+        currentScene.addComponent<NameComponent>(entity, std::string{ std::move(name) });
 
         Engine_OnEntityCreated ^ message { gcnew Engine_OnEntityCreated };
         message->entity = entity;
@@ -182,9 +186,16 @@ namespace garlic::membrane {
 
     void RuntimeLayer::updateTransform(clove::Entity entity, clove::vec3f position, clove::vec3f rotation, clove::vec3f scale) {
         if(entityManager->hasComponent<clove::TransformComponent>(entity)) {
-            entityManager->getComponent<clove::TransformComponent>(entity).position = position;
-            entityManager->getComponent<clove::TransformComponent>(entity).rotation = rotation;
-            entityManager->getComponent<clove::TransformComponent>(entity).scale    = scale;
+            auto &transform{ entityManager->getComponent<clove::TransformComponent>(entity) };
+            transform.position = position;
+            transform.rotation = rotation;
+            transform.scale    = scale;
+        }
+    }
+
+    void RuntimeLayer::updateName(clove::Entity entity, std::string name) {
+        if(entityManager->hasComponent<NameComponent>(entity)) {
+            entityManager->getComponent<NameComponent>(entity).name = std::move(name);
         }
     }
 }

@@ -16,6 +16,8 @@ add_library(
         ${SOURCE}/MessageHandler.cpp
         ${INCLUDE}/Messages.hpp
 
+        ${INCLUDE}/NameComponent.hpp
+
         ${INCLUDE}/EditorLayer.hpp
         ${SOURCE}/EditorLayer.cpp
         ${INCLUDE}/RuntimeLayer.hpp

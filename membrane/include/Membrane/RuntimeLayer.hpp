@@ -28,7 +28,6 @@ namespace garlic::membrane {
         msclr::gcroot<RuntimeLayerMessageProxy ^> proxy;
 
         clove::EntityManager *entityManager{ nullptr };
-        std::vector<clove::Entity> runtimeEntities;//TODO: Remove? Keeping just so update transforms etc.
 
         Scene currentScene;
 
@@ -48,5 +47,6 @@ namespace garlic::membrane {
         void createComponent(clove::Entity entity, ComponentType componentType);
 
         void updateTransform(clove::Entity entity, clove::vec3f position, clove::vec3f rotation, clove::vec3f scale);
+        void updateName(clove::Entity entity, std::string name);
     };
 }

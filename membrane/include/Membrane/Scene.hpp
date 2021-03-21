@@ -30,8 +30,7 @@ namespace garlic::membrane {
         void save();
         void load();
 
-        //TODO: Add name component on Bulb side instead?
-        clove::Entity createEntity(std::string_view name);
+        clove::Entity createEntity();
         inline std::vector<clove::Entity> getKnownEntities() const;
 
         template<typename ComponentType, typename... ConstructArgs>

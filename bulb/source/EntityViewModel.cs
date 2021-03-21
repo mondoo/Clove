@@ -15,6 +15,12 @@ namespace Garlic.Bulb {
 			set {
 				name = value;
 				OnPropertyChanged(nameof(Name));
+
+				var message = new Membrane.Editor_UpdateName();
+				message.entity = EntityId;
+				message.name = name;
+				
+				Membrane.MessageHandler.sendMessage(message);
 			}
 		}
 		private string name = "New Entity";
