@@ -1,6 +1,7 @@
 #include "Membrane/RuntimeLayer.hpp"
 
 #include "Membrane/Messages.hpp"
+#include "Membrane/NameComponent.hpp"
 
 #include <Clove/Application.hpp>
 #include <Clove/Components/PointLightComponent.hpp>
@@ -8,6 +9,7 @@
 #include <Clove/Components/TransformComponent.hpp>
 #include <Clove/ECS/EntityManager.hpp>
 #include <Clove/ModelLoader.hpp>
+#include <msclr/marshal_cppstd.h>
 
 namespace garlic::membrane {
     // clang-format off
@@ -26,6 +28,7 @@ namespace garlic::membrane {
             MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_CreateEntity ^>(this, &RuntimeLayerMessageProxy::createEntity));
             MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_CreateComponent ^>(this, &RuntimeLayerMessageProxy::createComponent));
             MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_UpdateTransform ^>(this, &RuntimeLayerMessageProxy::updateTransform));
+            MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_UpdateName ^>(this, &RuntimeLayerMessageProxy::updateName));
 
             MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_SaveScene ^>(this, &RuntimeLayerMessageProxy::saveScene));
             MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_LoadScene ^>(this, &RuntimeLayerMessageProxy::loadScene));
@@ -48,12 +51,17 @@ namespace garlic::membrane {
             layer->updateTransform(message->entity, pos, rot, scale);
         }
 
+        void updateName(Editor_UpdateName ^ message){
+            System::String ^name{ message->name };
+            layer->updateName(message->entity, msclr::interop::marshal_as<std::string>(name));
+        }
+
         void saveScene(Editor_SaveScene ^message){
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, clove::LogLevel::Warning, "Saving not yet handled!");
+            layer->saveScene();
         }
 
         void loadScene(Editor_LoadScene ^message){
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, clove::LogLevel::Warning, "Loading not yet handled!");
+            layer->loadScene();
         }
     };
     // clang-format on
@@ -62,7 +70,7 @@ namespace garlic::membrane {
 namespace garlic::membrane {
     RuntimeLayer::RuntimeLayer()
         : clove::Layer{ "Runtime Layer" }
-        , entityManager{ clove::Application::get().getEntityManager() } {
+        , currentScene{ clove::Application::get().getEntityManager(), "scene.yaml" } {
         proxy = gcnew RuntimeLayerMessageProxy(this);
     }
 
@@ -71,20 +79,18 @@ namespace garlic::membrane {
         createComponent(lightEnt, ComponentType::Transform);
         createComponent(lightEnt, ComponentType::PointLight);
 
-        entityManager->getComponent<clove::TransformComponent>(lightEnt).position = clove::vec3f{ 5.0f, 0.0f, 0.0f };
-
-        runtimeEntities.push_back(lightEnt);
+        currentScene.getComponent<clove::TransformComponent>(lightEnt).position = clove::vec3f{ 5.0f, 0.0f, 0.0f };
     }
 
     void RuntimeLayer::onUpdate(clove::DeltaTime const deltaTime) {
         static float time{ 0.0f };
         time += deltaTime;
 
-        for(auto &entity : runtimeEntities) {
-            if(entityManager->hasComponent<clove::TransformComponent>(entity)) {
-                auto const &pos{ entityManager->getComponent<clove::TransformComponent>(entity).position };
-                auto const &rot{ clove::quaternionToEuler(entityManager->getComponent<clove::TransformComponent>(entity).rotation) };
-                auto const &scale{ entityManager->getComponent<clove::TransformComponent>(entity).scale };
+        for(auto &entity : currentScene.getKnownEntities()) {
+            if(currentScene.hasComponent<clove::TransformComponent>(entity)) {
+                auto const &pos{ currentScene.getComponent<clove::TransformComponent>(entity).position };
+                auto const &rot{ clove::quaternionToEuler(currentScene.getComponent<clove::TransformComponent>(entity).rotation) };
+                auto const &scale{ currentScene.getComponent<clove::TransformComponent>(entity).scale };
 
                 Engine_OnTransformChanged ^ message { gcnew Engine_OnTransformChanged };
                 message->entity   = entity;
@@ -97,14 +103,44 @@ namespace garlic::membrane {
     }
 
     void RuntimeLayer::onDetach() {
-        for(auto &entity : runtimeEntities) {
-            entityManager->destroy(entity);
+        currentScene.destroyAllEntities();
+    }
+
+    void RuntimeLayer::saveScene() {
+        currentScene.save();
+    }
+
+    void RuntimeLayer::loadScene() {
+        currentScene.load();
+
+        Engine_OnSceneLoaded ^ loadMessage { gcnew Engine_OnSceneLoaded };
+        loadMessage->entities = gcnew System::Collections::Generic::List<Entity ^>{};
+        for(auto entity : currentScene.getKnownEntities()) {
+            Entity ^ editorEntity { gcnew Entity };
+            editorEntity->id         = entity;
+            editorEntity->name       = gcnew System::String(currentScene.getComponent<NameComponent>(entity).name.c_str());
+            editorEntity->components = gcnew System::Collections::Generic::List<ComponentType>{};
+
+            //Add all of the component types for an entity
+            if(currentScene.hasComponent<clove::TransformComponent>(entity)) {
+                editorEntity->components->Add(ComponentType::Transform);
+            }
+            if(currentScene.hasComponent<clove::StaticModelComponent>(entity)) {
+                editorEntity->components->Add(ComponentType::Mesh);
+            }
+            if(currentScene.hasComponent<clove::PointLightComponent>(entity)) {
+                editorEntity->components->Add(ComponentType::PointLight);
+            }
+
+            loadMessage->entities->Add(editorEntity);
         }
+
+        MessageHandler::sendMessage(loadMessage);
     }
 
     clove::Entity RuntimeLayer::createEntity(std::string_view name) {
-        clove::Entity entity{ entityManager->create() };
-        runtimeEntities.push_back(entity);
+        clove::Entity entity{ currentScene.createEntity() };
+        currentScene.addComponent<NameComponent>(entity, std::string{ std::move(name) });
 
         Engine_OnEntityCreated ^ message { gcnew Engine_OnEntityCreated };
         message->entity = entity;
@@ -118,20 +154,20 @@ namespace garlic::membrane {
         bool added{ false };
         switch(componentType) {
             case ComponentType::Transform:
-                if(!entityManager->hasComponent<clove::TransformComponent>(entity)) {
-                    entityManager->addComponent<clove::TransformComponent>(entity);
+                if(!currentScene.hasComponent<clove::TransformComponent>(entity)) {
+                    currentScene.addComponent<clove::TransformComponent>(entity);
                     added = true;
                 }
                 break;
             case ComponentType::Mesh:
-                if(!entityManager->hasComponent<clove::StaticModelComponent>(entity)) {
-                    entityManager->addComponent<clove::StaticModelComponent>(entity, clove::ModelLoader::loadStaticModel(ASSET_DIR "/cube.obj"));
+                if(!currentScene.hasComponent<clove::StaticModelComponent>(entity)) {
+                    currentScene.addComponent<clove::StaticModelComponent>(entity, clove::ModelLoader::loadStaticModel(ASSET_DIR "/cube.obj"));
                     added = true;
                 }
                 break;
             case ComponentType::PointLight:
-                if(!entityManager->hasComponent<clove::PointLightComponent>(entity)) {
-                    entityManager->addComponent<clove::PointLightComponent>(entity);
+                if(!currentScene.hasComponent<clove::PointLightComponent>(entity)) {
+                    currentScene.addComponent<clove::PointLightComponent>(entity);
                     added = true;
                 }
                 break;
@@ -146,10 +182,17 @@ namespace garlic::membrane {
     }
 
     void RuntimeLayer::updateTransform(clove::Entity entity, clove::vec3f position, clove::vec3f rotation, clove::vec3f scale) {
-        if(entityManager->hasComponent<clove::TransformComponent>(entity)) {
-            entityManager->getComponent<clove::TransformComponent>(entity).position = position;
-            entityManager->getComponent<clove::TransformComponent>(entity).rotation = rotation;
-            entityManager->getComponent<clove::TransformComponent>(entity).scale = scale;
+        if(currentScene.hasComponent<clove::TransformComponent>(entity)) {
+            auto &transform{ currentScene.getComponent<clove::TransformComponent>(entity) };
+            transform.position = position;
+            transform.rotation = rotation;
+            transform.scale    = scale;
+        }
+    }
+
+    void RuntimeLayer::updateName(clove::Entity entity, std::string name) {
+        if(currentScene.hasComponent<NameComponent>(entity)) {
+            currentScene.getComponent<NameComponent>(entity).name = std::move(name);
         }
     }
 }

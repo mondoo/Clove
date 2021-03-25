@@ -2,67 +2,80 @@
 
 namespace garlic::clove::serialiser {
     Node::Node() = default;
-    Node::Node(std::string name)
-        : name{ std::move(name) } {
-    }
-    Node::Node(std::string_view name)
-        : name{ name } {
-    }
 
-    Node::Node(Node const &other)     = default;
+    Node::Node(Node const &other) = default;
+
     Node::Node(Node &&other) noexcept = default;
 
-    Node &Node::operator=(std::string string) {
-        value = string;
-        return *this;
-    }
-
-    Node &Node::operator=(char const *string){
-        value = string;
-        return *this;
-    }
-
     Node &Node::operator=(Node const &other) {
-        //Note: Not taking name on assignment only
-        value = other.value;
+        if(other.type == Type::Leaf) {
+            scalar = other.scalar;
+        }
+        nodes = other.nodes;
+        type  = other.type;
+
         return *this;
     }
 
     Node &Node::operator=(Node &&other) noexcept {
-        value = std::move(other.value);
+        if(other.type == Type::Leaf) {
+            scalar = std::move(other.scalar);
+        }
+        nodes = std::move(other.nodes);
+        type  = other.type;
+
+        return *this;
+    }
+
+    Node &Node::operator=(char const *string) {
+        *this = operator=<char const *>(string);
         return *this;
     }
 
     Node::~Node() = default;
 
     Node &Node::operator[](std::string_view nodeName) {
-        //Turn this node into a parent node if not already
-        if(!std::holds_alternative<std::vector<Node>>(value)) {
-            value = std::vector<Node>{};
-        }
-
-        auto &nodes{ std::get<std::vector<Node>>(value) };
-        for(auto &node : nodes) {
-            if(node.name == nodeName) {
-                return node;
+        if(type == Type::None) {
+            type = Type::Map;
+            nodes.clear();
+        } else if(type == Type::Sequence) {
+            type = Type::Map;
+            for(size_t i{ 0 }; i < nodes.size(); ++i) {
+                nodes[i].scalar = std::to_string(i);
             }
         }
 
-        return nodes.emplace_back(nodeName);
+        if(type == Type::Map) {
+            for(auto &node : nodes) {
+                if(node.scalar == nodeName) {
+                    return node;
+                }
+            }
+
+            return nodes.emplace_back(Node{ nodeName });
+        } else {
+            throw std::runtime_error{ "Cannot pushBack onto a non-sequence type node." };
+        }
     }
 
     Node const &Node::operator[](std::string_view nodeName) const {
-        if(!std::holds_alternative<std::vector<Node>>(value)) {
-            throw std::runtime_error{ "Node does not contain child nodes." };
+        if(type != Type::Map) {
+            throw std::runtime_error{ "Node is const and is not of type Map. Cannot perform any valid conversion" };
         }
 
-        auto const &nodes{ std::get<std::vector<Node>>(value) };
         for(auto const &node : nodes) {
-            if(node.name == nodeName) {
+            if(node.scalar == nodeName) {
                 return node;
             }
         }
 
         throw std::runtime_error{ "Node does not have requested child." };
+    }
+
+    Node::Node(std::string_view key)
+        : scalar{ key } {
+        Node child{};
+        child.type = Type::Scalar;
+        nodes.emplace_back(std::move(child));
     }
 }

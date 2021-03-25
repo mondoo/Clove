@@ -8,36 +8,51 @@ using namespace garlic::clove::serialiser;
 namespace garlic::clove {
     namespace {
         void emittNode(YAML::Node &emitterNode, Node const &node) {
-            if(node.name.length() <= 0) {
+            if(node.getKey().length() <= 0 && node.numChildren() <= 0) {
                 return;
             }
 
-            if(auto const *floatVal{ std::get_if<float>(&node.value) }) {
-                emitterNode[node.name] = *floatVal;
-            } else if(auto const *stringVal{ std::get_if<std::string>(&node.value) }) {
-                emitterNode[node.name] = *stringVal;
-            } else if(auto const *children{ std::get_if<std::vector<Node>>(&node.value) }; children != nullptr && !children->empty()) {
+            if(node.getType() == Node::Type::Scalar) {
+                if(!node.getKey().empty()) {
+                    emitterNode[node.getKey()] = node.as<std::string>();
+                } else {
+                    emitterNode.push_back(node.as<std::string>());
+                }
+            } else {
                 YAML::Node childNode{};
-                for(auto const &child : *children) {
+                for(auto const &child : node) {
                     emittNode(childNode, child);
                 }
-                emitterNode[node.name] = childNode;
+
+                if(!node.getKey().empty()) {
+                    emitterNode[node.getKey()] = childNode;
+                } else {
+                    emitterNode.push_back(childNode);
+                }
             }
         }
 
         Node buildNode(YAML::Node const &node) {
             Node outNode{};
 
-            for(YAML::const_iterator it{ node.begin() }; it != node.end(); ++it) {
-                std::string const name{ it->first.as<std::string>() };
-                if(it->second.IsScalar()) {
-                    if(it->second.Tag() == "?") {
-                        outNode[name] = it->second.as<float>();
+            if(node.IsSequence()) {
+                //Sequence iterator
+                for(YAML::const_iterator it{ node.begin() }; it != node.end(); ++it) {
+                    if(it->IsScalar()) {
+                        outNode.pushBack(it->as<std::string>());
                     } else {
-                        outNode[name] = it->second.as<std::string>();
+                        outNode.pushBack(buildNode(*it));
                     }
-                } else {
-                    outNode[name] = buildNode(it->second);
+                }
+            } else {
+                //Map iterator
+                for(YAML::const_iterator it{ node.begin() }; it != node.end(); ++it) {
+                    std::string const name{ it->first.as<std::string>() };
+                    if(it->second.IsScalar()) {
+                        outNode[name] = it->second.as<std::string>();
+                    } else {
+                        outNode[name] = buildNode(it->second);
+                    }
                 }
             }
 
@@ -51,10 +66,9 @@ namespace garlic::clove {
                 emitterNode["type"]    = "yaml";
                 emitterNode["version"] = 1;
 
-                if(auto const *children{ std::get_if<std::vector<Node>>(&rootNode.value) }; children != nullptr) {
-                    for(auto const &child : *children) {
-                        emittNode(emitterNode, child);
-                    }
+                //Loop through the children so the rootNode isn't added to the file
+                for(auto const &child : rootNode) {
+                    emittNode(emitterNode, child);
                 }
 
                 YAML::Emitter emitter{};
@@ -77,11 +91,7 @@ namespace garlic::clove {
                     }
 
                     if(it->second.IsScalar()) {
-                        if(it->second.Tag() == "?") {
-                            deserialisedFile[name] = it->second.as<float>();
-                        } else {
-                            deserialisedFile[name] = it->second.as<std::string>();
-                        }
+                        deserialisedFile[name] = it->second.as<std::string>();
                     } else {
                         deserialisedFile[name] = buildNode(it->second);
                     }

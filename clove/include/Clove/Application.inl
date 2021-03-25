@@ -19,8 +19,8 @@ namespace garlic::clove {
         return renderer.get();
     }
 
-    EntityManager *Application::getEntityManager() const {
-        return entityManager.get();
+    EntityManager *Application::getEntityManager() {
+        return &entityManager;
     }
 
     PhysicsLayer *Application::getPhysicsLayer() const {
