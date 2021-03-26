@@ -1,7 +1,7 @@
 #include "Clove/Platform/Mac/MacWindow.hpp"
 
 @implementation MacWindowProxy
-- (void)windowWillClose:(NSNotification *)notification{
+- (void)windowWillClose:(NSNotification *)notification {
 	_cloveWindow->close();
 }
 
@@ -25,7 +25,7 @@ namespace garlic::clove{
 		//Window specific init
 		NSString* nameString = [NSString stringWithCString:descriptor.title.c_str() encoding:[NSString defaultCStringEncoding]];
 		NSRect const rect{ NSMakeRect(0, 0, descriptor.width, descriptor.height) };
-		NSWindowStyleMask const styleMask{ NSWindowStyleMaskHUDWindow | NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable };
+		NSWindowStyleMask const styleMask{ NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable };
 			
 		windowProxy = [[MacWindowProxy alloc] initWithContentRect:rect
 												  styleMask:styleMask
@@ -46,7 +46,7 @@ namespace garlic::clove{
 		[nameString release];
     }
 
-	MacWindow::~MacWindow(){
+	MacWindow::~MacWindow() {
 		[windowProxy release];
 	}
 
@@ -54,7 +54,7 @@ namespace garlic::clove{
         return std::make_unique<MacWindow>(std::move(descriptor));
     }
 	
-	void MacWindow::processInput(){
+	void MacWindow::processInput() {
 		@autoreleasepool {
 			/*
 			 Currently in Clove each window also pumps the application's event queue.
@@ -68,27 +68,37 @@ namespace garlic::clove{
 		}
 	}
 	
-	std::any MacWindow::getNativeWindow() const{
+	std::any MacWindow::getNativeWindow() const {
 		//Make sure the any holds an NSWindow and not our custom window.
 		return static_cast<NSWindow*>(windowProxy);
 	}
 	
-	vec2i MacWindow::getPosition(bool clientArea) const{
-		NSRect frame = [windowProxy frame];
-		return { frame.origin.x, frame.origin.y };
+	vec2i MacWindow::getPosition(bool clientArea) const {
+		/*
+		 The window coordinates work from the bottom left. Clove expects them to
+		 be in the top left so we need to transform the Y coordinate.
+		 */
+		NSRect const screenFrame{ [[NSScreen mainScreen] frame] };
+		if(clientArea) {
+			NSRect const contentFrame{ [windowProxy contentRectForFrameRect:[windowProxy frame]] };
+			return { contentFrame.origin.x, screenFrame.size.height - (contentFrame.origin.y + contentFrame.size.height) };
+		} else {
+			NSRect const frame{ [windowProxy frame] };
+			return { frame.origin.x, screenFrame.size.height - (frame.origin.y + frame.size.height) };
+		}
 	}
 	
-	vec2i MacWindow::getSize() const{
+	vec2i MacWindow::getSize() const {
 		NSRect frame = [windowProxy frame];
 		return { frame.size.width, frame.size.height };
 	}
 
-	void MacWindow::moveWindow(vec2i const &position){
+	void MacWindow::moveWindow(vec2i const &position) {
 		vec2i const size{ getSize() };
 		[windowProxy setFrame:NSMakeRect(position.x, position.x, size.x, size.y) display:YES];
 	}
 	
-	void MacWindow::resizeWindow(vec2i const &size){
+	void MacWindow::resizeWindow(vec2i const &size) {
 		vec2i const position{ getPosition(false) };
 		[windowProxy setFrame:NSMakeRect(position.x, position.x, size.x, size.y) display:YES];
 	}
@@ -169,7 +179,7 @@ namespace garlic::clove{
 			case NSEventTypeScrollWheel:
 				mouseDispatcher.onWheelDelta(static_cast<int32_t>([event scrollingDeltaY]), mouseLoc);
 				break;
-				
+
 			default:
 				break;
 		}
