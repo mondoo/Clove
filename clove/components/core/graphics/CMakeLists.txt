@@ -95,6 +95,8 @@ set(
 		${SOURCE}/Metal/MetalDevice.mm
 		${INCLUDE}/Metal/MetalFactory.hpp
 		${SOURCE}/Metal/MetalFactory.mm
+		${INCLUDE}/Metal/MetalFramebuffer.hpp
+		${SOURCE}/Metal/MetalFramebuffer.mm
 		${INCLUDE}/Metal/MetalGraphicsCommandBuffer.hpp
 		${SOURCE}/Metal/MetalGraphicsCommandBuffer.mm
 		${INCLUDE}/Metal/MetalGraphicsPipelineObject.hpp
