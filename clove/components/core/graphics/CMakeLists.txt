@@ -103,6 +103,8 @@ set(
 		${SOURCE}/Metal/MetalGraphicsPipelineObject.mm
 		${INCLUDE}/Metal/MetalGraphicsQueue.hpp
 		${SOURCE}/Metal/MetalGraphicsQueue.mm
+		${INCLUDE}/Metal/MetalImage.hpp
+		${SOURCE}/Metal/MetalImage.mm
 		${INCLUDE}/Metal/MetalRenderPass.hpp
 		${INCLUDE}/Metal/MetalRenderPass.inl
 		${SOURCE}/Metal/MetalRenderPass.mm
