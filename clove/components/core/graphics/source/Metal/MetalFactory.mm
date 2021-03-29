@@ -5,6 +5,7 @@
 #include "Clove/Graphics/Metal/MetalShader.hpp"
 #include "Clove/Graphics/Metal/MetalGraphicsPipelineObject.hpp"
 #include "Clove/Graphics/Metal/MetalGraphicsQueue.hpp"
+#include "Clove/Graphics/Metal/MetalImage.hpp"
 #include "Clove/Graphics/Metal/MetalRenderPass.hpp"
 
 #include <Clove/Cast.hpp>
@@ -28,7 +29,44 @@ namespace garlic::clove {
 					return MTLVertexFormatFloat;
 			}
 		}
+		
+		MTLTextureType convertImageType(MetalImage::Type type) {
+			switch (type) {
+				case MetalImage::Type::_2D:
+					return MTLTextureType2D;
+				case MetalImage::Type::_3D:
+					return MTLTextureType3D;
+				case MetalImage::Type::Cube:
+					return MTLTextureTypeCube;
+				default:
+					CLOVE_ASSERT(false, "{0}: Unkown type passed", CLOVE_FUNCTION_NAME_PRETTY);
+					return MTLTextureType2D;
+			}
+		}
+		
+		MTLTextureUsage getUsageFlags(GhaImage::UsageMode flags) {
+			MTLTextureUsage mtlFlags{ MTLTextureUsageUnknown };
+			
+			if((flags & GhaImage::UsageMode::TransferSource) != 0) {
+				mtlFlags |= MTLTextureUsageUnknown;
+			}
+			if((flags & GhaImage::UsageMode::TransferDestination) != 0) {
+				mtlFlags |= MTLTextureUsageUnknown;
+			}
+			if((flags & GhaImage::UsageMode::Sampled) != 0) {
+				mtlFlags |= MTLTextureUsageShaderRead;
+			}
+			if((flags & GhaImage::UsageMode::ColourAttachment) != 0) {
+				mtlFlags |= MTLTextureUsageRenderTarget;
+			}
+			if((flags & GhaImage::UsageMode::DepthStencilAttachment) != 0) {
+				mtlFlags |= MTLTextureUsageRenderTarget;
+			}
+			
+			return mtlFlags;
+		}
 	}
+	
 	MetalFactory::MetalFactory(id<MTLDevice> device)
 		: device{ device }{
 	}
@@ -86,35 +124,14 @@ namespace garlic::clove {
 			return Unexpected{ std::move(compilationResult.getError()) };
 		}
 	}
-	
-	//TODO: Move this into MetalImage when available
-	MTLPixelFormat convertFormat(GhaImage::Format format){
-		switch(format) {
-			case GhaImage::Format::Unkown:
-				return MTLPixelFormatInvalid;
-			case GhaImage::Format::R8_UNORM:
-				return MTLPixelFormatR8Unorm;
-			case GhaImage::Format::R8G8B8A8_SRGB:
-				return MTLPixelFormatRGBA8Unorm_sRGB;
-			case GhaImage::Format::B8G8R8A8_SRGB:
-				return MTLPixelFormatBGRA8Unorm_sRGB;
-			case GhaImage::Format::B8G8R8A8_UNORM:
-				return MTLPixelFormatBGRA8Unorm;
-			case GhaImage::Format::D32_SFLOAT:
-				return MTLPixelFormatDepth32Float;
-			default:
-				CLOVE_ASSERT(false, "{0}: Unkown format", CLOVE_FUNCTION_NAME);
-				return MTLPixelFormatInvalid;
-		}
-	}
 
 	Expected<std::unique_ptr<GhaRenderPass>, std::runtime_error> MetalFactory::createRenderPass(GhaRenderPass::Descriptor descriptor) {
 		MTLRenderPipelineColorAttachmentDescriptorArray* colourAttachments{};
 		for(size_t i{ 0 }; i < descriptor.colourAttachments.size(); ++i){
-			colourAttachments[i].pixelFormat = convertFormat(descriptor.colourAttachments[i].format);
+			colourAttachments[i].pixelFormat = MetalImage::convertFormat(descriptor.colourAttachments[i].format);
 		}
 		
-		MTLPixelFormat depthPixelFormat{ convertFormat(descriptor.depthAttachment.format) };
+		MTLPixelFormat depthPixelFormat{ MetalImage::convertFormat(descriptor.depthAttachment.format) };
 		
 		return std::unique_ptr<GhaRenderPass>{ std::make_unique<MetalRenderPass>(std::move(colourAttachments), std::move(depthPixelFormat), std::move(descriptor)) };
 	}
@@ -237,7 +254,18 @@ namespace garlic::clove {
 	}
 	
 	Expected<std::unique_ptr<GhaImage>, std::runtime_error> MetalFactory::createImage(GhaImage::Descriptor descriptor) {
-		return Unexpected{ std::runtime_error{ "Not implemented" } };
+		MTLTextureDescriptor *mtlDescriptor;
+		
+		mtlDescriptor.textureType = convertImageType(descriptor.type);
+		mtlDescriptor.pixelFormat = MetalImage::convertFormat(descriptor.format);
+		mtlDescriptor.width = descriptor.dimensions.x;
+		mtlDescriptor.height = descriptor.dimensions.y;
+		mtlDescriptor.resourceOptions = MTLResourceStorageModePrivate;
+		mtlDescriptor.usage = getUsageFlags(descriptor.usageFlags);
+		
+		id<MTLTexture> texture{ [device newTextureWithDescriptor:mtlDescriptor] };
+		
+		return std::unique_ptr<GhaImage>{ std::make_unique<MetalImage>(texture, std::move(descriptor)) };
 	}
 
 	Expected<std::unique_ptr<GhaSampler>, std::runtime_error> MetalFactory::createSampler(GhaSampler::Descriptor descriptor) {
