@@ -1,5 +1,9 @@
 #include "Clove/Graphics/Metal/MetalGraphicsCommandBuffer.hpp"
 
+#include "Clove/Graphics/Metal/MetalFramebuffer.hpp"
+
+#include <Clove/Cast.hpp>
+
 namespace garlic::clove {
 	MetalGraphicsCommandBuffer::MetalGraphicsCommandBuffer(id<MTLCommandBuffer> commandBuffer)
 		: commandBuffer{ commandBuffer }{
@@ -20,8 +24,7 @@ namespace garlic::clove {
 	}
 
 	void MetalGraphicsCommandBuffer::beginRenderPass(GhaRenderPass &renderPass, GhaFramebuffer &frameBuffer, RenderArea const &renderArea, std::span<ClearValue> clearValues) {
-		//TODO: Get renderpass descriptor from frame buffer
-		currentEncoder = [commandBuffer renderCommandEncoderWithDescriptor:nullptr];
+		currentEncoder = [commandBuffer renderCommandEncoderWithDescriptor:polyCast<MetalFramebuffer>(&frameBuffer)->getRenderPassDescriptor()];
 	}
 	
 	void MetalGraphicsCommandBuffer::endRenderPass() {
