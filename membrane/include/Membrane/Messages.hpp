@@ -39,6 +39,13 @@ namespace garlic::membrane {
         Vector3 scale;
     };
 
+    public ref class Editor_UpdateName{
+    public:
+        System::UInt32 entity;
+
+        System::String^ name;
+    };
+
     public ref class Editor_ViewportKeyEvent{
     public:
         enum class Type{
@@ -65,6 +72,16 @@ namespace garlic::membrane {
 
     public ref class Editor_SaveScene{};
 
+    public ref struct Entity{
+        System::UInt32 id;
+        System::String ^name;
+        System::Collections::Generic::List<ComponentType> ^components;
+    };
+
     public ref class Editor_LoadScene{};
+    public ref class Engine_OnSceneLoaded{
+    public:
+        System::Collections::Generic::List<Entity^> ^entities;
+    };
     // clang-format on
 }

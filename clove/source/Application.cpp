@@ -13,7 +13,6 @@
 
 #include <Clove/Audio/AhaDevice.hpp>
 #include <Clove/Definitions.hpp>
-#include <Clove/ECS/EntityManager.hpp>
 #include <Clove/Graphics/GhaDevice.hpp>
 #include <Clove/Graphics/Graphics.hpp>
 #include <Clove/Log/Log.hpp>
@@ -41,13 +40,13 @@ namespace garlic::clove {
     }
 
     std::pair<std::unique_ptr<Application>, GraphicsImageRenderTarget *> Application::createHeadless(GraphicsApi graphicsApi, AudioApi audioApi, GhaImage::Descriptor renderTargetDescriptor, std::unique_ptr<Surface> surface) {
-		auto graphicsDevice{ createGraphicsDevice(graphicsApi, std::any{}) };
-		auto audioDevice{ createAudioDevice(audioApi) };
-		
-		auto renderTarget{ std::make_unique<GraphicsImageRenderTarget>(renderTargetDescriptor, graphicsDevice->getGraphicsFactory()) };
-		auto *renderTargetPtr{ renderTarget.get() };
-		
-		std::unique_ptr<Application> app{ new Application{ std::move(graphicsDevice), std::move(audioDevice), std::move(surface), std::move(renderTarget) } };
+        auto graphicsDevice{ createGraphicsDevice(graphicsApi, std::any{}) };
+        auto audioDevice{ createAudioDevice(audioApi) };
+
+        auto renderTarget{ std::make_unique<GraphicsImageRenderTarget>(renderTargetDescriptor, graphicsDevice->getGraphicsFactory()) };
+        auto *renderTargetPtr{ renderTarget.get() };
+
+        std::unique_ptr<Application> app{ new Application{ std::move(graphicsDevice), std::move(audioDevice), std::move(surface), std::move(renderTarget) } };
 
         return { std::move(app), renderTargetPtr };
     }
@@ -122,24 +121,23 @@ namespace garlic::clove {
     }
 
     Application::Application(std::unique_ptr<GhaDevice> graphicsDevice, std::unique_ptr<AhaDevice> audioDevice, std::unique_ptr<Surface> surface, std::unique_ptr<RenderTarget> renderTarget)
-		: graphicsDevice{ std::move(graphicsDevice) }
-		, audioDevice{ std::move(audioDevice) }
-		, surface{ std::move(surface) }{
+        : graphicsDevice{ std::move(graphicsDevice) }
+        , audioDevice{ std::move(audioDevice) }
+        , surface{ std::move(surface) } {
         CLOVE_ASSERT(instance == nullptr, "Only one Application can be active");
         instance = this;
 
         prevFrameTime = std::chrono::system_clock::now();
-		
-		//Systems
-		renderer = std::make_unique<ForwardRenderer3D>(this->graphicsDevice.get(), std::move(renderTarget));
-		entityManager = std::make_unique<EntityManager>();
-		
-		//Layers
-		physicsLayer = std::make_shared<PhysicsLayer>(entityManager.get());
-		
-		pushLayer(std::make_shared<TransformLayer>(entityManager.get()), LayerGroup::Initialisation);
-		pushLayer(physicsLayer, LayerGroup::Initialisation);
-		pushLayer(std::make_shared<AudioLayer>(entityManager.get()), LayerGroup::Render);
-		pushLayer(std::make_shared<RenderLayer>(renderer.get(), entityManager.get()), LayerGroup::Render);
+
+        //Systems
+        renderer = std::make_unique<ForwardRenderer3D>(this->graphicsDevice.get(), std::move(renderTarget));
+
+        //Layers
+        physicsLayer = std::make_shared<PhysicsLayer>(&entityManager);
+
+        pushLayer(std::make_shared<TransformLayer>(&entityManager), LayerGroup::Initialisation);
+        pushLayer(physicsLayer, LayerGroup::Initialisation);
+        pushLayer(std::make_shared<AudioLayer>(&entityManager), LayerGroup::Render);
+        pushLayer(std::make_shared<RenderLayer>(renderer.get(), &entityManager), LayerGroup::Render);
     }
 }

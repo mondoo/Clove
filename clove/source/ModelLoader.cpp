@@ -364,7 +364,10 @@ namespace garlic::clove::ModelLoader {
         }
 
         CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Info, "Finished loading static model: {0}", modelFilePath.string());
-        return { meshes, std::make_shared<Material>() };
+        //TEMP: Storing the path of the model for serialisation purposes
+        StaticModel model{ meshes, std::make_shared<Material>() };
+        model.setAssetPath(modelFilePath);
+        return model;
     }
 
     AnimatedModel loadAnimatedModel(std::filesystem::path const &modelFilePath) {
