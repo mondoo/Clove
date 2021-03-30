@@ -88,13 +88,18 @@ namespace garlic::clove{
 		}
 	}
 	
-	vec2i MacWindow::getSize() const {
-		NSRect frame = [windowProxy frame];
-		return { frame.size.width, frame.size.height };
+	vec2i MacWindow::getSize(bool clientArea) const {
+		if(clientArea) {
+			NSRect const contentFrame{ [windowProxy contentRectForFrameRect:[windowProxy frame]] };
+			return { contentFrame.size.width, contentFrame.size.height};
+		} else {
+			NSRect frame = [windowProxy frame];
+			return { frame.size.width, frame.size.height };
+		}
 	}
 
 	void MacWindow::moveWindow(vec2i const &position) {
-		vec2i const size{ getSize() };
+		vec2i const size{ getSize(false) };
 		[windowProxy setFrame:NSMakeRect(position.x, position.x, size.x, size.y) display:YES];
 	}
 	
