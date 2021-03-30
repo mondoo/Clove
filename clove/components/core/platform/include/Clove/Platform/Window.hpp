@@ -17,8 +17,8 @@ namespace garlic::clove {
     public:
         struct Descriptor {
             std::string title{ "Clove window" };
-            int32_t width{ 800 };
-            int32_t height{ 600 };
+            int32_t width{ 800 }; /**< Width of the client region. */
+            int32_t height{ 600 }; /**< Height of the client region. */
         };
 
         //VARIABLES
