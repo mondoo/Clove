@@ -82,15 +82,19 @@ namespace garlic::clove {
         return { windowRect.left, windowRect.top };
     }
 
-    vec2i WindowsWindow::getSize() const {
+    vec2i WindowsWindow::getSize(bool clientArea) const {
         RECT windowRect{};
-        GetClientRect(windowsHandle, &windowRect);
+        if(clientArea) {
+            GetClientRect(windowsHandle, &windowRect);
+        } else {
+            GetWindowRect(windowsHandle, &windowRect);
+        }
 
         return { windowRect.right - windowRect.left, windowRect.bottom - windowRect.top };
     }
 
     void WindowsWindow::moveWindow(vec2i const &position) {
-        vec2i const size{ getSize() };
+        vec2i const size{ getSize(false) };
         MoveWindow(windowsHandle, position.x, position.y, size.x, size.y, FALSE);
     }
 
@@ -176,7 +180,7 @@ namespace garlic::clove {
 
                 //Mouse
             case WM_MOUSEMOVE:
-                if(pos.x >= 0 && pos.x < getSize().x && pos.y >= 0 && pos.y < getSize().y) {
+                if(pos.x >= 0 && pos.x < getSize(true).x && pos.y >= 0 && pos.y < getSize(true).y) {
                     mouseDispatcher.onMouseMove(pos);
                     if(!mouse.isInWindow()) {
                         mouseDispatcher.onMouseEnter();
