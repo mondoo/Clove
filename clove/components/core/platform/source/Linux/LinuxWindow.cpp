@@ -23,7 +23,7 @@ namespace garlic::clove {
         screen   = DefaultScreenOfDisplay(display);//NOLINT Get the screen of the display
         screenID = DefaultScreen(display);         //NOLINT
 
-        XSetWindowAttributes windowAttribs {
+        XSetWindowAttributes windowAttribs{
             .background_pixel  = WhitePixel(display, screenID),
             .border_pixel      = BlackPixel(display, screenID),
             .event_mask        = ExposureMask,
@@ -81,10 +81,21 @@ namespace garlic::clove {
         }
     }
 
-    vec2i LinuxWindow::getSize() const {
+    vec2i LinuxWindow::getSize(bool clientArea) const {
         XWindowAttributes attribs{};
         XGetWindowAttributes(display, window, &attribs);
-        return { attribs.width, attribs.height };
+        if(clientArea) {
+            return { attribs.width, attribs.height };
+        } else {
+            /* 
+            There is no easy way to get the border height. So instead add on the 
+            difference between the client pos y and window pos y
+            */
+            int32_t clientY{ getPosition(true).y };
+            int32_t windowY{ getPosition(false).y };
+
+            return { attribs.width + attribs.border_width, attribs.height + (clientY - windowY) };
+        }
     }
 
     void LinuxWindow::moveWindow(vec2i const &position) {
@@ -159,7 +170,7 @@ namespace garlic::clove {
                 case MotionNotify:
                     mouseDispatcher.onMouseMove(vec2i{ xevent.xbutton.x, xevent.xbutton.y });
                     break;
-                    
+
                 case EnterNotify:
                     mouseDispatcher.onMouseEnter();
                     break;
@@ -195,7 +206,7 @@ namespace garlic::clove {
         }
     }
 
-    void LinuxWindow::closeWindow(::Window window){
+    void LinuxWindow::closeWindow(::Window window) {
         if(onWindowCloseDelegate.isBound()) {
             onWindowCloseDelegate.broadcast();
         }
