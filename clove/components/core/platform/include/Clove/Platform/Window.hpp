@@ -56,12 +56,17 @@ namespace garlic::clove {
         virtual std::any getNativeWindow() const = 0;
 
         /**
-         * @brief Returns the poisition of the window in screen space coordinates.
+         * @brief Returns the position of the window in screen space coordinates.
          * @param clientArea If true, returns the top left of the client area (inside the window's borders).
          * @return A vec2i containing the screen space coordinates.
          */
         virtual vec2i getPosition(bool clientArea) const = 0;
-        virtual vec2i getSize() const                    = 0;
+        /**
+         * @brief Returns the size of the window.
+         * @param clientArea If true, returns just the size of the client area instead of the entire window itself.
+         * @return a vec2i containing the size of the window.
+         */
+        virtual vec2i getSize(bool clientArea) const = 0;
 
         virtual void moveWindow(vec2i const &position) = 0;
         virtual void resizeWindow(vec2i const &size)   = 0;
