@@ -60,6 +60,10 @@ namespace garlic::clove {
     }
 
     WindowsWindow::~WindowsWindow() {
+        if(isOpen()) {
+            close();
+        }
+
         UnregisterClass(className, instance);
         DestroyWindow(windowsHandle);
     }
