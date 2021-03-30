@@ -12,20 +12,20 @@ namespace garlic::clove {
 
         instance = GetModuleHandle(nullptr);
 
-        WNDCLASSEX wc{};
-        wc.cbSize        = sizeof(wc);
-        wc.style         = CS_OWNDC;
-        wc.lpfnWndProc   = HandleMsgSetup;
-        wc.cbClsExtra    = 0;
-        wc.cbWndExtra    = 0;
-        wc.hInstance     = instance;
-        wc.hIcon         = nullptr;
-        wc.hCursor       = nullptr;
-        wc.hbrBackground = nullptr;
-        wc.lpszMenuName  = nullptr;
-        wc.lpszClassName = className;
-
-        RegisterClassEx(&wc);
+        WNDCLASSEX windowClass {
+            .cbSize        = sizeof(windowClass),
+            .style         = CS_OWNDC,
+            .lpfnWndProc   = HandleMsgSetup,
+            .cbClsExtra    = 0,
+            .cbWndExtra    = 0,
+            .hInstance     = instance,
+            .hIcon         = nullptr,
+            .hCursor       = nullptr,
+            .hbrBackground = nullptr,
+            .lpszMenuName  = nullptr,
+            .lpszClassName = className,
+        };
+        RegisterClassEx(&windowClass);
 
         CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Windows class registered");
 
@@ -33,20 +33,22 @@ namespace garlic::clove {
 
         DWORD const windowStyle{ WS_CAPTION | WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_SIZEBOX | WS_SYSMENU | WS_VISIBLE };
 
-        RECT wr{};
-        wr.left   = 0;
-        wr.right  = descriptor.width;
-        wr.top    = 0;
-        wr.bottom = descriptor.height;
+        RECT windowRect {
+            .left   = 0,
+            .top    = 0,
+            .right  = descriptor.width,
+            .bottom = descriptor.height,
+        };
+        AdjustWindowRect(&windowRect, windowStyle, FALSE);
 
         windowsHandle = CreateWindow(
-            wc.lpszClassName,
+            windowClass.lpszClassName,
             wideTitle.c_str(),
             windowStyle,
             CW_USEDEFAULT,
             CW_USEDEFAULT,
-            wr.right - wr.left,
-            wr.bottom - wr.top,
+            windowRect.right - windowRect.left,
+            windowRect.bottom - windowRect.top,
             nullptr,
             nullptr,
             instance,
