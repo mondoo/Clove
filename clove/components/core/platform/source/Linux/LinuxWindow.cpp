@@ -58,8 +58,8 @@ namespace garlic::clove {
         XCloseDisplay(display);
     }
 
-    std::unique_ptr<Window> Window::create(Descriptor descriptor) {
-        return std::make_unique<LinuxWindow>(std::move(descriptor));
+    std::unique_ptr<Window> Window::create(Descriptor const &descriptor) {
+        return std::make_unique<LinuxWindow>(descriptor);
     }
 
     std::any LinuxWindow::getNativeWindow() const {

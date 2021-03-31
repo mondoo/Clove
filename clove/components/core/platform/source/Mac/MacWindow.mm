@@ -50,8 +50,8 @@ namespace garlic::clove{
 		[windowProxy release];
 	}
 
-	std::unique_ptr<Window> Window::create(Descriptor descriptor) {
-        return std::make_unique<MacWindow>(std::move(descriptor));
+	std::unique_ptr<Window> Window::create(Descriptor const &descriptor) {
+        return std::make_unique<MacWindow>(descriptor);
     }
 	
 	void MacWindow::processInput() {

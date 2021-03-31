@@ -68,8 +68,8 @@ namespace garlic::clove {
         DestroyWindow(windowsHandle);
     }
 
-    std::unique_ptr<Window> Window::create(Descriptor descriptor) {
-        return std::make_unique<WindowsWindow>(std::move(descriptor));
+    std::unique_ptr<Window> Window::create(Descriptor const &descriptor) {
+        return std::make_unique<WindowsWindow>(descriptor);
     }
 
     std::any WindowsWindow::getNativeWindow() const {

@@ -46,7 +46,7 @@ namespace garlic::clove {
 
         virtual ~Window() = default;
 
-        static std::unique_ptr<Window> create(Descriptor descriptor);
+        static std::unique_ptr<Window> create(Descriptor const &descriptor);
 
         /**
          * @brief Pumps the message queue of the window. Populating the Mouse and Keyboard classes with events.
