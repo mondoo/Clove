@@ -6,26 +6,26 @@
 #define CLV_WINDOWS_QUIT 25397841//Note: this number is completely random
 
 namespace garlic::clove {
-    WindowsWindow::WindowsWindow(WindowDescriptor const &descriptor)
+    WindowsWindow::WindowsWindow(Descriptor const &descriptor)
         : Window(keyboardDispatcher, mouseDispatcher) {
         CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Creating window: {0} ({1}, {2})", descriptor.title, descriptor.width, descriptor.height);
 
         instance = GetModuleHandle(nullptr);
 
-        WNDCLASSEX wc{};
-        wc.cbSize        = sizeof(wc);
-        wc.style         = CS_OWNDC;
-        wc.lpfnWndProc   = HandleMsgSetup;
-        wc.cbClsExtra    = 0;
-        wc.cbWndExtra    = 0;
-        wc.hInstance     = instance;
-        wc.hIcon         = nullptr;
-        wc.hCursor       = nullptr;
-        wc.hbrBackground = nullptr;
-        wc.lpszMenuName  = nullptr;
-        wc.lpszClassName = className;
-
-        RegisterClassEx(&wc);
+        WNDCLASSEX windowClass {
+            .cbSize        = sizeof(windowClass),
+            .style         = CS_OWNDC,
+            .lpfnWndProc   = HandleMsgSetup,
+            .cbClsExtra    = 0,
+            .cbWndExtra    = 0,
+            .hInstance     = instance,
+            .hIcon         = nullptr,
+            .hCursor       = nullptr,
+            .hbrBackground = nullptr,
+            .lpszMenuName  = nullptr,
+            .lpszClassName = className,
+        };
+        RegisterClassEx(&windowClass);
 
         CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Windows class registered");
 
@@ -33,20 +33,22 @@ namespace garlic::clove {
 
         DWORD const windowStyle{ WS_CAPTION | WS_MAXIMIZEBOX | WS_MINIMIZEBOX | WS_SIZEBOX | WS_SYSMENU | WS_VISIBLE };
 
-        RECT wr{};
-        wr.left   = 0;
-        wr.right  = descriptor.width;
-        wr.top    = 0;
-        wr.bottom = descriptor.height;
+        RECT windowRect {
+            .left   = 0,
+            .top    = 0,
+            .right  = descriptor.width,
+            .bottom = descriptor.height,
+        };
+        AdjustWindowRect(&windowRect, windowStyle, FALSE);
 
         windowsHandle = CreateWindow(
-            wc.lpszClassName,
+            windowClass.lpszClassName,
             wideTitle.c_str(),
             windowStyle,
             CW_USEDEFAULT,
             CW_USEDEFAULT,
-            wr.right - wr.left,
-            wr.bottom - wr.top,
+            windowRect.right - windowRect.left,
+            windowRect.bottom - windowRect.top,
             nullptr,
             nullptr,
             instance,
@@ -58,37 +60,53 @@ namespace garlic::clove {
     }
 
     WindowsWindow::~WindowsWindow() {
+        if(isOpen()) {
+            close();
+        }
+
         UnregisterClass(className, instance);
         DestroyWindow(windowsHandle);
+    }
+
+    std::unique_ptr<Window> Window::create(Descriptor const &descriptor) {
+        return std::make_unique<WindowsWindow>(descriptor);
     }
 
     std::any WindowsWindow::getNativeWindow() const {
         return windowsHandle;
     }
 
-    vec2i WindowsWindow::getPosition() const {
-        RECT windowRect;
-        GetWindowRect(windowsHandle, &windowRect);
-        MapWindowPoints(HWND_DESKTOP, GetParent(windowsHandle), (LPPOINT)&windowRect, 2);
+    vec2i WindowsWindow::getPosition(bool clientArea) const {
+        RECT windowRect{};
+        if(clientArea) {
+            GetClientRect(windowsHandle, &windowRect);
+            MapWindowPoints(windowsHandle, HWND_DESKTOP, (LPPOINT)&windowRect, 2);
+        } else {
+            GetWindowRect(windowsHandle, &windowRect);
+        }
 
         return { windowRect.left, windowRect.top };
     }
 
-    vec2i WindowsWindow::getSize() const {
-        RECT windowRect;
-        GetClientRect(windowsHandle, &windowRect);
+    vec2i WindowsWindow::getSize(bool clientArea) const {
+        RECT windowRect{};
+        if(clientArea) {
+            GetClientRect(windowsHandle, &windowRect);
+        } else {
+            GetWindowRect(windowsHandle, &windowRect);
+        }
 
         return { windowRect.right - windowRect.left, windowRect.bottom - windowRect.top };
     }
 
     void WindowsWindow::moveWindow(vec2i const &position) {
-        vec2i const size = getSize();
-        BOOL const moved = MoveWindow(windowsHandle, position.x, position.y, size.x, size.y, FALSE);
+        vec2i const size{ getSize(false) };
+        MoveWindow(windowsHandle, position.x, position.y, size.x, size.y, FALSE);
     }
 
     void WindowsWindow::resizeWindow(vec2i const &size) {
-        vec2i const position = getPosition();
-        BOOL const resized   = MoveWindow(windowsHandle, position.x, position.y, size.x, size.y, FALSE);
+        vec2i const position{ getPosition(false) };
+        MoveWindow(windowsHandle, position.x, position.y, size.x, size.y, FALSE);
     }
 
     bool WindowsWindow::isOpen() const {
@@ -118,8 +136,8 @@ namespace garlic::clove {
     LRESULT CALLBACK WindowsWindow::HandleMsgSetup(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         if(msg == WM_NCCREATE) {
             //Extract the ptr to our window class
-            const CREATESTRUCTW *const create = reinterpret_cast<CREATESTRUCTW *>(lParam);
-            WindowsWindow *const window       = static_cast<WindowsWindow *>(create->lpCreateParams);
+            CREATESTRUCTW const *const create{ reinterpret_cast<CREATESTRUCTW *>(lParam) };
+            WindowsWindow *const window{ static_cast<WindowsWindow *>(create->lpCreateParams) };
             //Store our windows class into the windows api
             SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(window));
             //Switch over to the normal procedure handler
@@ -132,12 +150,13 @@ namespace garlic::clove {
 
     LRESULT CALLBACK WindowsWindow::HandleMsgThunk(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         //Forward message to our windows instance
-        WindowsWindow *const window = reinterpret_cast<WindowsWindow *>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+        WindowsWindow *const window{ reinterpret_cast<WindowsWindow *>(GetWindowLongPtr(hWnd, GWLP_USERDATA)) };
         return window->HandleMsg(hWnd, msg, wParam, lParam);
     }
 
     LRESULT WindowsWindow::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) {
-        const POINTS pt = MAKEPOINTS(lParam);
+        POINTS const pt{ MAKEPOINTS(lParam) };
+        vec2i const pos{ pt.x, pt.y };
 
         switch(msg) {
             case WM_CLOSE:
@@ -167,15 +186,15 @@ namespace garlic::clove {
 
                 //Mouse
             case WM_MOUSEMOVE:
-                if(pt.x >= 0 && pt.x < getSize().x && pt.y >= 0 && pt.y < getSize().y) {
-                    mouseDispatcher.onMouseMove(pt.x, pt.y);
+                if(pos.x >= 0 && pos.x < getSize(true).x && pos.y >= 0 && pos.y < getSize(true).y) {
+                    mouseDispatcher.onMouseMove(pos);
                     if(!mouse.isInWindow()) {
                         mouseDispatcher.onMouseEnter();
                         SetCapture(hWnd);
                     }
                 } else {
                     if(mouse.isButtonPressed(MouseButton::Left) || mouse.isButtonPressed(MouseButton::Right)) {
-                        mouseDispatcher.onMouseMove(pt.x, pt.y);
+                        mouseDispatcher.onMouseMove(pos);
                     } else {
                         mouseDispatcher.onMouseLeave();
                         ReleaseCapture();
@@ -184,31 +203,31 @@ namespace garlic::clove {
                 break;
 
             case WM_LBUTTONDOWN:
-                mouseDispatcher.onButtonPressed(MouseButton::Left, pt.x, pt.y);
+                mouseDispatcher.onButtonPressed(MouseButton::Left, pos);
                 break;
 
             case WM_LBUTTONUP:
-                mouseDispatcher.onButtonReleased(MouseButton::Left, pt.x, pt.y);
+                mouseDispatcher.onButtonReleased(MouseButton::Left, pos);
                 break;
 
             case WM_RBUTTONDOWN:
-                mouseDispatcher.onButtonPressed(MouseButton::Right, pt.x, pt.y);
+                mouseDispatcher.onButtonPressed(MouseButton::Right, pos);
                 break;
 
             case WM_RBUTTONUP:
-                mouseDispatcher.onButtonReleased(MouseButton::Right, pt.x, pt.y);
+                mouseDispatcher.onButtonReleased(MouseButton::Right, pos);
                 break;
 
             case WM_XBUTTONDOWN:
-                mouseDispatcher.onButtonPressed(static_cast<MouseButton>(GET_KEYSTATE_WPARAM(wParam)), pt.x, pt.y);
+                mouseDispatcher.onButtonPressed(static_cast<MouseButton>(GET_KEYSTATE_WPARAM(wParam)), pos);
                 break;
 
             case WM_XBUTTONUP:
-                mouseDispatcher.onButtonReleased(static_cast<MouseButton>(GET_KEYSTATE_WPARAM(wParam)), pt.x, pt.y);
+                mouseDispatcher.onButtonReleased(static_cast<MouseButton>(GET_KEYSTATE_WPARAM(wParam)), pos);
                 break;
 
             case WM_MOUSEWHEEL:
-                mouseDispatcher.onWheelDelta(GET_WHEEL_DELTA_WPARAM(wParam), pt.x, pt.y);
+                mouseDispatcher.onWheelDelta(GET_WHEEL_DELTA_WPARAM(wParam), pos);
                 break;
 
                 //Window

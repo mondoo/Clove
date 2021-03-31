@@ -3,8 +3,6 @@ set(INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/include/Clove/Platform)
 
 set(
 	PlatformFiles
-		${INCLUDE}/Platform.hpp
-		${INCLUDE}/PlatformTypes.hpp
 		${INCLUDE}/Window.hpp
 		${INCLUDE}/Window.inl
 )
@@ -12,7 +10,7 @@ set(
 set(
 	WindowsPlatformFiles
 		${INCLUDE}/Windows/CloveWindows.hpp
-		${SOURCE}/Windows/WindowsPlatform.cpp
+		${SOURCE}/Windows/WindowsMouse.cpp
 		${INCLUDE}/Windows/WindowsWindow.hpp
 		${SOURCE}/Windows/WindowsWindow.cpp
 )
@@ -20,7 +18,7 @@ set(
 set(
 	LinuxPlatformFiles
 		${INCLUDE}/Linux/CloveLinux.hpp
-		${SOURCE}/Linux/LinuxPlatform.cpp
+		${SOURCE}/Linux/LinuxMouse.cpp
 		${INCLUDE}/Linux/LinuxWindow.hpp
 		${SOURCE}/Linux/LinuxWindow.cpp
 )
@@ -28,7 +26,7 @@ set(
 set(
 	MacOSPlatformFiles
 		${INCLUDE}/Mac/CloveMac.hpp
-		${SOURCE}/Mac/MacPlatform.mm
+		${SOURCE}/Mac/MacMouse.mm
 		${INCLUDE}/Mac/MacWindow.hpp
 		${SOURCE}/Mac/MacWindow.mm
 )

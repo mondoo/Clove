@@ -9,6 +9,9 @@
 #include <unordered_map>
 
 namespace garlic::clove {
+    /**
+     * @brief Provides an interface to handle any platform mouse events.
+     */
     class Mouse {
         //TYPES
     public:
@@ -44,6 +47,9 @@ namespace garlic::clove {
             Type getType() const;
             bool isValid() const;
 
+            /**
+             * @brief Returns the position in the window where this event happened.
+             */
             vec2i const &getPos() const;
 
             MouseButton getButton() const;
@@ -59,11 +65,10 @@ namespace garlic::clove {
         private:
             static constexpr uint32_t bufferSize{ 16u };
 
-            vec2i pos{};
-
             int32_t wheelDelta{ 0 };
+            vec2i lastPos{ 0 };
 
-            bool inWindow = false;
+            bool inWindow{ false };
 
             std::unordered_map<MouseButton, bool> buttonStates;
             std::queue<Event> buffer;
@@ -73,21 +78,21 @@ namespace garlic::clove {
             Dispatcher();
 
             Dispatcher(Dispatcher const &other);
-            Dispatcher(Dispatcher&& other) noexcept;
-            
+            Dispatcher(Dispatcher &&other) noexcept;
+
             Dispatcher &operator=(Dispatcher const &other);
             Dispatcher &operator=(Dispatcher &&other) noexcept;
 
             ~Dispatcher();
 
-            void onMouseMove(int32_t x, int32_t y);
+            void onMouseMove(vec2i pos);
 
-            void onButtonPressed(MouseButton button, int32_t x, int32_t y);
-            void onButtonReleased(MouseButton button, int32_t x, int32_t y);
+            void onButtonPressed(MouseButton button, vec2i pos);
+            void onButtonReleased(MouseButton button, vec2i pos);
 
-            void onWheelDelta(int32_t delta, int32_t x, int32_t y);
-            void onWheelUp(int32_t x, int32_t y);
-            void onWheelDown(int32_t x, int32_t y);
+            void onWheelDelta(int32_t delta, vec2i pos);
+            void onWheelUp(vec2i pos);
+            void onWheelDown(vec2i pos);
 
             void onMouseLeave();
             void onMouseEnter();
@@ -114,10 +119,30 @@ namespace garlic::clove {
 
         ~Mouse() = default;
 
-        bool isButtonPressed(MouseButton button) const;
+        /**
+         * @brief Pops an event off of the buffer and returns it.
+         * @return An event from the front of the buffer. std::nullopt if buffer is empty.
+         */
         std::optional<Event> getEvent();
 
-        vec2i const &getPosition() const;
+        bool isButtonPressed(MouseButton button) const;
+        
+        /**
+         * @brief Gets the current position of the mouse in screen coordinates.
+         * @details This is the current position at the time of calling this function
+         * and not the position of the last event. This can be useful when setting the position
+         * manually and mouse move events need to be ignored.
+         */
+        vec2i getPosition() const;
+        /**
+         * @brief Sets the position of the mouse in screen coordinates. This will generate a mouse move event.
+         */
+        void setPosition(vec2i const &position);
+
+        /**
+         * @brief Shows / hides the mouse.
+         */
+        void show(bool shouldShow);
 
         bool isInWindow() const;
 
