@@ -27,7 +27,7 @@ namespace garlic::clove {
             .background_pixel  = WhitePixel(display, screenID),//NOLINT clang-tidy complains about a cast inside this macro
             .border_pixel      = BlackPixel(display, screenID),//NOLINT clang-tidy complains about a cast inside this macro
             .event_mask        = ExposureMask,
-            .override_redirect = true,
+            .override_redirect = 1,
             .colormap          = XDefaultColormap(display, screenID),
         };
 
@@ -37,8 +37,8 @@ namespace garlic::clove {
         atomWmDeleteWindow = XInternAtom(display, "WM_DELETE_WINDOW", 0);
         XSetWMProtocols(display, window, &atomWmDeleteWindow, 1);
 
-        bool constexpr flushEventQueue{ false };
-        XSync(display, flushEventQueue);
+        int constexpr discardEvents{ 1 };
+        XSync(display, discardEvents);
 
         long constexpr keyboardMask{ KeyPressMask | KeyReleaseMask | KeymapStateMask };
         long constexpr mouseMask{ PointerMotionMask | ButtonPressMask | ButtonReleaseMask | EnterWindowMask | LeaveWindowMask };
@@ -125,7 +125,8 @@ namespace garlic::clove {
                         //Need to use the window from the event here.
                         closeWindow(xevent.xclient.window);
                         //Flush the output buffer before exiting. Not doing this step causes the whole OS to freeze.
-                        XSync(display, true);
+                        int constexpr discardEvents{ 1 };
+                        XSync(display, discardEvents);
                     }
                     break;
 

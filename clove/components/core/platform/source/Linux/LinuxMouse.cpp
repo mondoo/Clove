@@ -31,7 +31,7 @@ namespace garlic::clove {
     }
 
     void Mouse::show(bool shouldShow) {//NOLINT It's designed for this function to not be static
-        static char data[1] = { 0 };
+        static char data{ 0 };
         static bool cursorSet{ false };
 
         if(shouldShow) {
@@ -46,7 +46,7 @@ namespace garlic::clove {
             }
         } else {
             if(!cursorSet) {
-                Pixmap blank{ XCreateBitmapFromData(display, XDefaultRootWindow(display), data, 1, 1) };
+                Pixmap blank{ XCreateBitmapFromData(display, XDefaultRootWindow(display), &data, 1, 1) };
                 XColor dummy{};
                 Cursor cursor{ XCreatePixmapCursor(display, blank, blank, &dummy, &dummy, 0, 0) };
 
