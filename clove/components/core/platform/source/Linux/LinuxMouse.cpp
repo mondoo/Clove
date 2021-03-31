@@ -4,7 +4,7 @@
 #include <X11/cursorfont.h>
 
 namespace garlic::clove {
-    vec2i Mouse::getPosition() const {
+    vec2i Mouse::getPosition() const {//NOLINT It's designed for this function to not be static
         ::Window rootReturn{};
         ::Window childReturn{};
         int rootX{ 0 };//Relative to the root window
@@ -18,7 +18,7 @@ namespace garlic::clove {
         return { mouseX, mouseY };
     }
 
-    void Mouse::setPosition(vec2i const &position) {
+    void Mouse::setPosition(vec2i const &position) {//NOLINT It's designed for this function to not be static
         ::Window const sourceWindow{ 0 };
         ::Window const destWindow{ XDefaultRootWindow(display) };
 
@@ -30,7 +30,7 @@ namespace garlic::clove {
         XWarpPointer(display, sourceWindow, destWindow, sourceX, sourceY, sourceWidth, sourceHeight, position.x, position.y);
     }
 
-    void Mouse::show(bool shouldShow) {
+    void Mouse::show(bool shouldShow) {//NOLINT It's designed for this function to not be static
         static char data[1] = { 0 };
         static bool cursorSet{ false };
 

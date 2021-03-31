@@ -24,8 +24,8 @@ namespace garlic::clove {
         screenID = DefaultScreen(display);         //NOLINT
 
         XSetWindowAttributes windowAttribs{
-            .background_pixel  = WhitePixel(display, screenID),
-            .border_pixel      = BlackPixel(display, screenID),
+            .background_pixel  = WhitePixel(display, screenID),//NOLINT clang-tidy complains about a cast inside this macro
+            .border_pixel      = BlackPixel(display, screenID),//NOLINT clang-tidy complains about a cast inside this macro
             .event_mask        = ExposureMask,
             .override_redirect = true,
             .colormap          = XDefaultColormap(display, screenID),
