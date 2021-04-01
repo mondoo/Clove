@@ -75,7 +75,9 @@ namespace garlic::clove {
 
 	MetalFactory &MetalFactory::operator=(MetalFactory &&other) noexcept = default;
 
-	MetalFactory::~MetalFactory() = default;
+	MetalFactory::~MetalFactory() {
+		[device release];
+	}
 
 	Expected<std::unique_ptr<GhaGraphicsQueue>, std::runtime_error> MetalFactory::createGraphicsQueue(CommandQueueDescriptor descriptor) {
 		return std::unique_ptr<GhaGraphicsQueue>{ std::make_unique<MetalGraphicsQueue>([device newCommandQueue]) };
@@ -141,74 +143,76 @@ namespace garlic::clove {
 	}
 
 	Expected<std::unique_ptr<GhaGraphicsPipelineObject>, std::runtime_error> MetalFactory::createGraphicsPipelineObject(GhaGraphicsPipelineObject::Descriptor descriptor) {
-		//Vertex shader
-		id<MTLFunction> vertexFunction{ polyCast<MetalShader>(descriptor.vertexShader.get())->getFunction() };
+		@autoreleasepool {
+			//Vertex shader
+			id<MTLFunction> vertexFunction{ polyCast<MetalShader>(descriptor.vertexShader.get())->getFunction() };
 		
-		//Pixel shader
-		id<MTLFunction> fragmentFunction{ polyCast<MetalShader>(descriptor.pixelShader.get())->getFunction() };
+			//Pixel shader
+			id<MTLFunction> fragmentFunction{ polyCast<MetalShader>(descriptor.pixelShader.get())->getFunction() };
 		
-		//Vertex input
-		MTLVertexDescriptor *vertexDescriptor{ [[MTLVertexDescriptor alloc] init] };
-		vertexDescriptor.layouts[0].stride = descriptor.vertexInput.stride;
-		for(size_t i{0}; i < descriptor.vertexAttributes.size(); ++i){
-			auto const &attribute{ descriptor.vertexAttributes[i] };
-			vertexDescriptor.attributes[i].bufferIndex = 0;
-			vertexDescriptor.attributes[i].format = convertAttributeFormat(attribute.format);
-			vertexDescriptor.attributes[i].offset = attribute.offset;
-		}
+			//Vertex input
+			MTLVertexDescriptor *vertexDescriptor{ [[MTLVertexDescriptor alloc] init] };
+			vertexDescriptor.layouts[0].stride = descriptor.vertexInput.stride;
+			for(size_t i{0}; i < descriptor.vertexAttributes.size(); ++i){
+				auto const &attribute{ descriptor.vertexAttributes[i] };
+				vertexDescriptor.attributes[i].bufferIndex = 0;
+				vertexDescriptor.attributes[i].format = convertAttributeFormat(attribute.format);
+				vertexDescriptor.attributes[i].offset = attribute.offset;
+			}
 		
-		//Topology
-		MTLPrimitiveTopologyClass const topology{ MTLPrimitiveTopologyClassTriangle };
+			//Topology
+			MTLPrimitiveTopologyClass const topology{ MTLPrimitiveTopologyClassTriangle };
 		
-		//Depth state
-		MTLDepthStencilDescriptor *depthStencil{ [[MTLDepthStencilDescriptor alloc] init]};
-		depthStencil.depthWriteEnabled = descriptor.depthState.depthWrite;
-		if(descriptor.depthState.depthTest){
-			depthStencil.depthCompareFunction = MTLCompareFunctionLess;
-		}else{
-			depthStencil.depthCompareFunction = MTLCompareFunctionAlways;
-		}
+			//Depth state
+			MTLDepthStencilDescriptor *depthStencil{ [[MTLDepthStencilDescriptor alloc] init]};
+			depthStencil.depthWriteEnabled = descriptor.depthState.depthWrite;
+			if(descriptor.depthState.depthTest){
+				depthStencil.depthCompareFunction = MTLCompareFunctionLess;
+			}else{
+				depthStencil.depthCompareFunction = MTLCompareFunctionAlways;
+			}
 		
-		id<MTLDepthStencilState> depthStencilState{ [device newDepthStencilStateWithDescriptor:depthStencil] };
+			id<MTLDepthStencilState> depthStencilState{ [device newDepthStencilStateWithDescriptor:depthStencil] };
 		
-		//Render pass
-		MetalRenderPass const *const renderPass{ polyCast<MetalRenderPass>(descriptor.renderPass.get()) };
-		size_t const colourAttachmentCount{ renderPass->getDescriptor().colourAttachments.size() };
-		MTLRenderPipelineColorAttachmentDescriptorArray* colourAttachments{ renderPass->getColourAttachments() };
-		MTLPixelFormat const depthPixelFormat{ renderPass->getDepthPixelFormat() };
+			//Render pass
+			MetalRenderPass const *const renderPass{ polyCast<MetalRenderPass>(descriptor.renderPass.get()) };
+			size_t const colourAttachmentCount{ renderPass->getDescriptor().colourAttachments.size() };
+			MTLRenderPipelineColorAttachmentDescriptorArray* colourAttachments{ renderPass->getColourAttachments() };
+			MTLPixelFormat const depthPixelFormat{ renderPass->getDepthPixelFormat() };
 		
-		//Descriptors
-		//TODO:
+			//Descriptors
+			//TODO:
 		
-		//Push constants
-		//TODO:
+			//Push constants
+			//TODO:
 		
-		MTLRenderPipelineDescriptor *pipelineDesc{ [[MTLRenderPipelineDescriptor alloc] init] };
-		pipelineDesc.vertexFunction = vertexFunction;
-		pipelineDesc.fragmentFunction = fragmentFunction;
-		pipelineDesc.vertexDescriptor = vertexDescriptor;
-		pipelineDesc.inputPrimitiveTopology = topology;
-		for(size_t i{ 0 }; i < colourAttachmentCount; ++i){
-			pipelineDesc.colorAttachments[i] = colourAttachments[i];
+			MTLRenderPipelineDescriptor *pipelineDesc{ [[MTLRenderPipelineDescriptor alloc] init] };
+			pipelineDesc.vertexFunction = vertexFunction;
+			pipelineDesc.fragmentFunction = fragmentFunction;
+			pipelineDesc.vertexDescriptor = vertexDescriptor;
+			pipelineDesc.inputPrimitiveTopology = topology;
+			for(size_t i{ 0 }; i < colourAttachmentCount; ++i){
+				pipelineDesc.colorAttachments[i] = colourAttachments[i];
 			
-			//Blending
-			pipelineDesc.colorAttachments[i].blendingEnabled = descriptor.enableBlending;
-			pipelineDesc.colorAttachments[i].sourceRGBBlendFactor = MTLBlendFactorSourceAlpha;
-			pipelineDesc.colorAttachments[i].destinationRGBBlendFactor = MTLBlendFactorOneMinusSourceAlpha;
-			pipelineDesc.colorAttachments[i].rgbBlendOperation = MTLBlendOperationAdd;
-			pipelineDesc.colorAttachments[i].sourceAlphaBlendFactor = MTLBlendFactorOne;
-			pipelineDesc.colorAttachments[i].destinationAlphaBlendFactor = MTLBlendFactorZero;
-			pipelineDesc.colorAttachments[i].alphaBlendOperation = MTLBlendOperationAdd;
-		}
-		pipelineDesc.depthAttachmentPixelFormat = depthPixelFormat;
+				//Blending
+				pipelineDesc.colorAttachments[i].blendingEnabled = descriptor.enableBlending;
+				pipelineDesc.colorAttachments[i].sourceRGBBlendFactor = MTLBlendFactorSourceAlpha;
+				pipelineDesc.colorAttachments[i].destinationRGBBlendFactor = MTLBlendFactorOneMinusSourceAlpha;
+				pipelineDesc.colorAttachments[i].rgbBlendOperation = MTLBlendOperationAdd;
+				pipelineDesc.colorAttachments[i].sourceAlphaBlendFactor = MTLBlendFactorOne;
+				pipelineDesc.colorAttachments[i].destinationAlphaBlendFactor = MTLBlendFactorZero;
+				pipelineDesc.colorAttachments[i].alphaBlendOperation = MTLBlendOperationAdd;
+			}
+			pipelineDesc.depthAttachmentPixelFormat = depthPixelFormat;
 		
-		NSError *error{ nullptr };
-		id<MTLRenderPipelineState> pipelineState{ [device newRenderPipelineStateWithDescriptor:pipelineDesc error:&error] };
-		if(error != nullptr && error.code != 0){
-			return Unexpected{ std::runtime_error{ [[error description] cStringUsingEncoding:[NSString defaultCStringEncoding]] } };
-		}
+			NSError *error{ nullptr };
+			id<MTLRenderPipelineState> pipelineState{ [device newRenderPipelineStateWithDescriptor:pipelineDesc error:&error] };
+			if(error != nullptr && error.code != 0) {
+				return Unexpected{ std::runtime_error{ [[error description] cStringUsingEncoding:[NSString defaultCStringEncoding]] } };
+			}
 		
-		return std::unique_ptr<GhaGraphicsPipelineObject>{ std::make_unique<MetalGraphicsPipelineObject>(pipelineState, depthStencilState) };
+			return std::unique_ptr<GhaGraphicsPipelineObject>{ std::make_unique<MetalGraphicsPipelineObject>(pipelineState, depthStencilState) };
+		}
 	}
 	
 	Expected<std::unique_ptr<GhaComputePipelineObject>, std::runtime_error> MetalFactory::createComputePipelineObject(GhaComputePipelineObject::Descriptor descriptor) {
@@ -233,10 +237,8 @@ namespace garlic::clove {
 
 	Expected<std::unique_ptr<GhaBuffer>, std::runtime_error> MetalFactory::createBuffer(GhaBuffer::Descriptor descriptor) {
 		MTLResourceOptions resourceOptions{};
-		
 		//Usage mode -- not needed
 		//Sharing mode -- not needed
-		
 		switch (descriptor.memoryType) {
 			case MemoryType::VideoMemory:
 				resourceOptions |= MTLResourceStorageModePrivate;
@@ -255,7 +257,6 @@ namespace garlic::clove {
 	
 	Expected<std::unique_ptr<GhaImage>, std::runtime_error> MetalFactory::createImage(GhaImage::Descriptor descriptor) {
 		MTLTextureDescriptor *mtlDescriptor;
-		
 		mtlDescriptor.textureType = convertImageType(descriptor.type);
 		mtlDescriptor.pixelFormat = MetalImage::convertFormat(descriptor.format);
 		mtlDescriptor.width = descriptor.dimensions.x;
@@ -273,13 +274,15 @@ namespace garlic::clove {
 	}
 	
 	Expected<std::unique_ptr<GhaShader>, std::runtime_error> MetalFactory::createShaderObject(std::string mslSource) {
-		NSError *libError;
-		id<MTLLibrary> library{ [device newLibraryWithSource:[NSString stringWithCString:mslSource.c_str() encoding:[NSString defaultCStringEncoding]] options:nil error:&libError] };
+		@autoreleasepool {
+			NSError *libError;
+			id<MTLLibrary> library{ [device newLibraryWithSource:[NSString stringWithCString:mslSource.c_str() encoding:[NSString defaultCStringEncoding]] options:nil error:&libError] };
 		
-		if(libError != nullptr && libError.code != 0){
-			return Unexpected{ std::runtime_error{ [[libError description] cStringUsingEncoding:[NSString defaultCStringEncoding]] } };
+			if(libError != nullptr && libError.code != 0){
+				return Unexpected{ std::runtime_error{ [[libError description] cStringUsingEncoding:[NSString defaultCStringEncoding]] } };
+			}
+		
+			return std::unique_ptr<GhaShader>{ std::make_unique<MetalShader>([library newFunctionWithName:@"main"]) };
 		}
-		
-		return std::unique_ptr<GhaShader>{ std::make_unique<MetalShader>([library newFunctionWithName:@"main"]) };
 	}
 }

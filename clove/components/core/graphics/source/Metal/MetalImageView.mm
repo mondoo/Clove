@@ -9,7 +9,9 @@ namespace garlic::clove {
 	
 	MetalImageView& MetalImageView::operator=(MetalImageView &&other) noexcept = default;
 	
-	MetalImageView::~MetalImageView() = default;
+	MetalImageView::~MetalImageView() {
+		[texture release];
+	}
 	
 	id<MTLTexture> MetalImageView::getTexture() const {
 		return texture;

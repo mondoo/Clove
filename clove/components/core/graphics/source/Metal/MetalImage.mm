@@ -28,7 +28,9 @@ namespace garlic::clove {
 	
 	MetalImage& MetalImage::operator=(MetalImage &&other) noexcept = default;
 	
-	MetalImage::~MetalImage() = default;
+	MetalImage::~MetalImage() {
+		[texture release];
+	}
 	
 	GhaImage::Descriptor const &MetalImage::getDescriptor() const {
 		return descriptor;

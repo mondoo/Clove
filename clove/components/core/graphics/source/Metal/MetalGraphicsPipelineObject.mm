@@ -10,7 +10,10 @@ namespace garlic::clove {
 	
 	MetalGraphicsPipelineObject& MetalGraphicsPipelineObject::operator=(MetalGraphicsPipelineObject &&other) noexcept = default;
 	
-	MetalGraphicsPipelineObject::~MetalGraphicsPipelineObject() = default;
+	MetalGraphicsPipelineObject::~MetalGraphicsPipelineObject() {
+		[pipeline release];
+		[depthStencil release];
+	}
 	
 	id<MTLRenderPipelineState> MetalGraphicsPipelineObject::getPipeline() const {
 		return pipeline;

@@ -9,7 +9,9 @@ namespace garlic::clove {
 	
 	MetalShader& MetalShader::operator=(MetalShader &&other) noexcept = default;
 	
-	MetalShader::~MetalShader() = default;
+	MetalShader::~MetalShader() {
+		[function release];
+	}
 	
 	id<MTLFunction> MetalShader::getFunction() const {
 		return function;
