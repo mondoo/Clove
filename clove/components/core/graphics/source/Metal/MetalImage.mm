@@ -24,4 +24,24 @@ namespace garlic::clove {
 	id<MTLTexture> MetalImage::getTexture() const {
 		return texture;
 	}
+	
+	MTLPixelFormat MetalImage::convertFormat(Format format) {
+		switch(format) {
+			case GhaImage::Format::Unkown:
+				return MTLPixelFormatInvalid;
+			case GhaImage::Format::R8_UNORM:
+				return MTLPixelFormatR8Unorm;
+			case GhaImage::Format::R8G8B8A8_SRGB:
+				return MTLPixelFormatRGBA8Unorm_sRGB;
+			case GhaImage::Format::B8G8R8A8_SRGB:
+				return MTLPixelFormatBGRA8Unorm_sRGB;
+			case GhaImage::Format::B8G8R8A8_UNORM:
+				return MTLPixelFormatBGRA8Unorm;
+			case GhaImage::Format::D32_SFLOAT:
+				return MTLPixelFormatDepth32Float;
+			default:
+				CLOVE_ASSERT(false, "{0}: Unkown format", CLOVE_FUNCTION_NAME);
+				return MTLPixelFormatInvalid;
+		}
+	}
 }
