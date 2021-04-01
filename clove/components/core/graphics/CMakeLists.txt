@@ -105,6 +105,8 @@ set(
 		${SOURCE}/Metal/MetalGraphicsQueue.mm
 		${INCLUDE}/Metal/MetalImage.hpp
 		${SOURCE}/Metal/MetalImage.mm
+		${INCLUDE}/Metal/MetalImageView.hpp
+		${SOURCE}/Metal/MetalImageView.mm
 		${INCLUDE}/Metal/MetalRenderPass.hpp
 		${INCLUDE}/Metal/MetalRenderPass.inl
 		${SOURCE}/Metal/MetalRenderPass.mm
