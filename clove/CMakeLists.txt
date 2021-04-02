@@ -131,8 +131,6 @@ add_library(
 		${SOURCE}/Rendering/RenderGraph/RgBuffer.cpp
 		${INCLUDE}/Rendering/RenderGraph/RgImage.hpp
 		${SOURCE}/Rendering/RenderGraph/RgImage.cpp
-		${INCLUDE}/Rendering/RenderGraph/RgNode.hpp
-		${SOURCE}/Rendering/RenderGraph/RgNode.cpp
 		${INCLUDE}/Rendering/RenderPasses/ForwardColourPass.hpp
 		${SOURCE}/Rendering/RenderPasses/ForwardColourPass.cpp
 		${INCLUDE}/Rendering/RenderPasses/DirectionalLightPass.hpp
