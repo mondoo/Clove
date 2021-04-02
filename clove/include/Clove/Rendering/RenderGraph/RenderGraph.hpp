@@ -1,16 +1,21 @@
 #pragma once
 
 #include "Clove/Rendering/RenderGraph/RgBuffer.hpp"
+#include "Clove/Rendering/RenderGraph/RgComputePipelineState.hpp"
+#include "Clove/Rendering/RenderGraph/RgGraphicsPipelineState.hpp"
 #include "Clove/Rendering/RenderGraph/RgImage.hpp"
 
-#include <Clove/Maths/Vector.hpp>
 #include <Clove/Graphics/GhaImage.hpp>
+#include <Clove/Maths/Vector.hpp>
+#include <functional>
 
-namespace garlic::clove{
+namespace garlic::clove {
     class GhaFactory;
     class GhaComputeQueue;
     class GhaGraphicsQueue;
     class GhaTransferQueue;
+    class GhaGraphicsCommandBuffer;
+    class GhaComputeCommandBuffer;
 }
 
 namespace garlic::clove {
@@ -20,7 +25,6 @@ namespace garlic::clove {
     class RenderGraph {
         //VARIABLES
     private:
-
         //FUNCTIONS
     public:
         RenderGraph();
@@ -47,7 +51,30 @@ namespace garlic::clove {
          */
         RgImage createImage(GhaImage::Type imageType, vec2ui dimensions);
 
-        void addPass(/*TODO*/){}
+        RgGraphicsPipelineState createGraphicsPipelineState(RgGraphicsPipelineState::Descriptor descriptor) {
+            //TODO:
+            return {};
+        }
+
+        RgComputePipelineState createComputePipelineState() {
+            //TODO:
+            return {};
+        }
+
+        //TODO: Maybe a version that just takes a vertex / index buffer?
+        void addGraphicsPass(RgGraphicsPipelineState pipelineState, std::function<void(GhaGraphicsCommandBuffer &)> pass) {
+            //TODO
+
+            //The idea is that it tracks the pipeline (incase of being used in multiple passes)
+            //Then will bind the pipeline and execute the pass
+
+            //I think it's expected (for now) to bind descriptor sets with in the provided pass
+        }
+
+        //TODO: Maybe a version that just adds a dispatch call
+        void addComputePass(RgComputePipelineState pipelineState, std::function<void(GhaComputeCommandBuffer)> pass) {
+            //TODO
+        }
 
         /**
          * @brief Executes the RenderGraph. Creating any objects required and submitting commands to the relevant queues.

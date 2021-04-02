@@ -18,6 +18,8 @@ namespace garlic::clove {
     private:
         GhaImage::Descriptor ghaDescriptor{}; /**< Gets updated while the image is used within the graph. */
 
+        //TODO: Keep some sort of internal ID (and maybe pointer to GhaImage) so when copying around it's easy to tell which RgImages are unique etc.
+
         //FUNCTIONS
     public:
         RgImage() = delete;

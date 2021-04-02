@@ -17,6 +17,8 @@ namespace garlic::clove {
     private:
         GhaBuffer::Descriptor ghaDescriptor{}; /**< Gets updated while the buffer is used within the graph. */
 
+        //TODO: Keep some sort of internal ID (and maybe pointer to GhaBuffer) so when copying around it's easy to tell which RgBufferss are unique etc.
+
         //FUNCTIONS
     public:
         RgBuffer() = delete;
