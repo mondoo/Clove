@@ -42,6 +42,14 @@ namespace garlic::clove {
 
         ~RgBuffer();
 
+        /**
+         * @brief Write data into this buffer.
+         * @param data Pointer to data to write.
+         * @param offset Offset into the buffer to write to.
+         * @param size Size of the region in the buffer to write to.
+         */
+        void write(void const *data, size_t const offset, size_t const size);
+
     private:
         /**
          * @brief Create a GhaBuffer with it's usage set based on how it's used in the graph.

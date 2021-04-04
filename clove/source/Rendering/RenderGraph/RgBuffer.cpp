@@ -33,6 +33,11 @@ namespace garlic::clove {
 
     RgBuffer::~RgBuffer() = default;
 
+    void RgBuffer::write(void const *data, size_t const offset, size_t const size) {
+        //TODO
+        //Block writes to buffers created directly from GHA?
+    }
+
     std::unique_ptr<GhaBuffer> RgBuffer::createGhaBuffer(GhaFactory &factory) const {
         return *factory.createBuffer(ghaDescriptor);
     }
