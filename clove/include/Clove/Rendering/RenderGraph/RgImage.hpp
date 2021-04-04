@@ -15,7 +15,7 @@ namespace garlic::clove {
      */
     class RgImage {
         friend class RenderGraph;
-        
+
         //VARIABLES
     private:
         GhaImage::Descriptor ghaDescriptor{}; /**< Gets updated while the image is used within the graph. */
@@ -24,7 +24,7 @@ namespace garlic::clove {
 
         //FUNCTIONS
     public:
-        RgImage() = delete;
+        RgImage();
         RgImage(GhaImage::Type imagetype, vec2ui dimensions);
 
         RgImage(RgImage const &other);

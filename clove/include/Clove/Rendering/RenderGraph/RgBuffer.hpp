@@ -14,7 +14,7 @@ namespace garlic::clove {
      */
     class RgBuffer {
         friend class RenderGraph;
-        
+
         //VARIABLES
     private:
         GhaBuffer::Descriptor ghaDescriptor{}; /**< Gets updated while the buffer is used within the graph. */
@@ -23,7 +23,7 @@ namespace garlic::clove {
 
         //FUNCTIONS
     public:
-        RgBuffer() = delete;
+        RgBuffer();
         RgBuffer(size_t bufferSize);
 
         RgBuffer(RgBuffer const &other);

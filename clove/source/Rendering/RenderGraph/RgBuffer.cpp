@@ -3,6 +3,8 @@
 #include <Clove/Graphics/GhaFactory.hpp>
 
 namespace garlic::clove {
+    RgBuffer::RgBuffer() = default;
+    
     RgBuffer::RgBuffer(size_t bufferSize) {
         ghaDescriptor.size = bufferSize;
     }
