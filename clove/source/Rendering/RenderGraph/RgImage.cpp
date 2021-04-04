@@ -10,6 +10,10 @@ namespace garlic::clove {
         ghaDescriptor.type       = imagetype;
     }
 
+    RgImage::RgImage(std::shared_ptr<GhaImageView> ghaImageView) {
+        //TODO
+    }
+
     RgImage::RgImage(RgImage const &other) {
         //TODO
     }
