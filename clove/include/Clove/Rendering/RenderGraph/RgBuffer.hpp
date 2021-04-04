@@ -13,6 +13,8 @@ namespace garlic::clove {
      * @details Can be used to later create a GhaBuffer when executing the graph.
      */
     class RgBuffer {
+        friend class RenderGraph;
+        
         //VARIABLES
     private:
         GhaBuffer::Descriptor ghaDescriptor{}; /**< Gets updated while the buffer is used within the graph. */
@@ -32,6 +34,7 @@ namespace garlic::clove {
 
         ~RgBuffer();
 
+    private:
         /**
          * @brief Create a GhaBuffer with it's usage set based on how it's used in the graph.
          * @param factory 

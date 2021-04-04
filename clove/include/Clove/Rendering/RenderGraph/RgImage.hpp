@@ -14,6 +14,8 @@ namespace garlic::clove {
      * @details Can be used to later create a GhaImage when executing the graph.
      */
     class RgImage {
+        friend class RenderGraph;
+        
         //VARIABLES
     private:
         GhaImage::Descriptor ghaDescriptor{}; /**< Gets updated while the image is used within the graph. */
@@ -33,6 +35,7 @@ namespace garlic::clove {
 
         ~RgImage();
 
+    private:
         /**
          * @brief Creates a GhaImage with it's usage/layout set based on how it's used in the graph. 
          * @param factory 
