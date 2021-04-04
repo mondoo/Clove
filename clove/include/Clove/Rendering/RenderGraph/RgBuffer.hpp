@@ -10,7 +10,8 @@ namespace garlic::clove {
 namespace garlic::clove {
     /**
      * @brief Tracks the usage and dependencies of a buffer in the RenderGraph.
-     * @details Can be used to later create a GhaBuffer when executing the graph.
+     * @details Can be used to later create a GhaBuffer when executing the graph
+     * or track an exisiting GhaBuffer.
      */
     class RgBuffer {
         friend class RenderGraph;
@@ -25,6 +26,13 @@ namespace garlic::clove {
     public:
         RgBuffer();
         RgBuffer(size_t bufferSize);
+        /**
+         * @brief Constructs an RgBuffer from an existing GhaBuffer.
+         * @param buffer GhaBuffer to construct from.
+         * @param offset The offset into the GhaBuffer that this RgBuffer will view.
+         * @param size The size of the GhaBuffer that this RgBuffer will view.
+         */
+        RgBuffer(std::shared_ptr<GhaBuffer> buffer, size_t offset, size_t size);
 
         RgBuffer(RgBuffer const &other);
         RgBuffer(RgBuffer &&other) noexcept;

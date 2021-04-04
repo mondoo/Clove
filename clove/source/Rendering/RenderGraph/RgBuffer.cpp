@@ -4,9 +4,13 @@
 
 namespace garlic::clove {
     RgBuffer::RgBuffer() = default;
-    
+
     RgBuffer::RgBuffer(size_t bufferSize) {
         ghaDescriptor.size = bufferSize;
+    }
+
+    RgBuffer::RgBuffer(std::shared_ptr<GhaBuffer> buffer, size_t offset, size_t size) {
+        //TODO: Keep track of offset and size used for binding later.
     }
 
     RgBuffer::RgBuffer(RgBuffer const &other) {
