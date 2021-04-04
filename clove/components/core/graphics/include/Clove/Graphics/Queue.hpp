@@ -1,13 +1,18 @@
 #pragma once
 
+#include <Clove/Definitions.hpp>
+
 namespace garlic::clove {
-    enum class QueueFlags {
+    using QueueFlagsType = uint8_t;
+    enum class QueueFlags : QueueFlagsType {
         None,
-        Transient,   /**< Buffers will be destroyed shortly after using them. */
-        ReuseBuffers /**< Buffers will be recorded to mutliple times. */
+        Transient,   /**< Specifies that command buffers will be freed or reset shortly after using them. */
+        ReuseBuffers /**< Allows buffers to be reset and recorded to multiple times. Normally a buffer needs to be freed and realloacted once used. */
     };
 
     struct CommandQueueDescriptor {
-        QueueFlags flags;
+        QueueFlags flags; /**< Flags specifying how buffers allocated from a queue will be used. */
     };
+
+    CLOVE_ENUM_BIT_FLAG_OPERATORS(QueueFlags, QueueFlagsType)
 }

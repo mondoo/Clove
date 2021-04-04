@@ -40,8 +40,8 @@ namespace garlic::clove {
         ghaFactory = graphicsDevice->getGraphicsFactory();
 
         //Object initialisation
-        graphicsQueue = *ghaFactory->createGraphicsQueue({ QueueFlags::ReuseBuffers });
-        computeQueue  = *ghaFactory->createComputeQueue({ QueueFlags::ReuseBuffers });
+        graphicsQueue = *ghaFactory->createGraphicsQueue({ QueueFlags::Transient | QueueFlags::ReuseBuffers });
+        computeQueue  = *ghaFactory->createComputeQueue({ QueueFlags::Transient | QueueFlags::ReuseBuffers });
 
         descriptorSetLayouts[DescriptorSetSlots::Mesh]     = createMeshDescriptorSetLayout(*ghaFactory);
         descriptorSetLayouts[DescriptorSetSlots::View]     = createViewDescriptorSetLayout(*ghaFactory);
