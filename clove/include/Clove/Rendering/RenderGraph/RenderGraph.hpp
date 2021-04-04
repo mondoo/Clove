@@ -23,6 +23,42 @@ namespace garlic::clove {
      * @brief Tracks how resources are used to create a graph of how to render a frame.
      */
     class RenderGraph {
+        //TYPES
+    public:
+        struct BufferBinding {
+            uint32_t slot{};
+            RgBuffer buffer{};
+        };
+
+        struct ImageBindng {
+            uint32_t slot{};
+            GhaSampler::Descriptor samplerState{};//TODO: RG version?
+            RgImage image{};
+        };
+
+        /**
+         * @brief Represents a single draw indexed call.
+         */
+        struct GraphicsSubmission {
+            RgBuffer vertexBuffer{};
+            RgBuffer indexBuffer{};
+
+            //NOTE: Will be used to create descriptor sets
+            std::vector<BufferBinding> shaderUbos{};
+            std::vector<ImageBindng> shaderCombinedImageSamplers{};
+        };
+
+        /**
+         * @brief Represents a single dispatch call.
+         */
+        struct ComputeSubmission {
+            vec3ui dispatchSize{ 1, 1, 1 };
+
+            //NOTE: Will be used to create descriptor sets
+            std::vector<BufferBinding> shaderStorageBuffers{};
+            std::vector<ImageBindng> shaderStorageImages{};//TODO: Sampler not required on compute passes
+        };
+
         //VARIABLES
     private:
         //FUNCTIONS
@@ -62,7 +98,7 @@ namespace garlic::clove {
         }
 
         //TODO: Maybe a version that just takes a vertex / index buffer?
-        void addGraphicsPass(RgGraphicsPipelineState pipelineState, std::function<void(GhaGraphicsCommandBuffer &)> pass) {
+        void addGraphicsPass(RgGraphicsPipelineState pipelineState, std::vector<GraphicsSubmission> pass) {
             //TODO
 
             //The idea is that it tracks the pipeline (incase of being used in multiple passes)
@@ -72,7 +108,7 @@ namespace garlic::clove {
         }
 
         //TODO: Maybe a version that just adds a dispatch call
-        void addComputePass(RgComputePipelineState pipelineState, std::function<void(GhaComputeCommandBuffer)> pass) {
+        void addComputePass(RgComputePipelineState pipelineState, std::vector<ComputeSubmission> pass) {
             //TODO
         }
 

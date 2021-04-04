@@ -16,21 +16,10 @@ namespace garlic::clove {
     class RgGraphicsPipelineState {
         //TYPES
     public:
-        struct BufferBinding {
-            uint32_t slot{};
-            RgBuffer buffer{};
-        };
-
-        struct ImageBindng {
-            uint32_t slot{};
-            GhaSampler::Descriptor samplerState{};//TODO: RG version?
-            RgImage image{};
-        };
-
         struct RenderTargetBinding {//TODO: RenderTargetDescriptor?
             LoadOperation loadOp{};
             StoreOperation storeOp{};
-            std::optional<RgImage> target{};//TODO: If set will render to that else will render to screen? Or have an inbuilt scene colour RgImage
+            RgImage target{};
         };
 
         struct DepthStencilBinding {
@@ -49,10 +38,6 @@ namespace garlic::clove {
             //TODO: raster state
             //TODO: depth state
             //TODO: Blending
-
-            //NOTE: Will be used to create descriptor sets
-            std::vector<BufferBinding> shaderUbos{};
-            std::vector<ImageBindng> shaderCombinedImageSamplers{};
 
             //NOTE: Will be used to create the render pass.
             std::vector<RenderTargetBinding> renderTargets{};

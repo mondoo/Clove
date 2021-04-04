@@ -12,22 +12,8 @@ namespace garlic::clove {
     class RgComputePipelineState {
         //TYPES
     public:
-        struct BufferBinding {
-            uint32_t slot{};
-            RgBuffer buffer{};
-        };
-
-        struct ImageBindng {
-            uint32_t slot{};
-            RgImage image{};
-        };
-
         struct Descriptor {
             std::shared_ptr<GhaShader> computeShader;
-            
-            //NOTE: Will be used to create descriptor sets
-            std::vector<BufferBinding> shaderStorageBuffers{};
-            std::vector<ImageBindng> shaderStorageImages{};
         };
 
         //VARIABLES
