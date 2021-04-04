@@ -73,30 +73,6 @@ namespace garlic::clove {
 
         ~RenderGraph();
 
-        /**
-         * @brief Creates a RenderGraph tracked buffer.
-         * @param bufferSize The size of the buffer in bytes.
-         * @return 
-         */
-        RgBuffer createBuffer(size_t bufferSize);
-        /**
-         * @brief Create a RenderGraph tracked image.
-         * @param imageType The type of the image (2D, 3D etc).
-         * @param dimensions The dimensions of the image.
-         * @return 
-         */
-        RgImage createImage(GhaImage::Type imageType, vec2ui dimensions);
-
-        RgGraphicsPipelineState createGraphicsPipelineState(RgGraphicsPipelineState::Descriptor descriptor) {
-            //TODO:
-            return {};
-        }
-
-        RgComputePipelineState createComputePipelineState() {
-            //TODO:
-            return {};
-        }
-
         //TODO: Maybe a version that just takes a vertex / index buffer?
         void addGraphicsPass(RgGraphicsPipelineState pipelineState, std::vector<GraphicsSubmission> pass) {
             //TODO

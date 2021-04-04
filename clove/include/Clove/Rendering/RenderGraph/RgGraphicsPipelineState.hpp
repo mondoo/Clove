@@ -52,6 +52,9 @@ namespace garlic::clove {
 
         //FUNCTIONS
     public:
+        RgGraphicsPipelineState();
+        RgGraphicsPipelineState(Descriptor descriptor);
+        
         //TODO:
     };
 }

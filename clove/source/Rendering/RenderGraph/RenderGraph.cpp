@@ -13,14 +13,6 @@ namespace garlic::clove {
 
     RenderGraph::~RenderGraph() = default;
 
-    RgBuffer RenderGraph::createBuffer(size_t bufferSize) {
-        return RgBuffer{ bufferSize };
-    }
-
-    RgImage RenderGraph::createImage(GhaImage::Type imageType, vec2ui dimensions) {
-        return RgImage{ imageType, std::move(dimensions) };
-    }
-
     //Return a submit info?
     void RenderGraph::execute(GhaFactory &factory, GhaGraphicsQueue &graphicsQueue, GhaComputeQueue &computeQueue, GhaTransferQueue &transferQueue) {
         //TODO

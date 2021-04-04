@@ -24,5 +24,9 @@ namespace garlic::clove {
 
         //FUNCTIONS
     public:
+        RgComputePipelineState();
+        RgComputePipelineState(Descriptor descriptor);
+
+        //TODO
     };
 }
