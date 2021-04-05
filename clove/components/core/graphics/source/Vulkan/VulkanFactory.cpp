@@ -31,17 +31,16 @@
 namespace garlic::clove {
     namespace {
         VkCommandPoolCreateFlags convertCommandPoolCreateFlags(QueueFlags garlicFlags) {
-            switch(garlicFlags) {
-                case QueueFlags::None:
-                    return 0;
-                case QueueFlags::Transient:
-                    return VK_COMMAND_POOL_CREATE_TRANSIENT_BIT;
-                case QueueFlags::ReuseBuffers:
-                    return VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
-                default:
-                    CLOVE_ASSERT(false, "{0}: Unkown queue flag", CLOVE_FUNCTION_NAME);
-                    return 0;
+            VkCommandPoolCreateFlags flags{ 0 };
+
+            if((garlicFlags & QueueFlags::Transient) != 0){
+                flags |= VK_COMMAND_POOL_CREATE_TRANSIENT_BIT;
             }
+            if((garlicFlags & QueueFlags::ReuseBuffers) != 0){
+                flags |= VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+            }
+            
+            return flags;
         }
 
         VkSurfaceFormatKHR chooseSwapSurfaceFormat(std::vector<VkSurfaceFormatKHR> const &availableFormats) {
