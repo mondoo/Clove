@@ -2,6 +2,8 @@
 
 #include "Clove/Graphics/Metal/MetalImageView.hpp"
 
+#include <Clove/Log/Log.hpp>
+
 namespace garlic::clove {
 	namespace {
 		MTLTextureType convertImageViewType(GhaImageView::Type type) {
