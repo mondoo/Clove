@@ -6,11 +6,21 @@
 
 namespace garlic::clove {
 	class MetalGraphicsCommandBuffer : public GhaGraphicsCommandBuffer {
+		//TYPES
+	private:
+		struct CachedIndexBufferData {
+			id<MTLBuffer> buffer{};
+			MTLIndexType indexType{};
+			NSUInteger offset{};
+		};
 		//VARIABLES
 	private:
 		id<MTLCommandBuffer> commandBuffer;
 		
 		id<MTLRenderCommandEncoder> currentEncoder;
+		
+		//Metal's drawIndexed call takes an index buffer directly so we need to cache the one provided from bindIndexBuffer
+		CachedIndexBufferData cachedIndexBuffer; 
 		
 		//FUNCTIONS
 	public:
