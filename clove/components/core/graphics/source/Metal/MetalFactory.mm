@@ -3,9 +3,11 @@
 #include "Clove/Graphics/ShaderCompiler.hpp"
 #include "Clove/Graphics/Metal/MetalBuffer.hpp"
 #include "Clove/Graphics/Metal/MetalShader.hpp"
+#include "Clove/Graphics/Metal/MetalFramebuffer.hpp"
 #include "Clove/Graphics/Metal/MetalGraphicsPipelineObject.hpp"
 #include "Clove/Graphics/Metal/MetalGraphicsQueue.hpp"
 #include "Clove/Graphics/Metal/MetalImage.hpp"
+#include "Clove/Graphics/Metal/MetalImageView.hpp"
 #include "Clove/Graphics/Metal/MetalRenderPass.hpp"
 
 #include <Clove/Cast.hpp>
@@ -64,6 +66,32 @@ namespace garlic::clove {
 			}
 			
 			return mtlFlags;
+		}
+		
+		MTLLoadAction convertLoadOp(LoadOperation garlicOperation) {
+			switch(garlicOperation) {
+				case LoadOperation::Load:
+					return MTLLoadActionLoad;
+				case LoadOperation::Clear:
+					return MTLLoadActionClear;
+				case LoadOperation::DontCare:
+					return MTLLoadActionDontCare;
+				default:
+					CLOVE_ASSERT(false, "{0}: Unkown operation", CLOVE_FUNCTION_NAME);
+					return MTLLoadActionDontCare;
+			}
+		}
+
+		MTLStoreAction convertStoreOp(StoreOperation garlicOperation) {
+			switch(garlicOperation) {
+				case StoreOperation::Store:
+					return MTLStoreActionStore;
+				case StoreOperation::DontCare:
+					return MTLStoreActionDontCare;
+				default:
+					CLOVE_ASSERT(false, "{0}: Unkown operation", CLOVE_FUNCTION_NAME);
+					return MTLStoreActionUnknown;
+			}
 		}
 	}
 	
@@ -220,7 +248,19 @@ namespace garlic::clove {
 	}
 
 	Expected<std::unique_ptr<GhaFramebuffer>, std::runtime_error> MetalFactory::createFramebuffer(GhaFramebuffer::Descriptor descriptor) {
-		return Unexpected{ std::runtime_error{ "Not implemented" } };
+		GhaRenderPass::Descriptor const &renderPassDescriptor{ polyCast<MetalRenderPass>(descriptor.renderPass.get())->getDescriptor() };
+		
+		MTLRenderPassDescriptor *frameBufferDescriptor{};
+		for(size_t i{ 0 }; i < renderPassDescriptor.colourAttachments.size(); ++i) {
+			frameBufferDescriptor.colorAttachments[i].texture = polyCast<MetalImageView>(descriptor.attachments[i].get())->getTexture();
+			frameBufferDescriptor.colorAttachments[i].loadAction = convertLoadOp(renderPassDescriptor.colourAttachments[i].loadOperation);
+			frameBufferDescriptor.colorAttachments[i].storeAction = convertStoreOp(renderPassDescriptor.colourAttachments[i].storeOperation);
+		}
+		frameBufferDescriptor.depthAttachment.texture = polyCast<MetalImageView>(descriptor.attachments.back().get())->getTexture();
+		frameBufferDescriptor.depthAttachment.loadAction = convertLoadOp(renderPassDescriptor.depthAttachment.loadOperation);
+		frameBufferDescriptor.depthAttachment.storeAction = convertStoreOp(renderPassDescriptor.depthAttachment.storeOperation);
+		
+		return std::unique_ptr<GhaFramebuffer>{ std::make_unique<MetalFramebuffer>(frameBufferDescriptor) };
 	}
 	
 	Expected<std::unique_ptr<GhaDescriptorPool>, std::runtime_error> MetalFactory::createDescriptorPool(GhaDescriptorPool::Descriptor descriptor) {
