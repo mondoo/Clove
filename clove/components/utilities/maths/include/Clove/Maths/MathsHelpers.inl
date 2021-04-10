@@ -116,7 +116,43 @@ namespace garlic::clove {
     }
 
     template<typename T>
-    vec<3, T> decomposeTranslation(mat<4, 4, T> const &matrix){
+    vec<3, T> decomposeTranslation(mat<4, 4, T> const &matrix) {
         return { matrix[3] };
+    }
+
+    template<typename T>
+    quat<T> decomposeRotation(mat<4, 4, T> matrix) {
+        matrix[3][0] = 0.0f;
+        matrix[3][1] = 0.0f;
+        matrix[3][2] = 0.0f;
+
+        vec3f const scaleX{ matrix[0][0], matrix[0][1], matrix[0][2] };
+        vec3f const scaleY{ matrix[1][0], matrix[1][1], matrix[1][2] };
+        vec3f const scaleZ{ matrix[2][0], matrix[2][1], matrix[2][2] };
+
+        vec3f const scale{ length(scaleX), length(scaleY), length(scaleZ) };
+
+        matrix[0][0] /= scale.x;
+        matrix[0][1] /= scale.x;
+        matrix[0][2] /= scale.x;
+
+        matrix[1][0] /= scale.y;
+        matrix[1][1] /= scale.y;
+        matrix[1][2] /= scale.y;
+
+        matrix[2][0] /= scale.z;
+        matrix[2][1] /= scale.z;
+        matrix[2][2] /= scale.z;
+
+        return matrixToQuaternion(matrix);
+    }
+
+    template<typename T>
+    vec<3, T> decomposeScale(mat<4, 4, T> const &matrix) {
+        vec3f const scaleX{ matrix[0][0], matrix[0][1], matrix[0][2] };
+        vec3f const scaleY{ matrix[1][0], matrix[1][1], matrix[1][2] };
+        vec3f const scaleZ{ matrix[2][0], matrix[2][1], matrix[2][2] };
+
+        return { length(scaleX), length(scaleY), length(scaleZ) };
     }
 }
