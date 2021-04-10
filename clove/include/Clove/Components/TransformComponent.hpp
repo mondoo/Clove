@@ -38,7 +38,7 @@ namespace garlic::clove {
         vec3f getWorldScale() const;
 
         vec3f getForward() const;
-        vec3f getRight() const;
+        vec3f getLeft() const;
         vec3f getUp() const;
     };
 }
