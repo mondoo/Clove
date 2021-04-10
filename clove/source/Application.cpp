@@ -20,7 +20,14 @@
 namespace garlic::clove {
     Application *Application::instance{ nullptr };
 
-    Application::~Application() = default;
+    Application::~Application() {
+        //Tell all layers they have been detached when the application is shutdown
+        for(auto &&[key, group] : layers) {
+            for(auto &layer : group) {
+                layer->onDetach();
+            }
+        }
+    }
 
     std::unique_ptr<Application> Application::create(GraphicsApi graphicsApi, AudioApi audioApi, Window::Descriptor const &windowDescriptor) {	
 		auto window{ Window::create(windowDescriptor) };
