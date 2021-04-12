@@ -1,10 +1,15 @@
+//There seems to be a bug with optional in msvc that stops it compiling. Having this header included here (above VulkanFactory) is a current work around.
+#include "Clove/Graphics/Vulkan/VulkanRenderPass.hpp"
+//
 #include "Clove/Graphics/Vulkan/VulkanFactory.hpp"
+//
 
 #include "Clove/Graphics/ShaderCompiler.hpp"
 #include "Clove/Graphics/Vulkan/MemoryAllocator.hpp"
 #include "Clove/Graphics/Vulkan/VulkanBuffer.hpp"
 #include "Clove/Graphics/Vulkan/VulkanComputePipelineObject.hpp"
 #include "Clove/Graphics/Vulkan/VulkanComputeQueue.hpp"
+#include "Clove/Graphics/Vulkan/VulkanDescriptor.hpp"
 #include "Clove/Graphics/Vulkan/VulkanDescriptorPool.hpp"
 #include "Clove/Graphics/Vulkan/VulkanDescriptorSetLayout.hpp"
 #include "Clove/Graphics/Vulkan/VulkanFence.hpp"
@@ -15,14 +20,12 @@
 #include "Clove/Graphics/Vulkan/VulkanImageView.hpp"
 #include "Clove/Graphics/Vulkan/VulkanPipelineObject.hpp"
 #include "Clove/Graphics/Vulkan/VulkanPresentQueue.hpp"
-#include "Clove/Graphics/Vulkan/VulkanRenderPass.hpp"
 #include "Clove/Graphics/Vulkan/VulkanResource.hpp"
 #include "Clove/Graphics/Vulkan/VulkanSampler.hpp"
 #include "Clove/Graphics/Vulkan/VulkanSemaphore.hpp"
 #include "Clove/Graphics/Vulkan/VulkanShader.hpp"
 #include "Clove/Graphics/Vulkan/VulkanSwapchain.hpp"
 #include "Clove/Graphics/Vulkan/VulkanTransferQueue.hpp"
-#include "Clove/Graphics/Vulkan/VulkanDescriptor.hpp"
 
 #include <Clove/Cast.hpp>
 #include <Clove/Log/Log.hpp>
@@ -33,13 +36,13 @@ namespace garlic::clove {
         VkCommandPoolCreateFlags convertCommandPoolCreateFlags(QueueFlags garlicFlags) {
             VkCommandPoolCreateFlags flags{ 0 };
 
-            if((garlicFlags & QueueFlags::Transient) != 0){
+            if((garlicFlags & QueueFlags::Transient) != 0) {
                 flags |= VK_COMMAND_POOL_CREATE_TRANSIENT_BIT;
             }
-            if((garlicFlags & QueueFlags::ReuseBuffers) != 0){
+            if((garlicFlags & QueueFlags::ReuseBuffers) != 0) {
                 flags |= VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
             }
-            
+
             return flags;
         }
 
