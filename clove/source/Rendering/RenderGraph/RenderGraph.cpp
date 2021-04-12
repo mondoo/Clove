@@ -14,7 +14,7 @@ namespace garlic::clove {
     RenderGraph::~RenderGraph() = default;
 
     //Return a submit info?
-    void RenderGraph::execute(GhaFactory &factory, GhaGraphicsQueue &graphicsQueue, GhaComputeQueue &computeQueue, GhaTransferQueue &transferQueue) {
+    GraphicsSubmitInfo RenderGraph::execute(GhaFactory &factory, GhaGraphicsQueue &graphicsQueue, GhaComputeQueue &computeQueue, GhaTransferQueue &transferQueue) {
         //TODO
 
         /*
@@ -30,5 +30,7 @@ namespace garlic::clove {
             - resources (buffers / images)
             - passes (execute shaders. consume and produce resources)
         */
+
+        return {};
     }
 }

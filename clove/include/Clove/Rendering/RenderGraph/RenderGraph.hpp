@@ -5,6 +5,7 @@
 #include "Clove/Rendering/RenderGraph/RgGraphicsPipelineState.hpp"
 #include "Clove/Rendering/RenderGraph/RgImage.hpp"
 
+#include <Clove/Graphics/GhaGraphicsQueue.hpp>
 #include <Clove/Graphics/GhaImage.hpp>
 #include <Clove/Maths/Vector.hpp>
 #include <functional>
@@ -94,7 +95,8 @@ namespace garlic::clove {
          * @param graphicsQueue The queue the graph will submit graphics work to.
          * @param computeQueue The queue the graph will submit compute work to.
          * @param transferQueue The queue the graph will submit transfer work to.
+         * @return Returns the GraphicsSubmitInfo used to render the final result of the graph.
          */
-        void execute(GhaFactory &factory, GhaGraphicsQueue &graphicsQueue, GhaComputeQueue &computeQueue, GhaTransferQueue &transferQueue);
+        GraphicsSubmitInfo execute(GhaFactory &factory, GhaGraphicsQueue &graphicsQueue, GhaComputeQueue &computeQueue, GhaTransferQueue &transferQueue);
     };
 }
