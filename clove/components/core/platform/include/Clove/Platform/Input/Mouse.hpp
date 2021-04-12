@@ -1,10 +1,13 @@
 #pragma once
 
+//There seems to be a bug with optional in msvc that stops it compiling. Having this header included here (before anything) is a current work around.
+#include <optional>
+//
+
 #include "Clove/Platform/Input/MouseButtonCodes.hpp"
 
 #include <Clove/Maths/Vector.hpp>
 #include <bitset>
-#include <optional>
 #include <queue>
 #include <unordered_map>
 
