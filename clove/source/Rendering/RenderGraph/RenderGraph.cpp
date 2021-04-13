@@ -25,7 +25,7 @@ namespace garlic::clove {
         return {};
     }
 
-    RgImage RenderGraph::createImage(GhaImage::Type imageType, vec2ui dimensions) {
+    RgImage RenderGraph::createImage(GhaImage::Type imageType, GhaImage::Format format, vec2ui dimensions) {
         //TODO
 
         return {};

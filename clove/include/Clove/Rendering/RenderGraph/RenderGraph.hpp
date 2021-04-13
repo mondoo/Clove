@@ -96,10 +96,11 @@ namespace garlic::clove {
         /**
          * @brief Constructs a new RgImage with the specified type and dimensions.
          * @param imageType 
+         * @param format
          * @param dimensions 
          * @return 
          */
-        RgImage createImage(GhaImage::Type imageType, vec2ui dimensions);
+        RgImage createImage(GhaImage::Type imageType, GhaImage::Format format, vec2ui dimensions);
         /**
          * @brief Creates a new RgImage from an existing image view. Usefull
          * if wanting to use pre made images (such as backbuffers) in the render graph.
