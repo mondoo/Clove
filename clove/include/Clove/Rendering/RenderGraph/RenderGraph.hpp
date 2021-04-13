@@ -3,6 +3,7 @@
 #include "Clove/Rendering/RenderGraph/RgGraphicsPipelineState.hpp"
 //
 
+#include "Clove/Rendering/RenderGraph/RgArena.hpp"
 #include "Clove/Rendering/RenderGraph/RgBuffer.hpp"
 #include "Clove/Rendering/RenderGraph/RgComputePipelineState.hpp"
 #include "Clove/Rendering/RenderGraph/RgImage.hpp"
@@ -71,7 +72,8 @@ namespace garlic::clove {
     private:
         //FUNCTIONS
     public:
-        RenderGraph();
+        RenderGraph() = delete;
+        RenderGraph(std::shared_ptr<RgArena> area);
 
         RenderGraph(RenderGraph const &other);
         RenderGraph(RenderGraph &&other) noexcept;

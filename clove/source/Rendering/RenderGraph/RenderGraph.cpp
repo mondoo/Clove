@@ -1,7 +1,9 @@
 #include "Clove/Rendering/RenderGraph/RenderGraph.hpp"
 
 namespace garlic::clove {
-    RenderGraph::RenderGraph() = default;
+    RenderGraph::RenderGraph(std::shared_ptr<RgArena> area) {
+        //TODO
+    };
 
     RenderGraph::RenderGraph(RenderGraph const &other) = default;
 
