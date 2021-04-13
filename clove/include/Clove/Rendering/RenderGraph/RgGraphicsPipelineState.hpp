@@ -5,6 +5,7 @@
 
 #include "Clove/Rendering/RenderGraph/RgBuffer.hpp"
 #include "Clove/Rendering/RenderGraph/RgImage.hpp"
+#include "Clove/Rendering/RenderGraph/RgShader.hpp"
 
 #include <Clove/Graphics/GhaGraphicsPipelineObject.hpp>
 #include <Clove/Graphics/GhaSampler.hpp>
@@ -29,8 +30,8 @@ namespace garlic::clove {
         };
 
         struct Descriptor {
-            std::shared_ptr<GhaShader> vertexShader;
-            std::shared_ptr<GhaShader> pixelShader;
+            RgShader vertexShader;
+            RgShader pixelShader;
 
             //NOTE: Will create the vertex input based off of clove's uber vertex
 

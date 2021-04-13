@@ -135,6 +135,8 @@ add_library(
 		${SOURCE}/Rendering/RenderGraph/RgGraphicsPipelineState.cpp
 		${INCLUDE}/Rendering/RenderGraph/RgImage.hpp
 		${SOURCE}/Rendering/RenderGraph/RgImage.cpp
+		${INCLUDE}/Rendering/RenderGraph/RgShader.hpp
+		${SOURCE}/Rendering/RenderGraph/RgShader.cpp
 		${INCLUDE}/Rendering/RenderPasses/ForwardColourPass.hpp
 		${SOURCE}/Rendering/RenderPasses/ForwardColourPass.cpp
 		${INCLUDE}/Rendering/RenderPasses/DirectionalLightPass.hpp

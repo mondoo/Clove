@@ -37,6 +37,18 @@ namespace garlic::clove {
         return {};
     }
 
+    RgShader RenderGraph::createShader(std::filesystem::path const &file, GhaShader::Stage shaderStage) {
+        //TODO
+
+        return {};
+    }
+
+    RgShader RenderGraph::createShader(std::string_view source, std::unordered_map<std::string, std::string> includeSources, std::string_view shaderName, GhaShader::Stage shaderStage) {
+        //TODO
+
+        return {};
+    }
+
     RgGraphicsPipelineState RenderGraph::createGraphicsPipelineState(RgGraphicsPipelineState::Descriptor desciptor) {
         //TODO
 

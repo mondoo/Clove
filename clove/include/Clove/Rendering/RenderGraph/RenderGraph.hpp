@@ -6,10 +6,14 @@
 #include "Clove/Rendering/RenderGraph/RgBuffer.hpp"
 #include "Clove/Rendering/RenderGraph/RgComputePipelineState.hpp"
 #include "Clove/Rendering/RenderGraph/RgImage.hpp"
+#include "Clove/Rendering/RenderGraph/RgShader.hpp"
 
+#include <Clove/Graphics/GhaBuffer.hpp>
 #include <Clove/Graphics/GhaGraphicsQueue.hpp>
 #include <Clove/Graphics/GhaImage.hpp>
+#include <Clove/Graphics/GhaShader.hpp>
 #include <Clove/Maths/Vector.hpp>
+#include <filesystem>
 #include <functional>
 #include <vector>
 
@@ -109,7 +113,22 @@ namespace garlic::clove {
          */
         RgImage createImage(std::shared_ptr<GhaImageView> ghaImageView);
 
-        //TODO: createShader
+        /**
+         * @brief Creates a new RgShader from a source file.
+         * @param file 
+         * @param shaderStage 
+         * @return 
+         */
+        RgShader createShader(std::filesystem::path const &file, GhaShader::Stage shaderStage);
+        /**
+         * @brief Create a new RgShader from a source string.
+         * @param source 
+         * @param includeSources A map of source strings that will get searched for any #includes.
+         * @param shaderName A name for the shader being compiled.
+         * @param shaderStage 
+         * @return 
+         */
+        RgShader createShader(std::string_view source, std::unordered_map<std::string, std::string> includeSources, std::string_view shaderName, GhaShader::Stage shaderStage);
 
         /**
          * @brief Constructs a new RgGraphicsPipelineState.

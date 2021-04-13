@@ -2,8 +2,10 @@
 
 #include "Clove/Rendering/RenderGraph/RgBuffer.hpp"
 #include "Clove/Rendering/RenderGraph/RgImage.hpp"
+#include "Clove/Rendering/RenderGraph/RgShader.hpp"
 
 #include <Clove/Graphics/GhaComputePipelineObject.hpp>
+#include <Clove/Graphics/GhaSampler.hpp>
 #include <Clove/Graphics/GhaShader.hpp>
 #include <memory>
 
@@ -12,7 +14,7 @@ namespace garlic::clove {
         //TYPES
     public:
         struct Descriptor {
-            std::shared_ptr<GhaShader> computeShader;
+            RgShader computeShader;
         };
 
         //VARIABLES
