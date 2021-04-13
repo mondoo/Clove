@@ -1,5 +1,9 @@
 #pragma once
 
+//There seems to be a bug with optional in msvc that stops it compiling. Having this header included here (above everything) is a current work around.
+#include "Clove/Graphics/GhaRenderPass.hpp"
+//
+
 #include "Clove/Graphics/GhaBuffer.hpp"
 #include "Clove/Graphics/GhaComputePipelineObject.hpp"
 #include "Clove/Graphics/GhaComputeQueue.hpp"
@@ -11,7 +15,6 @@
 #include "Clove/Graphics/GhaGraphicsQueue.hpp"
 #include "Clove/Graphics/GhaImage.hpp"
 #include "Clove/Graphics/GhaPresentQueue.hpp"
-#include "Clove/Graphics/GhaRenderPass.hpp"
 #include "Clove/Graphics/GhaSampler.hpp"
 #include "Clove/Graphics/GhaSemaphore.hpp"
 #include "Clove/Graphics/GhaShader.hpp"
