@@ -6,7 +6,6 @@
 #include <Clove/Graphics/GhaComputePipelineObject.hpp>
 #include <Clove/Graphics/GhaShader.hpp>
 #include <memory>
-#include <vector>
 
 namespace garlic::clove {
     class RgComputePipelineState {

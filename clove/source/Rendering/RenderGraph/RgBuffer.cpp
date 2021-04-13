@@ -1,7 +1,5 @@
 #include "Clove/Rendering/RenderGraph/RgBuffer.hpp"
 
-#include <Clove/Graphics/GhaFactory.hpp>
-
 namespace garlic::clove {
     RgBuffer::RgBuffer() = default;
 

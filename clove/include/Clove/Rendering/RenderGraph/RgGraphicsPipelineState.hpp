@@ -1,14 +1,15 @@
 #pragma once
+//
+#include <Clove/Graphics/GhaRenderPass.hpp>
+//
 
 #include "Clove/Rendering/RenderGraph/RgBuffer.hpp"
 #include "Clove/Rendering/RenderGraph/RgImage.hpp"
 
 #include <Clove/Graphics/GhaGraphicsPipelineObject.hpp>
-#include <Clove/Graphics/GhaRenderPass.hpp>
-#include <Clove/Graphics/GhaShader.hpp>
 #include <Clove/Graphics/GhaSampler.hpp>
+#include <Clove/Graphics/GhaShader.hpp>
 #include <memory>
-#include <optional>
 #include <vector>
 
 namespace garlic::clove {
