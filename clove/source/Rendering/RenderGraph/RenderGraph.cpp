@@ -13,23 +13,52 @@ namespace garlic::clove {
 
     RenderGraph::~RenderGraph() = default;
 
+    RgBuffer RenderGraph::createBuffer(size_t bufferSize) {
+        //TODO
+
+        return {};
+    }
+
+    RgBuffer RenderGraph::createBuffer(std::shared_ptr<GhaBuffer> buffer, size_t offset, size_t size) {
+        //TODO
+
+        return {};
+    }
+
+    RgImage RenderGraph::createImage(GhaImage::Type imageType, vec2ui dimensions) {
+        //TODO
+
+        return {};
+    }
+
+    RgImage RenderGraph::createImage(std::shared_ptr<GhaImageView> ghaImageView) {
+        //TODO
+
+        return {};
+    }
+
+    RgGraphicsPipelineState RenderGraph::createGraphicsPipelineState(RgGraphicsPipelineState::Descriptor desciptor) {
+        //TODO
+
+        return {};
+    }
+
+    RgComputePipelineState RenderGraph::createComputePipelineState(RgComputePipelineState::Descriptor descriptor) {
+        //TODO
+
+        return {};
+    }
+
+    void RenderGraph::addGraphicsPass(RgGraphicsPipelineState pipelineState, std::vector<RenderGraph::GraphicsSubmission> pass) {
+    }
+
+    void RenderGraph::addComputePass(RgComputePipelineState pipelineState, std::vector<RenderGraph::ComputeSubmission> pass) {
+        //TODO
+    }
+
     //Return a submit info?
     GraphicsSubmitInfo RenderGraph::execute(GhaFactory &factory, GhaGraphicsQueue &graphicsQueue, GhaComputeQueue &computeQueue, GhaTransferQueue &transferQueue) {
         //TODO
-
-        /*
-        Do I want to submit everything here or just return a bunch of render passes?
-
-        have a RgPass (RgGraphicsPass / RgComputePass)
-        Passes will take the buffers / textures
-        Render graph orders these based on dependencies
-        renderer traverses the graph and provides the actual textures etc.
-        At the moment I think this should submit everything to the queue. The only problem is sending everything to the render target
-
-        Have 2 things:
-            - resources (buffers / images)
-            - passes (execute shaders. consume and produce resources)
-        */
 
         return {};
     }

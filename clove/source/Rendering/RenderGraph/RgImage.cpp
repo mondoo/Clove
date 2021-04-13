@@ -5,15 +5,6 @@
 namespace garlic::clove {
     RgImage::RgImage() = default;
 
-    RgImage::RgImage(GhaImage::Type imagetype, vec2ui dimensions) {
-        ghaDescriptor.dimensions = std::move(dimensions);
-        ghaDescriptor.type       = imagetype;
-    }
-
-    RgImage::RgImage(std::shared_ptr<GhaImageView> ghaImageView) {
-        //TODO
-    }
-
     RgImage::RgImage(RgImage const &other) {
         //TODO
     }
@@ -33,6 +24,15 @@ namespace garlic::clove {
     }
 
     RgImage::~RgImage() = default;
+
+    RgImage::RgImage(GhaImage::Type imagetype, vec2ui dimensions) {
+        ghaDescriptor.dimensions = std::move(dimensions);
+        ghaDescriptor.type       = imagetype;
+    }
+
+    RgImage::RgImage(std::shared_ptr<GhaImageView> ghaImageView) {
+        //TODO
+    }
 
     std::unique_ptr<GhaImage> RgImage::createGhaImage(GhaFactory &factory) {
         return *factory.createImage(ghaDescriptor);

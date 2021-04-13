@@ -13,7 +13,6 @@
 #include <vector>
 
 namespace garlic::clove {
-    //TODO: Desc. Used to create pipeline / renderpass?
     class RgGraphicsPipelineState {
         //TYPES
     public:
@@ -54,8 +53,8 @@ namespace garlic::clove {
         //FUNCTIONS
     public:
         RgGraphicsPipelineState();
+
+    private:
         RgGraphicsPipelineState(Descriptor descriptor);
-        
-        //TODO:
     };
 }

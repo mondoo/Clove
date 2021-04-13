@@ -26,9 +26,7 @@ namespace garlic::clove {
         //FUNCTIONS
     public:
         RgImage();
-        RgImage(GhaImage::Type imagetype, vec2ui dimensions);
-        RgImage(std::shared_ptr<GhaImageView> ghaImageView);
-
+        
         RgImage(RgImage const &other);
         RgImage(RgImage &&other) noexcept;
 
@@ -38,6 +36,9 @@ namespace garlic::clove {
         ~RgImage();
 
     private:
+        RgImage(GhaImage::Type imagetype, vec2ui dimensions);
+        RgImage(std::shared_ptr<GhaImageView> ghaImageView);
+
         /**
          * @brief Creates a GhaImage with it's usage/layout set based on how it's used in the graph. 
          * @param factory 

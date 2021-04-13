@@ -3,14 +3,6 @@
 namespace garlic::clove {
     RgBuffer::RgBuffer() = default;
 
-    RgBuffer::RgBuffer(size_t bufferSize) {
-        ghaDescriptor.size = bufferSize;
-    }
-
-    RgBuffer::RgBuffer(std::shared_ptr<GhaBuffer> buffer, size_t offset, size_t size) {
-        //TODO: Keep track of offset and size used for binding later.
-    }
-
     RgBuffer::RgBuffer(RgBuffer const &other) {
         //TODO
     }
@@ -36,7 +28,16 @@ namespace garlic::clove {
         //Block writes to buffers created directly from GHA?
     }
 
+    RgBuffer::RgBuffer(size_t bufferSize) {
+        ghaDescriptor.size = bufferSize;
+    }
+
+    RgBuffer::RgBuffer(std::shared_ptr<GhaBuffer> buffer, size_t offset, size_t size) {
+        //TODO: Keep track of offset and size used for binding later.
+    }
+
     std::unique_ptr<GhaBuffer> RgBuffer::createGhaBuffer(GhaFactory &factory) const {
-        return *factory.createBuffer(ghaDescriptor);
+        //return *factory.createBuffer(ghaDescriptor);
+        return nullptr;
     }
 }

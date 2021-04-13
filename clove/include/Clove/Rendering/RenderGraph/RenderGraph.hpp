@@ -77,20 +77,55 @@ namespace garlic::clove {
 
         ~RenderGraph();
 
-        //TODO: Maybe a version that just takes a vertex / index buffer?
-        void addGraphicsPass(RgGraphicsPipelineState pipelineState, std::vector<GraphicsSubmission> pass) {
-            //TODO
+        /**
+         * @brief Constructs an RgBuffer with the specified size.
+         * @param bufferSize 
+         * @return 
+         */
+        RgBuffer createBuffer(size_t bufferSize);
+        /**
+         * @brief Constructs an RgBuffer from an existing GhaBuffer. Usefull if wanting to use
+         * pre set up buffers (such as vertex / index buffers).
+         * @param buffer GhaBuffer to construct from.
+         * @param offset The offset into the GhaBuffer that this RgBuffer will view.
+         * @param size The size of the GhaBuffer that this RgBuffer will view.
+         * @return
+         */
+        RgBuffer createBuffer(std::shared_ptr<GhaBuffer> buffer, size_t offset, size_t size);
 
-            //The idea is that it tracks the pipeline (incase of being used in multiple passes)
-            //Then will bind the pipeline and execute the pass
+        /**
+         * @brief Constructs a new RgImage with the specified type and dimensions.
+         * @param imageType 
+         * @param dimensions 
+         * @return 
+         */
+        RgImage createImage(GhaImage::Type imageType, vec2ui dimensions);
+        /**
+         * @brief Creates a new RgImage from an existing image view. Usefull
+         * if wanting to use pre made images (such as backbuffers) in the render graph.
+         * @param ghaImageView 
+         * @return 
+         */
+        RgImage createImage(std::shared_ptr<GhaImageView> ghaImageView);
 
-            //I think it's expected (for now) to bind descriptor sets with in the provided pass
-        }
+        //TODO: createShader
 
-        //TODO: Maybe a version that just adds a dispatch call
-        void addComputePass(RgComputePipelineState pipelineState, std::vector<ComputeSubmission> pass) {
-            //TODO
-        }
+        /**
+         * @brief Constructs a new RgGraphicsPipelineState.
+         * @param desciptor 
+         * @return 
+         */
+        RgGraphicsPipelineState createGraphicsPipelineState(RgGraphicsPipelineState::Descriptor desciptor);
+
+        /**
+         * @brief Constructs a new RgComputePipelineState.
+         * @param descriptor 
+         * @return 
+         */
+        RgComputePipelineState createComputePipelineState(RgComputePipelineState::Descriptor descriptor);
+
+        void addGraphicsPass(RgGraphicsPipelineState pipelineState, std::vector<GraphicsSubmission> pass);
+        void addComputePass(RgComputePipelineState pipelineState, std::vector<ComputeSubmission> pass);
 
         /**
          * @brief Executes the RenderGraph. Creating any objects required and submitting commands to the relevant queues.

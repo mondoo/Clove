@@ -25,14 +25,7 @@ namespace garlic::clove {
         //FUNCTIONS
     public:
         RgBuffer();
-        RgBuffer(size_t bufferSize);
-        /**
-         * @brief Constructs an RgBuffer from an existing GhaBuffer.
-         * @param buffer GhaBuffer to construct from.
-         * @param offset The offset into the GhaBuffer that this RgBuffer will view.
-         * @param size The size of the GhaBuffer that this RgBuffer will view.
-         */
-        RgBuffer(std::shared_ptr<GhaBuffer> buffer, size_t offset, size_t size);
+        
 
         RgBuffer(RgBuffer const &other);
         RgBuffer(RgBuffer &&other) noexcept;
@@ -51,6 +44,9 @@ namespace garlic::clove {
         void write(void const *data, size_t const offset, size_t const size);
 
     private:
+        RgBuffer(size_t bufferSize);
+        RgBuffer(std::shared_ptr<GhaBuffer> buffer, size_t offset, size_t size);
+
         /**
          * @brief Create a GhaBuffer with it's usage set based on how it's used in the graph.
          * @param factory 
