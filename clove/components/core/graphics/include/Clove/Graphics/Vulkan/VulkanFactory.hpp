@@ -4,7 +4,6 @@
 #include "Clove/Graphics/Vulkan/DevicePointer.hpp"
 #include "Clove/Graphics/Vulkan/VulkanTypes.hpp"
 
-#include <optional>
 #include <vulkan/vulkan.h>
 
 namespace garlic::clove {

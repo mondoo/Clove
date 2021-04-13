@@ -22,7 +22,7 @@ namespace garlic::clove {
     }
 
     vec2i WindowSurface::getSize() const {
-        return window->getSize();
+        return window->getSize(true);
     }
 
     Keyboard &WindowSurface::getKeyboard() {
@@ -31,5 +31,9 @@ namespace garlic::clove {
 
     Mouse &WindowSurface::getMouse() {
         return window->getMouse();
+    }
+
+    Window *WindowSurface::getWindow() const {
+        return window.get();
     }
 }

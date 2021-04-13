@@ -40,8 +40,8 @@ namespace garlic::clove {
         ghaFactory = graphicsDevice->getGraphicsFactory();
 
         //Object initialisation
-        graphicsQueue = *ghaFactory->createGraphicsQueue({ QueueFlags::ReuseBuffers });
-        computeQueue  = *ghaFactory->createComputeQueue({ QueueFlags::ReuseBuffers });
+        graphicsQueue = *ghaFactory->createGraphicsQueue({ QueueFlags::Transient | QueueFlags::ReuseBuffers });
+        computeQueue  = *ghaFactory->createComputeQueue({ QueueFlags::Transient | QueueFlags::ReuseBuffers });
 
         descriptorSetLayouts[DescriptorSetSlots::Mesh]     = createMeshDescriptorSetLayout(*ghaFactory);
         descriptorSetLayouts[DescriptorSetSlots::View]     = createViewDescriptorSetLayout(*ghaFactory);
@@ -146,7 +146,10 @@ namespace garlic::clove {
         textureSampler.reset();
         for(auto &imageData : inFlightImageData) {
             imageData.frameDataBuffer.reset();
+
             graphicsQueue->freeCommandBuffer(*imageData.commandBuffer);
+            graphicsQueue->freeCommandBuffer(*imageData.shadowMapCommandBuffer);
+            graphicsQueue->freeCommandBuffer(*imageData.cubeShadowMapCommandBuffer);
         }
     }
 

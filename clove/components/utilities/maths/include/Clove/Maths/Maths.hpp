@@ -48,6 +48,10 @@ namespace garlic::clove {
     template<length_t C, length_t R, typename T>
     mat<C, R, T> transpose(mat<C, R, T> const &m);
 
+    //Linear interpolate between two scalars
+    template<typename T>
+    T lerp(T const &a, T const &b, T t);
+
     //Linear interpolate between two vectors
     template<length_t L, typename T>
     vec<L, T> lerp(vec<L, T> const &a, vec<L, T> const &b, T t);

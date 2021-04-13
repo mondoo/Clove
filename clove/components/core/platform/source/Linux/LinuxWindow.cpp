@@ -4,11 +4,15 @@
 #include <Clove/Log/Log.hpp>
 
 namespace garlic::clove {
-    LinuxWindow::LinuxWindow(WindowDescriptor const &descriptor)
+    LinuxWindow::LinuxWindow(Descriptor const &descriptor)
         : Window(keyboardDispatcher, mouseDispatcher) {
         CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Creating window: {0} ({1}, {2})", descriptor.title, descriptor.width, descriptor.height);
+        CLOVE_ASSERT(window == 0, "Window already exists! Currently only a single window on linux is supported");
 
-        display = XOpenDisplay(nullptr);//makes the connection to the client, where to display the window
+        if(display == nullptr) {
+            //Make the connection to the client, where to display the window
+            display = XOpenDisplay(nullptr);
+        }
 
         if(display == nullptr) {
             //TODO: Exception
@@ -19,12 +23,13 @@ namespace garlic::clove {
         screen   = DefaultScreenOfDisplay(display);//NOLINT Get the screen of the display
         screenID = DefaultScreen(display);         //NOLINT
 
-        windowAttribs                   = {};
-        windowAttribs.border_pixel      = BlackPixel(display, screenID);//NOLINT
-        windowAttribs.background_pixel  = WhitePixel(display, screenID);//NOLINT
-        windowAttribs.override_redirect = 1;
-        windowAttribs.colormap          = XCreateColormap(display, RootWindow(display, screenID), screen->root_visual, AllocNone);//NOLINT
-        windowAttribs.event_mask        = ExposureMask;
+        XSetWindowAttributes windowAttribs{
+            .background_pixel  = WhitePixel(display, screenID),//NOLINT clang-tidy complains about a cast inside this macro
+            .border_pixel      = BlackPixel(display, screenID),//NOLINT clang-tidy complains about a cast inside this macro
+            .event_mask        = ExposureMask,
+            .override_redirect = 1,
+            .colormap          = XDefaultColormap(display, screenID),
+        };
 
         window = XCreateWindow(display, RootWindow(display, screenID), 0, 0, descriptor.width, descriptor.height, 0, screen->depths[0].depth, InputOutput, screen->root_visual, CWBackPixel | CWColormap | CWBorderPixel | CWEventMask, &windowAttribs);//NOLINT
 
@@ -32,11 +37,11 @@ namespace garlic::clove {
         atomWmDeleteWindow = XInternAtom(display, "WM_DELETE_WINDOW", 0);
         XSetWMProtocols(display, window, &atomWmDeleteWindow, 1);
 
-        XSync(display, 0);//Passing true here flushes the event queue
+        int constexpr discardEvents{ 1 };
+        XSync(display, discardEvents);
 
-        long const keyboardMask{ KeyPressMask | KeyReleaseMask | KeymapStateMask };
-        long const mouseMask{ PointerMotionMask | ButtonPressMask | ButtonReleaseMask | EnterWindowMask | LeaveWindowMask };
-
+        long constexpr keyboardMask{ KeyPressMask | KeyReleaseMask | KeymapStateMask };
+        long constexpr mouseMask{ PointerMotionMask | ButtonPressMask | ButtonReleaseMask | EnterWindowMask | LeaveWindowMask };
         XSelectInput(display, window, keyboardMask | mouseMask | StructureNotifyMask);
 
         XStoreName(display, window, descriptor.title.c_str());
@@ -50,46 +55,46 @@ namespace garlic::clove {
     }
 
     LinuxWindow::~LinuxWindow() {
-        XFreeColormap(display, windowAttribs.colormap);
-        XDestroyWindow(display, window);
         XCloseDisplay(display);
+    }
+
+    std::unique_ptr<Window> Window::create(Descriptor const &descriptor) {
+        return std::make_unique<LinuxWindow>(descriptor);
     }
 
     std::any LinuxWindow::getNativeWindow() const {
         return std::make_pair(display, window);
     }
 
-    vec2i LinuxWindow::getPosition() const {
-        ::Window rootWindow{ 0 };
-        int32_t posX{ 0 };
-        int32_t posY{ 0 };
-        uint32_t width{ 0 };
-        uint32_t height{ 0 };
-        uint32_t borderWidth{ 0 };
-        uint32_t depth{ 0 };
+    vec2i LinuxWindow::getPosition(bool clientArea) const {
+        int32_t x{ 0 };
+        int32_t y{ 0 };
+        ::Window child{};
+        XTranslateCoordinates(display, window, XRootWindowOfScreen(screen), 0, 0, &x, &y, &child);
 
-        if(XGetGeometry(display, window, &rootWindow, &posX, &posY, &width, &height, &borderWidth, &depth) != 0) {
-            return { posX, posY };
+        if(clientArea) {
+            return { x, y };
         } else {
-            CLOVE_ASSERT(false, "Could not get window geometry");
-            return { 0, 0 };
+            XWindowAttributes attribs{};
+            XGetWindowAttributes(display, window, &attribs);
+            return { x - attribs.x, y - attribs.y };
         }
     }
 
-    vec2i LinuxWindow::getSize() const {
-        ::Window rootWindow{ 0 };
-        int32_t posX{ 0 };
-        int32_t posY{ 0 };
-        uint32_t width{ 0 };
-        uint32_t height{ 0 };
-        uint32_t borderWidth{ 0 };
-        uint32_t depth{ 0 };
-
-        if(XGetGeometry(display, window, &rootWindow, &posX, &posY, &width, &height, &borderWidth, &depth) != 0) {
-            return { width, height };
+    vec2i LinuxWindow::getSize(bool clientArea) const {
+        XWindowAttributes attribs{};
+        XGetWindowAttributes(display, window, &attribs);
+        if(clientArea) {
+            return { attribs.width, attribs.height };
         } else {
-            CLOVE_ASSERT(false, "Could not get window geometry");
-            return { 0, 0 };
+            /* 
+            There is no easy way to get the border height. So instead add on the 
+            difference between the client pos y and window pos y
+            */
+            int32_t clientY{ getPosition(true).y };
+            int32_t windowY{ getPosition(false).y };
+
+            return { attribs.width + attribs.border_width, attribs.height + (clientY - windowY) };
         }
     }
 
@@ -106,31 +111,26 @@ namespace garlic::clove {
     }
 
     void LinuxWindow::close() {
-        if(onWindowCloseDelegate.isBound()) {
-            onWindowCloseDelegate.broadcast();
-        }
-        open = false;
-        XCloseDisplay(display);
+        closeWindow(window);
     }
 
     void LinuxWindow::processInput() {
-        if(XPending(display) > 0) {
-            KeySym xkeysym{ 0 };
-
+        while(XPending(display) > 0) {
+            XEvent xevent{};
             XNextEvent(display, &xevent);
+
             switch(xevent.type) {
                 case ClientMessage:
                     if(xevent.xclient.data.l[0] == atomWmDeleteWindow) {
-                        close();
+                        //Need to use the window from the event here.
+                        closeWindow(xevent.xclient.window);
+                        //Flush the output buffer before exiting. Not doing this step causes the whole OS to freeze.
+                        int constexpr discardEvents{ 1 };
+                        XSync(display, discardEvents);
                     }
-                    break;
-                case DestroyNotify:
-                    if(onWindowCloseDelegate.isBound()) {
-                        onWindowCloseDelegate.broadcast();
-                    }
-                    open = false;
                     break;
 
+                //Keyboard
                 case FocusOut:
                     keyboardDispatcher.clearState();
                     break;
@@ -140,12 +140,7 @@ namespace garlic::clove {
                     XRefreshKeyboardMapping(&xevent.xmapping);
                     break;
 
-                case KeyPress:
-                    xkeysym = XLookupKeysym(&xevent.xkey, 0);
-                    keyboardDispatcher.onKeyPressed(static_cast<Key>(xkeysym));
-                    break;
-
-                case KeyRelease: {
+                case KeyPress: {
                     bool isRepeat = false;
 
                     if(XEventsQueued(display, QueuedAlready) != 0) {
@@ -160,12 +155,22 @@ namespace garlic::clove {
                     }
 
                     if(!isRepeat || keyboard.isAutoRepeatEnabled()) {
-                        xkeysym = XLookupKeysym(&xevent.xkey, 0);
-                        keyboardDispatcher.onKeyReleased(static_cast<Key>(xkeysym));
+                        KeySym xkeysym{ XLookupKeysym(&xevent.xkey, 0) };
+                        keyboardDispatcher.onKeyPressed(static_cast<Key>(xkeysym));
                     }
                 } break;
 
+                case KeyRelease: {
+                    KeySym xkeysym{ XLookupKeysym(&xevent.xkey, 0) };
+                    keyboardDispatcher.onKeyReleased(static_cast<Key>(xkeysym));
+                } break;
+
                     //TODO: Char (I don't think Xlib has a 'typed' event)
+
+                //Mouse
+                case MotionNotify:
+                    mouseDispatcher.onMouseMove(vec2i{ xevent.xbutton.x, xevent.xbutton.y });
+                    break;
 
                 case EnterNotify:
                     mouseDispatcher.onMouseEnter();
@@ -177,21 +182,21 @@ namespace garlic::clove {
 
                 case ButtonPress:
                     if(xevent.xbutton.button == Button4) {
-                        mouseDispatcher.onWheelDelta(CLV_WHEEL_DELTA, xevent.xbutton.x, xevent.xbutton.y);
+                        mouseDispatcher.onWheelDelta(CLV_WHEEL_DELTA, vec2i{ xevent.xbutton.x, xevent.xbutton.y });
                     } else if(xevent.xbutton.button == Button5) {
-                        mouseDispatcher.onWheelDelta(-CLV_WHEEL_DELTA, xevent.xbutton.x, xevent.xbutton.y);
+                        mouseDispatcher.onWheelDelta(-CLV_WHEEL_DELTA, vec2i{ xevent.xbutton.x, xevent.xbutton.y });
                     } else {
-                        mouseDispatcher.onButtonPressed(static_cast<MouseButton>(xevent.xbutton.button), xevent.xbutton.x, xevent.xbutton.y);
+                        mouseDispatcher.onButtonPressed(static_cast<MouseButton>(xevent.xbutton.button), vec2i{ xevent.xbutton.x, xevent.xbutton.y });
                     }
                     break;
 
                 case ButtonRelease:
-                    mouseDispatcher.onButtonReleased(static_cast<MouseButton>(xevent.xbutton.button), xevent.xbutton.x, xevent.xbutton.y);
+                    mouseDispatcher.onButtonReleased(static_cast<MouseButton>(xevent.xbutton.button), vec2i{ xevent.xbutton.x, xevent.xbutton.y });
                     break;
 
                 //Window
                 case ConfigureNotify: {
-                    XConfigureEvent xce = xevent.xconfigure;
+                    XConfigureEvent xce{ xevent.xconfigure };
                     if(static_cast<uint32_t>(xce.width) != prevConfigureNotifySize.x || static_cast<uint32_t>(xce.height) != prevConfigureNotifySize.y) {
                         const vec2i size{ xce.width, xce.height };
                         prevConfigureNotifySize = size;
@@ -200,5 +205,13 @@ namespace garlic::clove {
                 } break;
             }
         }
+    }
+
+    void LinuxWindow::closeWindow(::Window window) {
+        if(onWindowCloseDelegate.isBound()) {
+            onWindowCloseDelegate.broadcast();
+        }
+        open = false;
+        XDestroyWindow(display, window);
     }
 }

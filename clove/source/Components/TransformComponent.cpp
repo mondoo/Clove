@@ -6,17 +6,29 @@
 #include <Clove/Maths/MathsHelpers.hpp>
 
 namespace garlic::clove {
-    vec3f TransformComponent::getForward() const {
-        vec3f constexpr worldForward{ 0.0f, 0.0f, 1.0f };
-        return normalise(rotation * worldForward);
+    vec3f TransformComponent::getWorldPosition() const {
+        return decomposeTranslation(worldMatrix);
     }
 
-    vec3f TransformComponent::getRight() const {
+    quatf TransformComponent::getWorldRotation() const {
+        return decomposeRotation(worldMatrix);
+    }
+
+    vec3f TransformComponent::getWorldScale() const {
+        return decomposeScale(worldMatrix);
+    }
+
+    vec3f TransformComponent::getForward() const {
+        vec3f constexpr worldForward{ 0.0f, 0.0f, 1.0f };
+        return normalise(getWorldRotation() * worldForward);
+    }
+
+    vec3f TransformComponent::getLeft() const {
         vec3f constexpr worldUp{ 0.0f, 1.0f, 0.0f };
         return normalise(cross(getForward(), worldUp));
     }
 
     vec3f TransformComponent::getUp() const {
-        return normalise(cross(getRight(), getForward()));
+        return normalise(cross(getLeft(), getForward()));
     }
 }

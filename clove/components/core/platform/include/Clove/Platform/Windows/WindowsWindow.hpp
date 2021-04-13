@@ -20,7 +20,7 @@ namespace garlic::clove {
         //FUNCTIONS
     public:
         WindowsWindow() = delete;
-        WindowsWindow(WindowDescriptor const &descriptor);
+        WindowsWindow(Descriptor const &descriptor);
 
         WindowsWindow(WindowsWindow const &other)     = delete;
         WindowsWindow(WindowsWindow &&other) noexcept = delete;
@@ -32,8 +32,8 @@ namespace garlic::clove {
 
         std::any getNativeWindow() const override;
 
-        vec2i getPosition() const override;
-        vec2i getSize() const override;
+        vec2i getPosition(bool clientArea) const override;
+        vec2i getSize(bool clientArea) const override;
 
         void moveWindow(vec2i const &position) override;
         void resizeWindow(vec2i const &size) override;

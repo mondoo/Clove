@@ -34,7 +34,7 @@ namespace garlic::clove {
 
         //Transform and submit cameras
         entityManager->forEach([this, &activeCamera](Entity entity, TransformComponent const &transform, CameraComponent &camera) {
-            vec3f const position{ decomposeTranslation(transform.worldMatrix) };
+            vec3f const position{ transform.getWorldPosition() };
 
             vec3f const camFront{ transform.getForward() };
             vec3f const camUp{ transform.getUp() };

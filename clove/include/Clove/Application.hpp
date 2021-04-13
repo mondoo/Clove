@@ -4,14 +4,13 @@
 #include <Clove/ECS/EntityManager.hpp>
 #include <Clove/Graphics/GhaImage.hpp>
 #include <Clove/Graphics/GraphicsAPI.hpp>
-#include <Clove/Platform/PlatformTypes.hpp>
+#include <Clove/Platform/Window.hpp>
 #include <chrono>
 #include <map>
 #include <memory>
 #include <vector>
 
 namespace garlic::clove {
-    class Platform;
     class Surface;
     class GhaDevice;
     class Layer;
@@ -75,7 +74,7 @@ namespace garlic::clove {
          * @param windowDescriptor A descriptor describing the properties of the window.
          * @return The created application instance.
          */
-        static std::unique_ptr<Application> create(GraphicsApi graphicsApi, AudioApi audioApi, WindowDescriptor const &windowDescriptor);
+        static std::unique_ptr<Application> create(GraphicsApi graphicsApi, AudioApi audioApi, Window::Descriptor const &windowDescriptor);
 
         /**
          * @brief Create a Garlic application without a window that is capable of offscreen rendering.

@@ -16,31 +16,33 @@
 #include <Clove/Graphics/GhaDevice.hpp>
 #include <Clove/Graphics/Graphics.hpp>
 #include <Clove/Log/Log.hpp>
-#include <Clove/Platform/Platform.hpp>
-#include <Clove/Platform/Window.hpp>
 
 namespace garlic::clove {
     Application *Application::instance{ nullptr };
 
-    Application::~Application() = default;
+    Application::~Application() {
+        //Tell all layers they have been detached when the application is shutdown
+        for(auto &&[key, group] : layers) {
+            for(auto &layer : group) {
+                layer->onDetach();
+            }
+        }
+    }
 
-    std::unique_ptr<Application> Application::create(GraphicsApi graphicsApi, AudioApi audioApi, WindowDescriptor const &windowDescriptor) {
-        //If we're managing our own window then we need to do any platform initialisation
-        Platform::initialise();
-
-        auto window{ Platform::createWindow(windowDescriptor) };
-        auto *windowPtr{ window.get() };
-
-        auto graphicsDevice{ createGraphicsDevice(graphicsApi, window->getNativeWindow()) };
-        auto audioDevice{ createAudioDevice(audioApi) };
-
-        auto surface{ std::make_unique<WindowSurface>(std::move(window)) };
-
-        auto renderTarget{ std::make_unique<SwapchainRenderTarget>(*surface, graphicsDevice.get()) };
-
-        std::unique_ptr<Application> app{ new Application{ std::move(graphicsDevice), std::move(audioDevice), std::move(surface), std::move(renderTarget) } };
-        windowPtr->onWindowCloseDelegate.bind(&Application::shutdown, app.get());
-
+    std::unique_ptr<Application> Application::create(GraphicsApi graphicsApi, AudioApi audioApi, Window::Descriptor const &windowDescriptor) {	
+		auto window{ Window::create(windowDescriptor) };
+		auto *windowPtr{ window.get() };
+		
+		auto graphicsDevice{ createGraphicsDevice(graphicsApi, window->getNativeWindow()) };
+		auto audioDevice{ createAudioDevice(audioApi) };
+		
+		auto surface{ std::make_unique<WindowSurface>(std::move(window)) };
+		
+		auto renderTarget{ std::make_unique<SwapchainRenderTarget>(*surface, graphicsDevice.get()) };
+		
+		std::unique_ptr<Application> app{ new Application{ std::move(graphicsDevice), std::move(audioDevice), std::move(surface), std::move(renderTarget) } };
+		windowPtr->onWindowCloseDelegate.bind(&Application::shutdown, app.get());
+		
         return app;
     }
 
@@ -78,9 +80,9 @@ namespace garlic::clove {
     }
 
     void Application::tick() {
-        //Process input first incase we get a close event.
         surface->processInput();
 
+        //If the previous processInput call closed the window we don't want to run the rest of the function.
         if(currentState != State::Running) {
             return;
         }
@@ -123,8 +125,6 @@ namespace garlic::clove {
 
     void Application::shutdown() {
         currentState = State::Stopped;
-        graphicsDevice->waitForIdleDevice();
-        surface.reset();
     }
 
     Application::Application(std::unique_ptr<GhaDevice> graphicsDevice, std::unique_ptr<AhaDevice> audioDevice, std::unique_ptr<Surface> surface, std::unique_ptr<RenderTarget> renderTarget)

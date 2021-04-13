@@ -13,16 +13,11 @@ namespace garlic::clove {
     private:
         bool open{ false };
 
-        Display *display{ nullptr };
-        ::Window window;
         Screen *screen{ nullptr };
         int32_t screenID;
+        ::Window window{ 0 };
 
-        XEvent xevent{};
-
-        XSetWindowAttributes windowAttribs{};
-
-        Atom atomWmDeleteWindow;
+        Atom atomWmDeleteWindow{};
 
         vec2i prevConfigureNotifySize{};
 
@@ -32,7 +27,7 @@ namespace garlic::clove {
         //FUNCTIONS
     public:
         LinuxWindow() = delete;
-        LinuxWindow(WindowDescriptor const &descriptor);
+        LinuxWindow(Descriptor const &descriptor);
 
         LinuxWindow(LinuxWindow const &other)     = delete;
         LinuxWindow(LinuxWindow &&other) noexcept = delete;
@@ -44,8 +39,8 @@ namespace garlic::clove {
 
         std::any getNativeWindow() const override;
 
-        vec2i getPosition() const override;
-        vec2i getSize() const override;
+        vec2i getPosition(bool clientArea) const override;
+        vec2i getSize(bool clientArea) const override;
 
         void moveWindow(vec2i const &position) override;
         void resizeWindow(vec2i const &size) override;
@@ -56,5 +51,7 @@ namespace garlic::clove {
 
     protected:
         void processInput() override;
+
+        void closeWindow(::Window window);
     };
 }
