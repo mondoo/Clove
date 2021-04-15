@@ -2,7 +2,6 @@
 
 #include "Clove/Platform/Input/Keyboard.hpp"
 #include "Clove/Platform/Input/Mouse.hpp"
-#include "Clove/Platform/PlatformTypes.hpp"
 
 #include <Clove/Delegate/MultiCastDelegate.hpp>
 #include <Clove/Delegate/SingleCastDelegate.hpp>
@@ -14,6 +13,14 @@ namespace garlic::clove {
      * @brief An abstraction over a platform's native window
      */
     class Window {
+        //TYPES
+    public:
+        struct Descriptor {
+            std::string title{ "Clove window" };
+            int32_t width{ 800 }; /**< Width of the client region. */
+            int32_t height{ 600 }; /**< Height of the client region. */
+        };
+
         //VARIABLES
     public:
         SingleCastDelegate<void()> onWindowCloseDelegate{};
@@ -39,6 +46,8 @@ namespace garlic::clove {
 
         virtual ~Window() = default;
 
+        static std::unique_ptr<Window> create(Descriptor const &descriptor);
+
         /**
          * @brief Pumps the message queue of the window. Populating the Mouse and Keyboard classes with events.
          */
@@ -46,8 +55,18 @@ namespace garlic::clove {
 
         virtual std::any getNativeWindow() const = 0;
 
-        virtual vec2i getPosition() const = 0;
-        virtual vec2i getSize() const     = 0;
+        /**
+         * @brief Returns the position of the window in screen space coordinates.
+         * @param clientArea If true, returns the top left of the client area (inside the window's borders).
+         * @return A vec2i containing the screen space coordinates.
+         */
+        virtual vec2i getPosition(bool clientArea) const = 0;
+        /**
+         * @brief Returns the size of the window.
+         * @param clientArea If true, returns just the size of the client area instead of the entire window itself.
+         * @return a vec2i containing the size of the window.
+         */
+        virtual vec2i getSize(bool clientArea) const = 0;
 
         virtual void moveWindow(vec2i const &position) = 0;
         virtual void resizeWindow(vec2i const &size)   = 0;

@@ -3,7 +3,6 @@
 #include "Clove/Graphics/GraphicsAPI.hpp"
 
 #include <any>
-#include <optional>
 #include <memory>
 
 namespace garlic::clove {

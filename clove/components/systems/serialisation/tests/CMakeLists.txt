@@ -1,3 +1,8 @@
+#Node
+add_executable(NodeTest NodeTests.cpp)
+target_link_libraries(NodeTest PRIVATE CONAN_PKG::gtest CloveSerialisation)
+add_test(NAME NodeTest COMMAND NodeTest)
+
 #Serialisation
 add_executable(YamlSerialisationTest YamlSerialisationTests.cpp)
 target_link_libraries(YamlSerialisationTest PRIVATE CONAN_PKG::gtest CloveSerialisation)

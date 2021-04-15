@@ -8,6 +8,9 @@
 #include <unordered_map>
 
 namespace garlic::clove {
+    /**
+     * @brief Provides an interface to handle any platform keyboard events.
+     */
     class Keyboard {
         //TYPES
     public:

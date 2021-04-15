@@ -81,6 +81,11 @@ namespace garlic::clove {
         return glm::transpose(m);
     }
 
+    template<typename T>
+    T lerp(T const &a, T const &b, T t) {
+        return glm::mix(a, b, t);
+    }
+
     template<length_t L, typename T>
     vec<L, T> lerp(vec<L, T> const &a, vec<L, T> const &b, T t) {
         return glm::mix(a, b, t);

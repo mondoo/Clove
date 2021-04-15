@@ -1,4 +1,8 @@
+//There seems to be a bug with optional in msvc that stops it compiling. Having this header included here (above VulkanFactory) is a current work around.
+#include "Clove/Graphics/Vulkan/VulkanRenderPass.hpp"
+//
 #include "Clove/Graphics/Vulkan/VulkanFactory.hpp"
+//
 
 #include "Clove/Graphics/ShaderCompiler.hpp"
 #include "Clove/Graphics/Vulkan/MemoryAllocator.hpp"
@@ -16,7 +20,6 @@
 #include "Clove/Graphics/Vulkan/VulkanImageView.hpp"
 #include "Clove/Graphics/Vulkan/VulkanPipelineObject.hpp"
 #include "Clove/Graphics/Vulkan/VulkanPresentQueue.hpp"
-#include "Clove/Graphics/Vulkan/VulkanRenderPass.hpp"
 #include "Clove/Graphics/Vulkan/VulkanResource.hpp"
 #include "Clove/Graphics/Vulkan/VulkanSampler.hpp"
 #include "Clove/Graphics/Vulkan/VulkanSemaphore.hpp"
@@ -31,17 +34,16 @@
 namespace garlic::clove {
     namespace {
         VkCommandPoolCreateFlags convertCommandPoolCreateFlags(QueueFlags garlicFlags) {
-            switch(garlicFlags) {
-                case QueueFlags::None:
-                    return 0;
-                case QueueFlags::Transient:
-                    return VK_COMMAND_POOL_CREATE_TRANSIENT_BIT;
-                case QueueFlags::ReuseBuffers:
-                    return VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
-                default:
-                    CLOVE_ASSERT(false, "{0}: Unkown queue flag", CLOVE_FUNCTION_NAME);
-                    return 0;
+            VkCommandPoolCreateFlags flags{ 0 };
+
+            if((garlicFlags & QueueFlags::Transient) != 0) {
+                flags |= VK_COMMAND_POOL_CREATE_TRANSIENT_BIT;
             }
+            if((garlicFlags & QueueFlags::ReuseBuffers) != 0) {
+                flags |= VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
+            }
+
+            return flags;
         }
 
         VkSurfaceFormatKHR chooseSwapSurfaceFormat(std::vector<VkSurfaceFormatKHR> const &availableFormats) {

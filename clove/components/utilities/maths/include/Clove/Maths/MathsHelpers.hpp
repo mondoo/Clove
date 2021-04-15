@@ -60,6 +60,10 @@ namespace garlic::clove {
 
     template<typename T>
     vec<3, T> decomposeTranslation(mat<4, 4, T> const &matrix);
+    template<typename T>
+    quat<T> decomposeRotation(mat<4, 4, T> matrix);
+    template<typename T>
+    vec<3, T> decomposeScale(mat<4, 4, T> const &matrix);
 }
 
 #include "MathsHelpers.inl"

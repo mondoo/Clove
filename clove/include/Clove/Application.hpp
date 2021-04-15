@@ -1,25 +1,24 @@
 #pragma once
 
 #include <Clove/Audio/Audio.hpp>
-#include <Clove/Graphics/GraphicsAPI.hpp>
+#include <Clove/ECS/EntityManager.hpp>
 #include <Clove/Graphics/GhaImage.hpp>
-#include <Clove/Platform/PlatformTypes.hpp>
+#include <Clove/Graphics/GraphicsAPI.hpp>
+#include <Clove/Platform/Window.hpp>
 #include <chrono>
 #include <map>
 #include <memory>
 #include <vector>
 
 namespace garlic::clove {
-    class Platform;
     class Surface;
     class GhaDevice;
-    class EntityManager;
     class Layer;
     class ForwardRenderer3D;
     class GraphicsImageRenderTarget;
     class AhaDevice;
     class PhysicsLayer;
-	class RenderTarget;
+    class RenderTarget;
 }
 
 namespace garlic::clove {
@@ -41,15 +40,15 @@ namespace garlic::clove {
         //VARIABLES
     private:
         static Application *instance;
-        State currentState{ State::Running }; //Assumed to be initialised to the running state.
+        State currentState{ State::Running };//Assumed to be initialised to the running state.
 
         std::unique_ptr<GhaDevice> graphicsDevice;
         std::unique_ptr<AhaDevice> audioDevice;
-		
-		std::unique_ptr<Surface> surface;
+
+        std::unique_ptr<Surface> surface;
 
         std::unique_ptr<ForwardRenderer3D> renderer;
-        std::unique_ptr<EntityManager> entityManager;
+        EntityManager entityManager;
         std::shared_ptr<PhysicsLayer> physicsLayer;
 
         std::map<LayerGroup, std::vector<std::shared_ptr<Layer>>> layers;
@@ -58,8 +57,8 @@ namespace garlic::clove {
 
         //FUNCTIONS
     public:
-		Application() = delete;
-		
+        Application() = delete;
+
         Application(Application const &other)     = delete;
         Application(Application &&other) noexcept = delete;
 
@@ -75,7 +74,7 @@ namespace garlic::clove {
          * @param windowDescriptor A descriptor describing the properties of the window.
          * @return The created application instance.
          */
-        static std::unique_ptr<Application> create(GraphicsApi graphicsApi, AudioApi audioApi, WindowDescriptor const &windowDescriptor);
+        static std::unique_ptr<Application> create(GraphicsApi graphicsApi, AudioApi audioApi, Window::Descriptor const &windowDescriptor);
 
         /**
          * @brief Create a Garlic application without a window that is capable of offscreen rendering.
@@ -114,7 +113,7 @@ namespace garlic::clove {
 
         //Systems
         inline ForwardRenderer3D *getRenderer() const;
-        inline EntityManager *getEntityManager() const;
+        inline EntityManager *getEntityManager();
         inline PhysicsLayer *getPhysicsLayer() const;
 
     private:

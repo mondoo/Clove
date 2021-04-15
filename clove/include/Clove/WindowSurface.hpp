@@ -38,5 +38,10 @@ namespace garlic::clove {
 
         Keyboard &getKeyboard() override;
         Mouse &getMouse() override;
+
+        /**
+         * @brief Returns the window this surface is backed by.
+         */
+        Window *getWindow() const;
     };
 }

@@ -1,9 +1,12 @@
+//There seems to be a bug with optional in msvc that stops it compiling. Having this header included here (above VulkanPresentQueue) is a current work around.
+#include "Clove/Graphics/Vulkan/VulkanSwapchain.hpp"
+//
 #include "Clove/Graphics/Vulkan/VulkanPresentQueue.hpp"
+//
 
 #include "Clove/Graphics/Vulkan/VulkanFence.hpp"
 #include "Clove/Graphics/Vulkan/VulkanResult.hpp"
 #include "Clove/Graphics/Vulkan/VulkanSemaphore.hpp"
-#include "Clove/Graphics/Vulkan/VulkanSwapchain.hpp"
 
 #include <Clove/Cast.hpp>
 
