@@ -9,6 +9,7 @@
 #include "Clove/Graphics/Metal/MetalImage.hpp"
 #include "Clove/Graphics/Metal/MetalImageView.hpp"
 #include "Clove/Graphics/Metal/MetalRenderPass.hpp"
+#include "Clove/Graphics/Metal/MetalSwapchain.hpp"
 
 #include <Clove/Cast.hpp>
 
@@ -110,7 +111,7 @@ namespace garlic::clove {
 	}
 
 	Expected<std::unique_ptr<GhaGraphicsQueue>, std::runtime_error> MetalFactory::createGraphicsQueue(CommandQueueDescriptor descriptor) {
-		//TODO: Provide the view to the swapchain or present queue instead
+		//TODO: Provide the view to the present queue instead
 		return std::unique_ptr<GhaGraphicsQueue>{ std::make_unique<MetalGraphicsQueue>([device newCommandQueue], [view retain]) };
 	}
 	
@@ -127,7 +128,7 @@ namespace garlic::clove {
 	}
 
 	Expected<std::unique_ptr<GhaSwapchain>, std::runtime_error> MetalFactory::createSwapChain(GhaSwapchain::Descriptor descriptor) {
-		return Unexpected{ std::runtime_error{ "Not implemented" } };
+		return std::unique_ptr<GhaSwapchain>{ std::make_unique<MetalSwapchain>([view retain]) };
 	}
 
 	Expected<std::unique_ptr<GhaShader>, std::runtime_error> MetalFactory::createShaderFromFile(std::filesystem::path const &file, GhaShader::Stage shaderStage) {

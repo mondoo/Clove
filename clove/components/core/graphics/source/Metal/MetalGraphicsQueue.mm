@@ -35,7 +35,7 @@ namespace garlic::clove {
 			for(auto &commandBuffer : submission.commandBuffers) {
 				id<MTLCommandBuffer> mtlCommandBuffer{ polyCast<MetalGraphicsCommandBuffer>(commandBuffer.get())->getCommandBuffer() };
 				
-				//TODO: This is something the present queue should deal with. However there is no MetalSwapchain yet
+				//TODO: This is something the present queue should deal with.
 				[mtlCommandBuffer presentDrawable: view.currentDrawable];
 			}
 		}

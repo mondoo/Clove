@@ -112,6 +112,8 @@ set(
 		${SOURCE}/Metal/MetalRenderPass.mm
 		${INCLUDE}/Metal/MetalShader.hpp
 		${SOURCE}/Metal/MetalShader.mm
+		${INCLUDE}/Metal/MetalSwapchain.hpp
+		${SOURCE}/Metal/MetalSwapchain.mm
 )
 
 #Library
