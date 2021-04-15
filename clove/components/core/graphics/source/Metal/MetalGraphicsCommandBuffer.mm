@@ -118,4 +118,8 @@ namespace garlic::clove {
 	void MetalGraphicsCommandBuffer::imageMemoryBarrier(GhaImage &image, ImageMemoryBarrierInfo const &barrierInfo, PipelineStage sourceStage, PipelineStage destinationStage) {
 		//TODO
 	}
+	
+	id<MTLCommandBuffer> MetalGraphicsCommandBuffer::getCommandBuffer() const {
+		return commandBuffer;
+	}
 }

@@ -9,11 +9,12 @@ namespace garlic::clove {
 		//VARIABLES
 	private:
 		id<MTLCommandQueue> commandQueue;
+		MTKView *view{ nullptr };
 
 		//FUNCTIONS
 	public:
 		MetalGraphicsQueue() = delete;
-		MetalGraphicsQueue(id<MTLCommandQueue> commandQueue);
+		MetalGraphicsQueue(id<MTLCommandQueue> commandQueue, MTKView *view);
 		
 		MetalGraphicsQueue(MetalGraphicsQueue const &other) = delete;
 		MetalGraphicsQueue(MetalGraphicsQueue &&other) noexcept;

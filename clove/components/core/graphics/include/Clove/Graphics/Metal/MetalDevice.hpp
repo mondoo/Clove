@@ -18,6 +18,7 @@ namespace garlic::clove {
 	private:
 #ifdef __OBJC__
 		id<MTLDevice> device{ nullptr };
+		MTKView *view{ nullptr };
 #endif
 		
 		std::shared_ptr<MetalFactory> factory;

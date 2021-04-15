@@ -2,9 +2,12 @@
 
 #include "Clove/Graphics/Metal/MetalGraphicsCommandBuffer.hpp"
 
+#include <Clove/Cast.hpp>
+
 namespace garlic::clove {
-	MetalGraphicsQueue::MetalGraphicsQueue(id<MTLCommandQueue> commandQueue)
-		: commandQueue{ commandQueue }{
+	MetalGraphicsQueue::MetalGraphicsQueue(id<MTLCommandQueue> commandQueue, MTKView *view)
+		: commandQueue{ commandQueue }
+		, view{ view } {
 	}
 	
 	MetalGraphicsQueue::MetalGraphicsQueue(MetalGraphicsQueue &&other) noexcept = default;
@@ -13,6 +16,7 @@ namespace garlic::clove {
 	
 	MetalGraphicsQueue::~MetalGraphicsQueue() {
 		[commandQueue release];
+		[view release];
 	}
 	
 	std::unique_ptr<GhaGraphicsCommandBuffer> MetalGraphicsQueue::allocateCommandBuffer() {
@@ -20,15 +24,20 @@ namespace garlic::clove {
 	}
 	
 	void MetalGraphicsQueue::freeCommandBuffer(GhaGraphicsCommandBuffer &buffer) {
-		//TODO: noop?
+		//no op
 	}
 
 	void MetalGraphicsQueue::submit(std::vector<GraphicsSubmitInfo> const &submissions, GhaFence const *signalFence) {
-		//TODO: Fences / semahpores
-		//TODO: How to submit the buffer?
-		/* i.e
-			[commandBuffer presentDrawable: view.currentDrawable];
-			[commandBuffer commit];
-		 */
+		for(auto &submission : submissions) {
+			//TODO: Fences / semahpores
+			//[currentEncoder updateFence:nullptr afterStages:MTLRenderStageFragment];
+			
+			for(auto &commandBuffer : submission.commandBuffers) {
+				id<MTLCommandBuffer> mtlCommandBuffer{ polyCast<MetalGraphicsCommandBuffer>(commandBuffer.get())->getCommandBuffer() };
+				
+				//TODO: This is something the present queue should deal with. However there is no MetalSwapchain yet
+				[mtlCommandBuffer presentDrawable: view.currentDrawable];
+			}
+		}
 	}
 }

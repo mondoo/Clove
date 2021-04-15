@@ -9,11 +9,12 @@ namespace garlic::clove {
 		//VARIABLES
 	private:
 		id<MTLDevice> device{ nullptr };
+		MTKView *view{ nullptr };
 		
 		//FUNCTIONS
 	public:
 		MetalFactory() = delete;
-		MetalFactory(id<MTLDevice> device);
+		MetalFactory(id<MTLDevice> device, MTKView *view);
 
 		MetalFactory(MetalFactory const &other) = delete;
 		MetalFactory(MetalFactory &&other) noexcept;
