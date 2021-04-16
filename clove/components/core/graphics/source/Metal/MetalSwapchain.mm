@@ -28,8 +28,8 @@ namespace garlic::clove {
 	}
 	
 	vec2ui MetalSwapchain::getSize() const {
-		//TODO
-		return {};
+		CGSize const size{ [view.metalLayer drawableSize] };
+		return { size.width, size.height };
 	}
 
 	std::vector<std::shared_ptr<GhaImageView>> MetalSwapchain::getImageViews() const {
