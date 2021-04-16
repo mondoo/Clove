@@ -1,5 +1,6 @@
 #include "Clove/Graphics/Metal/MetalSwapchain.hpp"
 
+#include "Clove/Graphics/Metal/MetalImage.hpp"
 #include "Clove/Graphics/Metal/MetalView.hpp"
 
 #include <QuartzCore/CAMetalLayer.h>
@@ -23,8 +24,7 @@ namespace garlic::clove {
 	}
 
 	GhaImage::Format MetalSwapchain::getImageFormat() const {
-		//TODO
-		return {};
+		return MetalImage::convertFormat([view.metalLayer pixelFormat]);
 	}
 	
 	vec2ui MetalSwapchain::getSize() const {

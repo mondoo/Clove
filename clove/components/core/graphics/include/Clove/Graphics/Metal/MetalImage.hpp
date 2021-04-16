@@ -32,5 +32,6 @@ namespace garlic::clove {
 		id<MTLTexture> getTexture() const;
 		
 		static MTLPixelFormat convertFormat(Format format);
+		static Format convertFormat(MTLPixelFormat format);
 	};
 }
