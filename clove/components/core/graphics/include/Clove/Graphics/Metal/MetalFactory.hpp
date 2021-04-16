@@ -4,17 +4,19 @@
 
 #include <MetalKit/MetalKit.h>
 
+@class MetalView;
+
 namespace garlic::clove {
 	class MetalFactory : public GhaFactory {
 		//VARIABLES
 	private:
 		id<MTLDevice> device{ nullptr };
-		MTKView *view{ nullptr };
+		MetalView *view{ nullptr };
 		
 		//FUNCTIONS
 	public:
 		MetalFactory() = delete;
-		MetalFactory(id<MTLDevice> device, MTKView *view);
+		MetalFactory(id<MTLDevice> device, MetalView *view);
 
 		MetalFactory(MetalFactory const &other) = delete;
 		MetalFactory(MetalFactory &&other) noexcept;

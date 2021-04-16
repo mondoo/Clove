@@ -4,17 +4,19 @@
 
 #include <MetalKit/MetalKit.h>
 
+@class MetalView;
+
 namespace garlic::clove {
 	class MetalGraphicsQueue : public GhaGraphicsQueue {
 		//VARIABLES
 	private:
 		id<MTLCommandQueue> commandQueue;
-		MTKView *view{ nullptr };
+		MetalView *view{ nullptr };
 
 		//FUNCTIONS
 	public:
 		MetalGraphicsQueue() = delete;
-		MetalGraphicsQueue(id<MTLCommandQueue> commandQueue, MTKView *view);
+		MetalGraphicsQueue(id<MTLCommandQueue> commandQueue, MetalView *view);
 		
 		MetalGraphicsQueue(MetalGraphicsQueue const &other) = delete;
 		MetalGraphicsQueue(MetalGraphicsQueue &&other) noexcept;

@@ -1,9 +1,11 @@
 #include "Clove/Graphics/Metal/MetalSwapchain.hpp"
 
+#include "Clove/Graphics/Metal/MetalView.hpp"
+
 #include <QuartzCore/CAMetalLayer.h>
 
 namespace garlic::clove {
-	MetalSwapchain::MetalSwapchain(MTKView *view)
+	MetalSwapchain::MetalSwapchain(MetalView *view)
 		: view{ view } {
 	}
 	
@@ -16,8 +18,7 @@ namespace garlic::clove {
 	}
 	
 	std::pair<uint32_t, Result> MetalSwapchain::aquireNextImage(GhaSemaphore const *availableSemaphore) {
-		//TODO: This will cause the layer to wait until a new drawable is free. Is it possible to set up dummy views that we can set later?
-		[[((CAMetalLayer*) [view layer]) nextDrawable] texture];
+		//TODO
 		return {};
 	}
 

@@ -10,6 +10,7 @@
 #include "Clove/Graphics/Metal/MetalImageView.hpp"
 #include "Clove/Graphics/Metal/MetalRenderPass.hpp"
 #include "Clove/Graphics/Metal/MetalSwapchain.hpp"
+#include "Clove/Graphics/Metal/MetalView.hpp"
 
 #include <Clove/Cast.hpp>
 
@@ -96,7 +97,7 @@ namespace garlic::clove {
 		}
 	}
 	
-	MetalFactory::MetalFactory(id<MTLDevice> device, MTKView *view)
+	MetalFactory::MetalFactory(id<MTLDevice> device, MetalView *view)
 		: device{ device }
 		, view{ view } {
 	}

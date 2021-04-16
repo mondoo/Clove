@@ -4,16 +4,18 @@
 
 #include <MetalKit/MetalKit.h>
 
+@class MetalView;
+
 namespace garlic::clove {
 	class MetalSwapchain : public GhaSwapchain {
 		//VARIABLES
 	private:
-		MTKView *view{ nullptr };
+		MetalView *view{ nullptr };
 		
 		//FUNCTIONS
 	public:
 		MetalSwapchain() = delete;
-		MetalSwapchain(MTKView *view);
+		MetalSwapchain(MetalView *view);
 		
 		MetalSwapchain(MetalSwapchain const &other) = delete;
 		MetalSwapchain(MetalSwapchain &&other) noexcept;

@@ -1,11 +1,12 @@
 #include "Clove/Graphics/Metal/MetalGraphicsQueue.hpp"
 
 #include "Clove/Graphics/Metal/MetalGraphicsCommandBuffer.hpp"
+#include "Clove/Graphics/Metal/MetalView.hpp"
 
 #include <Clove/Cast.hpp>
 
 namespace garlic::clove {
-	MetalGraphicsQueue::MetalGraphicsQueue(id<MTLCommandQueue> commandQueue, MTKView *view)
+	MetalGraphicsQueue::MetalGraphicsQueue(id<MTLCommandQueue> commandQueue, MetalView *view)
 		: commandQueue{ commandQueue }
 		, view{ view } {
 	}
@@ -35,8 +36,8 @@ namespace garlic::clove {
 			for(auto &commandBuffer : submission.commandBuffers) {
 				id<MTLCommandBuffer> mtlCommandBuffer{ polyCast<MetalGraphicsCommandBuffer>(commandBuffer.get())->getCommandBuffer() };
 				
-				//TODO: This is something the present queue should deal with.
-				[mtlCommandBuffer presentDrawable: view.currentDrawable];
+				//TODO: Temporarily present here. This is something the present queue should deal with.
+				//[mtlCommandBuffer presentDrawable: [view.metalLayer currentDrawable]];
 			}
 		}
 	}

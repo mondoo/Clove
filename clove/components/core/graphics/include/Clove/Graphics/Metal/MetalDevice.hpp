@@ -10,17 +10,14 @@
 
 namespace garlic::clove {
 	class MetalFactory;
+	struct DeviceWrapper;
 }
 
 namespace garlic::clove {
 	class MetalDevice : public GhaDevice {
 		//VARIABLES
 	private:
-#ifdef __OBJC__
-		id<MTLDevice> device{ nullptr };
-		MTKView *view{ nullptr };
-#endif
-		
+		std::unique_ptr<DeviceWrapper> wrapper{ nullptr };
 		std::shared_ptr<MetalFactory> factory;
 		
 		//FUNCTIONS
