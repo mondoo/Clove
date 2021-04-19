@@ -1,9 +1,8 @@
 #include "Clove/Rendering/RenderGraph/RenderGraph.hpp"
 
 namespace garlic::clove {
-    RenderGraph::RenderGraph(std::shared_ptr<RgArena> area) {
-        //TODO
-    };
+    RenderGraph::RenderGraph(RgArena &arena)
+        : arena{ arena } {};
 
     RenderGraph::RenderGraph(RenderGraph const &other) = default;
 
@@ -16,15 +15,40 @@ namespace garlic::clove {
     RenderGraph::~RenderGraph() = default;
 
     RgBuffer RenderGraph::createBuffer(size_t bufferSize) {
-        //TODO
+        RgBuffer const buffer{ nextId++ };
 
-        return {};
+        GhaBuffer::Descriptor &descriptor{ bufferDescriptors[buffer] };
+        descriptor.size       = bufferSize;
+        descriptor.memoryType = MemoryType::VideoMemory;//Assume video memory until it has been written to from the host
+
+        return buffer;
     }
 
     RgBuffer RenderGraph::createBuffer(std::shared_ptr<GhaBuffer> buffer, size_t offset, size_t size) {
-        //TODO
+        ResourceIdType const id{ nextId++ };
+        externalBuffers[id] = std::move(buffer);
 
-        return {};
+        return RgBuffer{ id };
+    }
+
+    void RenderGraph::writeToBuffer(RgBuffer const &buffer, void const *data, size_t const offset, size_t const size) {
+        BufferWrite write{
+            .data   = std::vector<std::byte>(size),
+            .offset = offset,
+            .size   = size,
+        };
+        memcpy(write.data.data(), data, size);
+        bufferWrites[buffer] = std::move(write);
+
+        if(!externalBuffers.contains(buffer)) {
+            //Update to system memory if a write has been recorded.
+            bufferDescriptors[buffer].memoryType = MemoryType::SystemMemory;
+        }
+
+        operations.emplace_back([this, buffer]() {
+            BufferWrite &write{ bufferWrites.at(buffer) };
+            allocatedBuffers[buffer]->write(write.data.data(), write.offset, write.size);
+        });
     }
 
     RgImage RenderGraph::createImage(GhaImage::Type imageType, GhaImage::Format format, vec2ui dimensions) {

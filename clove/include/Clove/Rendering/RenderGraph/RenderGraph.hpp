@@ -6,16 +6,19 @@
 #include "Clove/Rendering/RenderGraph/RgArena.hpp"
 #include "Clove/Rendering/RenderGraph/RgBuffer.hpp"
 #include "Clove/Rendering/RenderGraph/RgComputePipelineState.hpp"
+#include "Clove/Rendering/RenderGraph/RgId.hpp"
 #include "Clove/Rendering/RenderGraph/RgImage.hpp"
 #include "Clove/Rendering/RenderGraph/RgShader.hpp"
 
 #include <Clove/Graphics/GhaBuffer.hpp>
 #include <Clove/Graphics/GhaGraphicsQueue.hpp>
 #include <Clove/Graphics/GhaImage.hpp>
+#include <Clove/Graphics/GhaSampler.hpp>
 #include <Clove/Graphics/GhaShader.hpp>
 #include <Clove/Maths/Vector.hpp>
 #include <filesystem>
 #include <functional>
+#include <unordered_map>
 #include <vector>
 
 namespace garlic::clove {
@@ -68,12 +71,29 @@ namespace garlic::clove {
             std::vector<ImageBindng> shaderStorageImages{};//TODO: Sampler not required on compute passes
         };
 
+    private:
+        struct BufferWrite {
+            std::vector<std::byte> data;
+            size_t offset{};
+            size_t size;
+        };
+
         //VARIABLES
     private:
+        RgArena &arena;
+        ResourceIdType nextId{ 1 };
+
+        std::vector<std::function<void()>> operations{}; /**< Every operation (pass, copy, write, etc.) recorded into the graph in order. */
+
+        std::unordered_map<RgBuffer, GhaBuffer::Descriptor> bufferDescriptors{};
+        std::unordered_map<RgBuffer, BufferWrite> bufferWrites{};
+        std::unordered_map<ResourceIdType, std::shared_ptr<GhaBuffer>> externalBuffers{}; /**< Buffers created outside of the graph. */
+        std::unordered_map<ResourceIdType, std::shared_ptr<GhaBuffer>> allocatedBuffers{}; /**< All active buffers. Even external ones. */
+
         //FUNCTIONS
     public:
         RenderGraph() = delete;
-        RenderGraph(std::shared_ptr<RgArena> area);
+        RenderGraph(RgArena &arena);
 
         RenderGraph(RenderGraph const &other);
         RenderGraph(RenderGraph &&other) noexcept;
@@ -98,6 +118,14 @@ namespace garlic::clove {
          * @return
          */
         RgBuffer createBuffer(std::shared_ptr<GhaBuffer> buffer, size_t offset, size_t size);
+
+        /**
+         * @brief Write data into this buffer.
+         * @param data Pointer to data to write.
+         * @param offset Offset into the buffer to write to.
+         * @param size Size of the region in the buffer to write to.
+         */
+        void writeToBuffer(RgBuffer const &buffer, void const *data, size_t const offset, size_t const size);
 
         /**
          * @brief Constructs a new RgImage with the specified type and dimensions.
