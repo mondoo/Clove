@@ -125,18 +125,16 @@ add_library(
 		${INCLUDE}/Rendering/Renderables/StaticModel.hpp
 		${INCLUDE}/Rendering/Renderables/StaticModel.inl
 		${SOURCE}/Rendering/Renderables/StaticModel.cpp
+
 		${INCLUDE}/Rendering/RenderGraph/RenderGraph.hpp
 		${SOURCE}/Rendering/RenderGraph/RenderGraph.cpp
 		${INCLUDE}/Rendering/RenderGraph/RgBuffer.hpp
-		${SOURCE}/Rendering/RenderGraph/RgBuffer.cpp
 		${INCLUDE}/Rendering/RenderGraph/RgComputePipelineState.hpp
-		${SOURCE}/Rendering/RenderGraph/RgComputePipelineState.cpp
 		${INCLUDE}/Rendering/RenderGraph/RgGraphicsPipelineState.hpp
-		${SOURCE}/Rendering/RenderGraph/RgGraphicsPipelineState.cpp
+		${INCLUDE}/Rendering/RenderGraph/RgId.hpp
 		${INCLUDE}/Rendering/RenderGraph/RgImage.hpp
-		${SOURCE}/Rendering/RenderGraph/RgImage.cpp
 		${INCLUDE}/Rendering/RenderGraph/RgShader.hpp
-		${SOURCE}/Rendering/RenderGraph/RgShader.cpp
+
 		${INCLUDE}/Rendering/RenderPasses/ForwardColourPass.hpp
 		${SOURCE}/Rendering/RenderPasses/ForwardColourPass.cpp
 		${INCLUDE}/Rendering/RenderPasses/DirectionalLightPass.hpp

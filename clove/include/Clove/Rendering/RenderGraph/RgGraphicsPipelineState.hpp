@@ -1,17 +1,10 @@
 #pragma once
-//
-#include <Clove/Graphics/GhaRenderPass.hpp>
-//
 
-#include "Clove/Rendering/RenderGraph/RgBuffer.hpp"
+#include "Clove/Rendering/RenderGraph/RgId.hpp"
 #include "Clove/Rendering/RenderGraph/RgImage.hpp"
 #include "Clove/Rendering/RenderGraph/RgShader.hpp"
 
-#include <Clove/Graphics/GhaGraphicsPipelineObject.hpp>
-#include <Clove/Graphics/GhaSampler.hpp>
-#include <Clove/Graphics/GhaShader.hpp>
-#include <memory>
-#include <vector>
+#include <Clove/Graphics/GhaRenderPass.hpp>
 
 namespace garlic::clove {
     class RgGraphicsPipelineState {
@@ -47,15 +40,12 @@ namespace garlic::clove {
 
         //VARIABLES
     private:
-        GhaGraphicsPipelineObject::Descriptor ghaDescriptor{};
-
-        //TODO: Keep some sort of internal ID for tracking
+        ResourceIdType id{ INVALID_ID };
 
         //FUNCTIONS
     public:
-        RgGraphicsPipelineState();
-
-    private:
-        RgGraphicsPipelineState(Descriptor descriptor);
+        operator ResourceIdType() {
+            return id;
+        }
     };
 }

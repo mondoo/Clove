@@ -1,13 +1,6 @@
 #pragma once
 
-#include "Clove/Rendering/RenderGraph/RgBuffer.hpp"
-#include "Clove/Rendering/RenderGraph/RgImage.hpp"
-#include "Clove/Rendering/RenderGraph/RgShader.hpp"
-
-#include <Clove/Graphics/GhaComputePipelineObject.hpp>
-#include <Clove/Graphics/GhaSampler.hpp>
-#include <Clove/Graphics/GhaShader.hpp>
-#include <memory>
+#include "Clove/Rendering/RenderGraph/RgId.hpp"
 
 namespace garlic::clove {
     class RgComputePipelineState {
@@ -16,18 +9,15 @@ namespace garlic::clove {
         struct Descriptor {
             RgShader computeShader;
         };
-
+        
         //VARIABLES
     private:
-        GhaComputePipelineObject::Descriptor ghaDescriptor{};//TODO: Gets updated or is only set when this is created?
-
-        //TODO: Keep some sort of internal ID for tracking
+        ResourceIdType id{ INVALID_ID };
 
         //FUNCTIONS
     public:
-        RgComputePipelineState();
-
-    private:
-        RgComputePipelineState(Descriptor descriptor);
+        operator ResourceIdType() {
+            return id;
+        }
     };
 }
