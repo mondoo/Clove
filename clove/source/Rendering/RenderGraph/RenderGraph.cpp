@@ -52,15 +52,20 @@ namespace garlic::clove {
     }
 
     RgImage RenderGraph::createImage(GhaImage::Type imageType, GhaImage::Format format, vec2ui dimensions) {
-        //TODO
+        RgImage const image{ nextId++ };
 
-        return {};
+        GhaImage::Descriptor imageDescriptor{ imageDescriptors[image] };
+        imageDescriptor.dimensions = dimensions;
+        imageDescriptor.format = format;
+
+        return image;
     }
 
     RgImage RenderGraph::createImage(std::shared_ptr<GhaImageView> ghaImageView) {
-        //TODO
+        RgImage const image{ nextId++ };
+        allocatedImages[image] = std::move(ghaImageView);
 
-        return {};
+        return image;
     }
 
     RgShader RenderGraph::createShader(std::filesystem::path const &file, GhaShader::Stage shaderStage) {

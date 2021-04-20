@@ -89,6 +89,9 @@ namespace garlic::clove {
         std::unordered_map<ResourceIdType, BufferWrite> bufferWrites{};
         std::unordered_map<ResourceIdType, std::shared_ptr<GhaBuffer>> allocatedBuffers{}; /**< All active buffers. Even external ones. */
 
+        std::unordered_map<ResourceIdType, GhaImage::Descriptor> imageDescriptors{};
+        std::unordered_map<ResourceIdType, std::shared_ptr<GhaImageView>> allocatedImages{}; /**< All active images. Even external ones. */
+
         //FUNCTIONS
     public:
         RenderGraph() = delete;
