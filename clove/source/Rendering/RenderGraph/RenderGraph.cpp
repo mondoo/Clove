@@ -17,7 +17,7 @@ namespace garlic::clove {
     RgBuffer RenderGraph::createBuffer(size_t bufferSize) {
         RgBuffer const buffer{ nextId++ };
 
-        GhaBuffer::Descriptor &descriptor{ bufferDescriptors[buffer] };
+        GhaBuffer::Descriptor &descriptor{ bufferDescriptors[buffer.id] };
         descriptor.size       = bufferSize;
         descriptor.memoryType = MemoryType::VideoMemory;//Assume video memory until it has been written to from the host
 
@@ -25,10 +25,10 @@ namespace garlic::clove {
     }
 
     RgBuffer RenderGraph::createBuffer(std::shared_ptr<GhaBuffer> buffer, size_t offset, size_t size) {
-        ResourceIdType const id{ nextId++ };
-        externalBuffers[id] = std::move(buffer);
+        RgBuffer const rgBuffer{ nextId++, offset, size };
+        allocatedBuffers[rgBuffer.id] = std::move(buffer);
 
-        return RgBuffer{ id };
+        return rgBuffer;
     }
 
     void RenderGraph::writeToBuffer(RgBuffer const &buffer, void const *data, size_t const offset, size_t const size) {
@@ -38,16 +38,16 @@ namespace garlic::clove {
             .size   = size,
         };
         memcpy(write.data.data(), data, size);
-        bufferWrites[buffer] = std::move(write);
+        bufferWrites[buffer.id] = std::move(write);
 
-        if(!externalBuffers.contains(buffer)) {
+        if(!allocatedBuffers.contains(buffer.id)) {
             //Update to system memory if a write has been recorded.
-            bufferDescriptors[buffer].memoryType = MemoryType::SystemMemory;
+            bufferDescriptors[buffer.id].memoryType = MemoryType::SystemMemory;
         }
 
         operations.emplace_back([this, buffer]() {
-            BufferWrite &write{ bufferWrites.at(buffer) };
-            allocatedBuffers[buffer]->write(write.data.data(), write.offset, write.size);
+            BufferWrite &write{ bufferWrites.at(buffer.id) };
+            allocatedBuffers[buffer.id]->write(write.data.data(), buffer.offset + write.offset, write.size);
         });
     }
 

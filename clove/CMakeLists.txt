@@ -129,6 +129,7 @@ add_library(
 		${INCLUDE}/Rendering/RenderGraph/RenderGraph.hpp
 		${SOURCE}/Rendering/RenderGraph/RenderGraph.cpp
 		${INCLUDE}/Rendering/RenderGraph/RgBuffer.hpp
+		${SOURCE}/Rendering/RenderGraph/RgBuffer.cpp
 		${INCLUDE}/Rendering/RenderGraph/RgComputePipelineState.hpp
 		${INCLUDE}/Rendering/RenderGraph/RgGraphicsPipelineState.hpp
 		${INCLUDE}/Rendering/RenderGraph/RgId.hpp

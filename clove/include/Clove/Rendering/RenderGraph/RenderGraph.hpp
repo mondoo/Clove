@@ -85,9 +85,8 @@ namespace garlic::clove {
 
         std::vector<std::function<void()>> operations{}; /**< Every operation (pass, copy, write, etc.) recorded into the graph in order. */
 
-        std::unordered_map<RgBuffer, GhaBuffer::Descriptor> bufferDescriptors{};
-        std::unordered_map<RgBuffer, BufferWrite> bufferWrites{};
-        std::unordered_map<ResourceIdType, std::shared_ptr<GhaBuffer>> externalBuffers{}; /**< Buffers created outside of the graph. */
+        std::unordered_map<ResourceIdType, GhaBuffer::Descriptor> bufferDescriptors{};
+        std::unordered_map<ResourceIdType, BufferWrite> bufferWrites{};
         std::unordered_map<ResourceIdType, std::shared_ptr<GhaBuffer>> allocatedBuffers{}; /**< All active buffers. Even external ones. */
 
         //FUNCTIONS
@@ -122,7 +121,7 @@ namespace garlic::clove {
         /**
          * @brief Write data into this buffer.
          * @param data Pointer to data to write.
-         * @param offset Offset into the buffer to write to.
+         * @param offset Offset into the buffer to write to. If the RgBuffer views an offset into a GhaBuffer then it'll be view offset + offset
          * @param size Size of the region in the buffer to write to.
          */
         void writeToBuffer(RgBuffer const &buffer, void const *data, size_t const offset, size_t const size);
