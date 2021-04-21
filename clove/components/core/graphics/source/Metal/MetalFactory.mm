@@ -8,6 +8,7 @@
 #include "Clove/Graphics/Metal/MetalGraphicsQueue.hpp"
 #include "Clove/Graphics/Metal/MetalImage.hpp"
 #include "Clove/Graphics/Metal/MetalImageView.hpp"
+#include "Clove/Graphics/Metal/MetalPresentQueue.hpp"
 #include "Clove/Graphics/Metal/MetalRenderPass.hpp"
 #include "Clove/Graphics/Metal/MetalSwapchain.hpp"
 #include "Clove/Graphics/Metal/MetalView.hpp"
@@ -117,7 +118,7 @@ namespace garlic::clove {
 	}
 	
 	Expected<std::unique_ptr<GhaPresentQueue>, std::runtime_error> MetalFactory::createPresentQueue() {
-		return Unexpected{ std::runtime_error{ "Not implemented" } };
+		return std::unique_ptr<GhaPresentQueue>{ std::make_unique<MetalPresentQueue>([device newCommandQueue], [view retain]) };
 	}
 	
 	Expected<std::unique_ptr<GhaTransferQueue>, std::runtime_error> MetalFactory::createTransferQueue(CommandQueueDescriptor descriptor) {
