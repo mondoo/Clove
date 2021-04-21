@@ -28,7 +28,10 @@ namespace garlic::clove {
 	
 	MetalGraphicsCommandBuffer& MetalGraphicsCommandBuffer::operator=(MetalGraphicsCommandBuffer &&other) noexcept = default;
 	
-	MetalGraphicsCommandBuffer::~MetalGraphicsCommandBuffer() = default;
+	MetalGraphicsCommandBuffer::~MetalGraphicsCommandBuffer() {
+		//TODO: Might not be required
+		//[commandBuffer release];
+	}
 	
 	void MetalGraphicsCommandBuffer::beginRecording(CommandBufferUsage usageFlag) {
 		//no op

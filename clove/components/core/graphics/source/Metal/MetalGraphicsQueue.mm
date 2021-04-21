@@ -6,9 +6,8 @@
 #include <Clove/Cast.hpp>
 
 namespace garlic::clove {
-	MetalGraphicsQueue::MetalGraphicsQueue(id<MTLCommandQueue> commandQueue, MetalView *view)
-		: commandQueue{ commandQueue }
-		, view{ view } {
+	MetalGraphicsQueue::MetalGraphicsQueue(id<MTLCommandQueue> commandQueue)
+		: commandQueue{ commandQueue } {
 	}
 	
 	MetalGraphicsQueue::MetalGraphicsQueue(MetalGraphicsQueue &&other) noexcept = default;
@@ -17,7 +16,6 @@ namespace garlic::clove {
 	
 	MetalGraphicsQueue::~MetalGraphicsQueue() {
 		[commandQueue release];
-		[view release];
 	}
 	
 	std::unique_ptr<GhaGraphicsCommandBuffer> MetalGraphicsQueue::allocateCommandBuffer() {
@@ -35,9 +33,7 @@ namespace garlic::clove {
 			
 			for(auto &commandBuffer : submission.commandBuffers) {
 				id<MTLCommandBuffer> mtlCommandBuffer{ polyCast<MetalGraphicsCommandBuffer>(commandBuffer.get())->getCommandBuffer() };
-				
-				//TODO: Temporarily present here. This is something the present queue should deal with.
-				//[mtlCommandBuffer presentDrawable: [view.metalLayer currentDrawable]];
+				[mtlCommandBuffer commit];
 			}
 		}
 	}

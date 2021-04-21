@@ -113,8 +113,7 @@ namespace garlic::clove {
 	}
 
 	Expected<std::unique_ptr<GhaGraphicsQueue>, std::runtime_error> MetalFactory::createGraphicsQueue(CommandQueueDescriptor descriptor) {
-		//TODO: Provide the view to the present queue instead
-		return std::unique_ptr<GhaGraphicsQueue>{ std::make_unique<MetalGraphicsQueue>([device newCommandQueue], [view retain]) };
+		return std::unique_ptr<GhaGraphicsQueue>{ std::make_unique<MetalGraphicsQueue>([device newCommandQueue]) };
 	}
 	
 	Expected<std::unique_ptr<GhaPresentQueue>, std::runtime_error> MetalFactory::createPresentQueue() {
