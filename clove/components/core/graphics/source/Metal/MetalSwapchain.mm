@@ -1,39 +1,62 @@
 #include "Clove/Graphics/Metal/MetalSwapchain.hpp"
 
 #include "Clove/Graphics/Metal/MetalImage.hpp"
-#include "Clove/Graphics/Metal/MetalView.hpp"
+#include "Clove/Graphics/Metal/MetalImageView.hpp"
 
-#include <QuartzCore/CAMetalLayer.h>
+#include <Clove/Log/Log.hpp>
 
 namespace garlic::clove {
-	MetalSwapchain::MetalSwapchain(MetalView *view)
-		: view{ view } {
+	MetalSwapchain::MetalSwapchain(std::vector<std::shared_ptr<GhaImage>> images, GhaImage::Format imageFormat, vec2ui imageSize)
+		: images{ std::move(images) }
+		, imageFormat{ imageFormat }
+		, imageSize{ imageSize }{
 	}
 	
 	MetalSwapchain::MetalSwapchain(MetalSwapchain &&other) noexcept = default;
 	
 	MetalSwapchain& MetalSwapchain::operator=(MetalSwapchain &&other) noexcept = default;
 	
-	MetalSwapchain::~MetalSwapchain() {
-		[view release];
-	}
+	MetalSwapchain::~MetalSwapchain() = default;
 	
 	std::pair<uint32_t, Result> MetalSwapchain::aquireNextImage(GhaSemaphore const *availableSemaphore) {
-		//TODO
-		return {};
+		//TODO: will signal semaphore immediately semaphores
+		//TODO: Handle resizing;
+		
+		if(imageQueue.size() == 0) {
+			CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0} has no available images", CLOVE_FUNCTION_NAME_PRETTY);
+			return { -1, Result::Unkown };
+		}
+		
+		uint32_t const availableIndex{ imageQueue.front() };
+		imageQueue.pop();
+		
+		return { availableIndex, Result::Success };
 	}
 
 	GhaImage::Format MetalSwapchain::getImageFormat() const {
-		return MetalImage::convertFormat([view.metalLayer pixelFormat]);
+		return imageFormat;
 	}
 	
 	vec2ui MetalSwapchain::getSize() const {
-		CGSize const size{ [view.metalLayer drawableSize] };
-		return { size.width, size.height };
+		return imageSize;
 	}
 
 	std::vector<std::shared_ptr<GhaImageView>> MetalSwapchain::getImageViews() const {
-		//TODO
-		return {};
+		std::vector<std::shared_ptr<GhaImageView>> imageViews{};
+		imageViews.reserve(images.size());
+		
+		GhaImageView::Descriptor const viewDescriptor{
+			.type = GhaImageView::Type::_2D,
+		};
+		
+		for(auto &image : images) {
+			imageViews.emplace_back(image->createView(viewDescriptor));
+		}
+		
+		return imageViews;
+	}
+	
+	void MetalSwapchain::markIndexAsFree(uint32_t index) {
+		imageQueue.push(index);
 	}
 }

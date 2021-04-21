@@ -2,20 +2,27 @@
 
 #include "Clove/Graphics/GhaSwapchain.hpp"
 
-#include <MetalKit/MetalKit.h>
+#include <queue>
 
-@class MetalView;
+namespace garlic::clove {
+	class GhaImage;
+}
 
 namespace garlic::clove {
 	class MetalSwapchain : public GhaSwapchain {
 		//VARIABLES
 	private:
-		MetalView *view{ nullptr };
+		std::vector<std::shared_ptr<GhaImage>> images{};
+		
+		GhaImage::Format imageFormat{};
+		vec2ui imageSize{};
+		
+		std::queue<uint32_t> imageQueue{};
 		
 		//FUNCTIONS
 	public:
 		MetalSwapchain() = delete;
-		MetalSwapchain(MetalView *view);
+		MetalSwapchain(std::vector<std::shared_ptr<GhaImage>> images, GhaImage::Format imageFormat, vec2ui imageSize);
 		
 		MetalSwapchain(MetalSwapchain const &other) = delete;
 		MetalSwapchain(MetalSwapchain &&other) noexcept;
@@ -31,5 +38,10 @@ namespace garlic::clove {
 		vec2ui getSize() const override;
 
 		std::vector<std::shared_ptr<GhaImageView>> getImageViews() const override;
+		
+		/**
+		 * @brief Tells the swapchain that the image index is free to use again.
+		 */
+		void markIndexAsFree(uint32_t index);
 	};
 }

@@ -130,7 +130,32 @@ namespace garlic::clove {
 	}
 
 	Expected<std::unique_ptr<GhaSwapchain>, std::runtime_error> MetalFactory::createSwapChain(GhaSwapchain::Descriptor descriptor) {
-		return std::unique_ptr<GhaSwapchain>{ std::make_unique<MetalSwapchain>([view retain]) };
+		std::vector<std::shared_ptr<GhaImage>> swapchainImages{};
+		GhaImage::Format const drawableFormat{ MetalImage::convertFormat([view.metalLayer pixelFormat]) };
+		vec2ui const drawableSize{ [view.metalLayer drawableSize].width, [view.metalLayer drawableSize].height };
+		
+		GhaImage::Descriptor const imageDescriptor{
+			.type 		 = GhaImage::Type::_2D,
+			.usageFlags  = GhaImage::UsageMode::ColourAttachment | GhaImage::UsageMode::TransferSource,
+			.dimensions  = drawableSize,
+			.format 	 = drawableFormat,
+			.sharingMode = SharingMode::Concurrent,
+		};
+		
+		//Creating 3 back buffers for now. Will need to synchronise this number across APIs.
+		size_t constexpr swapchainImageCount{ 3 };
+		
+		swapchainImages.reserve(swapchainImageCount);
+		for(size_t i{ 0 }; i < swapchainImageCount; ++i) {
+			Expected<std::unique_ptr<GhaImage>, std::runtime_error> imageResult{ createImage(imageDescriptor) };
+			if(imageResult.hasValue()) {
+				swapchainImages.emplace_back(std::move(imageResult.getValue()));
+			} else {
+				return Unexpected{ std::move(imageResult.getError()) };
+			}
+		}
+		
+		return std::unique_ptr<GhaSwapchain>{ std::make_unique<MetalSwapchain>(std::move(swapchainImages), drawableFormat, drawableSize) };
 	}
 
 	Expected<std::unique_ptr<GhaShader>, std::runtime_error> MetalFactory::createShaderFromFile(std::filesystem::path const &file, GhaShader::Stage shaderStage) {
