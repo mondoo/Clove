@@ -9,7 +9,16 @@ namespace garlic::clove {
 	MetalSwapchain::MetalSwapchain(std::vector<std::shared_ptr<GhaImage>> images, GhaImage::Format imageFormat, vec2ui imageSize)
 		: images{ std::move(images) }
 		, imageFormat{ imageFormat }
-		, imageSize{ imageSize }{
+		, imageSize{ imageSize } {
+		imageViews.reserve(images.size());
+			
+		GhaImageView::Descriptor const viewDescriptor{
+			.type = GhaImageView::Type::_2D,
+		};
+			
+		for(auto &image : images) {
+			imageViews.emplace_back(image->createView(viewDescriptor));
+		}
 	}
 	
 	MetalSwapchain::MetalSwapchain(MetalSwapchain &&other) noexcept = default;
@@ -42,17 +51,6 @@ namespace garlic::clove {
 	}
 
 	std::vector<std::shared_ptr<GhaImageView>> MetalSwapchain::getImageViews() const {
-		std::vector<std::shared_ptr<GhaImageView>> imageViews{};
-		imageViews.reserve(images.size());
-		
-		GhaImageView::Descriptor const viewDescriptor{
-			.type = GhaImageView::Type::_2D,
-		};
-		
-		for(auto &image : images) {
-			imageViews.emplace_back(image->createView(viewDescriptor));
-		}
-		
 		return imageViews;
 	}
 	

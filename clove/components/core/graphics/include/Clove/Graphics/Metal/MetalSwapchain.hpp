@@ -13,6 +13,7 @@ namespace garlic::clove {
 		//VARIABLES
 	private:
 		std::vector<std::shared_ptr<GhaImage>> images{};
+		std::vector<std::shared_ptr<GhaImageView>> imageViews{};
 		
 		GhaImage::Format imageFormat{};
 		vec2ui imageSize{};
