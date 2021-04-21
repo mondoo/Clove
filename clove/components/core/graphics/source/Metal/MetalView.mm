@@ -17,6 +17,7 @@
 - (CALayer *) makeBackingLayer {
 	_metalLayer = [CAMetalLayer layer];
 	[_metalLayer setFramebufferOnly:YES]; //Notifies the layer that the images are only used in framebuffers
+	_metalLayer.allowsNextDrawableTimeout = NO; //Always blocks until a drawable is ready
 	
 	return _metalLayer;
 }
