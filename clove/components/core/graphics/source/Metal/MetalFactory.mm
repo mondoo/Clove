@@ -131,12 +131,11 @@ namespace garlic::clove {
 	Expected<std::unique_ptr<GhaSwapchain>, std::runtime_error> MetalFactory::createSwapChain(GhaSwapchain::Descriptor descriptor) {
 		std::vector<std::shared_ptr<GhaImage>> swapchainImages{};
 		GhaImage::Format const drawableFormat{ MetalImage::convertFormat([view.metalLayer pixelFormat]) };
-		vec2ui const drawableSize{ [view.metalLayer drawableSize].width, [view.metalLayer drawableSize].height };
 		
 		GhaImage::Descriptor const imageDescriptor{
 			.type 		 = GhaImage::Type::_2D,
 			.usageFlags  = GhaImage::UsageMode::ColourAttachment | GhaImage::UsageMode::TransferSource,
-			.dimensions  = drawableSize,
+			.dimensions  = descriptor.extent,
 			.format 	 = drawableFormat,
 			.sharingMode = SharingMode::Concurrent,
 		};
@@ -154,7 +153,7 @@ namespace garlic::clove {
 			}
 		}
 		
-		return std::unique_ptr<GhaSwapchain>{ std::make_unique<MetalSwapchain>(std::move(swapchainImages), drawableFormat, drawableSize) };
+		return std::unique_ptr<GhaSwapchain>{ std::make_unique<MetalSwapchain>(std::move(swapchainImages), drawableFormat, descriptor.extent) };
 	}
 
 	Expected<std::unique_ptr<GhaShader>, std::runtime_error> MetalFactory::createShaderFromFile(std::filesystem::path const &file, GhaShader::Stage shaderStage) {
