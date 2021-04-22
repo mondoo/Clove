@@ -35,5 +35,7 @@ namespace garlic::clove {
 		
 		[commandBuffer presentDrawable:drawable];
 		[commandBuffer commit];
+		
+		swapchain->markIndexAsFree(presentInfo.imageIndex);
 	}
 }
