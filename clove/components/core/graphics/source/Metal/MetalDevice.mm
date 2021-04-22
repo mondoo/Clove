@@ -43,7 +43,7 @@ namespace garlic::clove {
 		return factory;
 	}
 
-	void waitForIdleDevice() {
+	void MetalDevice::waitForIdleDevice() {
 		//No op
 	}
 
