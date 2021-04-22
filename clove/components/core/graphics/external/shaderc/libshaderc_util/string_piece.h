@@ -330,7 +330,9 @@ inline std::ostream& operator<<(std::ostream& os, const string_piece& piece) {
 }
 
 inline bool operator==(const char* first, const string_piece second) {
-  return second == first;
+    //GARLIC_CHANGE BEGIN
+    return second == string_piece{ first };
+    //GARLIC_CHANGE END
 }
 
 inline bool operator!=(const char* first, const string_piece second) {
