@@ -77,7 +77,7 @@ namespace Garlic.Bulb {
         private void RunEngineApplication() {
             while (!exitThread) {
                 if (engineApp.isRunning()) {
-                    //Send any editor events
+                    //Send any editor events to the engine
                     Membrane.MessageHandler.flushEditor();
 
                     //Update the application
@@ -99,8 +99,8 @@ namespace Garlic.Bulb {
                         imageSource.Unlock();
                     }));
 
-                    //Send any engine events
-                    Membrane.MessageHandler.flushEngine();
+                    //Send any engine events to the editor
+                    Membrane.MessageHandler.flushEngine(Application.Current.Dispatcher);
                 } else {
                     //Return to avoid calling shutdown if the app exits by itself
                     return;

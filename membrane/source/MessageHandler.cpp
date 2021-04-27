@@ -1,7 +1,5 @@
 #include "Membrane/MessageHandler.hpp"
 
-#include "Membrane/Messages.hpp"
-
 #include <Clove/Log/Log.hpp>
 #include <msclr/lock.h>
 #include <msclr/marshal_cppstd.h>
@@ -33,7 +31,7 @@ namespace garlic::membrane {
     }
 
     void MessageHandler::flushEditor() {
-        //All messages are dispatched from the engine thread so we need to lock the editor
+        //All messages are dispatched from the engine thread so we need to lock the editor thread incase it sends a message while we're flushing
         msclr::lock scopedLock{ editorLock };
 
         for each(EditorMessage ^message in editorMessages) {
@@ -45,10 +43,10 @@ namespace garlic::membrane {
         editorMessages->Clear();
     }
 
-    void MessageHandler::flushEngine() {
+    void MessageHandler::flushEngine(System::Windows::Threading::Dispatcher ^editorDispatcher) {
         for each(EngineMessage ^message in engineMessages) {            
             for each(IMessageDelegateWrapper^ wrapper in delegates){
-                wrapper->tryInvoke(message);
+                wrapper->tryInvoke(message, editorDispatcher);
             }
         }
 

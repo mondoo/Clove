@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Membrane/EditorTypes.hpp"
+#include "Membrane/MessageBase.hpp"
 
 namespace garlic::membrane {
     // clang-format off
@@ -12,8 +13,6 @@ namespace garlic::membrane {
     };
 
     //Messages sent from Bulb
-    public ref class EditorMessage{};
-
     public ref class Editor_CreateEntity : public EditorMessage {};
     public ref class Editor_CreateComponent : public EditorMessage {
     public:
@@ -59,8 +58,6 @@ namespace garlic::membrane {
     public ref class Editor_LoadScene : public EditorMessage {};
 
     //Messages sent from Clove
-    public ref class EngineMessage{}; 
-
     public ref class Engine_OnEntityCreated : public EngineMessage {
     public:
         System::UInt32 entity;
