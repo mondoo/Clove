@@ -1,10 +1,9 @@
 #include "Membrane/MessageHandler.hpp"
 
-#include <Clove/Log/Log.hpp>
+#include "Membrane/MembraneLog.hpp"
+
 #include <msclr/lock.h>
 #include <msclr/marshal_cppstd.h>
-
-CLOVE_DECLARE_LOG_CATEGORY(MEMBRANE)
 
 namespace garlic::membrane {
     // clang-format off
