@@ -95,6 +95,8 @@ namespace garlic::clove {
         std::unordered_map<ResourceIdType, GhaImage::Descriptor> imageDescriptors{};
         std::unordered_map<ResourceIdType, std::shared_ptr<GhaImageView>> allocatedImages{}; /**< All active images. Even external ones. */
 
+        std::unordered_map<ResourceIdType, std::shared_ptr<GhaShader>> allocatedShaders{};
+
         //FUNCTIONS
     public:
         RenderGraph() = delete;
@@ -154,7 +156,7 @@ namespace garlic::clove {
          * @param shaderStage 
          * @return 
          */
-        RgShader createShader(std::filesystem::path file, GhaShader::Stage shaderStage);
+        RgShader createShader(std::filesystem::path const &file, GhaShader::Stage shaderStage);
         /**
          * @brief Create a new RgShader from a source string.
          * @param source 
@@ -163,7 +165,7 @@ namespace garlic::clove {
          * @param shaderStage 
          * @return 
          */
-        RgShader createShader(std::string source, std::unordered_map<std::string, std::string> includeSources, std::string_view shaderName, GhaShader::Stage shaderStage);
+        RgShader createShader(std::string_view source, std::unordered_map<std::string, std::string> includeSources, std::string_view shaderName, GhaShader::Stage shaderStage);
 
         /**
          * @brief Constructs a new RgGraphicsPipelineState.

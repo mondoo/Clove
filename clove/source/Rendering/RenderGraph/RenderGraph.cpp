@@ -77,14 +77,18 @@ namespace garlic::clove {
         return image;
     }
 
-    RgShader RenderGraph::createShader(std::filesystem::path file, GhaShader::Stage shaderStage) {
+    RgShader RenderGraph::createShader(std::filesystem::path const &file, GhaShader::Stage shaderStage) {
         RgShader const shader{ nextId++ };
+        //Allocate straight away as it's usage does not define it's properties
+        allocatedShaders[shader] = globalCache.createShader(file, shaderStage);
 
         return shader;
     }
 
-    RgShader RenderGraph::createShader(std::string source, std::unordered_map<std::string, std::string> includeSources, std::string_view shaderName, GhaShader::Stage shaderStage) {
+    RgShader RenderGraph::createShader(std::string_view source, std::unordered_map<std::string, std::string> includeSources, std::string_view shaderName, GhaShader::Stage shaderStage) {
         RgShader const shader{ nextId++ };
+        //Allocate straight away as it's usage does not define it's properties
+        allocatedShaders[shader] = globalCache.createShader(source, std::move(includeSources), shaderName, shaderStage);
 
         return shader;
     }
