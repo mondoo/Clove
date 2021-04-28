@@ -1,8 +1,12 @@
 #include "Clove/Rendering/RenderGraph/RenderGraph.hpp"
 
+#include "Clove/Rendering/RenderGraph/RgFrameCache.hpp"
+#include "Clove/Rendering/RenderGraph/RgGlobalCache.hpp"
+
 namespace garlic::clove {
-    RenderGraph::RenderGraph(RgArena &arena)
-        : arena{ arena } {};
+    RenderGraph::RenderGraph(RgFrameCache &frameCache, RgGlobalCache &globalCache)
+        : frameCache{ frameCache }
+        , globalCache{ globalCache } {}
 
     RenderGraph::RenderGraph(RenderGraph const &other) = default;
 
@@ -56,7 +60,7 @@ namespace garlic::clove {
 
         GhaImage::Descriptor imageDescriptor{ imageDescriptors[image] };
         imageDescriptor.dimensions = dimensions;
-        imageDescriptor.format = format;
+        imageDescriptor.format     = format;
 
         return image;
     }
@@ -68,16 +72,16 @@ namespace garlic::clove {
         return image;
     }
 
-    RgShader RenderGraph::createShader(std::filesystem::path const &file, GhaShader::Stage shaderStage) {
-        //TODO
+    RgShader RenderGraph::createShader(std::filesystem::path file, GhaShader::Stage shaderStage) {
+        RgShader const shader{ nextId++ };
 
-        return {};
+        return shader;
     }
 
-    RgShader RenderGraph::createShader(std::string_view source, std::unordered_map<std::string, std::string> includeSources, std::string_view shaderName, GhaShader::Stage shaderStage) {
-        //TODO
+    RgShader RenderGraph::createShader(std::string source, std::unordered_map<std::string, std::string> includeSources, std::string_view shaderName, GhaShader::Stage shaderStage) {
+        RgShader const shader{ nextId++ };
 
-        return {};
+        return shader;
     }
 
     RgGraphicsPipelineState RenderGraph::createGraphicsPipelineState(RgGraphicsPipelineState::Descriptor desciptor) {

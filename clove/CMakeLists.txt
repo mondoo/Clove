@@ -131,11 +131,15 @@ add_library(
 		${INCLUDE}/Rendering/RenderGraph/RgBuffer.hpp
 		${SOURCE}/Rendering/RenderGraph/RgBuffer.cpp
 		${INCLUDE}/Rendering/RenderGraph/RgComputePipelineState.hpp
+		${INCLUDE}/Rendering/RenderGraph/RgFrameCache.hpp
+		${SOURCE}/Rendering/RenderGraph/RgFrameCache.cpp
+		${INCLUDE}/Rendering/RenderGraph/RgGlobalCache.hpp
+		${SOURCE}/Rendering/RenderGraph/RgGlobalCache.cpp
 		${INCLUDE}/Rendering/RenderGraph/RgGraphicsPipelineState.hpp
 		${INCLUDE}/Rendering/RenderGraph/RgId.hpp
 		${INCLUDE}/Rendering/RenderGraph/RgImage.hpp
 		${INCLUDE}/Rendering/RenderGraph/RgShader.hpp
-
+		
 		${INCLUDE}/Rendering/RenderPasses/ForwardColourPass.hpp
 		${SOURCE}/Rendering/RenderPasses/ForwardColourPass.cpp
 		${INCLUDE}/Rendering/RenderPasses/DirectionalLightPass.hpp

@@ -3,7 +3,6 @@
 #include "Clove/Rendering/RenderGraph/RgGraphicsPipelineState.hpp"
 //
 
-#include "Clove/Rendering/RenderGraph/RgArena.hpp"
 #include "Clove/Rendering/RenderGraph/RgBuffer.hpp"
 #include "Clove/Rendering/RenderGraph/RgComputePipelineState.hpp"
 #include "Clove/Rendering/RenderGraph/RgId.hpp"
@@ -22,6 +21,9 @@
 #include <vector>
 
 namespace garlic::clove {
+    class RgFrameCache;
+    class RgGlobalCache;
+
     class GhaFactory;
     class GhaComputeQueue;
     class GhaGraphicsQueue;
@@ -80,7 +82,8 @@ namespace garlic::clove {
 
         //VARIABLES
     private:
-        RgArena &arena;
+        RgFrameCache &frameCache;
+        RgGlobalCache &globalCache;
         ResourceIdType nextId{ 1 };
 
         std::vector<std::function<void()>> operations{}; /**< Every operation (pass, copy, write, etc.) recorded into the graph in order. */
@@ -95,7 +98,7 @@ namespace garlic::clove {
         //FUNCTIONS
     public:
         RenderGraph() = delete;
-        RenderGraph(RgArena &arena);
+        RenderGraph(RgFrameCache &frameCache, RgGlobalCache &globalCache);
 
         RenderGraph(RenderGraph const &other);
         RenderGraph(RenderGraph &&other) noexcept;
@@ -151,7 +154,7 @@ namespace garlic::clove {
          * @param shaderStage 
          * @return 
          */
-        RgShader createShader(std::filesystem::path const &file, GhaShader::Stage shaderStage);
+        RgShader createShader(std::filesystem::path file, GhaShader::Stage shaderStage);
         /**
          * @brief Create a new RgShader from a source string.
          * @param source 
@@ -160,7 +163,7 @@ namespace garlic::clove {
          * @param shaderStage 
          * @return 
          */
-        RgShader createShader(std::string_view source, std::unordered_map<std::string, std::string> includeSources, std::string_view shaderName, GhaShader::Stage shaderStage);
+        RgShader createShader(std::string source, std::unordered_map<std::string, std::string> includeSources, std::string_view shaderName, GhaShader::Stage shaderStage);
 
         /**
          * @brief Constructs a new RgGraphicsPipelineState.

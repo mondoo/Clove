@@ -6,10 +6,9 @@
 
 namespace garlic::clove {
     /**
-     * @brief Tracks created objects for any given render graph.
-     * Allowing for resources to be created once and reused.
+     * @brief Stores objects associated with a single frame (images, buffers, etc.) for a RenderGraph
      */
-    class RgArena {
+    class RgFrameCache {
         //VARIABLES
     private:
         std::vector<std::shared_ptr<GhaBuffer>> buffers{};
