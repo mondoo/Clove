@@ -22,8 +22,10 @@ namespace garlic::clove {
         RgBuffer const buffer{ nextId++ };
 
         GhaBuffer::Descriptor &descriptor{ bufferDescriptors[buffer.id] };
-        descriptor.size       = bufferSize;
-        descriptor.memoryType = MemoryType::VideoMemory;//Assume video memory until it has been written to from the host
+        descriptor.size        = bufferSize;
+        descriptor.usageFlags  = static_cast<GhaBuffer::UsageMode>(0);//Will be built when executing the graph
+        descriptor.sharingMode = SharingMode::Exclusive; //Assume exclusive to begin with
+        descriptor.memoryType  = MemoryType::VideoMemory;//Assume video memory until it has been written to from the host
 
         return buffer;
     }
@@ -58,9 +60,12 @@ namespace garlic::clove {
     RgImage RenderGraph::createImage(GhaImage::Type imageType, GhaImage::Format format, vec2ui dimensions) {
         RgImage const image{ nextId++ };
 
-        GhaImage::Descriptor imageDescriptor{ imageDescriptors[image] };
-        imageDescriptor.dimensions = dimensions;
-        imageDescriptor.format     = format;
+        GhaImage::Descriptor &imageDescriptor{ imageDescriptors[image] };
+        imageDescriptor.type        = imageType;
+        imageDescriptor.usageFlags  = static_cast<GhaImage::UsageMode>(0);//Will be built when executing the graph
+        imageDescriptor.dimensions  = dimensions;
+        imageDescriptor.format      = format;
+        imageDescriptor.sharingMode = SharingMode::Exclusive;//Assume exclusive to beigin with
 
         return image;
     }
