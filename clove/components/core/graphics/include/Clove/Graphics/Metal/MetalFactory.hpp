@@ -13,6 +13,8 @@ namespace garlic::clove {
 		id<MTLDevice> device{ nullptr };
 		MetalView *view{ nullptr };
 		
+		id<MTLCommandQueue> commandQueue{ nullptr };
+		
 		//FUNCTIONS
 	public:
 		MetalFactory() = delete;

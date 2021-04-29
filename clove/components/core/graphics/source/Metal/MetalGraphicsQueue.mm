@@ -14,9 +14,7 @@ namespace garlic::clove {
 	
 	MetalGraphicsQueue& MetalGraphicsQueue::operator=(MetalGraphicsQueue &&other) noexcept = default;
 	
-	MetalGraphicsQueue::~MetalGraphicsQueue() {
-		[commandQueue release];
-	}
+	MetalGraphicsQueue::~MetalGraphicsQueue() = default;
 	
 	std::unique_ptr<GhaGraphicsCommandBuffer> MetalGraphicsQueue::allocateCommandBuffer() {
 		return std::make_unique<MetalGraphicsCommandBuffer>([commandQueue commandBuffer]);

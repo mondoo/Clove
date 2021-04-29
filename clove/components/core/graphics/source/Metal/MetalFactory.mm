@@ -101,6 +101,7 @@ namespace garlic::clove {
 	MetalFactory::MetalFactory(id<MTLDevice> device, MetalView *view)
 		: device{ device }
 		, view{ view } {
+		commandQueue = [this->device newCommandQueue];
 	}
 	
 	MetalFactory::MetalFactory(MetalFactory &&other) noexcept = default;
@@ -110,21 +111,25 @@ namespace garlic::clove {
 	MetalFactory::~MetalFactory() {
 		[device release];
 		[view release];
+		[commandQueue release];
 	}
 
 	Expected<std::unique_ptr<GhaGraphicsQueue>, std::runtime_error> MetalFactory::createGraphicsQueue(CommandQueueDescriptor descriptor) {
-		return std::unique_ptr<GhaGraphicsQueue>{ std::make_unique<MetalGraphicsQueue>([device newCommandQueue]) };
+		//TODO: descriptor
+		return std::unique_ptr<GhaGraphicsQueue>{ std::make_unique<MetalGraphicsQueue>([commandQueue retain]) };
 	}
 	
 	Expected<std::unique_ptr<GhaPresentQueue>, std::runtime_error> MetalFactory::createPresentQueue() {
-		return std::unique_ptr<GhaPresentQueue>{ std::make_unique<MetalPresentQueue>([device newCommandQueue], [view retain]) };
+		return std::unique_ptr<GhaPresentQueue>{ std::make_unique<MetalPresentQueue>([commandQueue retain], [view retain]) };
 	}
 	
 	Expected<std::unique_ptr<GhaTransferQueue>, std::runtime_error> MetalFactory::createTransferQueue(CommandQueueDescriptor descriptor) {
+		//NOTE: For async a new queue would be needed (like the the family indicies)
 		return Unexpected{ std::runtime_error{ "Not implemented" } };
 	}
 	
 	Expected<std::unique_ptr<GhaComputeQueue>, std::runtime_error> MetalFactory::createComputeQueue(CommandQueueDescriptor descriptor) {
+		//NOTE: For async a new queue would be needed (like the the family indicies)
 		return Unexpected{ std::runtime_error{ "Not implemented" } };
 	}
 
