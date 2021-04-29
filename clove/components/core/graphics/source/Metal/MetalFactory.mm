@@ -325,7 +325,7 @@ namespace garlic::clove {
 	}
 	
 	Expected<std::unique_ptr<GhaImage>, std::runtime_error> MetalFactory::createImage(GhaImage::Descriptor descriptor) {
-		MTLTextureDescriptor *mtlDescriptor;
+		MTLTextureDescriptor *mtlDescriptor{ [[MTLTextureDescriptor alloc] init] };
 		mtlDescriptor.textureType = convertImageType(descriptor.type);
 		mtlDescriptor.pixelFormat = MetalImage::convertFormat(descriptor.format);
 		mtlDescriptor.width = descriptor.dimensions.x;
@@ -334,6 +334,8 @@ namespace garlic::clove {
 		mtlDescriptor.usage = getUsageFlags(descriptor.usageFlags);
 		
 		id<MTLTexture> texture{ [device newTextureWithDescriptor:mtlDescriptor] };
+		
+		[mtlDescriptor release];
 		
 		return std::unique_ptr<GhaImage>{ std::make_unique<MetalImage>(texture, std::move(descriptor)) };
 	}
