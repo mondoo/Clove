@@ -9,7 +9,9 @@ namespace garlic::clove {
 	
 	MetalFramebuffer& MetalFramebuffer::operator=(MetalFramebuffer &&other) noexcept = default;
 	
-	MetalFramebuffer::~MetalFramebuffer() = default;
+	MetalFramebuffer::~MetalFramebuffer() {
+		[renderPassDescriptor release];
+	}
 	
 	MTLRenderPassDescriptor *MetalFramebuffer::getRenderPassDescriptor() const {
 		return renderPassDescriptor;

@@ -279,7 +279,7 @@ namespace garlic::clove {
 	Expected<std::unique_ptr<GhaFramebuffer>, std::runtime_error> MetalFactory::createFramebuffer(GhaFramebuffer::Descriptor descriptor) {
 		GhaRenderPass::Descriptor const &renderPassDescriptor{ polyCast<MetalRenderPass>(descriptor.renderPass.get())->getDescriptor() };
 		
-		MTLRenderPassDescriptor *frameBufferDescriptor{};
+		MTLRenderPassDescriptor *frameBufferDescriptor{ [[MTLRenderPassDescriptor alloc] init] };
 		for(size_t i{ 0 }; i < renderPassDescriptor.colourAttachments.size(); ++i) {
 			frameBufferDescriptor.colorAttachments[i].texture = polyCast<MetalImageView>(descriptor.attachments[i].get())->getTexture();
 			frameBufferDescriptor.colorAttachments[i].loadAction = convertLoadOp(renderPassDescriptor.colourAttachments[i].loadOperation);
