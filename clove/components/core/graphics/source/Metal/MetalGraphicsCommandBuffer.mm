@@ -20,8 +20,8 @@ namespace garlic::clove {
 		}
 	}
 	
-	MetalGraphicsCommandBuffer::MetalGraphicsCommandBuffer(id<MTLCommandBuffer> commandBuffer)
-		: commandBuffer{ commandBuffer }{
+	MetalGraphicsCommandBuffer::MetalGraphicsCommandBuffer(id<MTLCommandQueue> commandQueue)
+		: commandQueue{ [commandQueue retain] }{
 	}
 	
 	MetalGraphicsCommandBuffer::MetalGraphicsCommandBuffer(MetalGraphicsCommandBuffer &&other) noexcept = default;
@@ -29,12 +29,11 @@ namespace garlic::clove {
 	MetalGraphicsCommandBuffer& MetalGraphicsCommandBuffer::operator=(MetalGraphicsCommandBuffer &&other) noexcept = default;
 	
 	MetalGraphicsCommandBuffer::~MetalGraphicsCommandBuffer() {
-		//TODO: Might not be required
-		//[commandBuffer release];
+		[commandQueue release];
 	}
 	
 	void MetalGraphicsCommandBuffer::beginRecording(CommandBufferUsage usageFlag) {
-		//no op
+		commandBuffer = [commandQueue commandBuffer];
 	}
 	
 	void MetalGraphicsCommandBuffer::endRecording() {
@@ -68,6 +67,8 @@ namespace garlic::clove {
 			.originY = static_cast<double>(position.y),
 			.width   = static_cast<double>(size.x),
 			.height  = static_cast<double>(size.y),
+			.znear   = 0.0f,
+			.zfar    = 1.0f,
 		};
 		[currentEncoder setViewport:std::move(viewport)];
 	}
@@ -127,6 +128,7 @@ namespace garlic::clove {
 	}
 	
 	void MetalGraphicsCommandBuffer::setNewCommandBuffer(id<MTLCommandBuffer> commandBuffer) {
-		this->commandBuffer = commandBuffer;
+		[this->commandBuffer release];
+		this->commandBuffer = [commandBuffer retain];
 	}
 }

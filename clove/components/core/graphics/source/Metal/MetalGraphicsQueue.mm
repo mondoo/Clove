@@ -17,7 +17,7 @@ namespace garlic::clove {
 	MetalGraphicsQueue::~MetalGraphicsQueue() = default;
 	
 	std::unique_ptr<GhaGraphicsCommandBuffer> MetalGraphicsQueue::allocateCommandBuffer() {
-		return std::make_unique<MetalGraphicsCommandBuffer>([commandQueue commandBuffer]);
+		return std::make_unique<MetalGraphicsCommandBuffer>(commandQueue);
 	}
 	
 	void MetalGraphicsQueue::freeCommandBuffer(GhaGraphicsCommandBuffer &buffer) {
@@ -36,7 +36,7 @@ namespace garlic::clove {
 				[mtlCommandBuffer commit];
 				
 				//Once the buffer has been committed provide a new one to record to
-				metalGraphicsBuffer->setNewCommandBuffer([commandQueue commandBuffer]);
+				//metalGraphicsBuffer->setNewCommandBuffer([commandQueue commandBuffer]);
 			}
 		}
 	}

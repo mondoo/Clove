@@ -15,8 +15,8 @@ namespace garlic::clove {
 		};
 		//VARIABLES
 	private:
+		id<MTLCommandQueue> commandQueue;
 		id<MTLCommandBuffer> commandBuffer;
-		
 		id<MTLRenderCommandEncoder> currentEncoder;
 		
 		//Metal's drawIndexed call takes an index buffer directly so we need to cache the one provided from bindIndexBuffer
@@ -25,7 +25,7 @@ namespace garlic::clove {
 		//FUNCTIONS
 	public:
 		MetalGraphicsCommandBuffer() = delete;
-		MetalGraphicsCommandBuffer(id<MTLCommandBuffer> commandBuffer);
+		MetalGraphicsCommandBuffer(id<MTLCommandQueue> commandQueue);
 		
 		MetalGraphicsCommandBuffer(MetalGraphicsCommandBuffer const &other) = delete;
 		MetalGraphicsCommandBuffer(MetalGraphicsCommandBuffer &&other) noexcept;
@@ -57,6 +57,7 @@ namespace garlic::clove {
 		void imageMemoryBarrier(GhaImage &image, ImageMemoryBarrierInfo const &barrierInfo, PipelineStage sourceStage, PipelineStage destinationStage) override;
 		
 		id<MTLCommandBuffer> getCommandBuffer() const;
+		
 		void setNewCommandBuffer(id<MTLCommandBuffer> commandBuffer);
 	};
 }
