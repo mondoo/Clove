@@ -16,8 +16,9 @@ namespace garlic::clove {
 			.type = GhaImageView::Type::_2D,
 		};
 			
-		for(auto &image : images) {
-			imageViews.emplace_back(image->createView(viewDescriptor));
+		for(size_t i{ 0 }; i < this->images.size(); ++i) {
+			imageViews.emplace_back(this->images[i]->createView(viewDescriptor));
+			imageQueue.push(i);
 		}
 	}
 	
