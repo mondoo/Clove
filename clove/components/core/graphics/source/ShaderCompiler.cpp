@@ -147,12 +147,13 @@ namespace garlic::clove::ShaderCompiler {
 
     Expected<std::string, std::runtime_error> spirvToMSL(std::span<uint32_t> spirvSource) {
         spirv_cross::CompilerMSL msl{ spirvSource.data(), spirvSource.size() };
-        spirv_cross::CompilerMSL::Options scoptions;
+		spirv_cross::CompilerMSL::Options scoptions{};
 
         scoptions.platform = spirv_cross::CompilerMSL::Options::Platform::macOS;
+		
         msl.set_msl_options(scoptions);
 
-        spirv_cross::ShaderResources resources = msl.get_shader_resources();
+		spirv_cross::ShaderResources resources{ msl.get_shader_resources() };
 
         auto const remapMSLBindings = [&msl](uint32_t const binding, spirv_cross::ID const resourceID) {
             spirv_cross::MSLResourceBinding resourceBinding;
