@@ -57,5 +57,6 @@ namespace garlic::clove {
 		void imageMemoryBarrier(GhaImage &image, ImageMemoryBarrierInfo const &barrierInfo, PipelineStage sourceStage, PipelineStage destinationStage) override;
 		
 		id<MTLCommandBuffer> getCommandBuffer() const;
+		void setNewCommandBuffer(id<MTLCommandBuffer> commandBuffer);
 	};
 }

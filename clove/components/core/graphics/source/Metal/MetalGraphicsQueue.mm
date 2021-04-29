@@ -32,8 +32,13 @@ namespace garlic::clove {
 			//[currentEncoder updateFence:nullptr afterStages:MTLRenderStageFragment];
 			
 			for(auto &commandBuffer : submission.commandBuffers) {
-				id<MTLCommandBuffer> mtlCommandBuffer{ polyCast<MetalGraphicsCommandBuffer>(commandBuffer.get())->getCommandBuffer() };
+				MetalGraphicsCommandBuffer *const metalGraphicsBuffer{ polyCast<MetalGraphicsCommandBuffer>(commandBuffer.get()) };
+				
+				id<MTLCommandBuffer> mtlCommandBuffer{ metalGraphicsBuffer->getCommandBuffer() };
 				[mtlCommandBuffer commit];
+				
+				//Once the buffer has been committed provide a new one to record to
+				metalGraphicsBuffer->setNewCommandBuffer([commandQueue commandBuffer]);
 			}
 		}
 	}

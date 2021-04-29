@@ -125,4 +125,8 @@ namespace garlic::clove {
 	id<MTLCommandBuffer> MetalGraphicsCommandBuffer::getCommandBuffer() const {
 		return commandBuffer;
 	}
+	
+	void MetalGraphicsCommandBuffer::setNewCommandBuffer(id<MTLCommandBuffer> commandBuffer) {
+		this->commandBuffer = commandBuffer;
+	}
 }
