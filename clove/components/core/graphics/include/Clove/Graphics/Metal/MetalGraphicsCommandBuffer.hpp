@@ -3,6 +3,8 @@
 #include "Clove/Graphics/GhaGraphicsCommandBuffer.hpp"
 
 #include <MetalKit/MetalKit.h>
+#include <vector>
+#include <functional>
 
 namespace garlic::clove {
 	class MetalGraphicsCommandBuffer : public GhaGraphicsCommandBuffer {
@@ -13,19 +15,23 @@ namespace garlic::clove {
 			MTLIndexType indexType{};
 			NSUInteger offset{};
 		};
+		
+		struct RenderPass {
+			std::function<id<MTLRenderCommandEncoder>(id<MTLCommandBuffer>)> begin{};
+			std::vector<std::function<void(id<MTLRenderCommandEncoder>)>> commands{};
+		};
+		
 		//VARIABLES
 	private:
-		id<MTLCommandQueue> commandQueue;
-		id<MTLCommandBuffer> commandBuffer;
-		id<MTLRenderCommandEncoder> currentEncoder;
+		std::vector<RenderPass> passes{};
+		RenderPass *currentPass{ nullptr };
 		
 		//Metal's drawIndexed call takes an index buffer directly so we need to cache the one provided from bindIndexBuffer
 		CachedIndexBufferData cachedIndexBuffer; 
 		
 		//FUNCTIONS
 	public:
-		MetalGraphicsCommandBuffer() = delete;
-		MetalGraphicsCommandBuffer(id<MTLCommandQueue> commandQueue);
+		MetalGraphicsCommandBuffer();
 		
 		MetalGraphicsCommandBuffer(MetalGraphicsCommandBuffer const &other) = delete;
 		MetalGraphicsCommandBuffer(MetalGraphicsCommandBuffer &&other) noexcept;
@@ -56,8 +62,6 @@ namespace garlic::clove {
 		void bufferMemoryBarrier(GhaBuffer &buffer, BufferMemoryBarrierInfo const &barrierInfo, PipelineStage sourceStage, PipelineStage destinationStage) override;
 		void imageMemoryBarrier(GhaImage &image, ImageMemoryBarrierInfo const &barrierInfo, PipelineStage sourceStage, PipelineStage destinationStage) override;
 		
-		id<MTLCommandBuffer> getCommandBuffer() const;
-		
-		void setNewCommandBuffer(id<MTLCommandBuffer> commandBuffer);
+		void executeCommands(id<MTLCommandBuffer> commandBuffer);
 	};
 }

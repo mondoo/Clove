@@ -20,20 +20,16 @@ namespace garlic::clove {
 		}
 	}
 	
-	MetalGraphicsCommandBuffer::MetalGraphicsCommandBuffer(id<MTLCommandQueue> commandQueue)
-		: commandQueue{ [commandQueue retain] }{
-	}
+	MetalGraphicsCommandBuffer::MetalGraphicsCommandBuffer() = default;
 	
 	MetalGraphicsCommandBuffer::MetalGraphicsCommandBuffer(MetalGraphicsCommandBuffer &&other) noexcept = default;
 	
 	MetalGraphicsCommandBuffer& MetalGraphicsCommandBuffer::operator=(MetalGraphicsCommandBuffer &&other) noexcept = default;
 	
-	MetalGraphicsCommandBuffer::~MetalGraphicsCommandBuffer() {
-		[commandQueue release];
-	}
+	MetalGraphicsCommandBuffer::~MetalGraphicsCommandBuffer() = default;
 	
 	void MetalGraphicsCommandBuffer::beginRecording(CommandBufferUsage usageFlag) {
-		commandBuffer = [commandQueue commandBuffer];
+		passes.clear();
 	}
 	
 	void MetalGraphicsCommandBuffer::endRecording() {
@@ -41,24 +37,31 @@ namespace garlic::clove {
 	}
 
 	void MetalGraphicsCommandBuffer::beginRenderPass(GhaRenderPass &renderPass, GhaFramebuffer &frameBuffer, RenderArea const &renderArea, std::span<ClearValue> clearValues) {
-		GhaRenderPass::Descriptor const &renderPassDescriptor{ polyCast<MetalRenderPass>(&renderPass)->getDescriptor() };
+		std::vector<ClearValue> clearValuesCopy{ clearValues.begin(), clearValues.end() };
 		
-		//Modify the attachments to have the correct clear values.
-		MTLRenderPassDescriptor *frameBufferDescriptor{ polyCast<MetalFramebuffer>(&frameBuffer)->getRenderPassDescriptor() };
-		for(size_t i{ 0 }; i < renderPassDescriptor.colourAttachments.size(); ++i) {
-			ColourValue const colour{ std::get<ColourValue>(clearValues[i]) };
-			frameBufferDescriptor.colorAttachments[i].clearColor = MTLClearColor{ colour.r, colour.g, colour.b, colour.a };
-		}
-		DepthStencilValue const depthStencilValue{ std::get<DepthStencilValue>(clearValues.back()) };
-		frameBufferDescriptor.depthAttachment.clearDepth = depthStencilValue.depth;
-		
-		//TODO: RenderArea
-		
-		currentEncoder = [commandBuffer renderCommandEncoderWithDescriptor:frameBufferDescriptor];
+		currentPass = &passes.emplace_back(RenderPass{});
+		currentPass->begin = [this, renderPass = &renderPass, frameBuffer = &frameBuffer, renderArea, clearValuesCopy](id<MTLCommandBuffer> commandBuffer) mutable {
+			GhaRenderPass::Descriptor const &renderPassDescriptor{ polyCast<MetalRenderPass>(renderPass)->getDescriptor() };
+			
+			//Modify the attachments to have the correct clear values.
+			MTLRenderPassDescriptor *frameBufferDescriptor{ polyCast<MetalFramebuffer>(frameBuffer)->getRenderPassDescriptor() };
+			for(size_t i{ 0 }; i < renderPassDescriptor.colourAttachments.size(); ++i) {
+				ColourValue const colour{ std::get<ColourValue>(clearValuesCopy[i]) };
+				frameBufferDescriptor.colorAttachments[i].clearColor = MTLClearColor{ colour.r, colour.g, colour.b, colour.a };
+			}
+			DepthStencilValue const depthStencilValue{ std::get<DepthStencilValue>(clearValuesCopy.back()) };
+			frameBufferDescriptor.depthAttachment.clearDepth = depthStencilValue.depth;
+			
+			//TODO: RenderArea
+			
+			return [commandBuffer renderCommandEncoderWithDescriptor:frameBufferDescriptor];
+		};
 	}
 	
 	void MetalGraphicsCommandBuffer::endRenderPass() {
-		[currentEncoder endEncoding];
+		currentPass->commands.emplace_back([](id<MTLRenderCommandEncoder> encoder){
+			[encoder endEncoding];
+		});
 	}
 
 	void MetalGraphicsCommandBuffer::setViewport(vec2i position, vec2ui size) {
@@ -70,7 +73,10 @@ namespace garlic::clove {
 			.znear   = 0.0f,
 			.zfar    = 1.0f,
 		};
-		[currentEncoder setViewport:std::move(viewport)];
+		
+		currentPass->commands.emplace_back([viewport](id<MTLRenderCommandEncoder> encoder){
+			[encoder setViewport:std::move(viewport)];
+		});
 	}
 	
 	void MetalGraphicsCommandBuffer::setScissor(vec2i position, vec2ui size) {
@@ -80,17 +86,24 @@ namespace garlic::clove {
 			.width  = size.x,
 			.height = size.y,
 		};
-		[currentEncoder setScissorRect:std::move(scissorRect)];
+		
+		currentPass->commands.emplace_back([scissorRect](id<MTLRenderCommandEncoder> encoder){
+			[encoder setScissorRect:std::move(scissorRect)];
+		});
 	}
 
 	void MetalGraphicsCommandBuffer::bindPipelineObject(GhaGraphicsPipelineObject &pipelineObject) {
-		[currentEncoder setRenderPipelineState:polyCast<MetalGraphicsPipelineObject>(&pipelineObject)->getPipeline()];
+		currentPass->commands.emplace_back([pipelineObject = &pipelineObject](id<MTLRenderCommandEncoder> encoder){
+			[encoder setRenderPipelineState:polyCast<MetalGraphicsPipelineObject const>(pipelineObject)->getPipeline()];
+		});
 	}
 	
 	void MetalGraphicsCommandBuffer::bindVertexBuffer(GhaBuffer &vertexBuffer, size_t const offset) {
-		[currentEncoder setVertexBuffer:polyCast<MetalBuffer>(&vertexBuffer)->getBuffer()
-								 offset:offset
-								atIndex:0];
+		currentPass->commands.emplace_back([vertexBuffer = &vertexBuffer, offset](id<MTLRenderCommandEncoder> encoder){
+			[encoder setVertexBuffer:polyCast<MetalBuffer>(vertexBuffer)->getBuffer()
+							  offset:offset
+							 atIndex:0];
+		});
 	}
 	
 	void MetalGraphicsCommandBuffer::bindIndexBuffer(GhaBuffer &indexBuffer, size_t const offset, IndexType indexType) {
@@ -112,7 +125,9 @@ namespace garlic::clove {
 	}
 
 	void MetalGraphicsCommandBuffer::drawIndexed(size_t const indexCount) {
-		[currentEncoder drawIndexedPrimitives:MTLPrimitiveTypeTriangle indexCount:indexCount indexType:cachedIndexBuffer.indexType indexBuffer:cachedIndexBuffer.buffer indexBufferOffset:cachedIndexBuffer.offset];
+		currentPass->commands.emplace_back([cachedIndexBuffer = cachedIndexBuffer, indexCount](id<MTLRenderCommandEncoder> encoder){
+			[encoder drawIndexedPrimitives:MTLPrimitiveTypeTriangle indexCount:indexCount indexType:cachedIndexBuffer.indexType indexBuffer:cachedIndexBuffer.buffer indexBufferOffset:cachedIndexBuffer.offset];
+		});
 	}
 
 	void MetalGraphicsCommandBuffer::bufferMemoryBarrier(GhaBuffer &buffer, BufferMemoryBarrierInfo const &barrierInfo, PipelineStage sourceStage, PipelineStage destinationStage) {
@@ -123,12 +138,14 @@ namespace garlic::clove {
 		//TODO
 	}
 	
-	id<MTLCommandBuffer> MetalGraphicsCommandBuffer::getCommandBuffer() const {
-		return commandBuffer;
-	}
-	
-	void MetalGraphicsCommandBuffer::setNewCommandBuffer(id<MTLCommandBuffer> commandBuffer) {
-		[this->commandBuffer release];
-		this->commandBuffer = [commandBuffer retain];
+	void MetalGraphicsCommandBuffer::executeCommands(id<MTLCommandBuffer> commandBuffer) {
+		for(auto &pass : passes) {
+			id<MTLRenderCommandEncoder> encoder{ pass.begin(commandBuffer) };
+			for(auto &command : pass.commands) {
+				command(encoder);
+			}
+		}
+		
+		[commandBuffer commit];
 	}
 }
