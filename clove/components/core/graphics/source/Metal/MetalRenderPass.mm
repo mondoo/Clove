@@ -11,5 +11,7 @@ namespace garlic::clove {
 	
 	MetalRenderPass& MetalRenderPass::operator=(MetalRenderPass &&other) noexcept = default;
 	
-	MetalRenderPass::~MetalRenderPass() = default;
+	MetalRenderPass::~MetalRenderPass() {
+		[colourAttachments release];
+	}
 }

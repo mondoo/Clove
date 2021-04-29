@@ -185,7 +185,7 @@ namespace garlic::clove {
 	}
 
 	Expected<std::unique_ptr<GhaRenderPass>, std::runtime_error> MetalFactory::createRenderPass(GhaRenderPass::Descriptor descriptor) {
-		MTLRenderPipelineColorAttachmentDescriptorArray* colourAttachments{};
+		MTLRenderPipelineColorAttachmentDescriptorArray* colourAttachments{ [[MTLRenderPipelineColorAttachmentDescriptorArray alloc] init] };
 		for(size_t i{ 0 }; i < descriptor.colourAttachments.size(); ++i){
 			colourAttachments[i].pixelFormat = MetalImage::convertFormat(descriptor.colourAttachments[i].format);
 		}
