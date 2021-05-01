@@ -79,9 +79,14 @@
 					</ListBox.Resources>
 				</ListBox>
 				<Menu HorizontalAlignment="Center">
-					<MenuItem Header="Add Component">
-						<MenuItem Header="Transform Component" Command="{Binding Scene.AddComponentCommand}" CommandParameter="{x:Static membrane:ComponentType.Transform}"/>
-						<MenuItem Header="Mesh Component" Command="{Binding Scene.AddComponentCommand}" CommandParameter="{x:Static membrane:ComponentType.Mesh}"/>
+					<MenuItem Header="Add Component" ItemsSource="{Binding Scene.ComponentMenuItems}">
+						<!--Doing a regular DataTemplate here will cause a MenuItem within a MenuItem. So manually set up the container style ourselves-->
+						<MenuItem.ItemContainerStyle>
+							<Style TargetType="MenuItem">
+								<Setter Property="Header" Value="{Binding ComponentType}"/>
+								<Setter Property="Command" Value="{Binding OnSelectedCommand}"/>
+							</Style>
+						</MenuItem.ItemContainerStyle>
 					</MenuItem>
 				</Menu>
 			</StackPanel>

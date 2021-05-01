@@ -23,6 +23,7 @@ add_executable(
 
 		${SOURCE}/RelayCommand.cs
 		
+		${SOURCE}/ComponentMenuItemViewModel.cs
 		${SOURCE}/EditorSessionViewModel.cs
 		${SOURCE}/SceneViewModel.cs
 		${SOURCE}/EntityViewModel.cs
