@@ -12,8 +12,7 @@ namespace Garlic.Bulb {
 	/// </summary>
 	public class SceneViewModel : ViewModel {
 		public ICommand CreateEntityCommand { get; }
-		public ICommand AddTransformComponentCommand { get; }
-		public ICommand AddMeshComponentCommand { get; }
+		public ICommand AddComponentCommand { get; }
 
 		public ObservableCollection<EntityViewModel> Entities { get; } = new ObservableCollection<EntityViewModel>();
 
@@ -39,8 +38,7 @@ namespace Garlic.Bulb {
 
 			//Set up commands
 			CreateEntityCommand = new RelayCommand(() => Membrane.MessageHandler.sendMessage(new Membrane.Editor_CreateEntity()));
-			AddTransformComponentCommand = new RelayCommand(() => SelectedEntity?.AddComponent(Membrane.ComponentType.Transform));
-			AddMeshComponentCommand = new RelayCommand(() => SelectedEntity?.AddComponent(Membrane.ComponentType.Mesh));
+			AddComponentCommand = new RelayCommand<Membrane.ComponentType>(CreateComponent);
 		}
 
 		public SceneViewModel(List<Membrane.Entity> entities) : this() {
@@ -63,5 +61,13 @@ namespace Garlic.Bulb {
 
 			Entities.Add(entityVm);
 		}
+
+		private void CreateComponent(Membrane.ComponentType componentType) {
+			if(SelectedEntity != null) {
+				SelectedEntity.AddComponent(componentType);
+            } else {
+				Membrane.Log.write(Membrane.LogLevel.Warning, $"CreateComponent called with unkown type: {componentType}");
+            }
+        }
 	};
 }

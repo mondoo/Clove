@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Garlic.Bulb"
+		xmlns:membrane="clr-namespace:garlic.membrane;assembly=BulbMembrane"
         mc:Ignorable="d"
         Title="MainWindow" Width="1280" Height="720"
 		MouseMove="Window_MouseMove">
@@ -79,8 +80,8 @@
 				</ListBox>
 				<Menu HorizontalAlignment="Center">
 					<MenuItem Header="Add Component">
-						<MenuItem Header="Transform Component" Command="{Binding Scene.AddTransformComponentCommand}"/>
-						<MenuItem Header="Mesh Component" Command="{Binding Scene.AddMeshComponentCommand}"/>
+						<MenuItem Header="Transform Component" Command="{Binding Scene.AddComponentCommand}" CommandParameter="{x:Static membrane:ComponentType.Transform}"/>
+						<MenuItem Header="Mesh Component" Command="{Binding Scene.AddComponentCommand}" CommandParameter="{x:Static membrane:ComponentType.Mesh}"/>
 					</MenuItem>
 				</Menu>
 			</StackPanel>
