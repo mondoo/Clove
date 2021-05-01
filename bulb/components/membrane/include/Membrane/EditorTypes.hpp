@@ -6,6 +6,8 @@ namespace garlic::membrane {
         Transform,
         Mesh,
         PointLight,
+        RigidBody,
+        CollisionShape
     };
 
     public value struct Vector3 {

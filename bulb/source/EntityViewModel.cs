@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -35,6 +36,7 @@ namespace Garlic.Bulb {
         public EntityViewModel() {
             //Bind to messages
             Membrane.MessageHandler.bindToMessage<Membrane.Engine_OnComponentCreated>(OnComponentCreated);
+            Membrane.MessageHandler.bindToMessage<Membrane.Engine_OnRigidBodyChanged>(OnRigidBodyChanged);
             Membrane.MessageHandler.bindToMessage<Membrane.Engine_OnTransformChanged>(OnTransformChanged);
 
             //Set up commands
@@ -72,6 +74,13 @@ namespace Garlic.Bulb {
                     componentVm = transformComp;
                 }
                 break;
+                case Membrane.ComponentType.RigidBody: {
+                    var rigidBodyComp = new RigidBodyComponentViewModel($"{type}", type);
+                    rigidBodyComp.OnRigidBodyChanged = UpdateRigidBody;
+
+                    componentVm = rigidBodyComp;
+                }
+                break;
                 default:
                     componentVm = new ComponentViewModel($"{type}", type);
                     break;
@@ -88,6 +97,26 @@ namespace Garlic.Bulb {
             message.scale = scale;
 
             Membrane.MessageHandler.sendMessage(message);
+        }
+
+        private void UpdateRigidBody(float mass) {
+            var message = new Membrane.Editor_UpdateRigidBody();
+            message.entity = EntityId;
+            message.mass = mass;
+
+            Membrane.MessageHandler.sendMessage(message);
+        }
+
+        private void OnRigidBodyChanged(Membrane.Engine_OnRigidBodyChanged message) {
+            if (EntityId == message.entity) {
+                foreach (ComponentViewModel comp in Components) {
+                    if (comp.GetType() == typeof(RigidBodyComponentViewModel)) {
+                        var rigidBody = (RigidBodyComponentViewModel)comp;
+                        rigidBody.Update(message.mass);
+                        break;
+                    }
+                }
+            }
         }
 
         private void OnTransformChanged(Membrane.Engine_OnTransformChanged message) {

@@ -27,6 +27,12 @@ namespace garlic::membrane {
         Vector3 rotation;
         Vector3 scale;
     };
+    public ref class Editor_UpdateRigidBody : public EditorMessage {
+    public:
+        System::UInt32 entity;
+
+        float mass{};
+    };
     public ref class Editor_UpdateName : public EditorMessage {
     public:
         System::UInt32 entity;
@@ -75,6 +81,12 @@ namespace garlic::membrane {
         Vector3 position;
         Vector3 rotation;
         Vector3 scale;
+    };
+    public ref class Engine_OnRigidBodyChanged : public EngineMessage {
+    public:
+        System::UInt32 entity;
+
+        float mass{};
     };
     public ref class Engine_OnSceneLoaded : public EngineMessage {
     public:

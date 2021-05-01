@@ -4,7 +4,9 @@
 #include "Membrane/NameComponent.hpp"
 
 #include <Clove/Application.hpp>
+#include <Clove/Components/CollisionShapeComponent.hpp>
 #include <Clove/Components/PointLightComponent.hpp>
+#include <Clove/Components/RigidBodyComponent.hpp>
 #include <Clove/Components/StaticModelComponent.hpp>
 #include <Clove/Components/TransformComponent.hpp>
 #include <Clove/ECS/EntityManager.hpp>
@@ -27,8 +29,10 @@ namespace garlic::membrane {
             : layer{ layer } {
             MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_CreateEntity ^>(this, &RuntimeLayerMessageProxy::createEntity));
             MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_CreateComponent ^>(this, &RuntimeLayerMessageProxy::createComponent));
+            MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_UpdateRigidBody ^>(this, &RuntimeLayerMessageProxy::updateRigidBody));
             MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_UpdateTransform ^>(this, &RuntimeLayerMessageProxy::updateTransform));
             MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_UpdateName ^>(this, &RuntimeLayerMessageProxy::updateName));
+
 
             MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_SaveScene ^>(this, &RuntimeLayerMessageProxy::saveScene));
             MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_LoadScene ^>(this, &RuntimeLayerMessageProxy::loadScene));
@@ -41,6 +45,10 @@ namespace garlic::membrane {
 
         void createComponent(Editor_CreateComponent ^ message){
             layer->createComponent(message->entity, message->componentType);
+        }
+
+        void updateRigidBody(Editor_UpdateRigidBody^ message){
+            layer->updateRigidBody(message->entity, message->mass);
         }
 
         void updateTransform(Editor_UpdateTransform ^ message){
@@ -156,13 +164,25 @@ namespace garlic::membrane {
                 break;
             case ComponentType::Mesh:
                 if(!currentScene.hasComponent<clove::StaticModelComponent>(entity)) {
-                    currentScene.addComponent<clove::StaticModelComponent>(entity, clove::ModelLoader::loadStaticModel(ASSET_DIR "/cube.obj"));
+                    currentScene.addComponent<clove::StaticModelComponent>(entity, clove::ModelLoader::loadStaticModel(ASSET_DIR "/cube.obj"));//TEMP: Hard coding to a cube for now
                     added = true;
                 }
                 break;
             case ComponentType::PointLight:
                 if(!currentScene.hasComponent<clove::PointLightComponent>(entity)) {
                     currentScene.addComponent<clove::PointLightComponent>(entity);
+                    added = true;
+                }
+                break;
+            case ComponentType::RigidBody:
+                if(!currentScene.hasComponent<clove::RigidBodyComponent>(entity)) {
+                    currentScene.addComponent<clove::RigidBodyComponent>(entity);
+                    added = true;
+                }
+                break;
+            case ComponentType::CollisionShape:
+                if(!currentScene.hasComponent<clove::CollisionShapeComponent>(entity)) {
+                    currentScene.addComponent<clove::CollisionShapeComponent>(entity, clove::CollisionShapeComponent::Cube{});//TEMP: Use basic cube shape
                     added = true;
                 }
                 break;
@@ -182,6 +202,19 @@ namespace garlic::membrane {
             transform.position = position;
             transform.rotation = rotation;
             transform.scale    = scale;
+        }
+    }
+
+    void RuntimeLayer::updateRigidBody(clove::Entity entity, float mass) {
+        if(currentScene.hasComponent<clove::RigidBodyComponent>(entity)) {
+            auto &rigidBody{ currentScene.getComponent<clove::RigidBodyComponent>(entity) };
+            rigidBody.mass = mass;
+
+            //Pipe back up the change to the editor
+            Engine_OnRigidBodyChanged ^ message { gcnew Engine_OnRigidBodyChanged };
+            message->entity = entity;
+            message->mass   = mass;
+            MessageHandler::sendMessage(message);
         }
     }
 

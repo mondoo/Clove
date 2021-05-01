@@ -89,6 +89,7 @@ add_library(
 		${INCLUDE}/Components/ParentComponent.hpp
 		${INCLUDE}/Components/PointLightComponent.hpp
 		${INCLUDE}/Components/RigidBodyComponent.hpp
+		${SOURCE}/Components/RigidBodyComponent.cpp
 		${INCLUDE}/Components/StaticModelComponent.hpp
 		${INCLUDE}/Components/TransformComponent.hpp
 		${SOURCE}/Components/TransformComponent.cpp

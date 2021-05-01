@@ -30,6 +30,7 @@ add_executable(
 		${SOURCE}/LogViewModel.cs
 
 		${SOURCE}/ComponentViewModel.cs
+		${SOURCE}/RigidBodyComponentViewModel.cs
 		${SOURCE}/TransformComponentViewModel.cs
 )
 

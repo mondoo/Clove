@@ -36,8 +36,6 @@ namespace garlic::clove {
          */
         float mass{ 1.0f };
 
-        
-
         /**
          * @brief The bouncyness of this body. Anything higher than 0 will cause the body to increase in bouncyness.
          */
@@ -71,18 +69,14 @@ namespace garlic::clove {
          * @param force The direction + power of the force.
          * @param relativeOffset The offset in relation to the body's center of mass.
          */
-        void applyForce(vec3f force, vec3f relativeOffset = { 0.0f, 0.0f, 0.0f }){
-            appliedForce = ForceApplication{ .amount = std::move(force), .offset = std::move(relativeOffset) };
-        }
+        void applyForce(vec3f force, vec3f relativeOffset = { 0.0f, 0.0f, 0.0f });
 
         /**
          * @brief Apply a 1 frame burst of force to this body.
          * @param impulse The direction + power of the impulse.
          * @param relativeOffset The offset in relation to the body's center of mass.
          */
-        void applyImpulse(vec3f impulse, vec3f relativeOffset = { 0.0f, 0.0f, 0.0f }){
-            appliedImpulse = ForceApplication{ .amount = std::move(impulse), .offset = std::move(relativeOffset) };
-        }
+        void applyImpulse(vec3f impulse, vec3f relativeOffset = { 0.0f, 0.0f, 0.0f });
 
     private:
         std::optional<vec3f> appliedVelocity{};

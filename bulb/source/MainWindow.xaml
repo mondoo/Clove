@@ -73,6 +73,21 @@
 							</StackPanel>
 						</DataTemplate>
 
+						<DataTemplate DataType="{x:Type local:RigidBodyComponentViewModel}">
+							<StackPanel>
+								<TextBlock Text="{Binding Name}" FontWeight="Bold"/>
+								<Grid Grid.Column="0" Margin="3,0">
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="*"/>
+										<ColumnDefinition Width="*"/>
+									</Grid.ColumnDefinitions>
+
+									<TextBlock Grid.Column="0" Text="Mass"/>
+									<TextBox Grid.Column="1" Text="{Binding Mass, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+								</Grid>
+							</StackPanel>
+						</DataTemplate>
+
 						<DataTemplate DataType="{x:Type local:ComponentViewModel}">
 							<TextBlock Text="{Binding Name}" FontWeight="Bold"/>
 						</DataTemplate>
