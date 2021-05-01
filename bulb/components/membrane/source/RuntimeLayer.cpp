@@ -75,11 +75,6 @@ namespace garlic::membrane {
     }
 
     void RuntimeLayer::onAttach() {
-        auto lightEnt{ createEntity("Point Light") };
-        createComponent(lightEnt, ComponentType::Transform);
-        createComponent(lightEnt, ComponentType::PointLight);
-
-        currentScene.getComponent<clove::TransformComponent>(lightEnt).position = clove::vec3f{ 5.0f, 0.0f, 0.0f };
     }
 
     void RuntimeLayer::onUpdate(clove::DeltaTime const deltaTime) {
