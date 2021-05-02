@@ -24,12 +24,12 @@ namespace garlic::clove {
 
     RgBuffer RenderGraph::createBuffer(size_t bufferSize) {
         RgBuffer const buffer{ nextId++ };
-
-        GhaBuffer::Descriptor &descriptor{ bufferDescriptors[buffer.id] };
-        descriptor.size        = bufferSize;
-        descriptor.usageFlags  = static_cast<GhaBuffer::UsageMode>(0);//Will be built when executing the graph
-        descriptor.sharingMode = SharingMode::Exclusive;              //Assume exclusive to begin with
-        descriptor.memoryType  = MemoryType::VideoMemory;             //Assume video memory until it has been written to from the host
+        bufferDescriptors[buffer.id] = GhaBuffer::Descriptor{
+            .size        = bufferSize,
+            .usageFlags  = static_cast<GhaBuffer::UsageMode>(0),//Will be built when executing the graph
+            .sharingMode = SharingMode::Exclusive,              //Assume exclusive to begin with
+            .memoryType  = MemoryType::VideoMemory,             //Assume video memory until it has been written to from the host
+        };
 
         return buffer;
     }
@@ -55,7 +55,7 @@ namespace garlic::clove {
             bufferDescriptors[buffer.id].memoryType = MemoryType::SystemMemory;
         }
 
-        operations.emplace_back([this, buffer]() {
+        operations.emplace_back([this, buffer](GhaGraphicsCommandBuffer &graphicsBuffer, GhaComputeCommandBuffer &computeBuffer, GhaTransferCommandBuffer &transferbuffer) {
             BufferWrite &write{ bufferWrites.at(buffer.id) };
             allocatedBuffers[buffer.id]->write(write.data.data(), buffer.offset + write.offset, write.size);
         });
@@ -63,13 +63,13 @@ namespace garlic::clove {
 
     RgImage RenderGraph::createImage(GhaImage::Type imageType, GhaImage::Format format, vec2ui dimensions) {
         RgImage const image{ nextId++ };
-
-        GhaImage::Descriptor &imageDescriptor{ imageDescriptors[image] };
-        imageDescriptor.type        = imageType;
-        imageDescriptor.usageFlags  = static_cast<GhaImage::UsageMode>(0);//Will be built when executing the graph
-        imageDescriptor.dimensions  = dimensions;
-        imageDescriptor.format      = format;
-        imageDescriptor.sharingMode = SharingMode::Exclusive;//Assume exclusive to beigin with
+        imageDescriptors[image] = GhaImage::Descriptor{
+            .type        = imageType,
+            .usageFlags  = static_cast<GhaImage::UsageMode>(0),//Will be built when executing the graph
+            .dimensions  = dimensions,
+            .format      = format,
+            .sharingMode = SharingMode::Exclusive,//Assume exclusive to beigin with
+        };
 
         return image;
     }
@@ -96,6 +96,9 @@ namespace garlic::clove {
     }
 
     void RenderGraph::addGraphicsPass(GraphicsPassDescriptor const &passDescriptor, std::vector<RenderGraph::GraphicsSubmission> pass) {
+        //Allocate a resource ID for this whole pass
+        ResourceIdType const pipelineId{ nextId++ };//TODO: This will allocate one with a new id even if it's been cached. Needs changing
+
         //Update resource usage
         for(auto &renderTarget : passDescriptor.renderTargets) {
             if(imageDescriptors.contains(renderTarget.target)) {
@@ -133,7 +136,7 @@ namespace garlic::clove {
             .usedLayout     = GhaImage::Layout::DepthStencilAttachmentOptimal,
             .finalLayout    = GhaImage::Layout::DepthStencilAttachmentOptimal,//TODO: Can't be set properly until graph is executed?
         };
-        std::shared_ptr<GhaRenderPass> renderPass{ globalCache.createRenderPass(GhaRenderPass::Descriptor{ .colourAttachments = std::move(colourAttachments), .depthAttachment = std::move(depthStencilAttachment) }) };
+        allocatedRenderPasses[pipelineId] = globalCache.createRenderPass(GhaRenderPass::Descriptor{ .colourAttachments = std::move(colourAttachments), .depthAttachment = std::move(depthStencilAttachment) });
 
         //Build descriptor layouts using the first pass. TODO: Get this infomation from shader reflection
         std::vector<DescriptorSetBindingInfo> descriptorBindings{};
@@ -169,26 +172,46 @@ namespace garlic::clove {
             .state = ElementState::Dynamic,
         };
 
-        ResourceIdType const pipelineId{ nextId++ };//TODO: This will allocate one with a new id even if it's been cached. Needs changing
-        alloactedPipelines[pipelineId] = globalCache.createGraphicsPipelineObject(GhaGraphicsPipelineObject::Descriptor{
+        allocatedPipelines[pipelineId] = globalCache.createGraphicsPipelineObject(GhaGraphicsPipelineObject::Descriptor{
             .vertexShader         = allocatedShaders.at(passDescriptor.vertexShader),
             .pixelShader          = allocatedShaders.at(passDescriptor.pixelShader),
             .vertexInput          = Vertex::getInputBindingDescriptor(),
             .vertexAttributes     = vertexAttributes,
             .viewportDescriptor   = viewScissorArea,
             .scissorDescriptor    = viewScissorArea,
-            .renderPass           = std::move(renderPass),
+            .renderPass           = allocatedRenderPasses.at(pipelineId),
             .descriptorSetLayouts = { std::move(descriptorSetLayout) },
             .pushConstants        = {},
         });
 
-        //TODO: Allocate / bind descriptor sets?
-        //TODO: Build the frame buffer?
+        //Record draw calls
+        vec2ui const renderSize{ getImageSize(pass[0].renderTargets[0].target) };//TEMP: Use the size of the first target
+        operations.emplace_back([this, pipelineId, pass = pass, renderSize](GhaGraphicsCommandBuffer &graphicsBuffer, GhaComputeCommandBuffer &computeBuffer, GhaTransferCommandBuffer &transferbuffer) { 
+            //TODO: Batch operations by render pass and start the pass outside of the operation
+            RenderArea renderArea{
+                .origin = { 0, 0 },
+                .size   = renderSize
+            };
+            std::span<ClearValue> clearValues{};
+            graphicsBuffer.beginRenderPass(*allocatedRenderPasses.at(pipelineId), *allocatedFramebuffers.at(pipelineId), renderArea, clearValues);
 
-        //TODO: Record operations:
-        //  bind pipeline / renderpass / frame buffer
-        //  write descriptor sets
-        //  draw indexed
+            //TODO: Only do this if viewport is dynamic
+            graphicsBuffer.setViewport({ 0, 0 }, renderSize);
+            graphicsBuffer.setScissor({ 0, 0 }, renderSize);
+
+            graphicsBuffer.bindPipelineObject(*allocatedPipelines.at(pipelineId));
+
+            for(auto &submission : pass) {
+                graphicsBuffer.bindDescriptorSet(*allocatedDescriptorSets.at(pipelineId), 0);//TODO: Multiple sets / only set sets for a whole pass (i.e. view)
+
+                graphicsBuffer.bindVertexBuffer(*allocatedBuffers.at(submission.vertexBuffer.id), submission.vertexBuffer.offset);
+                graphicsBuffer.bindIndexBuffer(*allocatedBuffers.at(submission.indexBuffer.id), submission.indexBuffer.offset, IndexType::Uint16);
+
+                graphicsBuffer.drawIndexed(submission.indexCount);
+            }
+
+            graphicsBuffer.endRenderPass();
+        });
     }
 
     void RenderGraph::addComputePass(ComputePassDescriptor const &passDescriptor, std::vector<RenderGraph::ComputeSubmission> pass) {
@@ -196,7 +219,7 @@ namespace garlic::clove {
     }
 
     //Return a submit info?
-    GraphicsSubmitInfo RenderGraph::execute(GhaFactory &factory, GhaGraphicsQueue &graphicsQueue, GhaComputeQueue &computeQueue, GhaTransferQueue &transferQueue) {
+    GraphicsSubmitInfo RenderGraph::execute(GhaGraphicsQueue &graphicsQueue, GhaComputeQueue &computeQueue, GhaTransferQueue &transferQueue) {
         //TODO: Create resources from descriptors. Loop through all operations and execute them
 
         return {};
@@ -207,6 +230,14 @@ namespace garlic::clove {
             return imageDescriptors.at(image).format;
         } else {
             return allocatedImages.at(image)->getDescriptor().format;
+        }
+    }
+
+    vec2ui RenderGraph::getImageSize(RgImage image) {
+        if(imageDescriptors.contains(image)) {
+            return imageDescriptors.at(image).dimensions;
+        } else {
+            return allocatedImages.at(image)->getDescriptor().dimensions;
         }
     }
 }

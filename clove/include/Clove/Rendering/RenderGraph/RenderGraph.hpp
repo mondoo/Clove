@@ -12,6 +12,7 @@
 #include <Clove/Graphics/GhaSampler.hpp>
 #include <Clove/Graphics/GhaShader.hpp>
 #include <Clove/Graphics/GhaRenderPass.hpp>
+#include <Clove/Graphics/GhaFramebuffer.hpp>
 #include <Clove/Maths/Vector.hpp>
 #include <filesystem>
 #include <functional>
@@ -28,6 +29,7 @@ namespace garlic::clove {
     class GhaTransferQueue;
     class GhaGraphicsCommandBuffer;
     class GhaComputeCommandBuffer;
+    class GhaTransferCommandBuffer;
 }
 
 namespace garlic::clove {
@@ -89,6 +91,8 @@ namespace garlic::clove {
             //NOTE: Will be used to create descriptor sets
             std::vector<BufferBinding> shaderUbos{};
             std::vector<ImageBindng> shaderCombinedImageSamplers{};
+
+            size_t indexCount{ 0 };
         };
 
         /**
@@ -115,7 +119,7 @@ namespace garlic::clove {
         RgGlobalCache &globalCache;
         ResourceIdType nextId{ 1 };
 
-        std::vector<std::function<void()>> operations{}; /**< Every operation (pass, copy, write, etc.) recorded into the graph in order. */
+        std::vector<std::function<void(GhaGraphicsCommandBuffer &, GhaComputeCommandBuffer &, GhaTransferCommandBuffer&)>> operations{}; /**< Every operation (pass, copy, write, etc.) recorded into the graph in order. */
 
         std::unordered_map<ResourceIdType, GhaBuffer::Descriptor> bufferDescriptors{};
         std::unordered_map<ResourceIdType, BufferWrite> bufferWrites{};
@@ -126,7 +130,10 @@ namespace garlic::clove {
         std::unordered_map<ResourceIdType, std::shared_ptr<GhaImageView>> allocatedImageViews{}; /**< All active images. Even external ones. */
 
         std::unordered_map<ResourceIdType, std::shared_ptr<GhaShader>> allocatedShaders{};
-        std::unordered_map<ResourceIdType, std::shared_ptr<GhaGraphicsPipelineObject>> alloactedPipelines{};
+        std::unordered_map<ResourceIdType, std::shared_ptr<GhaRenderPass>> allocatedRenderPasses{};
+        std::unordered_map<ResourceIdType, std::shared_ptr<GhaFramebuffer>> allocatedFramebuffers{};
+        std::unordered_map<ResourceIdType, std::shared_ptr<GhaGraphicsPipelineObject>> allocatedPipelines{};
+        std::unordered_map<ResourceIdType, std::shared_ptr<GhaDescriptorSet>> allocatedDescriptorSets{};
 
         //FUNCTIONS
     public:
@@ -209,9 +216,10 @@ namespace garlic::clove {
          * @param transferQueue The queue the graph will submit transfer work to.
          * @return Returns the GraphicsSubmitInfo used to render the final result of the graph.
          */
-        GraphicsSubmitInfo execute(GhaFactory &factory, GhaGraphicsQueue &graphicsQueue, GhaComputeQueue &computeQueue, GhaTransferQueue &transferQueue);
+        GraphicsSubmitInfo execute(GhaGraphicsQueue &graphicsQueue, GhaComputeQueue &computeQueue, GhaTransferQueue &transferQueue);
 
     private:
         GhaImage::Format getImageFormat(RgImage image);
+        vec2ui getImageSize(RgImage image);
     };
 }
