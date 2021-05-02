@@ -2,6 +2,14 @@
 
 namespace garlic::clove {
     std::shared_ptr<GhaBuffer> RgFrameCache::allocateBuffer(GhaBuffer::Descriptor descriptor) {
-        return {};
+        //TODO
+        return nullptr;
+    }
+
+    std::shared_ptr<GhaImage> RgFrameCache::allocateImage(GhaImage::Descriptor descriptor) {
+        //TODO
+        return nullptr;
+    }
+
     }
 }

@@ -220,7 +220,13 @@ namespace garlic::clove {
 
     //Return a submit info?
     GraphicsSubmitInfo RenderGraph::execute(GhaGraphicsQueue &graphicsQueue, GhaComputeQueue &computeQueue, GhaTransferQueue &transferQueue) {
-        //TODO: Create resources from descriptors. Loop through all operations and execute them
+        //TEMP: Create all resources. Later we should only create the ones that are consumed
+        for(auto &&[id, descriptor] : bufferDescriptors) {
+            allocatedBuffers[id] = frameCache.allocateBuffer(descriptor);
+        }
+        for(auto &&[id, descriptor] : imageDescriptors) {
+            allocatedImages[id] = frameCache.allocateImage(descriptor);
+        }
 
         return {};
     }
