@@ -237,7 +237,7 @@ namespace garlic::clove {
 
         //TODO: Currently there'll be a unique frame buffer per pass. If a group of passes write to the same images, they should use the same FB
         for(auto &&[id, descriptor] : passDescriptors) {
-            std::vector<GhaImageView> attachments{};
+            std::vector<std::shared_ptr<GhaImageView>> attachments{};
             for(auto &renderTarget : descriptor.renderTargets) {
                 //TEMP: Just create the view when we need it
                 if(!allocatedImageViews.contains(renderTarget.target)) {
