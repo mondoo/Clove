@@ -129,6 +129,7 @@ namespace garlic::clove {
         std::unordered_map<ResourceIdType, std::shared_ptr<GhaImage>> allocatedImages{};         /**< All active images. Even external ones. */
         std::unordered_map<ResourceIdType, std::shared_ptr<GhaImageView>> allocatedImageViews{}; /**< All active images. Even external ones. */
 
+        std::unordered_map<ResourceIdType, GraphicsPassDescriptor> passDescriptors{};
         std::unordered_map<ResourceIdType, std::shared_ptr<GhaShader>> allocatedShaders{};
         std::unordered_map<ResourceIdType, std::shared_ptr<GhaRenderPass>> allocatedRenderPasses{};
         std::unordered_map<ResourceIdType, std::shared_ptr<GhaFramebuffer>> allocatedFramebuffers{};
@@ -205,7 +206,7 @@ namespace garlic::clove {
          */
         RgShader createShader(std::string_view source, std::unordered_map<std::string, std::string> includeSources, std::string_view shaderName, GhaShader::Stage shaderStage);
 
-        void addGraphicsPass(GraphicsPassDescriptor const &passDescriptor, std::vector<GraphicsSubmission> pass);
+        void addGraphicsPass(GraphicsPassDescriptor passDescriptor, std::vector<GraphicsSubmission> pass);
         void addComputePass(ComputePassDescriptor const &passDescriptor, std::vector<ComputeSubmission> pass);
 
         /**

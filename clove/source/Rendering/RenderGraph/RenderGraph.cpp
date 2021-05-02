@@ -95,7 +95,7 @@ namespace garlic::clove {
         return shader;
     }
 
-    void RenderGraph::addGraphicsPass(GraphicsPassDescriptor const &passDescriptor, std::vector<RenderGraph::GraphicsSubmission> pass) {
+    void RenderGraph::addGraphicsPass(GraphicsPassDescriptor passDescriptor, std::vector<RenderGraph::GraphicsSubmission> pass) {
         //Allocate a resource ID for this whole pass
         ResourceIdType const pipelineId{ nextId++ };//TODO: This will allocate one with a new id even if it's been cached. Needs changing
 
@@ -183,10 +183,11 @@ namespace garlic::clove {
             .descriptorSetLayouts = { std::move(descriptorSetLayout) },
             .pushConstants        = {},
         });
+        passDescriptors[pipelineId]    = std::move(passDescriptor);
 
         //Record draw calls
         vec2ui const renderSize{ getImageSize(pass[0].renderTargets[0].target) };//TEMP: Use the size of the first target
-        operations.emplace_back([this, pipelineId, pass = pass, renderSize](GhaGraphicsCommandBuffer &graphicsBuffer, GhaComputeCommandBuffer &computeBuffer, GhaTransferCommandBuffer &transferbuffer) { 
+        operations.emplace_back([this, pipelineId, pass = pass, renderSize](GhaGraphicsCommandBuffer &graphicsBuffer, GhaComputeCommandBuffer &computeBuffer, GhaTransferCommandBuffer &transferbuffer) {
             //TODO: Batch operations by render pass and start the pass outside of the operation
             RenderArea renderArea{
                 .origin = { 0, 0 },
@@ -226,6 +227,30 @@ namespace garlic::clove {
         }
         for(auto &&[id, descriptor] : imageDescriptors) {
             allocatedImages[id] = frameCache.allocateImage(descriptor);
+        }
+
+        //TODO: Currently there'll be a unique frame buffer per pass. If a group of passes write to the same images, they should use the same FB
+        for(auto &&[id, descriptor] : passDescriptors) {
+            std::vector<GhaImageView> attachments{};
+            for(auto &renderTarget : descriptor.renderTargets) {
+                //TEMP: Just create the view when we need it
+                if(!allocatedImageViews.contains(renderTarget.target)) {
+                    allocatedImageViews[renderTarget.target] = allocatedImages.at(renderTarget.target)->createView(GhaImageView::Descriptor{ .type = GhaImageView::Type::_2D });
+                }
+                attachments.push_back(allocatedImageViews.at(renderTarget.target));
+            }
+            attachments.push_back(allocatedImageViews.at(descriptor.depthStencil.target));
+            //TEMP: Just create the view when we need it
+            if(!allocatedImageViews.contains(descriptor.depthStencil.target)) {
+                allocatedImageViews[descriptor.depthStencil.target] = allocatedImages.at(descriptor.depthStencil.target)->createView(GhaImageView::Descriptor{ .type = GhaImageView::Type::_2D });
+            }
+
+            allocatedFramebuffers[id] = frameCache.allocateFrameBuffer(GhaFramebuffer::Descriptor{
+                .renderPass  = allocatedRenderPasses[id],
+                .attachments = std::move(attachments),
+                .width       = getImageSize(descriptor.renderTargets[0].target).x,//TEMP: Just using the first target as the size
+                .height      = getImageSize(descriptor.renderTargets[0].target).y,
+            });
         }
 
         return {};
