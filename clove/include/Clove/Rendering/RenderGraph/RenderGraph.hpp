@@ -1,19 +1,17 @@
 #pragma once
-//
-#include "Clove/Rendering/RenderGraph/RgGraphicsPipelineState.hpp"
-//
 
 #include "Clove/Rendering/RenderGraph/RgBuffer.hpp"
-#include "Clove/Rendering/RenderGraph/RgComputePipelineState.hpp"
 #include "Clove/Rendering/RenderGraph/RgId.hpp"
 #include "Clove/Rendering/RenderGraph/RgImage.hpp"
 #include "Clove/Rendering/RenderGraph/RgShader.hpp"
 
 #include <Clove/Graphics/GhaBuffer.hpp>
+#include <Clove/Graphics/GhaGraphicsPipelineObject.hpp>
 #include <Clove/Graphics/GhaGraphicsQueue.hpp>
 #include <Clove/Graphics/GhaImage.hpp>
 #include <Clove/Graphics/GhaSampler.hpp>
 #include <Clove/Graphics/GhaShader.hpp>
+#include <Clove/Graphics/GhaRenderPass.hpp>
 #include <Clove/Maths/Vector.hpp>
 #include <filesystem>
 #include <functional>
@@ -79,7 +77,7 @@ namespace garlic::clove {
         };
         struct ComputePassDescriptor {
             //TODO
-        }
+        };
 
         /**
          * @brief Represents a unit of work, single draw indexed call.
@@ -124,11 +122,11 @@ namespace garlic::clove {
         std::unordered_map<ResourceIdType, std::shared_ptr<GhaBuffer>> allocatedBuffers{}; /**< All active buffers. Even external ones. */
 
         std::unordered_map<ResourceIdType, GhaImage::Descriptor> imageDescriptors{};
-        std::unordered_map<ResourceIdType, std::shared_ptr<GhaImageView>> allocatedImages{}; /**< All active images. Even external ones. */
+        std::unordered_map<ResourceIdType, std::shared_ptr<GhaImage>> allocatedImages{};         /**< All active images. Even external ones. */
+        std::unordered_map<ResourceIdType, std::shared_ptr<GhaImageView>> allocatedImageViews{}; /**< All active images. Even external ones. */
 
         std::unordered_map<ResourceIdType, std::shared_ptr<GhaShader>> allocatedShaders{};
-
-        std::unordered_map<ResourceIdType, GhaGraphicsPipelineObject::Descriptor> pendingGraphicsPipelines{};
+        std::unordered_map<ResourceIdType, std::shared_ptr<GhaGraphicsPipelineObject>> alloactedPipelines{};
 
         //FUNCTIONS
     public:
@@ -212,5 +210,8 @@ namespace garlic::clove {
          * @return Returns the GraphicsSubmitInfo used to render the final result of the graph.
          */
         GraphicsSubmitInfo execute(GhaFactory &factory, GhaGraphicsQueue &graphicsQueue, GhaComputeQueue &computeQueue, GhaTransferQueue &transferQueue);
+
+    private:
+        GhaImage::Format getImageFormat(RgImage image);
     };
 }

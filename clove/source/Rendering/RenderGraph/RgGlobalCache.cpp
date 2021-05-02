@@ -15,4 +15,14 @@ namespace garlic::clove {
         //TODO
         return nullptr;
     }
+
+    std::shared_ptr<GhaDescriptorSetLayout> RgGlobalCache::createDescriptorSetLayout(GhaDescriptorSetLayout::Descriptor descriptor) {
+        //TODO
+        return nullptr;
+    }
+
+    std::shared_ptr<GhaGraphicsPipelineObject> RgGlobalCache::createGraphicsPipelineObject(GhaGraphicsPipelineObject::Descriptor descriptor) {
+        //TODO
+        return nullptr;
+    }
 }
