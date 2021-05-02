@@ -186,14 +186,20 @@ namespace garlic::clove {
         passDescriptors[pipelineId]    = std::move(passDescriptor);
 
         //Record draw calls
-        vec2ui const renderSize{ getImageSize(pass[0].renderTargets[0].target) };//TEMP: Use the size of the first target
+        vec2ui const renderSize{ getImageSize(passDescriptor.renderTargets[0].target) };//TEMP: Use the size of the first target
         operations.emplace_back([this, pipelineId, pass = pass, renderSize](GhaGraphicsCommandBuffer &graphicsBuffer, GhaComputeCommandBuffer &computeBuffer, GhaTransferCommandBuffer &transferbuffer) {
             //TODO: Batch operations by render pass and start the pass outside of the operation
             RenderArea renderArea{
                 .origin = { 0, 0 },
                 .size   = renderSize
             };
-            std::span<ClearValue> clearValues{};
+
+            std::vector<ClearValue> clearValues{};
+            for(auto &target : passDescriptors.at(pipelineId).renderTargets) {
+                clearValues.push_back(target.clearColour);
+            }
+            clearValues.push_back(passDescriptors.at(pipelineId).depthStencil.clearValue);
+
             graphicsBuffer.beginRenderPass(*allocatedRenderPasses.at(pipelineId), *allocatedFramebuffers.at(pipelineId), renderArea, clearValues);
 
             //TODO: Only do this if viewport is dynamic

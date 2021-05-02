@@ -53,12 +53,14 @@ namespace garlic::clove {
         struct RenderTargetBinding {//TODO: RenderTargetDescriptor?
             LoadOperation loadOp{};
             StoreOperation storeOp{};
+            ColourValue clearColour{};
             RgImage target{};
         };
 
         struct DepthStencilBinding {
             LoadOperation loadOp{};
             StoreOperation storeOp{};
+            DepthStencilValue clearValue{};
             RgImage target{};
         };
 
