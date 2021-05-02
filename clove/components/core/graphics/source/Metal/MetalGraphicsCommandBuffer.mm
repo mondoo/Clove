@@ -126,7 +126,11 @@ namespace garlic::clove {
 
 	void MetalGraphicsCommandBuffer::drawIndexed(size_t const indexCount) {
 		currentPass->commands.emplace_back([cachedIndexBuffer = cachedIndexBuffer, indexCount](id<MTLRenderCommandEncoder> encoder){
-			[encoder drawIndexedPrimitives:MTLPrimitiveTypeTriangle indexCount:indexCount indexType:cachedIndexBuffer.indexType indexBuffer:cachedIndexBuffer.buffer indexBufferOffset:cachedIndexBuffer.offset];
+			[encoder drawIndexedPrimitives:MTLPrimitiveTypeTriangle
+								indexCount:indexCount
+								 indexType:cachedIndexBuffer.indexType
+							   indexBuffer:cachedIndexBuffer.buffer
+						 indexBufferOffset:cachedIndexBuffer.offset];
 		});
 	}
 

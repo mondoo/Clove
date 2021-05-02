@@ -2,7 +2,7 @@
 
 namespace garlic::clove {
 	MetalShader::MetalShader(id<MTLFunction> function)
-		: function{ std::move(function) }{
+		: function{ [function retain] }{
 	}
 	
 	MetalShader::MetalShader(MetalShader &&other) noexcept = default;

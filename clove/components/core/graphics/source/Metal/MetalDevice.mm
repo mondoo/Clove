@@ -26,7 +26,7 @@ namespace garlic::clove {
 		
 			[nsWindow setContentView:wrapper->view];
 		
-			factory = std::make_shared<MetalFactory>([wrapper->device retain], [wrapper->view retain]);
+			factory = std::make_shared<MetalFactory>(wrapper->device, wrapper->view);
 		}
 	}
 	

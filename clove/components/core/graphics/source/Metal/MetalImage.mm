@@ -22,7 +22,7 @@ namespace garlic::clove {
 	}
 	
 	MetalImage::MetalImage(id<MTLTexture> texture, Descriptor descriptor)
-		: texture{ texture }
+		: texture{ [texture retain] }
 		, descriptor{ std::move(descriptor) } {
 	}
 	

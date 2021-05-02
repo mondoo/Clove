@@ -99,8 +99,8 @@ namespace garlic::clove {
 	}
 	
 	MetalFactory::MetalFactory(id<MTLDevice> device, MetalView *view)
-		: device{ device }
-		, view{ view } {
+		: device{ [device retain] }
+		, view{ [view retain] } {
 		commandQueue = [this->device newCommandQueue];
 	}
 	
@@ -116,11 +116,11 @@ namespace garlic::clove {
 
 	Expected<std::unique_ptr<GhaGraphicsQueue>, std::runtime_error> MetalFactory::createGraphicsQueue(CommandQueueDescriptor descriptor) {
 		//TODO: descriptor
-		return std::unique_ptr<GhaGraphicsQueue>{ std::make_unique<MetalGraphicsQueue>([commandQueue retain]) };
+		return std::unique_ptr<GhaGraphicsQueue>{ std::make_unique<MetalGraphicsQueue>(commandQueue) };
 	}
 	
 	Expected<std::unique_ptr<GhaPresentQueue>, std::runtime_error> MetalFactory::createPresentQueue() {
-		return std::unique_ptr<GhaPresentQueue>{ std::make_unique<MetalPresentQueue>([commandQueue retain], [view retain]) };
+		return std::unique_ptr<GhaPresentQueue>{ std::make_unique<MetalPresentQueue>(commandQueue, view) };
 	}
 	
 	Expected<std::unique_ptr<GhaTransferQueue>, std::runtime_error> MetalFactory::createTransferQueue(CommandQueueDescriptor descriptor) {
@@ -197,7 +197,11 @@ namespace garlic::clove {
 		
 		MTLPixelFormat depthPixelFormat{ MetalImage::convertFormat(descriptor.depthAttachment.format) };
 		
-		return std::unique_ptr<GhaRenderPass>{ std::make_unique<MetalRenderPass>(std::move(colourAttachments), std::move(depthPixelFormat), std::move(descriptor)) };
+		auto result{ std::unique_ptr<GhaRenderPass>{ std::make_unique<MetalRenderPass>(colourAttachments, std::move(depthPixelFormat), std::move(descriptor)) }};
+		
+		[colourAttachments release];
+		
+		return result;
 	}
 	
 	Expected<std::unique_ptr<GhaDescriptorSetLayout>, std::runtime_error> MetalFactory::createDescriptorSetLayout(GhaDescriptorSetLayout::Descriptor descriptor) {
@@ -213,7 +217,7 @@ namespace garlic::clove {
 			id<MTLFunction> fragmentFunction{ polyCast<MetalShader>(descriptor.pixelShader.get())->getFunction() };
 		
 			//Vertex input
-			MTLVertexDescriptor *vertexDescriptor{ [[MTLVertexDescriptor alloc] init] };
+			MTLVertexDescriptor *vertexDescriptor{ [[[MTLVertexDescriptor alloc] init] autorelease]};
 			vertexDescriptor.layouts[0].stride = descriptor.vertexInput.stride;
 			for(size_t i{0}; i < descriptor.vertexAttributes.size(); ++i){
 				auto const &attribute{ descriptor.vertexAttributes[i] };
@@ -222,11 +226,14 @@ namespace garlic::clove {
 				vertexDescriptor.attributes[i].offset = attribute.offset;
 			}
 		
-			//Topology
+			//Input assembly
 			MTLPrimitiveTopologyClass const topology{ MTLPrimitiveTopologyClassTriangle };
 		
 			//Depth state
 			MTLDepthStencilDescriptor *depthStencil{ [[MTLDepthStencilDescriptor alloc] init]};
+		
+			//Depth / Stencil
+			MTLDepthStencilDescriptor *depthStencil{ [[[MTLDepthStencilDescriptor alloc] init] autorelease] };
 			depthStencil.depthWriteEnabled = descriptor.depthState.depthWrite;
 			if(descriptor.depthState.depthTest){
 				depthStencil.depthCompareFunction = MTLCompareFunctionLess;
@@ -234,7 +241,7 @@ namespace garlic::clove {
 				depthStencil.depthCompareFunction = MTLCompareFunctionAlways;
 			}
 		
-			id<MTLDepthStencilState> depthStencilState{ [device newDepthStencilStateWithDescriptor:depthStencil] };
+			id<MTLDepthStencilState> depthStencilState{ [[device newDepthStencilStateWithDescriptor:depthStencil] autorelease] };
 		
 			//Render pass
 			MetalRenderPass const *const renderPass{ polyCast<MetalRenderPass>(descriptor.renderPass.get()) };
@@ -248,7 +255,7 @@ namespace garlic::clove {
 			//Push constants
 			//TODO:
 		
-			MTLRenderPipelineDescriptor *pipelineDesc{ [[MTLRenderPipelineDescriptor alloc] init] };
+			MTLRenderPipelineDescriptor *pipelineDesc{ [[[MTLRenderPipelineDescriptor alloc] init] autorelease] };
 			pipelineDesc.vertexFunction = vertexFunction;
 			pipelineDesc.fragmentFunction = fragmentFunction;
 			pipelineDesc.vertexDescriptor = vertexDescriptor;
@@ -294,7 +301,11 @@ namespace garlic::clove {
 		frameBufferDescriptor.depthAttachment.loadAction = convertLoadOp(renderPassDescriptor.depthAttachment.loadOperation);
 		frameBufferDescriptor.depthAttachment.storeAction = convertStoreOp(renderPassDescriptor.depthAttachment.storeOperation);
 		
-		return std::unique_ptr<GhaFramebuffer>{ std::make_unique<MetalFramebuffer>(frameBufferDescriptor) };
+		auto result{ std::unique_ptr<GhaFramebuffer>{ std::make_unique<MetalFramebuffer>(frameBufferDescriptor) }};
+		
+		[frameBufferDescriptor release];
+		
+		return result;
 	}
 	
 	Expected<std::unique_ptr<GhaDescriptorPool>, std::runtime_error> MetalFactory::createDescriptorPool(GhaDescriptorPool::Descriptor descriptor) {
@@ -325,8 +336,11 @@ namespace garlic::clove {
 		}
 		
 		id<MTLBuffer> buffer{ [device newBufferWithLength:descriptor.size options:resourceOptions] };
+		auto result{ std::unique_ptr<GhaBuffer>{ std::make_unique<MetalBuffer>(buffer, std::move(descriptor)) }};
 		
-		return std::unique_ptr<GhaBuffer>{ std::make_unique<MetalBuffer>(buffer, std::move(descriptor)) };
+		[buffer release];
+		
+		return result;
 	}
 	
 	Expected<std::unique_ptr<GhaImage>, std::runtime_error> MetalFactory::createImage(GhaImage::Descriptor descriptor) {
@@ -339,10 +353,12 @@ namespace garlic::clove {
 		mtlDescriptor.usage = getUsageFlags(descriptor.usageFlags);
 		
 		id<MTLTexture> texture{ [device newTextureWithDescriptor:mtlDescriptor] };
+		auto result{ std::unique_ptr<GhaImage>{ std::make_unique<MetalImage>(texture, std::move(descriptor)) }};
 		
 		[mtlDescriptor release];
+		[texture release];
 		
-		return std::unique_ptr<GhaImage>{ std::make_unique<MetalImage>(texture, std::move(descriptor)) };
+		return result;
 	}
 
 	Expected<std::unique_ptr<GhaSampler>, std::runtime_error> MetalFactory::createSampler(GhaSampler::Descriptor descriptor) {
@@ -352,13 +368,13 @@ namespace garlic::clove {
 	Expected<std::unique_ptr<GhaShader>, std::runtime_error> MetalFactory::createShaderObject(std::string mslSource) {
 		@autoreleasepool {
 			NSError *libError;
-			id<MTLLibrary> library{ [device newLibraryWithSource:[NSString stringWithCString:mslSource.c_str() encoding:[NSString defaultCStringEncoding]] options:nil error:&libError] };
+			id<MTLLibrary> library{ [[device newLibraryWithSource:[NSString stringWithCString:mslSource.c_str() encoding:[NSString defaultCStringEncoding]] options:nil error:&libError] autorelease] };
 		
 			if(libError != nullptr && libError.code != 0){
 				return Unexpected{ std::runtime_error{ [[libError description] cStringUsingEncoding:[NSString defaultCStringEncoding]] } };
 			}
 		
-			return std::unique_ptr<GhaShader>{ std::make_unique<MetalShader>([library newFunctionWithName:@"main0"]) }; //MSL can't have main so we use main0 (generated by spirv)
+			return std::unique_ptr<GhaShader>{ std::make_unique<MetalShader>([[library newFunctionWithName:@"main0"] autorelease]) }; //MSL can't have main so we use main0 (generated by spirv)
 		}
 	}
 }
