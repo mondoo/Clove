@@ -6,6 +6,7 @@ Checks: >
   diagnostic-*,
   readability-*,
   performance-*,
+  objc-*,
   -cppcoreguidelines-macro-usage,
   -cppcoreguidelines-no-malloc,
   -cppcoreguidelines-non-private-member-variables-in-classes,
