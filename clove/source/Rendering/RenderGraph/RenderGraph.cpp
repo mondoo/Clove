@@ -2,6 +2,9 @@
 
 #include "Clove/Rendering/RenderGraph/RgFrameCache.hpp"
 #include "Clove/Rendering/RenderGraph/RgGlobalCache.hpp"
+#include "Clove/Rendering/Vertex.hpp"
+
+#include <Clove/Log/Log.hpp>
 
 namespace garlic::clove {
     RenderGraph::RenderGraph(RgFrameCache &frameCache, RgGlobalCache &globalCache)
@@ -24,8 +27,8 @@ namespace garlic::clove {
         GhaBuffer::Descriptor &descriptor{ bufferDescriptors[buffer.id] };
         descriptor.size        = bufferSize;
         descriptor.usageFlags  = static_cast<GhaBuffer::UsageMode>(0);//Will be built when executing the graph
-        descriptor.sharingMode = SharingMode::Exclusive; //Assume exclusive to begin with
-        descriptor.memoryType  = MemoryType::VideoMemory;//Assume video memory until it has been written to from the host
+        descriptor.sharingMode = SharingMode::Exclusive;              //Assume exclusive to begin with
+        descriptor.memoryType  = MemoryType::VideoMemory;             //Assume video memory until it has been written to from the host
 
         return buffer;
     }
@@ -94,9 +97,84 @@ namespace garlic::clove {
     }
 
     RgGraphicsPipelineState RenderGraph::createGraphicsPipelineState(RgGraphicsPipelineState::Descriptor desciptor) {
-        //TODO
+        RgGraphicsPipelineState const pipeline{ nextId++ };
+        GhaGraphicsPipelineObject::Descriptor pipelineDescriptor{};
 
-        return {};
+        std::vector<AttachmentDescriptor> colourAttachments{};
+        AttachmentDescriptor depthAttachment{};
+
+        //Update usage flags of the attached resources and build the render pass attachment array
+        for(auto &renderTarget : desciptor.renderTargets) {
+            RgImage const target{ renderTarget.target };
+            if(imageDescriptors.contains(target)) {
+                auto &targetDesc{ imageDescriptors.at(target) };
+                targetDesc.usageFlags |= GhaImage::UsageMode::ColourAttachment;
+
+                colourAttachments.emplace_back(AttachmentDescriptor{
+                    .format         = targetDesc.format,
+                    .loadOperation  = renderTarget.loadOp,
+                    .storeOperation = renderTarget.storeOp,
+                    .initialLayout  = GhaImage::Layout::Undefined,
+                    .usedLayout     = GhaImage::Layout::ColourAttachmentOptimal,
+                    .finalLayout    = GhaImage::Layout::Present,//TODO: Assuming present. This will cause issues with shadow maps etc.
+                });
+
+            } else {
+                //Validate that the image exists
+                CLOVE_ASSERT(allocatedImages.contains(target), "RenderGraph does not know about the render target provided!");
+            }
+        }
+
+        {
+            RgImage const depthStencil{ desciptor.depthStencil.target };
+            if(imageDescriptors.contains(depthStencil)) {
+                auto &depthStencilDesc{ imageDescriptors.at(depthStencil) };
+                depthStencilDesc.usageFlags |= GhaImage::UsageMode::DepthStencilAttachment;
+
+                depthAttachment.format         = depthStencilDesc.format;
+                depthAttachment.loadOperation  = desciptor.depthStencil.loadOp;
+                depthAttachment.storeOperation = desciptor.depthStencil..storeOp;
+                depthAttachment.initialLayout  = GhaImage::Layout::Undefined;
+                depthAttachment.usedLayout     = GhaImage::Layout::DepthStencilAttachmentOptimal;
+                depthAttachment.finalLayout    = GhaImage::Layout::DepthStencilAttachmentOptimal;
+            } else {
+                //Validate that the image exists
+                CLOVE_ASSERT(allocatedImages.contains(depthStencil), "RenderGraph does not know about the depth stencil target provided!");
+            }
+        }
+
+        //Compile the shaders for the pipeline
+        pipelineDescriptor.vertexShader = allocatedShaders[desciptor.vertexShader];
+        pipelineDescriptor.pixelShader  = allocatedShaders[desciptor.pixelShader];
+
+        //Build vertex input around Clove's vertex structure
+        std::vector<VertexAttributeDescriptor> vertexAttributes{ //TODO: Shader reflection to get proper input?
+            VertexAttributeDescriptor{
+                .format = VertexAttributeFormat::R32G32B32_SFLOAT,
+                .offset = offsetof(Vertex, position),
+            }
+        };
+
+        pipelineDescriptor.vertexInput = Vertex::getInputBindingDescriptor();
+        pipelineDescriptor.vertexAttributes = std::move(vertexAttributes);
+
+        //Create the render pass for the pipeline
+        pipelineDescriptor.renderPass = globalCache.createRenderPass(GhaRenderPass::Descriptor{
+            .colourAttachments = std::move(colourAttachments),
+            .depthAttachment   = std::move(depthAttachment),
+        });
+
+        //TEMP: Just using dynamic for now
+        AreaDescriptor const viewScissorArea{
+            .state = ElementState::Dynamic,
+        };
+        pipelineDescriptor.viewportDescriptor = viewScissorArea;
+        pipelineDescriptor.scissorDescriptor  = viewScissorArea;
+
+        //Cache the descriptor to create the pipeline for later as we do not know the descriptor sets / push constants at this point
+        pendingGraphicsPipelines[pipeline.id] = std::move(pipelineDescriptor);
+
+        return pipeline;
     }
 
     RgComputePipelineState RenderGraph::createComputePipelineState(RgComputePipelineState::Descriptor descriptor) {

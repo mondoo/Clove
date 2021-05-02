@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Clove/Graphics/GhaShader.hpp>
+#include <Clove/Graphics/GhaRenderPass.hpp>
 #include <filesystem>
 #include <memory>
 #include <string>
@@ -18,5 +19,7 @@ namespace garlic::clove {
     public:
         std::shared_ptr<GhaShader> createShader(std::filesystem::path const &file, GhaShader::Stage shaderStage);
         std::shared_ptr<GhaShader> createShader(std::string_view source, std::unordered_map<std::string, std::string> includeSources, std::string_view shaderName, GhaShader::Stage shaderStage);
+
+        std::shared_ptr<GhaRenderPass> createRenderPass(GhaRenderPass::Descriptor descriptor);
     };
 }

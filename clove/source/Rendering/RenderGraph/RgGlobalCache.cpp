@@ -10,4 +10,9 @@ namespace garlic::clove {
         //TODO
         return nullptr;
     }
+
+    std::shared_ptr<GhaRenderPass> RgGlobalCache::createRenderPass(GhaRenderPass::Descriptor descriptor) {
+        //TODO
+        return nullptr;
+    }
 }

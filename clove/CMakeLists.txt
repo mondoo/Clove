@@ -136,6 +136,7 @@ add_library(
 		${INCLUDE}/Rendering/RenderGraph/RgGlobalCache.hpp
 		${SOURCE}/Rendering/RenderGraph/RgGlobalCache.cpp
 		${INCLUDE}/Rendering/RenderGraph/RgGraphicsPipelineState.hpp
+		${SOURCE}/Rendering/RenderGraph/RgGraphicsPipelineState.cpp
 		${INCLUDE}/Rendering/RenderGraph/RgId.hpp
 		${INCLUDE}/Rendering/RenderGraph/RgImage.hpp
 		${INCLUDE}/Rendering/RenderGraph/RgShader.hpp

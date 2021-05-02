@@ -97,6 +97,8 @@ namespace garlic::clove {
 
         std::unordered_map<ResourceIdType, std::shared_ptr<GhaShader>> allocatedShaders{};
 
+        std::unordered_map<ResourceIdType, GhaGraphicsPipelineObject::Descriptor> pendingGraphicsPipelines{};
+
         //FUNCTIONS
     public:
         RenderGraph() = delete;

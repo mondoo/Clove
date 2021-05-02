@@ -8,6 +8,8 @@
 
 namespace garlic::clove {
     class RgGraphicsPipelineState {
+        friend class RenderGraph;
+
         //TYPES
     public:
         struct RenderTargetBinding {//TODO: RenderTargetDescriptor?
@@ -44,8 +46,17 @@ namespace garlic::clove {
 
         //FUNCTIONS
     public:
-        operator ResourceIdType() {
-            return id;
-        }
+        RgGraphicsPipelineState();
+
+        RgGraphicsPipelineState(RgGraphicsPipelineState const &other);
+        RgGraphicsPipelineState(RgGraphicsPipelineState &&other) noexcept;
+
+        RgGraphicsPipelineState &operator=(RgGraphicsPipelineState const &other);
+        RgGraphicsPipelineState &operator=(RgGraphicsPipelineState &&other) noexcept;
+
+        ~RgGraphicsPipelineState();
+
+    private:
+        RgGraphicsPipelineState(ResourceIdType id);
     };
 }
