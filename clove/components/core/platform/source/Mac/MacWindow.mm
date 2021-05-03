@@ -42,8 +42,6 @@ namespace garlic::clove{
 		windowProxy.cloveWindow = this;
 
 		open = true;
-			
-		[nameString release];
     }
 
 	MacWindow::~MacWindow() {
