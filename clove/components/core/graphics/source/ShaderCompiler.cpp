@@ -87,11 +87,11 @@ namespace garlic::clove::ShaderCompiler {
                 return {};
             }
 
-            size_t const fileSize{ static_cast<size_t>(file.tellg()) };
-            std::vector<char> buffer(fileSize);
+            auto const fileSize{ file.tellg() };
+            std::vector<char> buffer(static_cast<size_t>(fileSize));
 
             file.seekg(0);
-            file.read(buffer.data(), fileSize);
+            file.read(buffer.data(), static_cast<std::streamsize>(fileSize));
 
             file.close();
 

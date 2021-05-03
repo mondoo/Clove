@@ -35,8 +35,8 @@ namespace garlic::clove {
                 uint32_t const width{ glyph.size.x };
                 uint32_t const height{ glyph.size.y };
 
-                float const xpos{ cursorPos.x + glyph.bearing.x };
-                float const ypos{ cursorPos.y - (static_cast<float>(height) - glyph.bearing.y) };
+                float const xpos{ cursorPos.x + static_cast<float>(glyph.bearing.x) };
+                float const ypos{ cursorPos.y - (static_cast<float>(height) - static_cast<float>(glyph.bearing.y)) };
 
                 mat4f model{ translate(mat4f{ 1.0f }, { xpos, ypos, 0.0f }) };
                 model *= scale(mat4f{ 1.0f }, { width, height, 0.0f });
@@ -44,7 +44,7 @@ namespace garlic::clove {
                 Application::get().getRenderer()->submitText(glyph.characterView, projection * model);
             }
 
-            cursorPos.x += glyph.advance.x;
+            cursorPos.x += static_cast<float>(glyph.advance.x);
         }
     }
 
