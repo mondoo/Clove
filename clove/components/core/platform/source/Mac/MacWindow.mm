@@ -1,5 +1,7 @@
 #include "Clove/Platform/Mac/MacWindow.hpp"
 
+#include <Clove/Log/Log.hpp>
+
 @implementation MacWindowProxy
 - (void)windowWillClose:(NSNotification *)notification {
 	_cloveWindow->close();
@@ -23,7 +25,12 @@ namespace garlic::clove{
 		[NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
 
 		//Window specific init
-		NSString* nameString = [NSString stringWithCString:descriptor.title.c_str() encoding:[NSString defaultCStringEncoding]];
+		NSString *nameString = [NSString stringWithCString:descriptor.title.c_str() encoding:[NSString defaultCStringEncoding]];
+		if(nameString == nullptr) {
+			CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Critical, "nameString returned nullptr. Aborting");
+			abort();
+		}
+		
 		NSRect const rect{ NSMakeRect(0, 0, descriptor.width, descriptor.height) };
 		NSWindowStyleMask const styleMask{ NSWindowStyleMaskTitled | NSWindowStyleMaskClosable | NSWindowStyleMaskMiniaturizable };
 			
