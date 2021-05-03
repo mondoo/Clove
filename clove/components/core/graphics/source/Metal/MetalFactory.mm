@@ -273,7 +273,7 @@ namespace garlic::clove {
 			pipelineDesc.depthAttachmentPixelFormat = depthPixelFormat;
 		
 			NSError *error{ nullptr };
-			id<MTLRenderPipelineState> pipelineState{ [device newRenderPipelineStateWithDescriptor:pipelineDesc error:&error] };
+			id<MTLRenderPipelineState> pipelineState{ [[device newRenderPipelineStateWithDescriptor:pipelineDesc error:&error] autorelease] };
 			if(error != nullptr && error.code != 0) {
 				return Unexpected{ std::runtime_error{ [[error description] cStringUsingEncoding:[NSString defaultCStringEncoding]] } };
 			}

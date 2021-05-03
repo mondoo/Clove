@@ -2,8 +2,8 @@
 
 namespace garlic::clove {
 	MetalGraphicsPipelineObject::MetalGraphicsPipelineObject(id<MTLRenderPipelineState> pipeline, id<MTLDepthStencilState> depthStencil)
-		: pipeline{ std::move(pipeline) }
-		, depthStencil{ std::move(depthStencil) }{
+		: pipeline{ [pipeline retain] }
+		, depthStencil{ [depthStencil retain] }{
 	}
 	
 	MetalGraphicsPipelineObject::MetalGraphicsPipelineObject(MetalGraphicsPipelineObject &&other) noexcept = default;
