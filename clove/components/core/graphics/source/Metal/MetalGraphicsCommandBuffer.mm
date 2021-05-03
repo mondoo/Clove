@@ -1,6 +1,7 @@
 #include "Clove/Graphics/Metal/MetalGraphicsCommandBuffer.hpp"
 
 #include "Clove/Graphics/Metal/MetalFramebuffer.hpp"
+#include "Clove/Graphics/Metal/MetalGlobals.hpp"
 #include "Clove/Graphics/Metal/MetalGraphicsPipelineObject.hpp"
 #include "Clove/Graphics/Metal/MetalBuffer.hpp"
 #include "Clove/Graphics/Metal/MetalRenderPass.hpp"
@@ -102,7 +103,7 @@ namespace garlic::clove {
 		currentPass->commands.emplace_back([vertexBuffer = &vertexBuffer, offset](id<MTLRenderCommandEncoder> encoder){
 			[encoder setVertexBuffer:polyCast<MetalBuffer>(vertexBuffer)->getBuffer()
 							  offset:offset
-							 atIndex:0];
+							 atIndex:vertexBufferBindingIndex];
 		});
 	}
 	

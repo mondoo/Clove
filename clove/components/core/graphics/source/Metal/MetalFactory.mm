@@ -4,6 +4,7 @@
 #include "Clove/Graphics/Metal/MetalBuffer.hpp"
 #include "Clove/Graphics/Metal/MetalShader.hpp"
 #include "Clove/Graphics/Metal/MetalFramebuffer.hpp"
+#include "Clove/Graphics/Metal/MetalGlobals.hpp"
 #include "Clove/Graphics/Metal/MetalGraphicsPipelineObject.hpp"
 #include "Clove/Graphics/Metal/MetalGraphicsQueue.hpp"
 #include "Clove/Graphics/Metal/MetalImage.hpp"
@@ -218,10 +219,10 @@ namespace garlic::clove {
 		
 			//Vertex input
 			MTLVertexDescriptor *vertexDescriptor{ [[[MTLVertexDescriptor alloc] init] autorelease]};
-			vertexDescriptor.layouts[0].stride = descriptor.vertexInput.stride;
-			for(size_t i{0}; i < descriptor.vertexAttributes.size(); ++i){
+			vertexDescriptor.layouts[vertexBufferBindingIndex].stride = descriptor.vertexInput.stride;
+			for(size_t i{ 0 }; i < descriptor.vertexAttributes.size(); ++i){
 				auto const &attribute{ descriptor.vertexAttributes[i] };
-				vertexDescriptor.attributes[i].bufferIndex = 0;
+				vertexDescriptor.attributes[i].bufferIndex = vertexBufferBindingIndex;
 				vertexDescriptor.attributes[i].format = convertAttributeFormat(attribute.format);
 				vertexDescriptor.attributes[i].offset = attribute.offset;
 			}
