@@ -14,7 +14,7 @@ namespace garlic::clove {
 		dispatcher.onMouseMove(position);
 	}
 
-	void Mouse::show(bool shouldShow) {
+	void Mouse::show(bool shouldShow) { //NOLINT Ignore recommendation for static as on some platforms it can't be
 		if(shouldShow) {
 			[NSCursor hide];
 		} else {
