@@ -147,51 +147,39 @@ namespace garlic::clove::ShaderCompiler {
 
     Expected<std::string, std::runtime_error> spirvToMSL(std::span<uint32_t> spirvSource) {
         spirv_cross::CompilerMSL msl{ spirvSource.data(), spirvSource.size() };
-		spirv_cross::CompilerMSL::Options scoptions{};
-
-        scoptions.platform = spirv_cross::CompilerMSL::Options::Platform::macOS;
-		
-        msl.set_msl_options(scoptions);
+		msl.set_msl_options(spirv_cross::CompilerMSL::Options{
+			.platform = spirv_cross::CompilerMSL::Options::Platform::macOS,
+		});
 
 		spirv_cross::ShaderResources resources{ msl.get_shader_resources() };
 
-        auto const remapMSLBindings = [&msl](uint32_t const binding, spirv_cross::ID const resourceID) {
-            spirv_cross::MSLResourceBinding resourceBinding;
-            resourceBinding.stage    = msl.get_execution_model();
-            resourceBinding.desc_set = msl.get_decoration(resourceID, spv::DecorationDescriptorSet);
-            resourceBinding.binding  = binding;
-            //Can cause issue if not all are set
-            resourceBinding.msl_buffer  = binding;
-            resourceBinding.msl_texture = binding;
-            resourceBinding.msl_sampler = binding;
-            msl.add_msl_resource_binding(resourceBinding);
+        auto const remapMSLBindings = [&msl](spirv_cross::ID const resourceID, uint32_t const binding) {
+            msl.add_msl_resource_binding(spirv_cross::MSLResourceBinding{
+				.stage    = msl.get_execution_model(),
+				.desc_set = msl.get_decoration(resourceID, spv::DecorationDescriptorSet),
+				.binding  = binding,
+				//Can cause issue if not all are set
+				.msl_buffer  = binding,
+				.msl_texture = binding,
+				.msl_sampler = binding,
+			});
         };
 
         //Set up correct buffer bindings
         for(auto &resource : resources.uniform_buffers) {
             uint32_t const binding{ msl.get_decoration(resource.id, spv::DecorationBinding) };
-            remapMSLBindings(binding, resource.id);
+            remapMSLBindings(resource.id, binding);
         }
 
         //Set up correct texture bindings
         for(auto &resource : resources.separate_images) {
             uint32_t const binding{ msl.get_decoration(resource.id, spv::DecorationBinding) };
-            remapMSLBindings(binding, resource.id);
+            remapMSLBindings(resource.id, binding);
         }
         for(auto &resource : resources.separate_samplers) {
             uint32_t const binding{ msl.get_decoration(resource.id, spv::DecorationBinding) };
-            remapMSLBindings(binding, resource.id);
+            remapMSLBindings(resource.id, binding);
         }
-
-        //Remap names to semantics
-        /* if(shaderStage == GhaShader::Stage::Vertex) {
-            for(auto &resource : resources.stage_inputs) {
-                //uint32_t const location{ msl.get_decoration(resource.id, spv::DecorationLocation) };
-                std::string str{ msl.get_decoration_string(resource.id, spv::DecorationUserSemantic) };
-
-                msl.set_name(resource.id, str);
-            }
-        } */
 
         return msl.compile();
     }
