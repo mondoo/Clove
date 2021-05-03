@@ -229,9 +229,6 @@ namespace garlic::clove {
 			//Input assembly
 			MTLPrimitiveTopologyClass const topology{ MTLPrimitiveTopologyClassTriangle };
 		
-			//Depth state
-			MTLDepthStencilDescriptor *depthStencil{ [[MTLDepthStencilDescriptor alloc] init]};
-		
 			//Depth / Stencil
 			MTLDepthStencilDescriptor *depthStencil{ [[[MTLDepthStencilDescriptor alloc] init] autorelease] };
 			depthStencil.depthWriteEnabled = descriptor.depthState.depthWrite;
