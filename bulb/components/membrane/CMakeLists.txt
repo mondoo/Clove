@@ -3,15 +3,17 @@ set(INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/include/Membrane)
 
 #Library
 add_library(
-    Membrane SHARED
+    BulbMembrane SHARED
         ${INCLUDE}/Application.hpp
         ${SOURCE}/Application.cpp
 
         ${INCLUDE}/Log.hpp
         ${SOURCE}/Log.cpp
+        ${INCLUDE}/MembraneLog.hpp
 
         ${INCLUDE}/EditorTypes.hpp
 
+        ${INCLUDE}/MessageBase.hpp
         ${INCLUDE}/MessageHandler.hpp
         ${SOURCE}/MessageHandler.cpp
         ${INCLUDE}/Messages.hpp
@@ -33,7 +35,7 @@ add_library(
 
 #Include
 target_include_directories(
-    Membrane
+    BulbMembrane
 
     PUBLIC
         include   
@@ -41,7 +43,7 @@ target_include_directories(
 
 #Libraries
 target_link_libraries(
-    Membrane
+    BulbMembrane
 
     PRIVATE
         Clove
@@ -49,7 +51,7 @@ target_link_libraries(
 
 #Definitions
 target_compile_definitions(
-    Membrane
+    BulbMembrane
 
     PRIVATE
         ASSET_DIR="${CMAKE_CURRENT_SOURCE_DIR}/assets"
@@ -57,7 +59,7 @@ target_compile_definitions(
 
 #Properties
 set_target_properties(
-    Membrane
+    BulbMembrane
     
     PROPERTIES 
         COMMON_LANGUAGE_RUNTIME ""
