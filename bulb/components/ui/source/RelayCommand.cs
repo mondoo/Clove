@@ -1,13 +1,11 @@
 using System;
 using System.Windows.Input;
 
-namespace Garlic.Bulb
-{
+namespace Garlic.Bulb {
     /// <summary>
     /// Simple RelayCommand that invokes an action when executed.
     /// </summary>
-    public class RelayCommand : ICommand
-    {
+    public class RelayCommand : ICommand {
         public event EventHandler CanExecuteChanged = (sender, e) => { };
 
         private Action action;

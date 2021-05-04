@@ -4,6 +4,7 @@ set(SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/source)
 add_library(
     BulbUI SHARED
 
+	${SOURCE}/RelayCommand.cs
     ${SOURCE}/ViewModel.cs
 )
 
