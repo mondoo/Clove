@@ -68,7 +68,7 @@ namespace Garlic.Bulb {
 
 		private void OnComponentCreated(Membrane.Engine_OnComponentCreated message) {
 			//Remove the created component from the selected entity's menu item list
-			if (message.entity == SelectedEntity.EntityId) {
+			if (SelectedEntity != null && message.entity == SelectedEntity.EntityId) {
 				foreach (var menuItem in ComponentMenuItems) {
 					if(menuItem.ComponentType == message.componentType) {
 						ComponentMenuItems.Remove(menuItem);
