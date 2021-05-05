@@ -12,6 +12,8 @@
 		<StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
 			<Button Content="Load" Command="{Binding LoadSceneCommand}"/>
 			<Button Content="Save" Command="{Binding SaveSceneCommand}"/>
+			<Button Content="Play" Command="{Binding PlayCommand}" IsEnabled="{Binding IsPlayButtonEnabled}"/>
+			<Button Content="Stop" Command="{Binding StopCommand}" IsEnabled="{Binding IsStopButtonEnabled}"/>
 		</StackPanel>
 		<Grid DockPanel.Dock="Bottom">
 			<Grid.ColumnDefinitions>

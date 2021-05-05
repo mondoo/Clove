@@ -62,6 +62,8 @@ namespace garlic::membrane {
     };
     public ref class Editor_SaveScene : public EditorMessage {};
     public ref class Editor_LoadScene : public EditorMessage {};
+    public ref class Editor_Play : public EditorMessage {};
+    public ref class Editor_Stop : public EditorMessage {};
 
     //Messages sent from Clove
     public ref class Engine_OnEntityCreated : public EngineMessage {
