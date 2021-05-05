@@ -2,7 +2,9 @@
 
 #include "Membrane/NameComponent.hpp"
 
+#include <Clove/Components/CollisionShapeComponent.hpp>
 #include <Clove/Components/PointLightComponent.hpp>
+#include <Clove/Components/RigidBodyComponent.hpp>
 #include <Clove/Components/StaticModelComponent.hpp>
 #include <Clove/Components/TransformComponent.hpp>
 #include <Clove/ModelLoader.hpp>
@@ -73,6 +75,10 @@ namespace garlic::membrane {
                     manager->addComponent<StaticModelComponent>(entity, componentNode.as<StaticModelComponent>());
                 } else if(componentNode["id"].as<size_t>() == typeid(PointLightComponent).hash_code()) {
                     manager->addComponent<PointLightComponent>(entity, componentNode.as<PointLightComponent>());
+                } else if(componentNode["id"].as<size_t>() == typeid(CollisionShapeComponent).hash_code()) {
+                    manager->addComponent<CollisionShapeComponent>(entity, componentNode.as<CollisionShapeComponent>());
+                } else if(componentNode["id"].as<size_t>() == typeid(RigidBodyComponent).hash_code()) {
+                    manager->addComponent<RigidBodyComponent>(entity, componentNode.as<RigidBodyComponent>());
                 }
             }
 
