@@ -41,7 +41,6 @@ namespace garlic::membrane {
         runtimeLayer  = new std::shared_ptr<RuntimeLayer>();
         *runtimeLayer = std::make_shared<RuntimeLayer>();
 
-        app->pushLayer(*runtimeLayer);
         app->pushLayer(*editorLayer);
     }
 
