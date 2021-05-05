@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Clove/SerialisationCommon.hpp"
+
 #include <Clove/Maths/Vector.hpp>
 #include <cinttypes>
 #include <optional>
@@ -53,14 +55,14 @@ namespace garlic::clove {
         /**
          * @brief Sets a consistent velocity for the body to move in.
          */
-        void setLinearVelocity(vec3f velocity){
+        void setLinearVelocity(vec3f velocity) {
             appliedVelocity = velocity;
         }
 
         /**
          * @brief Returns the current velocity of the body
          */
-        vec3f getLinearVelocity(){
+        vec3f getLinearVelocity() const {
             return currentVelocity;
         }
 
@@ -86,4 +88,30 @@ namespace garlic::clove {
 
         vec3f currentVelocity{};
     };
+}
+
+namespace garlic::clove {
+    template<>
+    inline serialiser::Node serialise(RigidBodyComponent const &object) {
+        serialiser::Node node{};
+        node["collisionGroup"] = object.collisionGroup;
+        node["collisionMask"]  = object.collisionMask;
+        node["mass"]           = object.mass;
+        node["restitution"]    = object.restitution;
+        node["angularFactor"]  = object.angularFactor;
+        node["linearFactor"]   = object.linearFactor;
+        return node;
+    }
+
+    template<>
+    inline RigidBodyComponent deserialise(serialiser::Node const &node) {
+        RigidBodyComponent component{};
+        component.collisionGroup = node["collisionGroup"].as<uint32_t>();
+        component.collisionMask  = node["collisionMask"].as<uint32_t>();
+        component.mass           = node["mass"].as<float>();
+        component.restitution    = node["restitution"].as<float>();
+        component.angularFactor  = node["angularFactor"].as<vec3f>();
+        component.linearFactor   = node["linearFactor"].as<vec3f>();
+        return component;
+    }
 }
