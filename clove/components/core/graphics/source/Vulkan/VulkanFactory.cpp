@@ -763,7 +763,7 @@ namespace garlic::clove {
             }
         }
 
-        return std::unique_ptr<GhaGraphicsPipelineObject>{ std::make_unique<VulkanGraphicsPipelineObject>(devicePtr, pipeline, pipelineLayout) };
+        return std::unique_ptr<GhaGraphicsPipelineObject>{ std::make_unique<VulkanGraphicsPipelineObject>(std::move(descriptor), devicePtr, pipeline, pipelineLayout) };
     }
 
     Expected<std::unique_ptr<GhaComputePipelineObject>, std::runtime_error> VulkanFactory::createComputePipelineObject(GhaComputePipelineObject::Descriptor descriptor) {

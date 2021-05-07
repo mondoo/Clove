@@ -82,5 +82,7 @@ namespace garlic::clove {
         //FUNCTIONS
     public:
         virtual ~GhaGraphicsPipelineObject() = default;
+
+        virtual Descriptor const &getDescriptor() const = 0;
     };
 }
