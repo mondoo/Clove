@@ -156,7 +156,7 @@ namespace garlic::clove {
                 .stage     = GhaShader::Stage::Pixel,//TODO: provided by pass or by shader reflection
             });
         }
-        std::shared_ptr<GhaDescriptorSetLayout> descriptorSetLayout{ globalCache.createDescriptorSetLayout(GhaDescriptorSetLayout::Descriptor{ .bindings = std::move(descriptorBindings) }) };
+        descriptorSetLayouts[pipelineId] = globalCache.createDescriptorSetLayout(GhaDescriptorSetLayout::Descriptor{ .bindings = std::move(descriptorBindings) });
 
         //Build graphics pipeline
         //TODO: Hard coding in layout - will likely need to get it from the shader
@@ -172,6 +172,7 @@ namespace garlic::clove {
             .state = ElementState::Dynamic,
         };
 
+        //TODO: PassDescriptors are likely to be reused - if that's the case then we can just use the same pipeline ID
         allocatedPipelines[pipelineId] = globalCache.createGraphicsPipelineObject(GhaGraphicsPipelineObject::Descriptor{
             .vertexShader         = allocatedShaders.at(passDescriptor.vertexShader),
             .pixelShader          = allocatedShaders.at(passDescriptor.pixelShader),
@@ -180,10 +181,11 @@ namespace garlic::clove {
             .viewportDescriptor   = viewScissorArea,
             .scissorDescriptor    = viewScissorArea,
             .renderPass           = allocatedRenderPasses.at(pipelineId),
-            .descriptorSetLayouts = { std::move(descriptorSetLayout) },
+            .descriptorSetLayouts = { descriptorSetLayouts.at(pipelineId) },
             .pushConstants        = {},
         });
-        passDescriptors[pipelineId]    = std::move(passDescriptor);
+        passDescriptors[pipelineId]    = std::move(passDescriptor);//NOTE: This will duplicate any descriptors
+        passSubmissions[pipelineId]    = std::move(pass);
 
         //Record draw calls
         vec2ui const renderSize{ getImageSize(passDescriptor.renderTargets[0].target) };//TEMP: Use the size of the first target
@@ -208,13 +210,15 @@ namespace garlic::clove {
 
             graphicsBuffer.bindPipelineObject(*allocatedPipelines.at(pipelineId));
 
-            for(auto &submission : pass) {
-                graphicsBuffer.bindDescriptorSet(*allocatedDescriptorSets.at(pipelineId), 0);//TODO: Multiple sets / only set sets for a whole pass (i.e. view)
+            for(size_t index{ 0 }; auto &submission : pass) {
+                graphicsBuffer.bindDescriptorSet(*allocatedDescriptorSets.at(pipelineId)[index], 0);//TODO: Multiple sets / only set sets for a whole pass (i.e. view)
 
                 graphicsBuffer.bindVertexBuffer(*allocatedBuffers.at(submission.vertexBuffer.id), submission.vertexBuffer.offset);
                 graphicsBuffer.bindIndexBuffer(*allocatedBuffers.at(submission.indexBuffer.id), submission.indexBuffer.offset, IndexType::Uint16);
 
                 graphicsBuffer.drawIndexed(submission.indexCount);
+
+                ++index;
             }
 
             graphicsBuffer.endRenderPass();
@@ -225,7 +229,6 @@ namespace garlic::clove {
         //TODO
     }
 
-    //Return a submit info?
     GraphicsSubmitInfo RenderGraph::execute(GhaGraphicsQueue &graphicsQueue, GhaComputeQueue &computeQueue, GhaTransferQueue &transferQueue) {
         //TEMP: Create all resources. Later we should only create the ones that are consumed
         for(auto &&[id, descriptor] : bufferDescriptors) {
@@ -254,9 +257,45 @@ namespace garlic::clove {
             allocatedFramebuffers[id] = frameCache.allocateFrameBuffer(GhaFramebuffer::Descriptor{
                 .renderPass  = allocatedRenderPasses[id],
                 .attachments = std::move(attachments),
-                .width       = getImageSize(descriptor.renderTargets[0].target).x,//TEMP: Just using the first target as the size
+                .width       = getImageSize(descriptor.renderTargets[0].target).x,//TEMP: Just using the first target as the size. This will need to be validated
                 .height      = getImageSize(descriptor.renderTargets[0].target).y,
             });
+        }
+
+        //Allocate descriptor sets
+        //first pass - count all the different descriptor types
+        std::unordered_map<DescriptorType, uint32_t> bindingCount{};
+        uint32_t totalSets{ 0 };
+        for(auto &&[id, submissions] : passSubmissions) {
+            for(auto &submission : submissions) {
+                bindingCount[DescriptorType::UniformBuffer] += submission.shaderUbos.size();
+                bindingCount[DescriptorType::CombinedImageSampler] += submission.shaderCombinedImageSamplers.size();
+                ++totalSets;//Allocating a single set per submission
+            }
+        }
+
+        //Second pass - create a single pool to allocate from
+        std::vector<DescriptorInfo> descriptorTypes{};
+        descriptorTypes.reserve(bindingCount.size());
+
+        for(auto &&[type, count] : bindingCount) {
+            descriptorTypes.emplace_back(DescriptorInfo{
+                .type  = type,
+                .count = count,
+            });
+        }
+
+        std::shared_ptr<GhaDescriptorPool> descriptorPool{ frameCache.allocateDescriptorPool(GhaDescriptorPool::Descriptor{
+            .poolTypes = std::move(descriptorTypes),
+            .flag      = GhaDescriptorPool::Flag::None,
+            .maxSets   = totalSets,
+        }) };
+        descriptorPool->reset();//Make sure we have a fresh pool. TODO: do this inside frame cache? Or have a function to reset states
+
+        //Third pass - create a descriptor set for each pipeline
+        for(auto &&[id, pipeline] : allocatedPipelines) {
+            std::vector<std::shared_ptr<GhaDescriptorSetLayout>> layouts(passSubmissions.at(id).size(), pipeline->getDescriptor().descriptorSetLayouts);
+            allocatedDescriptorSets[id] = descriptorPool->allocateDescriptorSets(layouts);
         }
 
         return {};

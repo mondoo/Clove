@@ -1,8 +1,9 @@
 #pragma once
 
 #include <Clove/Graphics/GhaBuffer.hpp>
-#include <Clove/Graphics/GhaImage.hpp>
 #include <Clove/Graphics/GhaFramebuffer.hpp>
+#include <Clove/Graphics/GhaImage.hpp>
+#include <Clove/Graphics/GhaDescriptorPool.hpp>
 #include <memory>
 #include <vector>
 
@@ -14,7 +15,7 @@ namespace garlic::clove {
         //VARIABLES
     private:
         std::vector<std::shared_ptr<GhaBuffer>> buffers{};
-        
+
         //FUNCTIONS
     public:
         //TODO: ctors
@@ -23,5 +24,7 @@ namespace garlic::clove {
         std::shared_ptr<GhaImage> allocateImage(GhaImage::Descriptor descriptor);
 
         std::shared_ptr<GhaFramebuffer> allocateFrameBuffer(GhaFramebuffer::Descriptor descriptor);
+
+        std::shared_ptr<GhaDescriptorPool> allocateDescriptorPool(GhaDescriptorPool::Descriptor descriptor);
     };
 }

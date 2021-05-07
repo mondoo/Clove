@@ -15,4 +15,9 @@ namespace garlic::clove {
         //TODO
         return nullptr;
     }
+
+    std::shared_ptr<GhaDescriptorPool> RgFrameCache::allocateDescriptorPool(GhaDescriptorPool::Descriptor descriptor) {
+        //TODO
+        return nullptr;
+    }
 }

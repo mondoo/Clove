@@ -132,11 +132,13 @@ namespace garlic::clove {
         std::unordered_map<ResourceIdType, std::shared_ptr<GhaImageView>> allocatedImageViews{}; /**< All active images. Even external ones. */
 
         std::unordered_map<ResourceIdType, GraphicsPassDescriptor> passDescriptors{};
+        std::unordered_map<ResourceIdType, std::vector<GraphicsSubmission>> passSubmissions{};
         std::unordered_map<ResourceIdType, std::shared_ptr<GhaShader>> allocatedShaders{};
         std::unordered_map<ResourceIdType, std::shared_ptr<GhaRenderPass>> allocatedRenderPasses{};
         std::unordered_map<ResourceIdType, std::shared_ptr<GhaFramebuffer>> allocatedFramebuffers{};
         std::unordered_map<ResourceIdType, std::shared_ptr<GhaGraphicsPipelineObject>> allocatedPipelines{};
-        std::unordered_map<ResourceIdType, std::shared_ptr<GhaDescriptorSet>> allocatedDescriptorSets{};
+        std::unordered_map<ResourceIdType, std::shared_ptr<GhaDescriptorSetLayout>> descriptorSetLayouts{};
+        std::unordered_map<ResourceIdType, std::vector<std::shared_ptr<GhaDescriptorSet>>> allocatedDescriptorSets{};
 
         //FUNCTIONS
     public:
