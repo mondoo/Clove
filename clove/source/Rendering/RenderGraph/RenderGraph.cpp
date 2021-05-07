@@ -229,7 +229,7 @@ namespace garlic::clove {
         //TODO
     }
 
-    GraphicsSubmitInfo RenderGraph::execute(GhaGraphicsQueue &graphicsQueue, GhaComputeQueue &computeQueue, GhaTransferQueue &transferQueue) {
+    GraphicsSubmitInfo RenderGraph::execute() {
         //TEMP: Create all resources. Later we should only create the ones that are consumed
         for(auto &&[id, descriptor] : bufferDescriptors) {
             allocatedBuffers[id] = frameCache.allocateBuffer(descriptor);
@@ -298,7 +298,22 @@ namespace garlic::clove {
             allocatedDescriptorSets[id] = descriptorPool->allocateDescriptorSets(layouts);
         }
 
-        return {};
+        //Build a graphics submission
+        std::shared_ptr<GhaGraphicsCommandBuffer> graphicsCommandBufffer{ frameCache.getGraphicsCommandBuffer() };
+        std::shared_ptr<GhaComputeCommandBuffer> computeCommandBufffer{ frameCache.getComputeCommandBuffer() };
+        std::shared_ptr<GhaTransferCommandBuffer> transferCommandBufffer{ frameCache.getTransferCommandBuffer() };
+
+        //TEMP: Just using the graphics for now
+        graphicsCommandBufffer->beginRecording();
+        for(auto &operation : operations) {
+            operation(graphicsCommandBufffer, computeCommandBufffer, transferCommandBufffer);
+        }
+        graphicsCommandBufffer->endRecording();
+
+        //TODO: Perhaps the render graph should take a render target and do this internally.
+        return GraphicsSubmitInfo{
+            .commandBuffers = { graphicsCommandBufffer },
+        };
     }
 
     GhaImage::Format RenderGraph::getImageFormat(RgImage image) {

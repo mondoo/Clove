@@ -221,7 +221,7 @@ namespace garlic::clove {
          * @param transferQueue The queue the graph will submit transfer work to.
          * @return Returns the GraphicsSubmitInfo used to render the final result of the graph.
          */
-        GraphicsSubmitInfo execute(GhaGraphicsQueue &graphicsQueue, GhaComputeQueue &computeQueue, GhaTransferQueue &transferQueue);
+        GraphicsSubmitInfo execute();
 
     private:
         GhaImage::Format getImageFormat(RgImage image);
