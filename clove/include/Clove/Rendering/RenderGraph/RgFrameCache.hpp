@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Clove/Rendering/RenderGraph/RgId.hpp"
+
 #include <Clove/Graphics/GhaBuffer.hpp>
 #include <Clove/Graphics/GhaComputeCommandBuffer.hpp>
 #include <Clove/Graphics/GhaDescriptorPool.hpp>
@@ -18,22 +20,18 @@ namespace garlic::clove {
      */
     class RgFrameCache {
         //TYPES
-    private:
+    public:
         using PoolId = uint64_t;
 
+    private:
         template<typename T>
         struct ResourcePool {
-            std::unordered_map<PoolId, std::shared_ptr<T>> free{};
-            std::unordered_map<PoolId, std::shared_ptr<T>> allocated{};
+            std::unordered_multimap<PoolId, std::shared_ptr<T>> free{};
+            std::unordered_multimap<PoolId, std::shared_ptr<T>> allocated{};
 
             void reset() {
-                free = allocated;
+                free = allocated;//TODO: This can unintentionally destroy objects if not all freed ones are allocated
                 allocated.clear();
-            }
-
-            static PoolId generateId(T::Descriptor const &descriptor) {
-                //TODO
-                return 0;
             }
         };
 
