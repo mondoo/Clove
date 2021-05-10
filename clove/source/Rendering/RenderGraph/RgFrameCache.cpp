@@ -14,6 +14,13 @@ namespace garlic::clove {
 
     RgFrameCache::~RgFrameCache() = default;
 
+    void RgFrameCache::reset() {
+        bufferPool.reset();
+        imagePool.reset();
+        framebufferPool.reset();
+        descriptorPoolPool.reset();
+    }
+
     std::shared_ptr<GhaBuffer> RgFrameCache::allocateBuffer(GhaBuffer::Descriptor descriptor) {
         //TODO
         return nullptr;

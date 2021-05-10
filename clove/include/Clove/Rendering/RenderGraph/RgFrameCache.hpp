@@ -9,6 +9,7 @@
 #include <Clove/Graphics/GhaImage.hpp>
 #include <Clove/Graphics/GhaTransferCommandBuffer.hpp>
 #include <memory>
+#include <unordered_map>
 #include <vector>
 
 namespace garlic::clove {
@@ -16,9 +17,34 @@ namespace garlic::clove {
      * @brief Stores objects associated with a single frame (images, buffers, etc.) for a RenderGraph
      */
     class RgFrameCache {
+        //TYPES
+    private:
+        using PoolId = uint64_t;
+
+        template<typename T>
+        struct ResourcePool {
+            std::unordered_map<PoolId, std::shared_ptr<T>> free{};
+            std::unordered_map<PoolId, std::shared_ptr<T>> allocated{};
+
+            void reset() {
+                free = allocated;
+                allocated.clear();
+            }
+
+            static PoolId generateId(T::Descriptor const &descriptor) {
+                //TODO
+                return 0;
+            }
+        };
+
         //VARIABLES
     private:
         std::shared_ptr<GhaFactory> ghaFactory{ nullptr };
+
+        ResourcePool<GhaBuffer> bufferPool{};
+        ResourcePool<GhaImage> imagePool{};
+        ResourcePool<GhaFramebuffer> framebufferPool{};
+        ResourcePool<GhaDescriptorPool> descriptorPoolPool{};
 
         std::shared_ptr<GhaGraphicsCommandBuffer> graphicsCommandBuffer{ nullptr };
         std::shared_ptr<GhaComputeCommandBuffer> computeCommandBuffer{ nullptr };
@@ -37,10 +63,10 @@ namespace garlic::clove {
 
         ~RgFrameCache();
 
-        //FUNCTIONS
-    public:
-        //TODO: ctors
-        RgFrameCache(std::shared_ptr<GhaGraphicsQueue> graphicsQueue);
+        /**
+         * @brief Marks all allocate objects as free to use.
+         */
+        void reset();
 
         std::shared_ptr<GhaBuffer> allocateBuffer(GhaBuffer::Descriptor descriptor);
         std::shared_ptr<GhaImage> allocateImage(GhaImage::Descriptor descriptor);
