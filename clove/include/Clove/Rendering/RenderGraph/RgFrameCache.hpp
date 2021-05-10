@@ -34,6 +34,6 @@ namespace garlic::clove {
 
         std::shared_ptr<GhaGraphicsCommandBuffer> getGraphicsCommandBuffer();
         std::shared_ptr<GhaComputeCommandBuffer> getComputeCommandBuffer();
-        std::shared_ptr<GhaTransferCommandBuffer> getGraphicsCommandBuffer();
+        std::shared_ptr<GhaTransferCommandBuffer> getTransferCommandBuffer();
     };
 }

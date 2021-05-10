@@ -29,4 +29,14 @@ namespace garlic::clove {
         //TODO: Keep a single one?
         return nullptr;
     }
+
+    std::shared_ptr<GhaComputeCommandBuffer> RgFrameCache::getComputeCommandBuffer() {
+        //TODO: Keep a single one?
+        return nullptr;
+    }
+
+    std::shared_ptr<GhaTransferCommandBuffer> RgFrameCache::getTransferCommandBuffer() {
+        //TODO: Keep a single one?
+        return nullptr;
+    }
 }
