@@ -294,7 +294,7 @@ namespace garlic::clove {
 
         //Third pass - create a descriptor set for each pipeline
         for(auto &&[id, pipeline] : allocatedPipelines) {
-            std::vector<std::shared_ptr<GhaDescriptorSetLayout>> layouts(passSubmissions.at(id).size(), pipeline->getDescriptor().descriptorSetLayouts);
+            std::vector<std::shared_ptr<GhaDescriptorSetLayout>> layouts(passSubmissions.at(id).size(), pipeline->getDescriptor().descriptorSetLayouts[0]); //TEMP: Using first index as we know pipelines always have a single descriptor for now
             allocatedDescriptorSets[id] = descriptorPool->allocateDescriptorSets(layouts);
         }
 
@@ -304,9 +304,9 @@ namespace garlic::clove {
         std::shared_ptr<GhaTransferCommandBuffer> transferCommandBufffer{ frameCache.getTransferCommandBuffer() };
 
         //TEMP: Just using the graphics for now
-        graphicsCommandBufffer->beginRecording();
+        graphicsCommandBufffer->beginRecording(CommandBufferUsage::OneTimeSubmit);
         for(auto &operation : operations) {
-            operation(graphicsCommandBufffer, computeCommandBufffer, transferCommandBufffer);
+            operation(*graphicsCommandBufffer, *computeCommandBufffer, *transferCommandBufffer);
         }
         graphicsCommandBufffer->endRecording();
 
