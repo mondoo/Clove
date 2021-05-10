@@ -1,9 +1,18 @@
 #include "Clove/Rendering/RenderGraph/RgFrameCache.hpp"
 
 namespace garlic::clove {
-    RgFrameCache::RgFrameCache(std::shared_ptr<GhaGraphicsQueue> graphicsQueue) {
-        //TODO
+    RgFrameCache::RgFrameCache(std::shared_ptr<GhaFactory> ghaFactory, GhaGraphicsQueue &graphicsQueue, GhaComputeQueue &computeQueue, GhaTransferQueue &transferQueue)
+        : ghaFactory{ std::move(ghaFactory) } {
+        graphicsCommandBuffer = graphicsQueue.allocateCommandBuffer();
+        computeCommandBuffer  = computeQueue.allocateCommandBuffer();
+        transferCommandBuffer = transferQueue.allocateCommandBuffer();
     }
+
+    RgFrameCache::RgFrameCache(RgFrameCache &&other) noexcept = default;
+
+    RgFrameCache &RgFrameCache::operator=(RgFrameCache &&other) noexcept = default;
+
+    RgFrameCache::~RgFrameCache() = default;
 
     std::shared_ptr<GhaBuffer> RgFrameCache::allocateBuffer(GhaBuffer::Descriptor descriptor) {
         //TODO
