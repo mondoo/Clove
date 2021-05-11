@@ -122,7 +122,26 @@ namespace garlic::clove {
 	}
 	
 	void MetalGraphicsCommandBuffer::pushConstant(GhaShader::Stage const stage, size_t const offset, size_t const size, void const *data) {
-		//TODO
+		uint8_t *cachedData{ reinterpret_cast<uint8_t*>(malloc(size)) };
+		memcpy(cachedData, data, size);
+		
+		currentPass->commands.emplace_back([stage, data = cachedData, size](id<MTLRenderCommandEncoder> encoder){
+			switch(stage) {
+				case GhaShader::Stage::Vertex:
+					[encoder setVertexBytes:data
+									 length:size
+									atIndex:pushConstantSlot];
+					break;
+				case GhaShader::Stage::Pixel:
+					
+					break;
+				default:
+					CLOVE_ASSERT(false, "{0}: Unknown shader stage provided", CLOVE_FUNCTION_NAME_PRETTY);
+					break;
+			}
+			
+			delete data;
+		});
 	}
 
 	void MetalGraphicsCommandBuffer::drawIndexed(size_t const indexCount) {

@@ -10,4 +10,10 @@ namespace garlic::clove {
      * number.
      */
     static int32_t constexpr vertexBufferBindingIndex{ 30 };
+	
+	/**
+	 * @brief Push constants in metal work like regular buffer bindings so this
+	 * slot is reserved for push constant uploads.
+	 */
+	static int32_t constexpr pushConstantSlot{ 0 };
 }
