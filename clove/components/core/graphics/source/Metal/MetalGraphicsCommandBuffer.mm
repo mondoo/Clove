@@ -133,7 +133,9 @@ namespace garlic::clove {
 									atIndex:pushConstantSlot];
 					break;
 				case GhaShader::Stage::Pixel:
-					
+					[encoder setFragmentBytes:data
+									   length:size
+									  atIndex:pushConstantSlot];
 					break;
 				default:
 					CLOVE_ASSERT(false, "{0}: Unknown shader stage provided", CLOVE_FUNCTION_NAME_PRETTY);
