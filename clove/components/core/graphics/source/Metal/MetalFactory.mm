@@ -198,7 +198,7 @@ namespace garlic::clove {
 		
 		MTLPixelFormat depthPixelFormat{ MetalImage::convertFormat(descriptor.depthAttachment.format) };
 		
-		auto result{ std::unique_ptr<GhaRenderPass>{ std::make_unique<MetalRenderPass>(colourAttachments, std::move(depthPixelFormat), std::move(descriptor)) }};
+		auto result{ std::unique_ptr<GhaRenderPass>{ std::make_unique<MetalRenderPass>(colourAttachments, depthPixelFormat, std::move(descriptor)) }};
 		
 		[colourAttachments release];
 		
@@ -334,7 +334,7 @@ namespace garlic::clove {
 		}
 		
 		id<MTLBuffer> buffer{ [device newBufferWithLength:descriptor.size options:resourceOptions] };
-		auto result{ std::unique_ptr<GhaBuffer>{ std::make_unique<MetalBuffer>(buffer, std::move(descriptor)) }};
+		auto result{ std::unique_ptr<GhaBuffer>{ std::make_unique<MetalBuffer>(buffer, descriptor) }};
 		
 		[buffer release];
 		
@@ -351,7 +351,7 @@ namespace garlic::clove {
 		mtlDescriptor.usage = getUsageFlags(descriptor.usageFlags);
 		
 		id<MTLTexture> texture{ [device newTextureWithDescriptor:mtlDescriptor] };
-		auto result{ std::unique_ptr<GhaImage>{ std::make_unique<MetalImage>(texture, std::move(descriptor)) }};
+		auto result{ std::unique_ptr<GhaImage>{ std::make_unique<MetalImage>(texture, descriptor) }};
 		
 		[mtlDescriptor release];
 		[texture release];
