@@ -56,6 +56,6 @@ namespace garlic::clove {
 		Expected<std::unique_ptr<GhaSampler>, std::runtime_error> createSampler(GhaSampler::Descriptor descriptor) override;
 		
 	private:
-		Expected<std::unique_ptr<GhaShader>, std::runtime_error> createShaderObject(std::string mslSource);
+		Expected<std::unique_ptr<GhaShader>, std::runtime_error> createShaderObject(std::string const &mslSource);
 	};
 }

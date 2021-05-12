@@ -167,7 +167,7 @@ namespace garlic::clove {
 		if(compilationResult.hasValue()) {
 			Expected<std::string, std::runtime_error> msl{ ShaderCompiler::spirvToMSL(compilationResult.getValue()) };
 			if(msl.hasValue()) {
-				return createShaderObject(std::move(msl.getValue()));
+				return createShaderObject(msl.getValue());
 			} else {
 				return Unexpected{ std::move(msl.getError()) };
 			}
@@ -181,7 +181,7 @@ namespace garlic::clove {
 		if(compilationResult.hasValue()) {
 			Expected<std::string, std::runtime_error> msl{ ShaderCompiler::spirvToMSL(compilationResult.getValue()) };
 			if(msl.hasValue()) {
-				return createShaderObject(std::move(msl.getValue()));
+				return createShaderObject(msl.getValue());
 			} else {
 				return Unexpected{ std::move(msl.getError()) };
 			}
@@ -367,7 +367,7 @@ namespace garlic::clove {
 		return Unexpected{ std::runtime_error{ "Not implemented" } };
 	}
 	
-	Expected<std::unique_ptr<GhaShader>, std::runtime_error> MetalFactory::createShaderObject(std::string mslSource) {
+	Expected<std::unique_ptr<GhaShader>, std::runtime_error> MetalFactory::createShaderObject(std::string const &mslSource) {
 		@autoreleasepool {
 			NSError *libError;
 			id<MTLLibrary> library{ [[device newLibraryWithSource:[NSString stringWithCString:mslSource.c_str() encoding:[NSString defaultCStringEncoding]] options:nil error:&libError] autorelease] };

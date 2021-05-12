@@ -26,11 +26,11 @@ namespace garlic::clove {
 
 	void MetalGraphicsQueue::submit(std::vector<GraphicsSubmitInfo> const &submissions, GhaFence const *signalFence) {
 		@autoreleasepool {
-			for(auto &submission : submissions) {
+			for(auto const &submission : submissions) {
 				//TODO: Fences / semahpores
 				//[currentEncoder updateFence:nullptr afterStages:MTLRenderStageFragment];
 			
-				for(auto &commandBuffer : submission.commandBuffers) {
+				for(auto const &commandBuffer : submission.commandBuffers) {
 					id<MTLCommandBuffer> mtlCommandBuffer{ [commandQueue commandBuffer] };
 				
 					polyCast<MetalGraphicsCommandBuffer>(commandBuffer.get())->executeCommands(mtlCommandBuffer);
