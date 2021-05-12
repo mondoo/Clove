@@ -243,6 +243,10 @@ namespace garlic::clove {
 		
 			//Render pass
 			MetalRenderPass const *const renderPass{ polyCast<MetalRenderPass>(descriptor.renderPass.get()) };
+			if(renderPass == nullptr) {
+				return Unexpected{ std::runtime_error{ "Failed to create GraphicsPipelineObject. RenderPass is nullptr" } };
+			}
+			
 			size_t const colourAttachmentCount{ renderPass->getDescriptor().colourAttachments.size() };
 			MTLRenderPipelineColorAttachmentDescriptorArray* colourAttachments{ renderPass->getColourAttachments() };
 			MTLPixelFormat const depthPixelFormat{ renderPass->getDepthPixelFormat() };
