@@ -232,7 +232,7 @@ namespace garlic::clove {
 		
 			//Depth / Stencil
 			MTLDepthStencilDescriptor *depthStencil{ [[[MTLDepthStencilDescriptor alloc] init] autorelease] };
-			depthStencil.depthWriteEnabled = descriptor.depthState.depthWrite;
+			depthStencil.depthWriteEnabled = static_cast<BOOL>(descriptor.depthState.depthWrite);
 			if(descriptor.depthState.depthTest){
 				depthStencil.depthCompareFunction = MTLCompareFunctionLess;
 			}else{
@@ -262,7 +262,7 @@ namespace garlic::clove {
 				pipelineDesc.colorAttachments[i] = colourAttachments[i];
 			
 				//Blending
-				pipelineDesc.colorAttachments[i].blendingEnabled = descriptor.enableBlending;
+				pipelineDesc.colorAttachments[i].blendingEnabled = static_cast<BOOL>(descriptor.enableBlending);
 				pipelineDesc.colorAttachments[i].sourceRGBBlendFactor = MTLBlendFactorSourceAlpha;
 				pipelineDesc.colorAttachments[i].destinationRGBBlendFactor = MTLBlendFactorOneMinusSourceAlpha;
 				pipelineDesc.colorAttachments[i].rgbBlendOperation = MTLBlendOperationAdd;
