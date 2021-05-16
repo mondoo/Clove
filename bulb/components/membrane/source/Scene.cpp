@@ -61,6 +61,11 @@ namespace garlic::membrane {
         }
         knownEntities.clear();
 
+        //File won't exist if we haven't saved anything yet
+        if(!std::filesystem::exists(sceneFile)) {
+            return;
+        }
+
         auto loadResult{ loadYaml(sceneFile) };
         serialiser::Node rootNode{ loadResult.getValue() };
 
