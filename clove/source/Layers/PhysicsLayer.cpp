@@ -109,8 +109,7 @@ namespace garlic::clove {
             if(!entityManager->hasComponent<CollisionShapeComponent>(entity) || !entityManager->hasComponent<RigidBodyComponent>(entity)) {
                 proxiesToRemove.push_back(entity);
             }
-        },
-                               Exclude<ShapeOnlyComponent, BodyOnlyComponent>{});
+        }, Exclude<ShapeOnlyComponent, BodyOnlyComponent>{});
 
         //Remove them outside of the loops their found in.
         for(auto entity : proxiesToRemove) {
