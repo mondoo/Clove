@@ -46,6 +46,8 @@ namespace garlic::membrane {
             serialiseComponent<TransformComponent>(entityNode, *manager, entity);
             serialiseComponent<StaticModelComponent>(entityNode, *manager, entity);
             serialiseComponent<PointLightComponent>(entityNode, *manager, entity);
+            serialiseComponent<CollisionShapeComponent>(entityNode, *manager, entity);
+            serialiseComponent<RigidBodyComponent>(entityNode, *manager, entity);
 
             rootNode["entities"].pushBack(entityNode);
         }
