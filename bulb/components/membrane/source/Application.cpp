@@ -3,6 +3,8 @@
 #include "Membrane/EditorLayer.hpp"
 #include "Membrane/RuntimeLayer.hpp"
 #include "Membrane/ViewportSurface.hpp"
+#include "Membrane/Messages.hpp"
+#include "Membrane/MessageHandler.hpp"
 
 #include <Clove/Application.hpp>
 #include <Clove/Audio/Audio.hpp>
@@ -42,6 +44,9 @@ namespace garlic::membrane {
         *runtimeLayer = std::make_shared<RuntimeLayer>();
 
         app->pushLayer(*editorLayer);
+
+        MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_Stop ^>(this, &Application::setEditorMode));
+        MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_Play ^>(this, &Application::setRuntimeMode));
     }
 
     Application::~Application() {
@@ -79,5 +84,15 @@ namespace garlic::membrane {
 
         this->width  = width;
         this->height = height;
+    }
+
+    void Application::setEditorMode(Editor_Stop ^message) {
+        app->popLayer(*runtimeLayer);
+        app->pushLayer(*editorLayer);
+    }
+
+    void Application::setRuntimeMode(Editor_Play ^message) {
+        app->popLayer(*editorLayer);
+        app->pushLayer(*runtimeLayer);
     }
 }

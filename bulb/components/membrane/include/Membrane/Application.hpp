@@ -7,10 +7,12 @@ namespace garlic::clove {
     class GraphicsImageRenderTarget;
 }
 
-namespace garlic::membrane{
+namespace garlic::membrane {
     class EditorLayer;
     class RuntimeLayer;
     class ViewportSurface;
+    ref class Editor_Stop;
+    ref class Editor_Play;
 }
 
 namespace garlic::membrane {
@@ -40,5 +42,9 @@ public ref class Application {
         void shutdown();
 
         void resize(int width, int height);
+
+    private:
+        void setEditorMode(Editor_Stop ^message);
+        void setRuntimeMode(Editor_Play ^message);
     };
 }
