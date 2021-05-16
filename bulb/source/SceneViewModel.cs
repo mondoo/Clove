@@ -51,7 +51,7 @@ namespace Garlic.Bulb {
 				var entityVm = new EntityViewModel(entity.components);
 				entityVm.EntityId = entity.id;
 				entityVm.Name = entity.name;
-				entityVm.OnSelected = (EntityViewModel viewModel) => SelectedEntity = viewModel;
+				entityVm.OnSelected = SelectEntity;
 
 				Entities.Add(entityVm);
 			}
