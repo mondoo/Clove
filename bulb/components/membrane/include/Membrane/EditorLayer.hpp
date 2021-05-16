@@ -24,7 +24,7 @@ namespace garlic::membrane {
 
         Scene currentScene;
 
-        clove::Entity editorCamera;
+        clove::Entity editorCamera{};
 
         bool moveMouse{ false };
         clove::vec2i mousePos{};

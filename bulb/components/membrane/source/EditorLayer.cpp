@@ -93,12 +93,14 @@ namespace garlic::membrane {
         //Pop the physics layer from the application
         app.popLayer(app.getPhysicsLayer());
 
-        auto *const entityManager{ app.getEntityManager() };
-
         //Add the editor camera outside of the current scene
-        editorCamera                                                                  = entityManager->create();
-        entityManager->addComponent<clove::TransformComponent>(editorCamera).position = clove::vec3f{ 0.0f, 0.0f, -10.0f };
-        entityManager->addComponent<clove::CameraComponent>(editorCamera, clove::Camera{ clove::Camera::ProjectionMode::Perspective });
+        if(editorCamera == clove::NullEntity) {
+            auto *const entityManager{ app.getEntityManager() };
+
+            editorCamera                                                                  = entityManager->create();
+            entityManager->addComponent<clove::TransformComponent>(editorCamera).position = clove::vec3f{ 0.0f, 0.0f, -10.0f };
+            entityManager->addComponent<clove::CameraComponent>(editorCamera, clove::Camera{ clove::Camera::ProjectionMode::Perspective });
+        }
 
         loadScene();
     }
@@ -195,7 +197,7 @@ namespace garlic::membrane {
 
     void EditorLayer::onDetach() {
         saveScene();
-        clove::Application::get().getEntityManager()->destroyAll();
+        currentScene.destroyAllEntities();
     }
 
     void EditorLayer::saveScene() {
