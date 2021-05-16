@@ -38,10 +38,10 @@ namespace garlic::clove {
     inline serialiser::Node serialise(CollisionShapeComponent const &object) {
         serialiser::Node node{};
         if(auto *sphere{ std::get_if<CollisionShapeComponent::Sphere>(&object.shape) }) {
-            node["type"]  = ShapeSeralisationType::Sphere;
+            node["type"]  = static_cast<uint32_t>(ShapeSeralisationType::Sphere);
             node["value"] = sphere->radius;
         } else if(auto *cube{ std::get_if<CollisionShapeComponent::Cube>(&object.shape) }) {
-            node["type"]  = ShapeSeralisationType::Cube;
+            node["type"]  = static_cast<uint32_t>(ShapeSeralisationType::Cube);
             node["value"] = cube->halfExtents;
         }
         return node;
@@ -50,7 +50,7 @@ namespace garlic::clove {
     template<>
     inline CollisionShapeComponent deserialise(serialiser::Node const &node) {
         CollisionShapeComponent component{};
-        auto shapeType{ node["type"].as<ShapeSeralisationType>() };
+        ShapeSeralisationType const shapeType{ node["type"].as<uint32_t>() };
         switch(shapeType) {
             case ShapeSeralisationType::Sphere:
                 component.shape = CollisionShapeComponent::Sphere{ node["value"].as<float>() };
