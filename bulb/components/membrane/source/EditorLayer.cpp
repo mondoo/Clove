@@ -12,6 +12,7 @@
 #include <Clove/Components/StaticModelComponent.hpp>
 #include <Clove/Components/TransformComponent.hpp>
 #include <Clove/ECS/EntityManager.hpp>
+#include <Clove/Layers/PhysicsLayer.hpp>
 #include <Clove/Maths/MathsHelpers.hpp>
 #include <Clove/ModelLoader.hpp>
 #include <Clove/Surface.hpp>
@@ -87,7 +88,12 @@ namespace garlic::membrane {
     }
 
     void EditorLayer::onAttach() {
-        auto *const entityManager{ clove::Application::get().getEntityManager() };
+        auto &app{ clove::Application::get() };
+
+        //Pop the physics layer from the application
+        app.popLayer(app.getPhysicsLayer());
+
+        auto *const entityManager{ app.getEntityManager() };
 
         //Add the editor camera outside of the current scene
         editorCamera                                                                  = entityManager->create();

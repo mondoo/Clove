@@ -11,10 +11,6 @@
 #include <vector>
 
 namespace garlic::membrane {
-    //TODO: Runtime and editor are very similar except they are attached / detached and don't run together?
-    //Editor layer pops physics - runtime pushes physics
-    //Editor attaches the editor camera + controls etc.
-
     /**
      * @brief The layer that controls the interaction between the editor and the engine.
      * Is active while 'editing' and allows the user to build a scene

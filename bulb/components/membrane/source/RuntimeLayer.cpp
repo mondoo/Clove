@@ -1,8 +1,13 @@
 #include "Membrane/RuntimeLayer.hpp"
 
-#include <Clove/Application.hpp>
+#include "Membrane/MessageHandler.hpp"
+#include "Membrane/Messages.hpp"
 
+#include <Clove/Application.hpp>
+#include <Clove/Components/TransformComponent.hpp>
 #include <Clove/ECS/EntityManager.hpp>
+#include <Clove/Layers/PhysicsLayer.hpp>
+#include <Clove/Maths/MathsHelpers.hpp>
 #include <Clove/ModelLoader.hpp>
 
 namespace garlic::membrane {
@@ -12,11 +17,17 @@ namespace garlic::membrane {
     }
 
     void RuntimeLayer::onAttach() {
+        auto &app{ clove::Application::get() };
+
+        //push the physics layer from the application
+        app.pushLayer(app.getPhysicsLayer());
+
         currentScene.load();
     }
 
     void RuntimeLayer::onUpdate(clove::DeltaTime const deltaTime) {
-        /*for(auto &entity : currentScene.getKnownEntities()) {
+        //Make sure any movement is reflected in editor
+        for(auto &entity : currentScene.getKnownEntities()) {
             if(currentScene.hasComponent<clove::TransformComponent>(entity)) {
                 auto const &pos{ currentScene.getComponent<clove::TransformComponent>(entity).position };
                 auto const &rot{ clove::quaternionToEuler(currentScene.getComponent<clove::TransformComponent>(entity).rotation) };
@@ -29,7 +40,7 @@ namespace garlic::membrane {
                 message->scale    = Vector3(scale.x, scale.y, scale.z);
                 MessageHandler::sendMessage(message);
             }
-        }*/
+        }
     }
 
     void RuntimeLayer::onDetach() {
