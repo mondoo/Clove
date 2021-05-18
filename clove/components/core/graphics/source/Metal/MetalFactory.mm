@@ -273,7 +273,7 @@ namespace garlic::clove {
 				return Unexpected{ std::runtime_error{ [[error description] cStringUsingEncoding:[NSString defaultCStringEncoding]] } };
 			}
 		
-			return std::unique_ptr<GhaGraphicsPipelineObject>{ std::make_unique<MetalGraphicsPipelineObject>(pipelineState, depthStencilState) };
+			return std::unique_ptr<GhaGraphicsPipelineObject>{ std::make_unique<MetalGraphicsPipelineObject>(std::move(descriptor), pipelineState, depthStencilState) };
 		}
 	}
 	
