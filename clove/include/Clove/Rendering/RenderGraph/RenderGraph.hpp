@@ -145,11 +145,11 @@ namespace garlic::clove {
         RenderGraph() = delete;
         RenderGraph(RgFrameCache &frameCache, RgGlobalCache &globalCache);
 
-        RenderGraph(RenderGraph const &other);
-        RenderGraph(RenderGraph &&other) noexcept;
+        RenderGraph(RenderGraph const &other) = delete;
+        RenderGraph(RenderGraph &&other) noexcept = delete;
 
-        RenderGraph &operator=(RenderGraph const &other);
-        RenderGraph &operator=(RenderGraph &&other) noexcept;
+        RenderGraph &operator=(RenderGraph const &other) = delete;
+        RenderGraph &operator=(RenderGraph &&other) noexcept = delete;
 
         ~RenderGraph();
 

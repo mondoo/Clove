@@ -10,15 +10,9 @@
 namespace garlic::clove {
     RenderGraph::RenderGraph(RgFrameCache &frameCache, RgGlobalCache &globalCache)
         : frameCache{ frameCache }
-        , globalCache{ globalCache } {}
-
-    RenderGraph::RenderGraph(RenderGraph const &other) = default;
-
-    RenderGraph::RenderGraph(RenderGraph &&other) noexcept = default;
-
-    RenderGraph &RenderGraph::operator=(RenderGraph const &other) = default;
-
-    RenderGraph &RenderGraph::operator=(RenderGraph &&other) noexcept = default;
+        , globalCache{ globalCache } {
+        frameCache.reset();
+    }
 
     RenderGraph::~RenderGraph() = default;
 
@@ -294,7 +288,7 @@ namespace garlic::clove {
 
         //Third pass - create a descriptor set for each pipeline
         for(auto &&[id, pipeline] : allocatedPipelines) {
-            std::vector<std::shared_ptr<GhaDescriptorSetLayout>> layouts(passSubmissions.at(id).size(), pipeline->getDescriptor().descriptorSetLayouts[0]); //TEMP: Using first index as we know pipelines always have a single descriptor for now
+            std::vector<std::shared_ptr<GhaDescriptorSetLayout>> layouts(passSubmissions.at(id).size(), pipeline->getDescriptor().descriptorSetLayouts[0]);//TEMP: Using first index as we know pipelines always have a single descriptor for now
             allocatedDescriptorSets[id] = descriptorPool->allocateDescriptorSets(layouts);
         }
 
