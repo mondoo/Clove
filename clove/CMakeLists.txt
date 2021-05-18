@@ -126,6 +126,8 @@ add_library(
 		${INCLUDE}/Rendering/Renderables/StaticModel.inl
 		${SOURCE}/Rendering/Renderables/StaticModel.cpp
 
+		${INCLUDE}/Rendering/RenderGraph/CacheUtils.hpp
+		${INCLUDE}/Rendering/RenderGraph/CacheUtils.inl
 		${INCLUDE}/Rendering/RenderGraph/RenderGraph.hpp
 		${SOURCE}/Rendering/RenderGraph/RenderGraph.cpp
 		${INCLUDE}/Rendering/RenderGraph/RgBuffer.hpp

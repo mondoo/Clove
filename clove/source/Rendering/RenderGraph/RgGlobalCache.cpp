@@ -1,5 +1,6 @@
 #include "Clove/Rendering/RenderGraph/RgGlobalCache.hpp"
 
+#include "Clove/Rendering/RenderGraph/CacheUtils.hpp"
 namespace garlic::clove {
     std::shared_ptr<GhaShader> RgGlobalCache::createShader(std::filesystem::path const &file, GhaShader::Stage shaderStage) {
         //TODO

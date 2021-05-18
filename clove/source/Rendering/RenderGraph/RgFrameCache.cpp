@@ -1,17 +1,11 @@
 #include "Clove/Rendering/RenderGraph/RgFrameCache.hpp"
 
+#include "Clove/Rendering/RenderGraph/CacheUtils.hpp"
+
 #include <Clove/Log/Log.hpp>
 #include <functional>
 
 namespace garlic::clove {
-    namespace {
-        template<typename HashType, typename T>
-        void hashCombine(HashType &currentHash, T const &value) {
-            std::hash<T> hash{};
-            currentHash ^= hash(value) + 0x9e3779b9 + (currentHash << 6) + (currentHash >> 2);
-        }
-    }
-
     RgFrameCache::RgFrameCache(std::shared_ptr<GhaFactory> ghaFactory, GhaGraphicsQueue &graphicsQueue, GhaComputeQueue &computeQueue, GhaTransferQueue &transferQueue)
         : ghaFactory{ std::move(ghaFactory) } {
         graphicsCommandBuffer = graphicsQueue.allocateCommandBuffer();
