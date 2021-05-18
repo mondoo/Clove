@@ -5,8 +5,8 @@
 
 namespace garlic::clove {
     namespace {
-        template<typename T>
-        void hasCombine(RgFrameCache::PoolId &currentHash, T const &value) {
+        template<typename HashType, typename T>
+        void hashCombine(HashType &currentHash, T const &value) {
             std::hash<T> hash{};
             currentHash ^= hash(value) + 0x9e3779b9 + (currentHash << 6) + (currentHash >> 2);
         }
@@ -34,10 +34,10 @@ namespace garlic::clove {
 
     std::shared_ptr<GhaBuffer> RgFrameCache::allocateBuffer(GhaBuffer::Descriptor descriptor) {
         PoolId bufferId{ 0 };
-        hasCombine(bufferId, descriptor.size);
-        hasCombine(bufferId, descriptor.usageFlags);
-        hasCombine(bufferId, descriptor.sharingMode);
-        hasCombine(bufferId, descriptor.memoryType);
+        hashCombine(bufferId, descriptor.size);
+        hashCombine(bufferId, descriptor.usageFlags);
+        hashCombine(bufferId, descriptor.sharingMode);
+        hashCombine(bufferId, descriptor.memoryType);
 
         if(bufferPool.free.contains(bufferId)) {
             bufferPool.allocated.insert(bufferPool.free.extract(bufferId));
@@ -49,32 +49,79 @@ namespace garlic::clove {
     }
 
     std::shared_ptr<GhaImage> RgFrameCache::allocateImage(GhaImage::Descriptor descriptor) {
-        //TODO
-        return nullptr;
+        PoolId imageId{ 0 };
+        hashCombine(imageId, descriptor.type);
+        hashCombine(imageId, descriptor.usageFlags);
+        hashCombine(imageId, descriptor.dimensions.x);
+        hashCombine(imageId, descriptor.dimensions.y);
+        hashCombine(imageId, descriptor.format);
+        hashCombine(imageId, descriptor.sharingMode);
+
+        if(imagePool.free.contains(imageId)) {
+            imagePool.allocated.insert(imagePool.free.extract(imageId));
+        } else {
+            imagePool.allocated.emplace(imageId, ghaFactory->createImage(std::move(descriptor)).getValue());
+        }
+
+        return imagePool.allocated.find(imageId)->second;
     }
 
-    std::shared_ptr<GhaFramebuffer> RgFrameCache::allocateFrameBuffer(GhaFramebuffer::Descriptor descriptor) {
-        //TODO
-        return nullptr;
+    std::shared_ptr<GhaFramebuffer> RgFrameCache::allocateFramebuffer(GhaFramebuffer::Descriptor descriptor) {
+        auto const &renderPassDesc{ descriptor.renderPass->getDescriptor() };
+        auto const hashAttachment = [](PoolId &id, AttachmentDescriptor const &attachment) {
+            hashCombine(id, attachment.format);
+            hashCombine(id, attachment.loadOperation);
+            hashCombine(id, attachment.storeOperation);
+            hashCombine(id, attachment.initialLayout);
+            hashCombine(id, attachment.usedLayout);
+            hashCombine(id, attachment.finalLayout);
+        };
+
+        PoolId framebufferId{ 0 };
+        for(auto &attachment : renderPassDesc.colourAttachments){
+            hashAttachment(framebufferId, attachment);
+        }
+        hashAttachment(framebufferId, renderPassDesc.depthAttachment);
+        hashCombine(framebufferId, descriptor.attachments.size());
+        hashCombine(framebufferId, descriptor.width);
+        hashCombine(framebufferId, descriptor.height);
+
+        if(framebufferPool.free.contains(framebufferId)) {
+            framebufferPool.allocated.insert(framebufferPool.free.extract(framebufferId));
+        } else {
+            framebufferPool.allocated.emplace(framebufferId, ghaFactory->createFramebuffer(std::move(descriptor)).getValue());
+        }
+
+        return framebufferPool.allocated.find(framebufferId)->second;
     }
 
     std::shared_ptr<GhaDescriptorPool> RgFrameCache::allocateDescriptorPool(GhaDescriptorPool::Descriptor descriptor) {
-        //TODO
-        return nullptr;
+        PoolId poolId{ 0 };
+        for(auto &poolType : descriptor.poolTypes){
+            hashCombine(poolId, poolType.type);
+            hashCombine(poolId, poolType.count);
+        }
+        hashCombine(poolId, descriptor.flag);
+        hashCombine(poolId, descriptor.maxSets);
+
+        if(descriptorPoolPool.free.contains(poolId)) {
+            descriptorPoolPool.allocated.insert(descriptorPoolPool.free.extract(poolId));
+        } else {
+            descriptorPoolPool.allocated.emplace(poolId, ghaFactory->createDescriptorPool(std::move(descriptor)).getValue());
+        }
+
+        return descriptorPoolPool.allocated.find(poolId)->second;
     }
 
     std::shared_ptr<GhaGraphicsCommandBuffer> RgFrameCache::getGraphicsCommandBuffer() {
-        //TODO: Keep a single one?
-        return nullptr;
+        return graphicsCommandBuffer;
     }
 
     std::shared_ptr<GhaComputeCommandBuffer> RgFrameCache::getComputeCommandBuffer() {
-        //TODO: Keep a single one?
-        return nullptr;
+        return computeCommandBuffer;
     }
 
     std::shared_ptr<GhaTransferCommandBuffer> RgFrameCache::getTransferCommandBuffer() {
-        //TODO: Keep a single one?
-        return nullptr;
+        return transferCommandBuffer;
     }
 }

@@ -248,7 +248,7 @@ namespace garlic::clove {
                 allocatedImageViews[descriptor.depthStencil.target] = allocatedImages.at(descriptor.depthStencil.target)->createView(GhaImageView::Descriptor{ .type = GhaImageView::Type::_2D });
             }
 
-            allocatedFramebuffers[id] = frameCache.allocateFrameBuffer(GhaFramebuffer::Descriptor{
+            allocatedFramebuffers[id] = frameCache.allocateFramebuffer(GhaFramebuffer::Descriptor{
                 .renderPass  = allocatedRenderPasses[id],
                 .attachments = std::move(attachments),
                 .width       = getImageSize(descriptor.renderTargets[0].target).x,//TEMP: Just using the first target as the size. This will need to be validated

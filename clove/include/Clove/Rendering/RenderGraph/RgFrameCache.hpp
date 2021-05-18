@@ -20,10 +20,9 @@ namespace garlic::clove {
      */
     class RgFrameCache {
         //TYPES
-    public:
+    private:
         using PoolId = uint64_t;
 
-    private:
         template<typename T>
         struct ResourcePool {
             std::unordered_multimap<PoolId, std::shared_ptr<T>> free{};
@@ -69,7 +68,7 @@ namespace garlic::clove {
         std::shared_ptr<GhaBuffer> allocateBuffer(GhaBuffer::Descriptor descriptor);
         std::shared_ptr<GhaImage> allocateImage(GhaImage::Descriptor descriptor);
 
-        std::shared_ptr<GhaFramebuffer> allocateFrameBuffer(GhaFramebuffer::Descriptor descriptor);
+        std::shared_ptr<GhaFramebuffer> allocateFramebuffer(GhaFramebuffer::Descriptor descriptor);
 
         std::shared_ptr<GhaDescriptorPool> allocateDescriptorPool(GhaDescriptorPool::Descriptor descriptor);
 
