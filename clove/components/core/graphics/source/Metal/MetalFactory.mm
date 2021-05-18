@@ -197,7 +197,7 @@ namespace garlic::clove {
 		
 		MTLPixelFormat depthPixelFormat{ MetalImage::convertFormat(descriptor.depthAttachment.format) };
 		
-		return std::unique_ptr<GhaRenderPass>{ std::make_unique<MetalRenderPass>(std::move(colourAttachments), std::move(depthPixelFormat), std::move(descriptor)) };
+		return std::unique_ptr<GhaRenderPass>{ std::make_unique<MetalRenderPass>(std::move(descriptor), std::move(colourAttachments), std::move(depthPixelFormat)) };
 	}
 	
 	Expected<std::unique_ptr<GhaDescriptorSetLayout>, std::runtime_error> MetalFactory::createDescriptorSetLayout(GhaDescriptorSetLayout::Descriptor descriptor) {

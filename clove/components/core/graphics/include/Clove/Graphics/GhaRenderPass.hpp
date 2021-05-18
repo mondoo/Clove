@@ -48,5 +48,7 @@ namespace garlic::clove {
         //FUNCTIONS
     public:
         virtual ~GhaRenderPass() = default;
+
+        virtual Descriptor const &getDescriptor() const = 0;
     };
 }

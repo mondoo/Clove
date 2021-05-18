@@ -501,7 +501,7 @@ namespace garlic::clove {
             }
         }
 
-        return std::unique_ptr<GhaRenderPass>{ std::make_unique<VulkanRenderPass>(devicePtr, renderPass) };
+        return std::unique_ptr<GhaRenderPass>{ std::make_unique<VulkanRenderPass>(std::move(descriptor), devicePtr, renderPass) };
     }
 
     Expected<std::unique_ptr<GhaDescriptorSetLayout>, std::runtime_error> VulkanFactory::createDescriptorSetLayout(GhaDescriptorSetLayout::Descriptor descriptor) {
