@@ -2,6 +2,7 @@
 
 #include "Clove/Graphics/ShaderCompiler.hpp"
 #include "Clove/Graphics/Metal/MetalBuffer.hpp"
+#include "Clove/Graphics/Metal/MetalDescriptorPool.hpp"
 #include "Clove/Graphics/Metal/MetalDescriptorSetLayout.hpp"
 #include "Clove/Graphics/Metal/MetalShader.hpp"
 #include "Clove/Graphics/Metal/MetalFramebuffer.hpp"
@@ -315,7 +316,7 @@ namespace garlic::clove {
 	}
 	
 	Expected<std::unique_ptr<GhaDescriptorPool>, std::runtime_error> MetalFactory::createDescriptorPool(GhaDescriptorPool::Descriptor descriptor) {
-		return Unexpected{ std::runtime_error{ "Not implemented" } };
+		return std::unique_ptr<GhaDescriptorPool>{ std::make_unique<MetalDescriptorPool>(std::move(descriptor)) };
 	}
 
 	Expected<std::unique_ptr<GhaSemaphore>, std::runtime_error> MetalFactory::createSemaphore() {
