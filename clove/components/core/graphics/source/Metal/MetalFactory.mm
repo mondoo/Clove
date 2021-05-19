@@ -2,6 +2,7 @@
 
 #include "Clove/Graphics/ShaderCompiler.hpp"
 #include "Clove/Graphics/Metal/MetalBuffer.hpp"
+#include "Clove/Graphics/Metal/MetalDescriptorSetLayout.hpp"
 #include "Clove/Graphics/Metal/MetalShader.hpp"
 #include "Clove/Graphics/Metal/MetalFramebuffer.hpp"
 #include "Clove/Graphics/Metal/MetalGlobals.hpp"
@@ -206,7 +207,7 @@ namespace garlic::clove {
 	}
 	
 	Expected<std::unique_ptr<GhaDescriptorSetLayout>, std::runtime_error> MetalFactory::createDescriptorSetLayout(GhaDescriptorSetLayout::Descriptor descriptor) {
-		return Unexpected{ std::runtime_error{ "Not implemented" } };
+		return std::unique_ptr<GhaDescriptorSetLayout>{ std::make_unique<MetalDescriptorSetLayout>(std::move(descriptor)) };
 	}
 
 	Expected<std::unique_ptr<GhaGraphicsPipelineObject>, std::runtime_error> MetalFactory::createGraphicsPipelineObject(GhaGraphicsPipelineObject::Descriptor descriptor) {
@@ -229,6 +230,9 @@ namespace garlic::clove {
 		
 			//Input assembly
 			MTLPrimitiveTopologyClass const topology{ MTLPrimitiveTopologyClassTriangle };
+			
+			//Rasteriser
+			MTLWinding const winding{ MTLWindingClockwise }; //TODO: Set inside the command encoder
 		
 			//Depth / Stencil
 			MTLDepthStencilDescriptor *depthStencil{ [[[MTLDepthStencilDescriptor alloc] init] autorelease] };
@@ -369,7 +373,7 @@ namespace garlic::clove {
 	
 	Expected<std::unique_ptr<GhaShader>, std::runtime_error> MetalFactory::createShaderObject(std::string const &mslSource) {
 		@autoreleasepool {
-			NSError *libError;
+			NSError *libError{ nullptr };
 			id<MTLLibrary> library{ [[device newLibraryWithSource:[NSString stringWithCString:mslSource.c_str() encoding:[NSString defaultCStringEncoding]] options:nil error:&libError] autorelease] };
 		
 			if(libError != nullptr && libError.code != 0){
