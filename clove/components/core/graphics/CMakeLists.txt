@@ -94,6 +94,7 @@ set(
 		${INCLUDE}/Metal/MetalDescriptorPool.hpp
 		${SOURCE}/Metal/MetalDescriptorPool.mm
 		${INCLUDE}/Metal/MetalDescriptorSet.hpp
+		${INCLUDE}/Metal/MetalDescriptorSet.inl
 		${SOURCE}/Metal/MetalDescriptorSet.mm
 		${INCLUDE}/Metal/MetalDescriptorSetLayout.hpp
 		${SOURCE}/Metal/MetalDescriptorSetLayout.mm

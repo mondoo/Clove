@@ -26,7 +26,7 @@ namespace garlic::clove {
 		descriptorSets.reserve(layouts.size());
 		
 		for(size_t i{ 0 }; i < layouts.size(); ++i) {
-			descriptorSets.emplace_back(std::make_shared<MetalDescriptorSet>());
+			descriptorSets.emplace_back(std::make_shared<MetalDescriptorSet>(layouts[i]));
 		}
 		
 		return descriptorSets;

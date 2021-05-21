@@ -1,0 +1,17 @@
+namespace garlic::clove {
+	std::shared_ptr<GhaDescriptorSetLayout> const &MetalDescriptorSet::getLayout() const {
+		return layout;
+	}
+	
+	std::unordered_map<uint32_t, id<MTLBuffer>> const &MetalDescriptorSet::getMappedBuffers() const {
+		return mappedBuffers;
+	}
+	
+	std::unordered_map<uint32_t, id<MTLTexture>> const &MetalDescriptorSet::getMappedTextures() const {
+		return mappedTextures;
+	}
+	
+	std::unordered_map<uint32_t, std::vector<id<MTLTexture>>> const &MetalDescriptorSet::getMappedTextureArrays() const {
+		return mappedTextureArrays;
+	}
+}

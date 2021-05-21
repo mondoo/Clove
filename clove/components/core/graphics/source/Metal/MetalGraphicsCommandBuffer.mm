@@ -5,6 +5,8 @@
 #include "Clove/Graphics/Metal/MetalGraphicsPipelineObject.hpp"
 #include "Clove/Graphics/Metal/MetalBuffer.hpp"
 #include "Clove/Graphics/Metal/MetalRenderPass.hpp"
+#include "Clove/Graphics/Metal/MetalDescriptorSet.hpp"
+#include "Clove/Graphics/Metal/MetalDescriptorSetLayout.hpp"
 
 #include <Clove/Cast.hpp>
 
@@ -17,6 +19,58 @@ namespace garlic::clove {
 				default:
 					CLOVE_ASSERT(false, "{0}: Unkown index type", CLOVE_FUNCTION_NAME);
 					return MTLIndexTypeUInt16;
+			}
+		}
+		
+		void bindBuffer(id<MTLRenderCommandEncoder> encoder, id<MTLBuffer> buffer, uint32_t slot, GhaShader::Stage stage) {
+			switch (stage) {
+				case GhaShader::Stage::Vertex:
+					[encoder setVertexBuffer:buffer
+									  offset:0
+									 atIndex:slot];
+					break;
+				case GhaShader::Stage::Pixel:
+					[encoder setFragmentBuffer:buffer
+										offset:0
+									   atIndex:slot];
+					break;
+				default:
+					CLOVE_ASSERT(false, "{0}: GhaStage not handled", CLOVE_FUNCTION_NAME_PRETTY);
+					break;
+			}
+		}
+		
+		void bindTexture(id<MTLRenderCommandEncoder> encoder, id<MTLTexture> texture, uint32_t slot, GhaShader::Stage stage) {
+			switch (stage) {
+				case GhaShader::Stage::Vertex:
+					[encoder setVertexTexture:texture
+									  atIndex:slot];
+					break;
+				case GhaShader::Stage::Pixel:
+					[encoder setFragmentTexture:texture
+										atIndex:slot];
+					break;
+				default:
+					CLOVE_ASSERT(false, "{0}: GhaStage not handled", CLOVE_FUNCTION_NAME_PRETTY);
+					break;
+			}
+		}
+		
+		void bindTextureArray(id<MTLRenderCommandEncoder> encoder, std::vector<id<MTLTexture>> const &textures, uint32_t slot, GhaShader::Stage stage) {
+			NSRange const textureRange{ NSMakeRange(0, textures.size()) };
+			
+			switch (stage) {
+				case GhaShader::Stage::Vertex:
+					[encoder setVertexTextures:textures.data()
+									 withRange:textureRange];
+					break;
+				case GhaShader::Stage::Pixel:
+					[encoder setFragmentTextures:textures.data()
+									   withRange:textureRange];
+					break;
+				default:
+					CLOVE_ASSERT(false, "{0}: GhaStage not handled", CLOVE_FUNCTION_NAME_PRETTY);
+					break;
 			}
 		}
 	}
@@ -118,7 +172,27 @@ namespace garlic::clove {
 	}
 	
 	void MetalGraphicsCommandBuffer::bindDescriptorSet(GhaDescriptorSet &descriptorSet, uint32_t const setNum) {
-		//TODO
+		currentPass->commands.emplace_back([descriptorSet = &descriptorSet, setNum](id<MTLRenderCommandEncoder> encoder){
+			auto *metalDescriptorSet{ polyCast<MetalDescriptorSet>(descriptorSet) };
+			
+			for(auto &descriptorBinding : metalDescriptorSet->getLayout()->getDescriptor().bindings) {
+				switch (descriptorBinding.type) {
+					case DescriptorType::UniformBuffer:
+						bindBuffer(encoder, metalDescriptorSet->getMappedBuffers().at(descriptorBinding.binding), descriptorBinding.binding, descriptorBinding.stage);
+						break;
+					case DescriptorType::CombinedImageSampler:
+						if(descriptorBinding.arraySize == 1) {
+							bindTexture(encoder, metalDescriptorSet->getMappedTextures().at(descriptorBinding.binding), descriptorBinding.binding, descriptorBinding.stage);
+						} else if(descriptorBinding.arraySize > 1) {
+							bindTextureArray(encoder, metalDescriptorSet->getMappedTextureArrays().at(descriptorBinding.binding), descriptorBinding.binding, descriptorBinding.stage);
+						}
+						break;
+					default:
+						CLOVE_ASSERT(false, "{0}: GhaStage not handled", CLOVE_FUNCTION_NAME_PRETTY);
+						break;
+				}
+			}
+		});
 	}
 	
 	void MetalGraphicsCommandBuffer::pushConstant(GhaShader::Stage const stage, size_t const offset, size_t const size, void const *data) {
