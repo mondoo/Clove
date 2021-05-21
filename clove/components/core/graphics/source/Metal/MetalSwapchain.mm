@@ -10,7 +10,7 @@ namespace garlic::clove {
 		: images{ std::move(images) }
 		, imageFormat{ imageFormat }
 		, imageSize{ imageSize } {
-		imageViews.reserve(images.size());
+		imageViews.reserve(this->images.size());
 			
 		GhaImageView::Descriptor const viewDescriptor{
 			.type = GhaImageView::Type::_2D,
