@@ -22,16 +22,16 @@ namespace garlic::clove {
 			}
 		}
 		
-		void bindBuffer(id<MTLRenderCommandEncoder> encoder, id<MTLBuffer> buffer, uint32_t slot, GhaShader::Stage stage) {
+		void bindBuffer(id<MTLRenderCommandEncoder> encoder, id<MTLBuffer> buffer, size_t const offset, uint32_t slot, GhaShader::Stage stage) {
 			switch (stage) {
 				case GhaShader::Stage::Vertex:
 					[encoder setVertexBuffer:buffer
-									  offset:0
+									  offset:offset
 									 atIndex:slot];
 					break;
 				case GhaShader::Stage::Pixel:
 					[encoder setFragmentBuffer:buffer
-										offset:0
+										offset:offset
 									   atIndex:slot];
 					break;
 				default:
@@ -177,9 +177,10 @@ namespace garlic::clove {
 			
 			for(auto &descriptorBinding : metalDescriptorSet->getLayout()->getDescriptor().bindings) {
 				switch (descriptorBinding.type) {
-					case DescriptorType::UniformBuffer:
-						bindBuffer(encoder, metalDescriptorSet->getMappedBuffers().at(descriptorBinding.binding), descriptorBinding.binding, descriptorBinding.stage);
-						break;
+					case DescriptorType::UniformBuffer: {
+						MetalDescriptorSet::BufferMapping const &mapping{ metalDescriptorSet->getMappedBuffers().at(descriptorBinding.binding) };
+						bindBuffer(encoder, mapping.buffer, mapping.offset, descriptorBinding.binding, descriptorBinding.stage);
+					} break;
 					case DescriptorType::CombinedImageSampler:
 						if(descriptorBinding.arraySize == 1) {
 							bindTexture(encoder, metalDescriptorSet->getMappedTextures().at(descriptorBinding.binding), descriptorBinding.binding, descriptorBinding.stage);

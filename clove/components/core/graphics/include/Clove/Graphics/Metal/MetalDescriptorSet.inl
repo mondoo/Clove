@@ -3,7 +3,7 @@ namespace garlic::clove {
 		return layout;
 	}
 	
-	std::unordered_map<uint32_t, id<MTLBuffer>> const &MetalDescriptorSet::getMappedBuffers() const {
+	std::unordered_map<uint32_t, MetalDescriptorSet::BufferMapping> const &MetalDescriptorSet::getMappedBuffers() const {
 		return mappedBuffers;
 	}
 	

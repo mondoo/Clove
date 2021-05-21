@@ -11,13 +11,21 @@ namespace garlic::clove {
 
 namespace garlic::clove {
 	class MetalDescriptorSet : public GhaDescriptorSet {
+		//TYPES
+	public:
+		struct BufferMapping {
+			id<MTLBuffer> buffer{ nullptr };
+			size_t offset{};
+		};
+		
 		//VARIABLES
 	private:
 		std::shared_ptr<GhaDescriptorSetLayout> layout{ nullptr };
 		
-		std::unordered_map<uint32_t, id<MTLBuffer>> mappedBuffers{};
+		std::unordered_map<uint32_t, BufferMapping> mappedBuffers{};
 		std::unordered_map<uint32_t, id<MTLTexture>> mappedTextures{};
 		std::unordered_map<uint32_t, std::vector<id<MTLTexture>>> mappedTextureArrays{};
+		//TODO: Samplers
 		
 		//FUNCTIONS
 	public:
@@ -39,7 +47,7 @@ namespace garlic::clove {
 		
 		inline std::shared_ptr<GhaDescriptorSetLayout> const &getLayout() const;
 		
-		inline std::unordered_map<uint32_t, id<MTLBuffer>> const &getMappedBuffers() const;
+		inline std::unordered_map<uint32_t, BufferMapping> const &getMappedBuffers() const;
 		inline std::unordered_map<uint32_t, id<MTLTexture>> const &getMappedTextures() const;
 		inline std::unordered_map<uint32_t, std::vector<id<MTLTexture>>> const &getMappedTextureArrays() const;
 	};
