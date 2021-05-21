@@ -13,6 +13,7 @@
 #include "Clove/Graphics/Metal/MetalImageView.hpp"
 #include "Clove/Graphics/Metal/MetalPresentQueue.hpp"
 #include "Clove/Graphics/Metal/MetalRenderPass.hpp"
+#include "Clove/Graphics/Metal/MetalSampler.hpp"
 #include "Clove/Graphics/Metal/MetalSwapchain.hpp"
 #include "Clove/Graphics/Metal/MetalView.hpp"
 
@@ -97,6 +98,34 @@ namespace garlic::clove {
 				default:
 					CLOVE_ASSERT(false, "{0}: Unkown operation", CLOVE_FUNCTION_NAME);
 					return MTLStoreActionUnknown;
+			}
+		}
+		
+		MTLSamplerMinMagFilter convertMinMagFilter(GhaSampler::Filter filter) {
+			switch (filter) {
+				case GhaSampler::Filter::Nearest:
+					return MTLSamplerMinMagFilterNearest;
+				case GhaSampler::Filter::Linear:
+					return MTLSamplerMinMagFilterLinear;
+				default:
+					CLOVE_ASSERT(false, "{0}: Unkown filter", CLOVE_FUNCTION_NAME);
+					return MTLSamplerMinMagFilterNearest;
+			}
+		}
+		
+		MTLSamplerAddressMode convertAddressMode(GhaSampler::AddressMode addressMode) {
+			switch (addressMode) {
+				case GhaSampler::AddressMode::Repeat:
+					return MTLSamplerAddressModeRepeat;
+				case GhaSampler::AddressMode::MirroredRepeat:
+					return MTLSamplerAddressModeMirrorRepeat;
+				case GhaSampler::AddressMode::ClampToEdge:
+					return MTLSamplerAddressModeClampToEdge;
+				case GhaSampler::AddressMode::ClampToBorder:
+					return MTLSamplerAddressModeClampToBorderColor;
+				default:
+					CLOVE_ASSERT(false, "{0}: Unkown address mode", CLOVE_FUNCTION_NAME);
+					return MTLSamplerAddressModeRepeat;
 			}
 		}
 	}
@@ -369,7 +398,22 @@ namespace garlic::clove {
 	}
 
 	Expected<std::unique_ptr<GhaSampler>, std::runtime_error> MetalFactory::createSampler(GhaSampler::Descriptor descriptor) {
-		return Unexpected{ std::runtime_error{ "Not implemented" } };
+		MTLSamplerDescriptor *samplerDescriptor{ [[MTLSamplerDescriptor alloc] init] };
+		samplerDescriptor.minFilter = convertMinMagFilter(descriptor.minFilter);
+		samplerDescriptor.magFilter = convertMinMagFilter(descriptor.magFilter);
+		samplerDescriptor.sAddressMode = convertAddressMode(descriptor.addressModeU);
+		samplerDescriptor.tAddressMode = convertAddressMode(descriptor.addressModeV);
+		samplerDescriptor.rAddressMode = convertAddressMode(descriptor.addressModeW);
+		samplerDescriptor.maxAnisotropy = descriptor.maxAnisotropy;
+		
+		id<MTLSamplerState> samplerState{ [device newSamplerStateWithDescriptor:samplerDescriptor] };
+		
+		auto result{ std::unique_ptr<GhaSampler>{ std::make_unique<MetalSampler>(samplerState) } };
+		
+		[samplerDescriptor release];
+		[samplerState release];
+		
+		return result;
 	}
 	
 	Expected<std::unique_ptr<GhaShader>, std::runtime_error> MetalFactory::createShaderObject(std::string const &mslSource) {

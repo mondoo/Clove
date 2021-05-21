@@ -120,6 +120,9 @@ set(
 		${INCLUDE}/Metal/MetalRenderPass.hpp
 		${INCLUDE}/Metal/MetalRenderPass.inl
 		${SOURCE}/Metal/MetalRenderPass.mm
+		${INCLUDE}/Metal/MetalSampler.hpp
+		${INCLUDE}/Metal/MetalSampler.inl
+		${SOURCE}/Metal/MetalSampler.mm
 		${INCLUDE}/Metal/MetalShader.hpp
 		${SOURCE}/Metal/MetalShader.mm
 		${INCLUDE}/Metal/MetalSwapchain.hpp
