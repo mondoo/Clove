@@ -130,7 +130,7 @@ namespace garlic::clove {
 		};
 		
 		currentPass->commands.emplace_back([viewport](id<MTLRenderCommandEncoder> encoder){
-			[encoder setViewport:std::move(viewport)];
+			[encoder setViewport:viewport];
 		});
 	}
 	
@@ -143,7 +143,7 @@ namespace garlic::clove {
 		};
 		
 		currentPass->commands.emplace_back([scissorRect](id<MTLRenderCommandEncoder> encoder){
-			[encoder setScissorRect:std::move(scissorRect)];
+			[encoder setScissorRect:scissorRect];
 		});
 	}
 
@@ -175,7 +175,7 @@ namespace garlic::clove {
 		currentPass->commands.emplace_back([descriptorSet = &descriptorSet, setNum](id<MTLRenderCommandEncoder> encoder){
 			auto *metalDescriptorSet{ polyCast<MetalDescriptorSet>(descriptorSet) };
 			
-			for(auto &descriptorBinding : metalDescriptorSet->getLayout()->getDescriptor().bindings) {
+			for(auto const &descriptorBinding : metalDescriptorSet->getLayout()->getDescriptor().bindings) {
 				switch (descriptorBinding.type) {
 					case DescriptorType::UniformBuffer: {
 						MetalDescriptorSet::BufferMapping const &mapping{ metalDescriptorSet->getMappedBuffers().at(descriptorBinding.binding) };

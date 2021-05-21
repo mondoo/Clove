@@ -32,7 +32,7 @@ namespace garlic::clove {
 		//TODO: will signal semaphore immediately semaphores
 		//TODO: Handle resizing;
 		
-		if(imageQueue.size() == 0) {
+		if(imageQueue.empty()) {
 			CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0} has no available images", CLOVE_FUNCTION_NAME_PRETTY);
 			return { -1, Result::Unkown };
 		}

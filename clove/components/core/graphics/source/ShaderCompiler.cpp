@@ -183,14 +183,14 @@ namespace garlic::clove::ShaderCompiler {
 		
 		//Remove the padding added onto push constants when using an offset. The offset is not required in metal
 		//as pushing small chunks of data works much like uploading a buffer.
-		if(resources.push_constant_buffers.size() > 0) {
+		if(!resources.push_constant_buffers.empty()) {
 			spirv_cross::ID const bufferId{ resources.push_constant_buffers.front().id };
 			spirv_cross::TypeID const bufferTypeId{ resources.push_constant_buffers.front().base_type_id };
 			spirv_cross::SmallVector<spirv_cross::BufferRange> const bufferRanges{ msl.get_active_buffer_ranges(bufferId) };
 			
-			if(bufferRanges.size() > 0) {
+			if(!bufferRanges.empty()) {
 				size_t const initialOffset{ msl.get_member_decoration(bufferTypeId, bufferRanges.front().index, spv::Decoration::DecorationOffset) };
-				for(auto &range : bufferRanges) {
+				for(auto const &range : bufferRanges) {
 					//Unset decoration does not seem to work for msl so just manually override the decoration instead.
 					msl.set_member_decoration(bufferTypeId, range.index, spv::Decoration::DecorationOffset, range.offset - initialOffset);
 				}
