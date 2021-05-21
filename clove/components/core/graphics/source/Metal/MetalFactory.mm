@@ -418,8 +418,13 @@ namespace garlic::clove {
 	
 	Expected<std::unique_ptr<GhaShader>, std::runtime_error> MetalFactory::createShaderObject(std::string const &mslSource) {
 		@autoreleasepool {
+			NSString *librarySource{ [NSString stringWithCString:mslSource.c_str() encoding:[NSString defaultCStringEncoding]] };
+			if(librarySource == nullptr) {
+				return Unexpected{ std::runtime_error{ "Shader creation failed. Could not convert std::string to NSString" } };
+			}
+			
 			NSError *libError{ nullptr };
-			id<MTLLibrary> library{ [[device newLibraryWithSource:[NSString stringWithCString:mslSource.c_str() encoding:[NSString defaultCStringEncoding]] options:nil error:&libError] autorelease] };
+			id<MTLLibrary> library{ [[device newLibraryWithSource:librarySource options:nil error:&libError] autorelease] };
 		
 			if(libError != nullptr && libError.code != 0){
 				return Unexpected{ std::runtime_error{ [[libError description] cStringUsingEncoding:[NSString defaultCStringEncoding]] } };
