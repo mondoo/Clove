@@ -33,6 +33,18 @@ namespace garlic::membrane {
 
         float mass{};
     };
+    public ref class Editor_UpdateSphereShape : public EditorMessage {
+    public:
+        System::UInt32 entity;
+
+        float radius{};
+    };
+    public ref class Editor_UpdateCubeShape : public EditorMessage {
+    public:
+        System::UInt32 entity;
+
+        Vector3 halfExtents{};
+    };
     public ref class Editor_UpdateName : public EditorMessage {
     public:
         System::UInt32 entity;

@@ -24,8 +24,37 @@ namespace Garlic.Bulb {
             }
         }
 
-        public float Radius { get; set; }
-        public Membrane.Vector3 HalfExtents { get; set; }
+        public string Radius {
+            get { return radius.ToString(); }
+            set {
+                float.TryParse(value, out var number);
+                OnSphereShapeChanged?.Invoke(number);
+            }
+        }
+        private float radius = 1.0f;
+
+        public string HalfExtentsX {
+            get { return halfExtents.x.ToString(); }
+            set {
+                float.TryParse(value, out var number);
+                OnCubeShapeChanged?.Invoke(new Membrane.Vector3(number, halfExtents.y, halfExtents.z));
+            }
+        }
+        public string HalfExtentsY {
+            get { return halfExtents.y.ToString(); }
+            set {
+                float.TryParse(value, out var number);
+                OnCubeShapeChanged?.Invoke(new Membrane.Vector3(halfExtents.x, number, halfExtents.z));
+            }
+        }
+        public string HalfExtentsZ {
+            get { return halfExtents.z.ToString(); }
+            set {
+                float.TryParse(value, out var number);
+                OnCubeShapeChanged?.Invoke(new Membrane.Vector3(halfExtents.x, halfExtents.y, number));
+            }
+        }
+        private Membrane.Vector3 halfExtents = new Membrane.Vector3(0.5f, 0.5f, 0.5f);
 
         public ShapeType CurrentShapeType {
             get { return currentShapeType; }
@@ -56,9 +85,27 @@ namespace Garlic.Bulb {
         }
         private Visibility halfExtentsVisibility = Visibility.Visible;
 
+        public delegate void CollisionShapeSphereChanged(float radius);
+        public delegate void CollisionShapeCubeChanged(Membrane.Vector3 halfExtents);
+
+        public CollisionShapeSphereChanged OnSphereShapeChanged;
+        public CollisionShapeCubeChanged OnCubeShapeChanged;
+
         public CollisionShapeComponentViewModel(string name, Membrane.ComponentType type) : base(name, type) {
             //Start off as a sphere
             OnShapeTypeChanged(ShapeType.Sphere);
+        }
+
+        public void UpdateSphereShape(float radius) {
+            this.radius = radius;
+            OnPropertyChanged(nameof(Radius));
+        }
+
+        public void UpdateCubeShape(Membrane.Vector3 halfExtents) {
+            this.halfExtents = halfExtents;
+            OnPropertyChanged(nameof(HalfExtentsX));
+            OnPropertyChanged(nameof(HalfExtentsY));
+            OnPropertyChanged(nameof(HalfExtentsZ));
         }
 
         private void OnShapeTypeChanged(ShapeType newType) {
@@ -68,10 +115,12 @@ namespace Garlic.Bulb {
                 case ShapeType.Sphere:
                     RadiusVisibility = Visibility.Visible;
                     HalfExtentsVisibility = Visibility.Collapsed;
+                    OnSphereShapeChanged?.Invoke(radius);
                     break;
                 case ShapeType.Cube:
                     RadiusVisibility = Visibility.Collapsed;
                     HalfExtentsVisibility = Visibility.Visible;
+                    OnCubeShapeChanged?.Invoke(halfExtents);
                     break;
             }
 

@@ -13,6 +13,7 @@
 #include <Clove/Components/TransformComponent.hpp>
 #include <Clove/ECS/EntityManager.hpp>
 #include <Clove/Layers/PhysicsLayer.hpp>
+#include <Clove/Log/Log.hpp>
 #include <Clove/Maths/MathsHelpers.hpp>
 #include <Clove/ModelLoader.hpp>
 #include <Clove/Surface.hpp>
@@ -34,10 +35,12 @@ namespace garlic::membrane {
             : layer{ layer } {
             MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_CreateEntity ^>(this, &EditorLayerMessageProxy::createEntity));
             MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_CreateComponent ^>(this, &EditorLayerMessageProxy::createComponent));
-            MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_UpdateRigidBody ^>(this, &EditorLayerMessageProxy::updateRigidBody));
-            MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_UpdateTransform ^>(this, &EditorLayerMessageProxy::updateTransform));
-            MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_UpdateName ^>(this, &EditorLayerMessageProxy::updateName));
 
+            MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_UpdateTransform ^>(this, &EditorLayerMessageProxy::updateTransform));
+            MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_UpdateRigidBody ^>(this, &EditorLayerMessageProxy::updateRigidBody));
+            MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_UpdateSphereShape ^>(this, &EditorLayerMessageProxy::updateSphereShape));
+            MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_UpdateCubeShape ^>(this, &EditorLayerMessageProxy::updateCubeShape));
+            MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_UpdateName ^>(this, &EditorLayerMessageProxy::updateName));
 
             MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_SaveScene ^>(this, &EditorLayerMessageProxy::saveScene));
             MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_LoadScene ^>(this, &EditorLayerMessageProxy::loadScene));
@@ -52,16 +55,26 @@ namespace garlic::membrane {
             layer->createComponent(message->entity, message->componentType);
         }
 
+        void updateTransform(Editor_UpdateTransform ^ message){
+            clove::vec3f const pos{message->position.x, message->position.y, message->position.z};
+            clove::vec3f const rot{clove::asRadians(message->rotation.x), clove::asRadians(message->rotation.y), clove::asRadians(message->rotation.z)};
+            clove::vec3f const scale{message->scale.x, message->scale.y, message->scale.z};
+
+            layer->updateTransform(message->entity, pos, rot, scale);
+        }
+
         void updateRigidBody(Editor_UpdateRigidBody^ message){
             layer->updateRigidBody(message->entity, message->mass);
         }
 
-        void updateTransform(Editor_UpdateTransform ^ message){
-            clove::vec3f pos{message->position.x, message->position.y, message->position.z};
-            clove::vec3f rot{clove::asRadians(message->rotation.x), clove::asRadians(message->rotation.y), clove::asRadians(message->rotation.z)};
-            clove::vec3f scale{message->scale.x, message->scale.y, message->scale.z};
+        void updateSphereShape(Editor_UpdateSphereShape ^message){
+            layer->updateSphereShape(message->entity, message->radius);
+        }
 
-            layer->updateTransform(message->entity, pos, rot, scale);
+        void updateCubeShape(Editor_UpdateCubeShape ^message){
+            clove::vec3f const halfExtents{message->halfExtents.x, message->halfExtents.y, message->halfExtents.z};
+
+            layer->updateCubeShape(message->entity, halfExtents);
         }
 
         void updateName(Editor_UpdateName ^ message){
@@ -313,6 +326,14 @@ namespace garlic::membrane {
             message->mass   = mass;
             MessageHandler::sendMessage(message);
         }
+    }
+
+    void EditorLayer::updateSphereShape(clove::Entity entity, float radius) {
+        CLOVE_LOG(LOG_CATEGORY_CLOVE, clove::LogLevel::Debug, "Update sphere: {0}", radius);
+    }
+
+    void EditorLayer::updateCubeShape(clove::Entity entity, clove::vec3f halfExtents) {
+        CLOVE_LOG(LOG_CATEGORY_CLOVE, clove::LogLevel::Debug, "Update cube: {0}, {1}, {2}", halfExtents.x, halfExtents.y, halfExtents.z);
     }
 
     void EditorLayer::updateName(clove::Entity entity, std::string name) {

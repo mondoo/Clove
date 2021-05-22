@@ -83,6 +83,8 @@ namespace Garlic.Bulb {
                 break;
                 case Membrane.ComponentType.CollisionShape: {
                     var collisionShapeComp = new CollisionShapeComponentViewModel($"{type}", type);
+                    collisionShapeComp.OnSphereShapeChanged = UpdateSphereShape;
+                    collisionShapeComp.OnCubeShapeChanged = UpdateCubeShape;
 
                     componentVm = collisionShapeComp;
                 }
@@ -109,6 +111,22 @@ namespace Garlic.Bulb {
             var message = new Membrane.Editor_UpdateRigidBody();
             message.entity = EntityId;
             message.mass = mass;
+
+            Membrane.MessageHandler.sendMessage(message);
+        }
+
+        private void UpdateSphereShape(float radius) {
+            var message = new Membrane.Editor_UpdateSphereShape();
+            message.entity = EntityId;
+            message.radius = radius;
+
+            Membrane.MessageHandler.sendMessage(message);
+        }
+
+        private void UpdateCubeShape(Membrane.Vector3 halfExtents) {
+            var message = new Membrane.Editor_UpdateCubeShape();
+            message.entity = EntityId;
+            message.halfExtents = halfExtents;
 
             Membrane.MessageHandler.sendMessage(message);
         }

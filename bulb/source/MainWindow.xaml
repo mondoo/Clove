@@ -106,9 +106,9 @@
 								</Menu>
 								<StackPanel Orientation="Horizontal" Visibility="{Binding RadiusVisibility}">
 									<TextBlock Text="Radius"/>
-									<TextBox Text="0"/>
+									<TextBox Text="{Binding Radius, Mode=TwoWay}"/>
 								</StackPanel>
-								<local:Vector3Box Visibility="{Binding HalfExtentsVisibility}" Label="Half Extents" LeftFieldText="X" LeftFieldValue="0" CenterFieldText="Y" CenterFieldValue="0" RightFieldText="Z" RightFieldValue="0"/>
+								<local:Vector3Box Visibility="{Binding HalfExtentsVisibility}" Label="Half Extents" LeftFieldText="X" LeftFieldValue="{Binding HalfExtentsX, Mode=TwoWay}" CenterFieldText="Y" CenterFieldValue="{Binding HalfExtentsY, Mode=TwoWay}" RightFieldText="Z" RightFieldValue="{Binding HalfExtentsZ, Mode=TwoWay}"/>
 							</StackPanel>
 						</DataTemplate>
 
