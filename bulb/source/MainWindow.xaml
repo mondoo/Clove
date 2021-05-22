@@ -90,6 +90,28 @@
 							</StackPanel>
 						</DataTemplate>
 
+						<DataTemplate DataType="{x:Type local:CollisionShapeComponentViewModel}">
+							<StackPanel>
+								<TextBlock Text="{Binding Name}" FontWeight="Bold"/>
+								<Menu HorizontalAlignment="Left">
+									<MenuItem Header="{Binding CurrentShapeType}" ItemsSource="{Binding AvailableShapes}">
+										<!--Doing a regular DataTemplate here will cause a MenuItem within a MenuItem. So manually set up the container style ourselves-->
+										<MenuItem.ItemContainerStyle>
+											<Style TargetType="MenuItem">
+												<Setter Property="Header" Value="{Binding Name}"/>
+												<Setter Property="Command" Value="{Binding OnSelectedCommand}"/>
+											</Style>
+										</MenuItem.ItemContainerStyle>
+									</MenuItem>
+								</Menu>
+								<StackPanel Orientation="Horizontal" Visibility="{Binding RadiusVisibility}">
+									<TextBlock Text="Radius"/>
+									<TextBox Text="0"/>
+								</StackPanel>
+								<local:Vector3Box Visibility="{Binding HalfExtentsVisibility}" Label="Half Extents" LeftFieldText="X" LeftFieldValue="0" CenterFieldText="Y" CenterFieldValue="0" RightFieldText="Z" RightFieldValue="0"/>
+							</StackPanel>
+						</DataTemplate>
+
 						<DataTemplate DataType="{x:Type local:ComponentViewModel}">
 							<TextBlock Text="{Binding Name}" FontWeight="Bold"/>
 						</DataTemplate>

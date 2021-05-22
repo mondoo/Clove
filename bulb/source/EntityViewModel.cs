@@ -81,6 +81,12 @@ namespace Garlic.Bulb {
                     componentVm = rigidBodyComp;
                 }
                 break;
+                case Membrane.ComponentType.CollisionShape: {
+                    var collisionShapeComp = new CollisionShapeComponentViewModel($"{type}", type);
+
+                    componentVm = collisionShapeComp;
+                }
+                break;
                 default:
                     componentVm = new ComponentViewModel($"{type}", type);
                     break;

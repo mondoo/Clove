@@ -28,6 +28,7 @@ add_executable(
 		${SOURCE}/LogViewModel.cs
 
 		${SOURCE}/ComponentViewModel.cs
+		${SOURCE}/CollisionShapeComponentViewModel.cs
 		${SOURCE}/RigidBodyComponentViewModel.cs
 		${SOURCE}/TransformComponentViewModel.cs
 )
