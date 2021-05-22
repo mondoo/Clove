@@ -225,6 +225,12 @@ namespace garlic::membrane {
             if(currentScene.hasComponent<clove::PointLightComponent>(entity)) {
                 editorEntity->components->Add(ComponentType::PointLight);
             }
+            if(currentScene.hasComponent<clove::CollisionShapeComponent>(entity)) {
+                editorEntity->components->Add(ComponentType::CollisionShape);
+            }
+            if(currentScene.hasComponent<clove::RigidBodyComponent>(entity)) {
+                editorEntity->components->Add(ComponentType::RigidBody);
+            }
 
             loadMessage->entities->Add(editorEntity);
         }
