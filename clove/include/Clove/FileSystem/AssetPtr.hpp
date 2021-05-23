@@ -19,6 +19,7 @@ namespace garlic::clove {
         //FUNCTIONS
     public:
         AssetPtr();
+        AssetPtr(std::filesystem::path assetPath);
 
         AssetPtr(AssetPtr const &other) = delete;
         AssetPtr(AssetPtr &&other) noexcept;

@@ -11,3 +11,9 @@ TEST(AssetPtrTest, ProperlyDefaultInitialises) {
     EXPECT_FALSE(meshPtr.isLoaded());
 }
 
+TEST(AssetPtrTest, CanInitialiseWithAFilePath) {
+    AssetPtr<Mesh> meshPtr{ ASSET_DIR "/cube.obj" };
+
+    EXPECT_TRUE(meshPtr.isValid());
+    EXPECT_FALSE(meshPtr.isLoaded());
+}

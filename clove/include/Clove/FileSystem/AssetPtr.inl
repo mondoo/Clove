@@ -3,6 +3,11 @@ namespace garlic::clove {
     AssetPtr<AssetType>::AssetPtr() = default;
 
     template<typename AssetType>
+    AssetPtr<AssetType>::AssetPtr(std::filesystem::path assetPath)
+        : assetPath{ std::move(assetPath) } {
+    }
+
+    template<typename AssetType>
     AssetPtr<AssetType>::AssetPtr(AssetPtr &&other) noexcept = default;
 
     template<typename AssetType>
