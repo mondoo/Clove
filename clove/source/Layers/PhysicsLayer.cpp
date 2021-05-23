@@ -172,11 +172,16 @@ namespace garlic::clove {
         entityManager->forEach([&](TransformComponent const &transform, PhysicsProxyComponent const &proxy) {
             auto const &pos{ transform.position };
             auto const &rot{ transform.rotation };
+            auto const &scale{ transform.scale };
 
-            btTransform btTrans = proxy.collisionObject->getWorldTransform();
+            btTransform btTrans{ proxy.collisionObject->getWorldTransform() };
             btTrans.setOrigin({ pos.x, pos.y, pos.z });
             btTrans.setRotation({ rot.x, rot.y, rot.z, rot.w });
             proxy.collisionObject->setWorldTransform(btTrans);
+
+            if(proxy.collisionShape != nullptr) {
+                proxy.collisionShape->setLocalScaling(btVector3{ scale.x, scale.y, scale.z });
+            }
         });
 
         //Step physics world
