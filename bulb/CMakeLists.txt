@@ -20,15 +20,16 @@ add_executable(
 
 		${SOURCE}/Vector3Box.xaml
 		${SOURCE}/Vector3Box.xaml.cs
-
-		${SOURCE}/RelayCommand.cs
 		
+		${SOURCE}/ComponentMenuItemViewModel.cs
 		${SOURCE}/EditorSessionViewModel.cs
 		${SOURCE}/SceneViewModel.cs
 		${SOURCE}/EntityViewModel.cs
 		${SOURCE}/LogViewModel.cs
 
 		${SOURCE}/ComponentViewModel.cs
+		${SOURCE}/CollisionShapeComponentViewModel.cs
+		${SOURCE}/RigidBodyComponentViewModel.cs
 		${SOURCE}/TransformComponentViewModel.cs
 )
 

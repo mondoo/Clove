@@ -150,3 +150,24 @@ TEST(NodeTests, CanPushBackOntoAMapNode) {
 
     EXPECT_EQ(root["Map"].getType(), Node::Type::Map);
 }
+
+TEST(NodeTests, WontIterateEmptyNode) {
+    bool loopedEmpty{ false };
+
+    Node empty{};
+    for(auto &node : empty){
+        loopedEmpty = true;
+        break;
+    }
+
+    EXPECT_FALSE(loopedEmpty);
+
+    bool loopedEmptyChild{ false };
+
+    for(auto &node : empty["child"]) {
+        loopedEmptyChild = true;
+        break;
+    }
+
+    EXPECT_FALSE(loopedEmptyChild);
+}

@@ -2,7 +2,9 @@
 
 #include "Membrane/NameComponent.hpp"
 
+#include <Clove/Components/CollisionShapeComponent.hpp>
 #include <Clove/Components/PointLightComponent.hpp>
+#include <Clove/Components/RigidBodyComponent.hpp>
 #include <Clove/Components/StaticModelComponent.hpp>
 #include <Clove/Components/TransformComponent.hpp>
 #include <Clove/ModelLoader.hpp>
@@ -44,6 +46,8 @@ namespace garlic::membrane {
             serialiseComponent<TransformComponent>(entityNode, *manager, entity);
             serialiseComponent<StaticModelComponent>(entityNode, *manager, entity);
             serialiseComponent<PointLightComponent>(entityNode, *manager, entity);
+            serialiseComponent<CollisionShapeComponent>(entityNode, *manager, entity);
+            serialiseComponent<RigidBodyComponent>(entityNode, *manager, entity);
 
             rootNode["entities"].pushBack(entityNode);
         }
@@ -59,6 +63,11 @@ namespace garlic::membrane {
         }
         knownEntities.clear();
 
+        //File won't exist if we haven't saved anything yet
+        if(!std::filesystem::exists(sceneFile)) {
+            return;
+        }
+
         auto loadResult{ loadYaml(sceneFile) };
         serialiser::Node rootNode{ loadResult.getValue() };
 
@@ -73,6 +82,10 @@ namespace garlic::membrane {
                     manager->addComponent<StaticModelComponent>(entity, componentNode.as<StaticModelComponent>());
                 } else if(componentNode["id"].as<size_t>() == typeid(PointLightComponent).hash_code()) {
                     manager->addComponent<PointLightComponent>(entity, componentNode.as<PointLightComponent>());
+                } else if(componentNode["id"].as<size_t>() == typeid(CollisionShapeComponent).hash_code()) {
+                    manager->addComponent<CollisionShapeComponent>(entity, componentNode.as<CollisionShapeComponent>());
+                } else if(componentNode["id"].as<size_t>() == typeid(RigidBodyComponent).hash_code()) {
+                    manager->addComponent<RigidBodyComponent>(entity, componentNode.as<RigidBodyComponent>());
                 }
             }
 

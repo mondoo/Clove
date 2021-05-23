@@ -114,7 +114,7 @@ namespace garlic::clove {
         //Systems
         inline ForwardRenderer3D *getRenderer() const;
         inline EntityManager *getEntityManager();
-        inline PhysicsLayer *getPhysicsLayer() const;
+        inline std::shared_ptr<PhysicsLayer> getPhysicsLayer() const;
 
     private:
         Application(std::unique_ptr<GhaDevice> graphicsDevice, std::unique_ptr<AhaDevice> audioDevice, std::unique_ptr<Surface> surface, std::unique_ptr<RenderTarget> renderTarget);

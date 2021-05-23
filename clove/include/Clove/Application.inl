@@ -23,7 +23,7 @@ namespace garlic::clove {
         return &entityManager;
     }
 
-    PhysicsLayer *Application::getPhysicsLayer() const {
-        return physicsLayer.get();
+   std::shared_ptr<PhysicsLayer> Application::getPhysicsLayer() const {
+        return physicsLayer;
     }
 }
