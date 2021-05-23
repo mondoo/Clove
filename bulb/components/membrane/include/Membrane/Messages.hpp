@@ -102,6 +102,18 @@ namespace garlic::membrane {
 
         float mass{};
     };
+    public ref class Engine_OnSphereShapeChanged : public EngineMessage {
+    public:
+        System::UInt32 entity;
+
+        float radius{};
+    };
+    public ref class Engine_OnCubeShapeChanged : public EngineMessage {
+    public:
+        System::UInt32 entity;
+
+        Vector3 halfExtents{};
+    };
     public ref class Engine_OnSceneLoaded : public EngineMessage {
     public:
         System::Collections::Generic::List<Entity^> ^entities;

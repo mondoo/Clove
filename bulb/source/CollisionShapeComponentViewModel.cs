@@ -92,8 +92,8 @@ namespace Garlic.Bulb {
         public CollisionShapeCubeChanged OnCubeShapeChanged;
 
         public CollisionShapeComponentViewModel(string name, Membrane.ComponentType type) : base(name, type) {
-            //Start off as a sphere
-            OnShapeTypeChanged(ShapeType.Sphere);
+            //TODO: Hard coding as a sphere. Should be synced to what ever the component is added as
+            OnShapeTypeChanged(ShapeType.Sphere, false);
         }
 
         public void UpdateSphereShape(float radius) {
@@ -108,19 +108,23 @@ namespace Garlic.Bulb {
             OnPropertyChanged(nameof(HalfExtentsZ));
         }
 
-        private void OnShapeTypeChanged(ShapeType newType) {
+        private void OnShapeTypeChanged(ShapeType newType, bool invokeDelegates = true) {
             CurrentShapeType = newType;
 
             switch (CurrentShapeType) {
                 case ShapeType.Sphere:
                     RadiusVisibility = Visibility.Visible;
                     HalfExtentsVisibility = Visibility.Collapsed;
-                    OnSphereShapeChanged?.Invoke(radius);
+                    if (invokeDelegates) {
+                        OnSphereShapeChanged?.Invoke(radius);
+                    }
                     break;
                 case ShapeType.Cube:
                     RadiusVisibility = Visibility.Collapsed;
                     HalfExtentsVisibility = Visibility.Visible;
-                    OnCubeShapeChanged?.Invoke(halfExtents);
+                    if (invokeDelegates) {
+                        OnCubeShapeChanged?.Invoke(halfExtents);
+                    }
                     break;
             }
 

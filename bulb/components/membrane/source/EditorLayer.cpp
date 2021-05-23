@@ -292,7 +292,7 @@ namespace garlic::membrane {
                 break;
             case ComponentType::CollisionShape:
                 if(!currentScene.hasComponent<clove::CollisionShapeComponent>(entity)) {
-                    currentScene.addComponent<clove::CollisionShapeComponent>(entity, clove::CollisionShapeComponent::Cube{});//TEMP: Use basic cube shape
+                    currentScene.addComponent<clove::CollisionShapeComponent>(entity, clove::CollisionShapeComponent::Sphere{ 1.0f });//TEMP: Defaulting as sphere. See CollisionShapeComponentViewModel
                     added = true;
                 }
                 break;
@@ -329,11 +329,25 @@ namespace garlic::membrane {
     }
 
     void EditorLayer::updateSphereShape(clove::Entity entity, float radius) {
-        CLOVE_LOG(LOG_CATEGORY_CLOVE, clove::LogLevel::Debug, "Update sphere: {0}", radius);
+        if(currentScene.hasComponent<clove::CollisionShapeComponent>(entity)) {
+            currentScene.getComponent<clove::CollisionShapeComponent>(entity).shape = clove::CollisionShapeComponent::Sphere{ radius };
+
+            Engine_OnSphereShapeChanged ^ message { gcnew Engine_OnSphereShapeChanged };
+            message->entity = entity;
+            message->radius = radius;
+            MessageHandler::sendMessage(message);
+        }
     }
 
     void EditorLayer::updateCubeShape(clove::Entity entity, clove::vec3f halfExtents) {
-        CLOVE_LOG(LOG_CATEGORY_CLOVE, clove::LogLevel::Debug, "Update cube: {0}, {1}, {2}", halfExtents.x, halfExtents.y, halfExtents.z);
+        if(currentScene.hasComponent<clove::CollisionShapeComponent>(entity)) {
+            currentScene.getComponent<clove::CollisionShapeComponent>(entity).shape = clove::CollisionShapeComponent::Cube{ halfExtents };
+
+            Engine_OnCubeShapeChanged ^ message { gcnew Engine_OnCubeShapeChanged };
+            message->entity      = entity;
+            message->halfExtents = Vector3{ halfExtents.x, halfExtents.y, halfExtents.z };
+            MessageHandler::sendMessage(message);
+        }
     }
 
     void EditorLayer::updateName(clove::Entity entity, std::string name) {

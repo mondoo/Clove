@@ -38,6 +38,8 @@ namespace Garlic.Bulb {
             Membrane.MessageHandler.bindToMessage<Membrane.Engine_OnComponentCreated>(OnComponentCreated);
             Membrane.MessageHandler.bindToMessage<Membrane.Engine_OnRigidBodyChanged>(OnRigidBodyChanged);
             Membrane.MessageHandler.bindToMessage<Membrane.Engine_OnTransformChanged>(OnTransformChanged);
+            Membrane.MessageHandler.bindToMessage<Membrane.Engine_OnSphereShapeChanged>(OnSphereShapeChanged);
+            Membrane.MessageHandler.bindToMessage<Membrane.Engine_OnCubeShapeChanged>(OnCubeShapeChanged);
 
             //Set up commands
             SelectedCommand = new RelayCommand(() => OnSelected?.Invoke(this));
@@ -149,6 +151,31 @@ namespace Garlic.Bulb {
                     if (comp.GetType() == typeof(TransformComponentViewModel)) {
                         var transform = (TransformComponentViewModel)comp;
                         transform.Update(message.position, message.rotation, message.scale);
+                        break;
+                    }
+                }
+            }
+        }
+
+        private void OnSphereShapeChanged(Membrane.Engine_OnSphereShapeChanged message) {
+            if (EntityId == message.entity) {
+                foreach (ComponentViewModel comp in Components) {
+                    if (comp.GetType() == typeof(CollisionShapeComponentViewModel)) {
+                        var collisionShape = (CollisionShapeComponentViewModel)comp;
+                        collisionShape.UpdateSphereShape(message.radius);
+                        break;
+                    }
+                }
+            }
+
+        }
+
+        private void OnCubeShapeChanged(Membrane.Engine_OnCubeShapeChanged message) {
+            if (EntityId == message.entity) {
+                foreach(ComponentViewModel comp in Components) {
+                    if (comp.GetType() == typeof(CollisionShapeComponentViewModel)) {
+                        var collisionShape = (CollisionShapeComponentViewModel)comp;
+                        collisionShape.UpdateCubeShape(message.halfExtents);
                         break;
                     }
                 }
