@@ -1,18 +1,25 @@
 #include <Clove/FileSystem/AssetPtr.hpp>
-#include <Clove/Rendering/Renderables/Mesh.hpp>
 #include <gtest/gtest.h>
 
 using namespace garlic::clove;
 
+class MockFile {
+public:
+    bool isLoaded{ false };
+};
 TEST(AssetPtrTest, ProperlyDefaultInitialises) {
-    AssetPtr<Mesh> meshPtr{};
+    AssetPtr<MockFile> asset{};
 
-    EXPECT_FALSE(meshPtr.isValid());
-    EXPECT_FALSE(meshPtr.isLoaded());
+    EXPECT_FALSE(asset.isValid());
+    EXPECT_FALSE(asset.isLoaded());
 }
 
 TEST(AssetPtrTest, CanInitialiseWithAFilePath) {
-    AssetPtr<Mesh> meshPtr{ ASSET_DIR "/cube.obj" };
+    AssetPtr<MockFile> asset{ "random/file/path.txt" };
+
+    EXPECT_TRUE(asset.isValid());
+    EXPECT_FALSE(asset.isLoaded());
+}
 
     EXPECT_TRUE(meshPtr.isValid());
     EXPECT_FALSE(meshPtr.isLoaded());
