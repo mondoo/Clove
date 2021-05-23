@@ -94,6 +94,9 @@ add_library(
 		${INCLUDE}/Components/TransformComponent.hpp
 		${SOURCE}/Components/TransformComponent.cpp
 
+		${INCLUDE}/FileSystem/AssetPtr.hpp
+		${INCLUDE}/FileSystem/AssetPtr.inl
+
 		${INCLUDE}/Rendering/AnimationTypes.hpp
 		${INCLUDE}/Rendering/Animator.hpp
 		${SOURCE}/Rendering/Animator.cpp
