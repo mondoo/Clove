@@ -242,3 +242,7 @@ target_link_libraries(
 		CONAN_PKG::libsndfile
 		stb
 )
+
+if(GAR_BUILD_TESTS)
+	add_subdirectory(tests)
+endif()
