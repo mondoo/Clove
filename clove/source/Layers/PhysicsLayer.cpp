@@ -130,19 +130,45 @@ namespace garlic::clove {
         entityManager->forEach([&](Entity entity, RigidBodyComponent const &rigidBody) { requiresRigidBody.push_back(entity); }, Exclude<PhysicsProxyComponent, CollisionShapeComponent>{});
         entityManager->forEach([&](Entity entity, CollisionShapeComponent const &shape, RigidBodyComponent const &body) { requiresRigidBodyShape.push_back(entity); }, Exclude<PhysicsProxyComponent>{});
 
-        for(auto entity : requiresCollisionShape){
+        for(auto entity : requiresCollisionShape) {
             initialiseCollisionShape(entity, entityManager->getComponent<CollisionShapeComponent>(entity));
         }
-        for(auto entity : requiresRigidBody){
+        for(auto entity : requiresRigidBody) {
             initialiseRigidBody(entity, entityManager->getComponent<RigidBodyComponent>(entity));
         }
-        for(auto entity : requiresRigidBodyShape){
+        for(auto entity : requiresRigidBodyShape) {
             initialiseRigidBodyShape(entity, entityManager->getComponent<CollisionShapeComponent>(entity), entityManager->getComponent<RigidBodyComponent>(entity));
         }
 
+        //Update any shapes that would've changed
+        entityManager->forEach([&](CollisionShapeComponent const &shape, PhysicsProxyComponent &proxy) {
+            bool needsNewShape{ false };
+
+            if(std::holds_alternative<CollisionShapeComponent::Sphere>(shape.shape)) {
+                if(proxy.collisionShape->getShapeType() == BroadphaseNativeTypes::SPHERE_SHAPE_PROXYTYPE) {
+                    static_cast<btSphereShape *>(proxy.collisionShape.get())->setUnscaledRadius(std::get<CollisionShapeComponent::Sphere>(shape.shape).radius);//NOLINT RTTI is not included in bullet
+                } else {
+                    //Shape type mismatch - recreate the proxy's body
+                    needsNewShape = true;
+                }
+            } else if(std::holds_alternative<CollisionShapeComponent::Cube>(shape.shape)) {
+                if(proxy.collisionShape->getShapeType() == BroadphaseNativeTypes::BOX_SHAPE_PROXYTYPE) {
+                    auto const halfExtents{ std::get<CollisionShapeComponent::Cube>(shape.shape).halfExtents };
+                    static_cast<btBoxShape *>(proxy.collisionShape.get())->setImplicitShapeDimensions(btVector3{ halfExtents.x, halfExtents.y, halfExtents.z });//NOLINT RTTI is not included in bullet
+                } else {
+                    //Shape type mismatch - recreate the proxy's body
+                    needsNewShape = true;
+                }
+            }
+
+            if(needsNewShape) {
+                createProxyShape(proxy, shape);
+            }
+        });
+
         //Apply any updates to the rigid body
         entityManager->forEach([&](RigidBodyComponent &body, PhysicsProxyComponent const &proxy) {
-            auto *btBody{ static_cast<btRigidBody*>(proxy.collisionObject.get()) }; //NOLINT
+            auto *btBody{ static_cast<btRigidBody *>(proxy.collisionObject.get()) };//NOLINT RTTI is not included in bullet
 
             if(body.appliedVelocity.has_value()) {
                 btBody->setLinearVelocity(toBt(*body.appliedVelocity));
@@ -197,7 +223,7 @@ namespace garlic::clove {
             transform.rotation = quatf{ rot.getW(), rot.getX(), rot.getY(), rot.getZ() };
         });
         entityManager->forEach([](RigidBodyComponent &body, PhysicsProxyComponent const &proxy) {
-            auto *btBody{ static_cast<btRigidBody*>(proxy.collisionObject.get()) }; //NOLINT
+            auto *btBody{ static_cast<btRigidBody *>(proxy.collisionObject.get()) };//NOLINT
             body.currentVelocity = toGar(btBody->getLinearVelocity());
         });
 
