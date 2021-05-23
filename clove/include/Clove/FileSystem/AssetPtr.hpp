@@ -2,6 +2,7 @@
 
 #include <filesystem>
 #include <optional>
+#include <functional>
 
 namespace garlic::clove {
     /**
@@ -13,13 +14,14 @@ namespace garlic::clove {
         //VARIABLES
     private:
         std::filesystem::path assetPath{};
+        std::function<AssetType(std::filesystem::path const &)> loadFunction{};
 
         std::optional<AssetType> asset{};
 
         //FUNCTIONS
     public:
         AssetPtr();
-        AssetPtr(std::filesystem::path assetPath);
+        AssetPtr(std::filesystem::path assetPath, std::function<AssetType(std::filesystem::path const &)> loadFunction);
 
         AssetPtr(AssetPtr const &other) = delete;
         AssetPtr(AssetPtr &&other) noexcept;
@@ -40,6 +42,12 @@ namespace garlic::clove {
          * @return 
          */
         bool isLoaded() const;
+
+        /**
+         * @brief Returns the asset object. Will load synchronously if the asset is not yet loaded.
+         * @return 
+         */
+        [[nodiscard]] AssetType const &get();
     };
 }
 
