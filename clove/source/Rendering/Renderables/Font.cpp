@@ -138,7 +138,7 @@ namespace garlic::clove {
 
     Font::FacePtr Font::createFace(std::span<std::byte const> bytes) {
         FT_Face face{ nullptr };
-        if(FT_New_Memory_Face(ftLibReference.get(), reinterpret_cast<unsigned char const *>(bytes.data()), bytes.size_bytes(), 0, &face) != FT_Err_Ok) {
+        if(FT_New_Memory_Face(ftLibReference.get(), reinterpret_cast<unsigned char const *>(bytes.data()), static_cast<FT_Long>(bytes.size_bytes()), 0, &face) != FT_Err_Ok) {
             CLOVE_ASSERT(false, "Could not load font");
         }
 

@@ -291,7 +291,7 @@ namespace garlic::clove::ModelLoader {
 
                     std::vector<std::pair<JointIndexType, float>> const &weightPairs{ vertWeightPairs[i] };
 
-                    for(size_t j = 0; j < 4; ++j) {
+                    for(int j{ 0 }; j < 4; ++j) {
                         if(j < weightPairs.size()) {
                             jointIds[j] = weightPairs[j].first;
                             weights[j]  = weightPairs[j].second;
