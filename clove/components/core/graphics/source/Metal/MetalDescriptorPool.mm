@@ -18,7 +18,7 @@ namespace garlic::clove {
 	}
 
 	std::shared_ptr<GhaDescriptorSet> MetalDescriptorPool::allocateDescriptorSets(std::shared_ptr<GhaDescriptorSetLayout> const &layout) {
-		return allocateDescriptorSets({ layout });
+		return allocateDescriptorSets(std::vector{ layout })[0];
 	}
 	
 	std::vector<std::shared_ptr<GhaDescriptorSet>> MetalDescriptorPool::allocateDescriptorSets(std::vector<std::shared_ptr<GhaDescriptorSetLayout>> const &layouts) {
