@@ -9,7 +9,7 @@ namespace garlic::clove {
         : factory{ std::move(ghaFactory) } {
     }
 
-    RRgGlobalCache::gGlobalCache(RgGlobalCache &&other) noexcept = default;
+    RgGlobalCache::RgGlobalCache(RgGlobalCache &&other) noexcept = default;
 
     RgGlobalCache &RgGlobalCache::operator=(RgGlobalCache &&other) noexcept = default;
 
@@ -33,10 +33,10 @@ namespace garlic::clove {
     std::shared_ptr<GhaDescriptorSetLayout> RgGlobalCache::createDescriptorSetLayout(GhaDescriptorSetLayout::Descriptor descriptor) {
         PoolId layoutId{};
         for(auto &binding : descriptor.bindings){
-            hashCombine(layoutId, binding.binding);
-            hashCombine(layoutId, binding.type);
-            hashCombine(layoutId, binding.arraySize);
-            hashCombine(layoutId, binding.stage);
+            CacheUtils::hashCombine(layoutId, binding.binding);
+            CacheUtils::hashCombine(layoutId, binding.type);
+            CacheUtils::hashCombine(layoutId, binding.arraySize);
+            CacheUtils::hashCombine(layoutId, binding.stage);
         }
 
         if(!descriptorSetLayouts.contains(layoutId)){

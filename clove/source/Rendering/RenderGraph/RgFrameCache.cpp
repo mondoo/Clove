@@ -28,10 +28,10 @@ namespace garlic::clove {
 
     std::shared_ptr<GhaBuffer> RgFrameCache::allocateBuffer(GhaBuffer::Descriptor descriptor) {
         PoolId bufferId{ 0 };
-        hashCombine(bufferId, descriptor.size);
-        hashCombine(bufferId, descriptor.usageFlags);
-        hashCombine(bufferId, descriptor.sharingMode);
-        hashCombine(bufferId, descriptor.memoryType);
+        CacheUtils::hashCombine(bufferId, descriptor.size);
+        CacheUtils::hashCombine(bufferId, descriptor.usageFlags);
+        CacheUtils::hashCombine(bufferId, descriptor.sharingMode);
+        CacheUtils::hashCombine(bufferId, descriptor.memoryType);
 
         if(bufferPool.free.contains(bufferId)) {
             bufferPool.allocated.insert(bufferPool.free.extract(bufferId));
@@ -44,12 +44,12 @@ namespace garlic::clove {
 
     std::shared_ptr<GhaImage> RgFrameCache::allocateImage(GhaImage::Descriptor descriptor) {
         PoolId imageId{ 0 };
-        hashCombine(imageId, descriptor.type);
-        hashCombine(imageId, descriptor.usageFlags);
-        hashCombine(imageId, descriptor.dimensions.x);
-        hashCombine(imageId, descriptor.dimensions.y);
-        hashCombine(imageId, descriptor.format);
-        hashCombine(imageId, descriptor.sharingMode);
+        CacheUtils::hashCombine(imageId, descriptor.type);
+        CacheUtils::hashCombine(imageId, descriptor.usageFlags);
+        CacheUtils::hashCombine(imageId, descriptor.dimensions.x);
+        CacheUtils::hashCombine(imageId, descriptor.dimensions.y);
+        CacheUtils::hashCombine(imageId, descriptor.format);
+        CacheUtils::hashCombine(imageId, descriptor.sharingMode);
 
         if(imagePool.free.contains(imageId)) {
             imagePool.allocated.insert(imagePool.free.extract(imageId));
@@ -63,12 +63,12 @@ namespace garlic::clove {
     std::shared_ptr<GhaFramebuffer> RgFrameCache::allocateFramebuffer(GhaFramebuffer::Descriptor descriptor) {
         auto const &renderPassDesc{ descriptor.renderPass->getDescriptor() };
         auto const hashAttachment = [](PoolId &id, AttachmentDescriptor const &attachment) {
-            hashCombine(id, attachment.format);
-            hashCombine(id, attachment.loadOperation);
-            hashCombine(id, attachment.storeOperation);
-            hashCombine(id, attachment.initialLayout);
-            hashCombine(id, attachment.usedLayout);
-            hashCombine(id, attachment.finalLayout);
+            CacheUtils::hashCombine(id, attachment.format);
+            CacheUtils::hashCombine(id, attachment.loadOperation);
+            CacheUtils::hashCombine(id, attachment.storeOperation);
+            CacheUtils::hashCombine(id, attachment.initialLayout);
+            CacheUtils::hashCombine(id, attachment.usedLayout);
+            CacheUtils::hashCombine(id, attachment.finalLayout);
         };
 
         PoolId framebufferId{ 0 };
@@ -76,9 +76,9 @@ namespace garlic::clove {
             hashAttachment(framebufferId, attachment);
         }
         hashAttachment(framebufferId, renderPassDesc.depthAttachment);
-        hashCombine(framebufferId, descriptor.attachments.size());
-        hashCombine(framebufferId, descriptor.width);
-        hashCombine(framebufferId, descriptor.height);
+        CacheUtils::hashCombine(framebufferId, descriptor.attachments.size());
+        CacheUtils::hashCombine(framebufferId, descriptor.width);
+        CacheUtils::hashCombine(framebufferId, descriptor.height);
 
         if(framebufferPool.free.contains(framebufferId)) {
             framebufferPool.allocated.insert(framebufferPool.free.extract(framebufferId));
@@ -92,11 +92,11 @@ namespace garlic::clove {
     std::shared_ptr<GhaDescriptorPool> RgFrameCache::allocateDescriptorPool(GhaDescriptorPool::Descriptor descriptor) {
         PoolId poolId{ 0 };
         for(auto &poolType : descriptor.poolTypes){
-            hashCombine(poolId, poolType.type);
-            hashCombine(poolId, poolType.count);
+            CacheUtils::hashCombine(poolId, poolType.type);
+            CacheUtils::hashCombine(poolId, poolType.count);
         }
-        hashCombine(poolId, descriptor.flag);
-        hashCombine(poolId, descriptor.maxSets);
+        CacheUtils::hashCombine(poolId, descriptor.flag);
+        CacheUtils::hashCombine(poolId, descriptor.maxSets);
 
         if(descriptorPoolPool.free.contains(poolId)) {
             descriptorPoolPool.allocated.insert(descriptorPoolPool.free.extract(poolId));
