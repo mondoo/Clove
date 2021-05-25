@@ -73,7 +73,76 @@ namespace garlic::clove {
     }
 
     std::shared_ptr<GhaGraphicsPipelineObject> RgGlobalCache::createGraphicsPipelineObject(GhaGraphicsPipelineObject::Descriptor descriptor) {
-        //TODO
-        return nullptr;
+        PoolId pipelineId{};
+
+        bool vertFound{ false };
+        bool pixelFound{ false };
+        for(auto &&[source, shaderObject] : shaders) {
+            if(!vertFound && shaderObject == descriptor.vertexShader) {
+                CacheUtils::hashCombine(pipelineId, source);
+                vertFound = true;
+            }
+
+            if(pixelFound && shaderObject == descriptor.pixelShader) {
+                CacheUtils::hashCombine(pipelineId, source);
+                pixelFound = true;
+            }
+
+            if(vertFound && pixelFound) {
+                break;
+            }
+        }
+
+        CacheUtils::hashCombine(pipelineId, descriptor.vertexInput.stride);
+        for(auto const &attribute : descriptor.vertexAttributes) {
+            CacheUtils::hashCombine(pipelineId, attribute.format);
+            CacheUtils::hashCombine(pipelineId, attribute.offset);
+        }
+
+        CacheUtils::hashCombine(pipelineId, descriptor.viewportDescriptor.state);
+        CacheUtils::hashCombine(pipelineId, descriptor.viewportDescriptor.position.x);
+        CacheUtils::hashCombine(pipelineId, descriptor.viewportDescriptor.position.y);
+        CacheUtils::hashCombine(pipelineId, descriptor.viewportDescriptor.size.x);
+        CacheUtils::hashCombine(pipelineId, descriptor.viewportDescriptor.size.y);
+
+        CacheUtils::hashCombine(pipelineId, descriptor.scissorDescriptor.state);
+        CacheUtils::hashCombine(pipelineId, descriptor.scissorDescriptor.position.x);
+        CacheUtils::hashCombine(pipelineId, descriptor.scissorDescriptor.position.y);
+        CacheUtils::hashCombine(pipelineId, descriptor.scissorDescriptor.size.x);
+        CacheUtils::hashCombine(pipelineId, descriptor.scissorDescriptor.size.y);
+
+        //NOTE: No rasteriser descriptor implemented yet
+
+        CacheUtils::hashCombine(pipelineId, descriptor.depthState.depthTest);
+        CacheUtils::hashCombine(pipelineId, descriptor.depthState.depthWrite);
+
+        CacheUtils::hashCombine(pipelineId, descriptor.enableBlending);
+
+        for(auto &&[id, renderPass] : renderPasses) {
+            if(renderPass == descriptor.renderPass){
+                CacheUtils::hashCombine(pipelineId, id);
+                break;
+            }
+        }
+
+        for(auto const &descriptorSetLayout : descriptor.descriptorSetLayouts){
+            for(auto&&[id, cachedLayout] : descriptorSetLayouts){
+                if(descriptorSetLayout == cachedLayout){
+                    CacheUtils::hashCombine(pipelineId, id);
+                    break;
+                }
+            }
+        }
+
+        for(auto const &pushConstantDescriptor : descriptor.pushConstants){
+            CacheUtils::hashCombine(pipelineId, pushConstantDescriptor.stage);
+            CacheUtils::hashCombine(pipelineId, pushConstantDescriptor.offset);
+            CacheUtils::hashCombine(pipelineId, pushConstantDescriptor.size);
+        }
+
+        if(!graphicsPipelines.contains(pipelineId)){
+            graphicsPipelines[pipelineId] = factory->createGraphicsPipelineObject(std::move(descriptor));
+        }
+        return graphicsPipelines.at(pipelineId);
     }
 }
