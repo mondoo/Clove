@@ -52,8 +52,27 @@ namespace garlic::clove {
     }
 
     std::shared_ptr<GhaRenderPass> RgGlobalCache::createRenderPass(GhaRenderPass::Descriptor descriptor) {
-        //TODO
-        return nullptr;
+        auto const hashAttachment = [](PoolId &passId, AttachmentDescriptor const &attachment) {
+            CacheUtils::hashCombine(passId, attachment.format);
+            CacheUtils::hashCombine(passId, attachment.loadOperation);
+            CacheUtils::hashCombine(passId, attachment.storeOperation);
+            CacheUtils::hashCombine(passId, attachment.initialLayout);
+            CacheUtils::hashCombine(passId, attachment.usedLayout);
+            CacheUtils::hashCombine(passId, attachment.finalLayout);
+
+            return passId;
+        };
+
+        PoolId passId{};
+        for(auto const &colourAttachment : descriptor.colourAttachments) {
+            hashAttachment(passId, colourAttachment);
+        }
+        hashAttachment(passId, descriptor.depthAttachment);
+
+        if(!renderPasses.contains(passId)) {
+            renderPasses[passId] = factory->createRenderPass(std::move(descriptor));
+        }
+        return renderPasses.at(passId);
     }
 
     std::shared_ptr<GhaDescriptorSetLayout> RgGlobalCache::createDescriptorSetLayout(GhaDescriptorSetLayout::Descriptor descriptor) {
@@ -119,28 +138,28 @@ namespace garlic::clove {
         CacheUtils::hashCombine(pipelineId, descriptor.enableBlending);
 
         for(auto &&[id, renderPass] : renderPasses) {
-            if(renderPass == descriptor.renderPass){
+            if(renderPass == descriptor.renderPass) {
                 CacheUtils::hashCombine(pipelineId, id);
                 break;
             }
         }
 
-        for(auto const &descriptorSetLayout : descriptor.descriptorSetLayouts){
-            for(auto&&[id, cachedLayout] : descriptorSetLayouts){
-                if(descriptorSetLayout == cachedLayout){
+        for(auto const &descriptorSetLayout : descriptor.descriptorSetLayouts) {
+            for(auto &&[id, cachedLayout] : descriptorSetLayouts) {
+                if(descriptorSetLayout == cachedLayout) {
                     CacheUtils::hashCombine(pipelineId, id);
                     break;
                 }
             }
         }
 
-        for(auto const &pushConstantDescriptor : descriptor.pushConstants){
+        for(auto const &pushConstantDescriptor : descriptor.pushConstants) {
             CacheUtils::hashCombine(pipelineId, pushConstantDescriptor.stage);
             CacheUtils::hashCombine(pipelineId, pushConstantDescriptor.offset);
             CacheUtils::hashCombine(pipelineId, pushConstantDescriptor.size);
         }
 
-        if(!graphicsPipelines.contains(pipelineId)){
+        if(!graphicsPipelines.contains(pipelineId)) {
             graphicsPipelines[pipelineId] = factory->createGraphicsPipelineObject(std::move(descriptor));
         }
         return graphicsPipelines.at(pipelineId);
