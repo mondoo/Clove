@@ -70,7 +70,7 @@ namespace garlic::clove {
         hashAttachment(passId, descriptor.depthAttachment);
 
         if(!renderPasses.contains(passId)) {
-            renderPasses[passId] = factory->createRenderPass(std::move(descriptor));
+            renderPasses[passId] = *factory->createRenderPass(std::move(descriptor));
         }
         return renderPasses.at(passId);
     }
@@ -160,7 +160,7 @@ namespace garlic::clove {
         }
 
         if(!graphicsPipelines.contains(pipelineId)) {
-            graphicsPipelines[pipelineId] = factory->createGraphicsPipelineObject(std::move(descriptor));
+            graphicsPipelines[pipelineId] = *factory->createGraphicsPipelineObject(std::move(descriptor));
         }
         return graphicsPipelines.at(pipelineId);
     }
