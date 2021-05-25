@@ -27,6 +27,7 @@ namespace garlic::clove {
     private:
         std::shared_ptr<GhaFactory> factory{ nullptr };
 
+        std::unordered_map<std::string, std::shared_ptr<GhaShader>> shaders{};
         std::unordered_map<PoolId, std::shared_ptr<GhaRenderPass>> renderPasses{};
         std::unordered_map<PoolId, std::shared_ptr<GhaDescriptorSetLayout>> descriptorSetLayouts{};
         std::unordered_map<PoolId, std::shared_ptr<GhaGraphicsPipelineObject>> graphicsPipelines{};
