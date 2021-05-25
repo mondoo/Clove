@@ -2,8 +2,8 @@
 
 #include <Clove/Definitions.hpp>
 #include <Clove/Log/Log.hpp>
-#include <glslc/file_includer.h>
 #include <fstream>
+#include <glslc/file_includer.h>
 #include <libshaderc_util/file_finder.h>
 #include <shaderc/shaderc.hpp>
 #include <spirv.hpp>
@@ -111,7 +111,7 @@ namespace garlic::clove::ShaderCompiler {
 
             shaderc::Compiler compiler{};
             shaderc::SpvCompilationResult spirvResult{ compiler.CompileGlslToSpv(source.data(), source.size(), getShadercStage(shaderStage), shaderName.data(), options) };
-            
+
             if(spirvResult.GetCompilationStatus() != shaderc_compilation_status_success) {
                 CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to compile shader {0}:\n\t{1}", shaderName, spirvResult.GetErrorMessage());
                 return Unexpected{ std::runtime_error{ "Failed to compile shader. See output log for details." } };
@@ -141,19 +141,20 @@ namespace garlic::clove::ShaderCompiler {
         return compile(source, std::make_unique<EmbeddedSourceIncluder>(std::move(includeSources)), shaderName, shaderStage);
     }
 
-    Expected<std::string, std::runtime_error> spirvToHLSL(std::span<uint32_t> spirvSource) {
-        return Unexpected{ std::runtime_error{ "SPIR-V to HLSL not supported!" } };
+    std::string spirvToHLSL(std::span<uint32_t> spirvSource) {
+        CLOVE_ASSERT(false, "HLSL not implemented!");
+        return "";
     }
 
-    Expected<std::string, std::runtime_error> spirvToMSL(std::span<uint32_t> spirvSource) {
+    std::string spirvToMSL(std::span<uint32_t> spirvSource) {
         spirv_cross::CompilerMSL msl{ spirvSource.data(), spirvSource.size() };
-		spirv_cross::CompilerMSL::Options scoptions{};
+        spirv_cross::CompilerMSL::Options scoptions{};
 
         scoptions.platform = spirv_cross::CompilerMSL::Options::Platform::macOS;
-		
+
         msl.set_msl_options(scoptions);
 
-		spirv_cross::ShaderResources resources{ msl.get_shader_resources() };
+        spirv_cross::ShaderResources resources{ msl.get_shader_resources() };
 
         auto const remapMSLBindings = [&msl](uint32_t const binding, spirv_cross::ID const resourceID) {
             spirv_cross::MSLResourceBinding resourceBinding;

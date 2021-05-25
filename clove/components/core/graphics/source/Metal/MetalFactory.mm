@@ -164,12 +164,8 @@ namespace garlic::clove {
 	Expected<std::unique_ptr<GhaShader>, std::runtime_error> MetalFactory::createShaderFromFile(std::filesystem::path const &file, GhaShader::Stage shaderStage) {
 		Expected<std::vector<uint32_t>, std::runtime_error> compilationResult{ ShaderCompiler::compileFromFile(file, shaderStage) };
 		if(compilationResult.hasValue()) {
-			Expected<std::string, std::runtime_error> msl{ ShaderCompiler::spirvToMSL(compilationResult.getValue()) };
-			if(msl.hasValue()) {
-				return createShaderObject(std::move(msl.getValue()));
-			} else {
-				return Unexpected{ std::move(msl.getError()) };
-			}
+			std::vector<uint32_t> spirvSource{ std::move(compilationResult.getValue()) };
+            return createShaderObject({ spirvSource.begin(), spirvSource.end() });
 		} else {
 			return Unexpected{ std::move(compilationResult.getError()) };
 		}
@@ -178,12 +174,8 @@ namespace garlic::clove {
 	Expected<std::unique_ptr<GhaShader>, std::runtime_error> MetalFactory::createShaderFromSource(std::string_view source, std::unordered_map<std::string, std::string> includeSources, std::string_view shaderName, GhaShader::Stage shaderStage) {
 		Expected<std::vector<uint32_t>, std::runtime_error> compilationResult{ ShaderCompiler::compileFromSource(source, std::move(includeSources), shaderName, shaderStage) };
 		if(compilationResult.hasValue()) {
-			Expected<std::string, std::runtime_error> msl{ ShaderCompiler::spirvToMSL(compilationResult.getValue()) };
-			if(msl.hasValue()) {
-				return createShaderObject(std::move(msl.getValue()));
-			} else {
-				return Unexpected{ std::move(msl.getError()) };
-			}
+			std::vector<uint32_t> spirvSource{ std::move(compilationResult.getValue()) };
+            return createShaderObject({ spirvSource.begin(), spirvSource.end() });
 		} else {
 			return Unexpected{ std::move(compilationResult.getError()) };
 		}
@@ -349,8 +341,10 @@ namespace garlic::clove {
 		return Unexpected{ std::runtime_error{ "Not implemented" } };
 	}
 	
-	Expected<std::unique_ptr<GhaShader>, std::runtime_error> MetalFactory::createShaderObject(std::string mslSource) {
+	Expected<std::unique_ptr<GhaShader>, std::runtime_error> MetalFactory::createShaderObject(std::span<uint32_t> spirvSource) {
 		@autoreleasepool {
+			std::string const mslSource{ ShaderCompiler::spirvToMSL(spirvSource) };
+			
 			NSError *libError;
 			id<MTLLibrary> library{ [device newLibraryWithSource:[NSString stringWithCString:mslSource.c_str() encoding:[NSString defaultCStringEncoding]] options:nil error:&libError] };
 		
