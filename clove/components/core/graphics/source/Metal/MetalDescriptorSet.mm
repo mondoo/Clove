@@ -2,6 +2,8 @@
 
 #include "Clove/Graphics/GhaDescriptorSetLayout.hpp"
 #include "Clove/Graphics/Metal/MetalBuffer.hpp"
+#include "Clove/Graphics/Metal/MetalImageView.hpp"
+#include "Clove/Graphics/Metal/MetalSampler.hpp"
 
 #include <Clove/Cast.hpp>
 
@@ -24,10 +26,17 @@ namespace garlic::clove {
 	}
 	
 	void MetalDescriptorSet::map(GhaImageView const &imageView, GhaSampler const &sampler, GhaImage::Layout const layout, uint32_t const bindingSlot) {
-		//TODO
+		mappedTextures[bindingSlot] = polyCast<MetalImageView const>(&imageView)->getTexture();
+		mappedSamplers[bindingSlot] = polyCast<MetalSampler const>(&sampler)->getSamplerState();
 	}
 	
 	void MetalDescriptorSet::map(std::span<std::shared_ptr<GhaImageView>> imageViews, GhaSampler const &sampler, GhaImage::Layout const layout, uint32_t const bindingSlot) {
-		//TODO
+		std::vector<id<MTLTexture>> mtlTextures{};
+		for(auto const &imageView : imageViews) {
+			mtlTextures.emplace_back(polyCast<MetalImageView const>(imageView.get())->getTexture());
+		}
+		
+		mappedTextureArrays[bindingSlot] = mtlTextures;
+		mappedSamplers[bindingSlot] = polyCast<MetalSampler const>(&sampler)->getSamplerState();
 	}
 }
