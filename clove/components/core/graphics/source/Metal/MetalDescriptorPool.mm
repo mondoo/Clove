@@ -25,8 +25,10 @@ namespace garlic::clove {
 		std::vector<std::shared_ptr<GhaDescriptorSet>> descriptorSets{};
 		descriptorSets.reserve(layouts.size());
 		
+		//TODO: Argument buffer is created from the shader object
+		
 		for(size_t i{ 0 }; i < layouts.size(); ++i) {
-			descriptorSets.emplace_back(std::make_shared<MetalDescriptorSet>(layouts[i]));
+			//descriptorSets.emplace_back(std::make_shared<MetalDescriptorSet>(layouts[i]));
 		}
 		
 		return descriptorSets;
