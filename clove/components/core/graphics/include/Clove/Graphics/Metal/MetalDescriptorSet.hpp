@@ -25,7 +25,7 @@ namespace garlic::clove {
 		std::unordered_map<uint32_t, BufferMapping> mappedBuffers{};
 		std::unordered_map<uint32_t, id<MTLTexture>> mappedTextures{};
 		std::unordered_map<uint32_t, std::vector<id<MTLTexture>>> mappedTextureArrays{};
-		//TODO: Samplers
+		std::unordered_map<uint32_t, id<MTLSamplerState>> mappedSamplers{};
 		
 		//FUNCTIONS
 	public:
@@ -50,6 +50,7 @@ namespace garlic::clove {
 		inline std::unordered_map<uint32_t, BufferMapping> const &getMappedBuffers() const;
 		inline std::unordered_map<uint32_t, id<MTLTexture>> const &getMappedTextures() const;
 		inline std::unordered_map<uint32_t, std::vector<id<MTLTexture>>> const &getMappedTextureArrays() const;
+		inline std::unordered_map<uint32_t, id<MTLSamplerState>> const &getMappedSamplers() const;
 	};
 }
 

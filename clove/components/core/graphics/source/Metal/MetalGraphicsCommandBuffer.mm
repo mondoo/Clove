@@ -73,6 +73,22 @@ namespace garlic::clove {
 					break;
 			}
 		}
+		
+		void bindSamplerState(id<MTLRenderCommandEncoder> encoder, id<MTLSamplerState> samplerState, uint32_t slot, GhaShader::Stage stage) {
+			switch (stage) {
+				case GhaShader::Stage::Vertex:
+					[encoder setVertexSamplerState:samplerState
+										   atIndex:slot];
+					break;
+				case GhaShader::Stage::Pixel:
+					[encoder setFragmentSamplerState:samplerState
+											 atIndex:slot];
+					break;
+				default:
+					CLOVE_ASSERT(false, "{0}: GhaStage not handled", CLOVE_FUNCTION_NAME_PRETTY);
+					break;
+			}
+		}
 	}
 	
 	MetalGraphicsCommandBuffer::MetalGraphicsCommandBuffer() = default;
@@ -187,6 +203,7 @@ namespace garlic::clove {
 						} else if(descriptorBinding.arraySize > 1) {
 							bindTextureArray(encoder, metalDescriptorSet->getMappedTextureArrays().at(descriptorBinding.binding), descriptorBinding.binding, descriptorBinding.stage);
 						}
+						bindSamplerState(encoder, metalDescriptorSet->getMappedSamplers().at(descriptorBinding.binding), descriptorBinding.binding, descriptorBinding.stage);
 						break;
 					default:
 						CLOVE_ASSERT(false, "{0}: GhaStage not handled", CLOVE_FUNCTION_NAME_PRETTY);

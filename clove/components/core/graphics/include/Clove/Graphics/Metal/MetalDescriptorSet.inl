@@ -14,4 +14,8 @@ namespace garlic::clove {
 	std::unordered_map<uint32_t, std::vector<id<MTLTexture>>> const &MetalDescriptorSet::getMappedTextureArrays() const {
 		return mappedTextureArrays;
 	}
+	
+	std::unordered_map<uint32_t, id<MTLSamplerState>> const &MetalDescriptorSet::getMappedSamplers() const {
+		return mappedSamplers;
+	}
 }
