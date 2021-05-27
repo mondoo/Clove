@@ -3,6 +3,7 @@
 #include <filesystem>
 #include <optional>
 #include <functional>
+#include <memory>
 
 namespace garlic::clove {
     /**
@@ -13,20 +14,20 @@ namespace garlic::clove {
     class AssetPtr {
         //VARIABLES
     private:
-        std::filesystem::path assetPath{};
+        std::shared_ptr<std::filesystem::path> assetPath{};
         std::function<AssetType(std::filesystem::path const &)> loadFunction{};
 
-        std::optional<AssetType> asset{};
+        std::shared_ptr<std::optional<AssetType>> asset{};
 
         //FUNCTIONS
     public:
         AssetPtr();
         AssetPtr(std::filesystem::path assetPath, std::function<AssetType(std::filesystem::path const &)> loadFunction);
 
-        AssetPtr(AssetPtr const &other) = delete;
+        AssetPtr(AssetPtr const &other);
         AssetPtr(AssetPtr &&other) noexcept;
 
-        AssetPtr &operator=(AssetPtr const &other) = delete;
+        AssetPtr &operator=(AssetPtr const &other);
         AssetPtr &operator=(AssetPtr &&other) noexcept;
 
         ~AssetPtr();

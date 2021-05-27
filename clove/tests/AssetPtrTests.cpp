@@ -46,3 +46,31 @@ TEST(AssetPtrTest, CanLoadFileWhenRequested) {
     EXPECT_TRUE(loadedFile.isLoaded);
     EXPECT_TRUE(fileRef.isLoaded);
 }
+
+TEST(AssetPtrTest, CanPointToSameAssetButOnlyLoadOnce) {
+    int32_t callCount{ 0 };
+
+    auto const loadMockFileCount = [&callCount](std::filesystem::path const &path) mutable {
+        ++callCount;
+        return MockFile{ true };
+    };
+
+    AssetPtr<MockFile> asset{ "random/file/path.txt", loadMockFileCount };
+    AssetPtr<MockFile> assetCopy{ asset };
+
+    ASSERT_TRUE(asset.isValid());
+    EXPECT_EQ(asset.isValid(), assetCopy.isValid());
+
+    MockFile const &loadedFile{ assetCopy.get() };
+
+    ASSERT_TRUE(assetCopy.isLoaded());
+    EXPECT_EQ(asset.isLoaded(), assetCopy.isLoaded());
+    EXPECT_TRUE(asset->isLoaded);
+    EXPECT_EQ(callCount, 1);
+
+    AssetPtr<MockFile> invalidAsset{};
+    AssetPtr<MockFile> invalidCopy{ invalidAsset };
+
+    EXPECT_FALSE(invalidAsset.isValid());
+    EXPECT_FALSE(invalidCopy.isValid());
+}
