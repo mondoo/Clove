@@ -2,7 +2,7 @@ namespace garlic::clove {
     Application::State Application::getState() const {
         return currentState;
     }
-    
+
     Surface *Application::getSurface() const {
         return surface.get();
     }
@@ -23,7 +23,11 @@ namespace garlic::clove {
         return &entityManager;
     }
 
-   std::shared_ptr<PhysicsLayer> Application::getPhysicsLayer() const {
+    std::shared_ptr<PhysicsLayer> Application::getPhysicsLayer() const {
         return physicsLayer;
+    }
+
+    AssetManager *Application::getAssetManager() {
+        return &assetManager;
     }
 }
