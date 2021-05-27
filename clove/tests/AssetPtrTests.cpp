@@ -39,7 +39,10 @@ TEST(AssetPtrTest, CanLoadFileWhenRequested) {
     ASSERT_FALSE(asset.isLoaded());
 
     MockFile const &loadedFile{ asset.get() };
+    MockFile &fileRef{ *asset };
 
     EXPECT_TRUE(asset.isLoaded());
+    EXPECT_TRUE(asset->isLoaded);
     EXPECT_TRUE(loadedFile.isLoaded);
+    EXPECT_TRUE(fileRef.isLoaded);
 }

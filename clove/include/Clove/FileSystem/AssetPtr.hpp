@@ -47,7 +47,18 @@ namespace garlic::clove {
          * @brief Returns the asset object. Will load synchronously if the asset is not yet loaded.
          * @return 
          */
-        [[nodiscard]] AssetType const &get();
+        [[nodiscard]] AssetType &get();
+
+        /**
+         * @copydoc AssetPtr::get 
+         */
+        [[nodiscard]] AssetType const &get() const;
+
+        AssetType *operator->();
+        AssetType const *operator->() const;
+
+        AssetType &operator*();
+        AssetType const &operator*() const;
     };
 }
 
