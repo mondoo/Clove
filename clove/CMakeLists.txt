@@ -96,6 +96,8 @@ add_library(
 
 		${INCLUDE}/FileSystem/AssetPtr.hpp
 		${INCLUDE}/FileSystem/AssetPtr.inl
+		${INCLUDE}/FileSystem/AssetManager.hpp
+		${SOURCE}/FileSystem/AssetManager.cpp
 
 		${INCLUDE}/Rendering/AnimationTypes.hpp
 		${INCLUDE}/Rendering/Animator.hpp
