@@ -167,6 +167,7 @@ namespace garlic::clove {
 
 	Expected<std::unique_ptr<GhaSwapchain>, std::runtime_error> MetalFactory::createSwapChain(GhaSwapchain::Descriptor descriptor) {
 		std::vector<std::shared_ptr<GhaImage>> swapchainImages{};
+		std::vector<std::shared_ptr<GhaImageView>> swapchainImageViews{};
 		GhaImage::Format const drawableFormat{ MetalImage::convertFormat([view.metalLayer pixelFormat]) };
 		
 		GhaImage::Descriptor const imageDescriptor{
@@ -175,6 +176,10 @@ namespace garlic::clove {
 			.dimensions  = descriptor.extent,
 			.format 	 = drawableFormat,
 			.sharingMode = SharingMode::Concurrent,
+		};
+
+		GhaImageView::Descriptor const imageViewDescriptor{
+			.type = GhaImageView::Type::_2D,
 		};
 		
 		//Creating 3 back buffers for now. Will need to synchronise this number across APIs.
@@ -189,8 +194,18 @@ namespace garlic::clove {
 				return Unexpected{ std::move(imageResult.getError()) };
 			}
 		}
+
+		swapchainImageViews.reserve(swapchainImageCount);
+		for(size_t i{ 0 }; i < swapchainImageCount; ++i) {
+			Expected<std::unique_ptr<GhaImageView>, std::runtime_error> imageViewResult{ createImageView(swapchainImages[i], imageViewDescriptor) };
+			if(imageViewResult.hasValue()) {
+				swapchainImageViews.emplace_back(std::move(imageViewResult.getValue()));
+			} else {
+				return Unexpected{ std::move(imageViewResult.getError()) };
+			}
+		}
 		
-		return std::unique_ptr<GhaSwapchain>{ std::make_unique<MetalSwapchain>(std::move(swapchainImages), drawableFormat, descriptor.extent) };
+		return std::unique_ptr<GhaSwapchain>{ std::make_unique<MetalSwapchain>(std::move(swapchainImages), std::move(swapchainImageViews), drawableFormat, descriptor.extent) };
 	}
 
 	Expected<std::unique_ptr<GhaShader>, std::runtime_error> MetalFactory::createShaderFromFile(std::filesystem::path const &file, GhaShader::Stage shaderStage) {
@@ -386,6 +401,26 @@ namespace garlic::clove {
 		[mtlDescriptor release];
 		[texture release];
 		
+		return result;
+	}
+
+	Expected<std::unique_ptr<GhaImageView>, std::runtime_error> MetalFactory::createImageView(GhaImage const &image, GhaImageView::Descriptor descriptor) {
+		NSRange const mipLevels{
+			.location = 0,
+			.length   = 1,
+		};
+		NSRange const arraySlices{
+			.location = descriptor.layer,
+			.length   = descriptor.layerCount,
+		};
+
+		id<MTLTexture> mtlTexture{ polyCast<MetalImage>(&image)->getTexture() };
+		id<MTLTexture> textureView{ [mtlTexture newTextureViewWithPixelFormat:convertFormat(descriptor.format) textureType:convertImageViewType(viewDescriptor.type) levels:mipLevels slices:arraySlices] };
+		
+		auto result{ std::unique_ptr<GhaImageView>{ std::make_unique<MetalImageView>(descriptor.format, descriptor.dimensions, textureView) }};
+
+		[textureView release];
+
 		return result;
 	}
 

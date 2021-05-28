@@ -574,11 +574,11 @@ namespace garlic::clove {
                     .format      = GhaImage::Format::D32_SFLOAT,
                     .sharingMode = SharingMode::Exclusive,
                 });
-                imageData.shadowMapViews[i] = imageData.shadowMaps[i]->createView(GhaImageView::Descriptor{
-                    .type       = GhaImageView::Type::_2D,
-                    .layer      = 0,
-                    .layerCount = 1,
-                });
+                imageData.shadowMapViews[i] = *ghaFactory->createImageView(*imageData.shadowMaps[i], GhaImageView::Descriptor{
+                                                                                                         .type       = GhaImageView::Type::_2D,
+                                                                                                         .layer      = 0,
+                                                                                                         .layerCount = 1,
+                                                                                                     });
 
                 imageData.shadowMapFrameBuffers[i] = *ghaFactory->createFramebuffer(GhaFramebuffer::Descriptor{
                     .renderPass  = shadowMapRenderPass,
@@ -595,18 +595,18 @@ namespace garlic::clove {
                     .format      = GhaImage::Format::D32_SFLOAT,
                     .sharingMode = SharingMode::Exclusive,
                 });
-                imageData.cubeShadowMapViews[i] = imageData.cubeShadowMaps[i]->createView(GhaImageView::Descriptor{
-                    .type       = GhaImageView::Type::Cube,
-                    .layer      = 0,
-                    .layerCount = cubeMapLayerCount,
-                });
+                imageData.cubeShadowMapViews[i] = *ghaFactory->createImageView(*imageData.cubeShadowMaps[i], GhaImageView::Descriptor{
+                                                                                                                 .type       = GhaImageView::Type::Cube,
+                                                                                                                 .layer      = 0,
+                                                                                                                 .layerCount = cubeMapLayerCount,
+                                                                                                             });
 
                 for(size_t j = 0; j < cubeMapLayerCount; ++j) {
-                    imageData.cubeShadowMapFaceViews[i][j] = imageData.cubeShadowMaps[i]->createView(GhaImageView::Descriptor{
-                        .type       = GhaImageView::Type::_2D,
-                        .layer      = static_cast<uint32_t>(j),
-                        .layerCount = 1,
-                    });
+                    imageData.cubeShadowMapFaceViews[i][j] = *ghaFactory->createImageView(*imageData.cubeShadowMaps[i], GhaImageView::Descriptor{
+                                                                                                                            .type       = GhaImageView::Type::_2D,
+                                                                                                                            .layer      = static_cast<uint32_t>(j),
+                                                                                                                            .layerCount = 1,
+                                                                                                                        });
 
                     imageData.cubeShadowMapFrameBuffers[i][j] = *ghaFactory->createFramebuffer(GhaFramebuffer::Descriptor{
                         .renderPass  = shadowMapRenderPass,
@@ -673,11 +673,11 @@ namespace garlic::clove {
             .format      = GhaImage::Format::D32_SFLOAT,
             .sharingMode = SharingMode::Exclusive,
         });
-        depthImageView = depthImage->createView(GhaImageView::Descriptor{
-            .type       = GhaImageView::Type::_2D,
-            .layer      = 0,
-            .layerCount = 1,
-        });
+        depthImageView = *ghaFactory->createImageView(*depthImage, GhaImageView::Descriptor{
+                                                                       .type       = GhaImageView::Type::_2D,
+                                                                       .layer      = 0,
+                                                                       .layerCount = 1,
+                                                                   });
     }
 
     void ForwardRenderer3D::createUiPipeline() {

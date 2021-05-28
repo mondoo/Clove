@@ -221,6 +221,46 @@ namespace garlic::clove {
                     return VK_SAMPLER_ADDRESS_MODE_REPEAT;
             }
         }
+
+        Expected<VkImageView, std::runtime_error> createVkImageView(VkDevice device, VkImage image, GhaImageView::Descriptor const &viewdescriptor, GhaImage::Format const imageFormat) {
+            VkImageAspectFlags const aspectFlags{ static_cast<VkImageAspectFlags>(imageFormat == GhaImage::Format::D32_SFLOAT ? VK_IMAGE_ASPECT_DEPTH_BIT : VK_IMAGE_ASPECT_COLOR_BIT) };
+
+            VkImageViewCreateInfo const viewInfo{
+                .sType      = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
+                .pNext      = nullptr,
+                .flags      = 0,
+                .image      = image,
+                .viewType   = VulkanImageView::convertType(viewdescriptor.type),
+                .format     = VulkanImage::convertFormat(imageFormat),
+                .components = {
+                    .r = VK_COMPONENT_SWIZZLE_IDENTITY,
+                    .g = VK_COMPONENT_SWIZZLE_IDENTITY,
+                    .b = VK_COMPONENT_SWIZZLE_IDENTITY,
+                    .a = VK_COMPONENT_SWIZZLE_IDENTITY,
+                },
+                .subresourceRange = {
+                    .aspectMask     = aspectFlags,
+                    .baseMipLevel   = 0,
+                    .levelCount     = 1,
+                    .baseArrayLayer = viewdescriptor.layer,
+                    .layerCount     = viewdescriptor.layerCount,
+                }
+            };
+
+            VkImageView imageView{ nullptr };
+            if(VkResult const result{ vkCreateImageView(device, &viewInfo, nullptr, &imageView) }; result != VK_SUCCESS) {
+                switch(result) {
+                    case VK_ERROR_OUT_OF_HOST_MEMORY:
+                        return Unexpected{ std::runtime_error{ "Failed to create GhaImageView. Out of host memory" } };
+                    case VK_ERROR_OUT_OF_DEVICE_MEMORY:
+                        return Unexpected{ std::runtime_error{ "Failed to create GhaImageView. Out of device memory" } };
+                    default:
+                        return Unexpected{ std::runtime_error{ "Failed to create GhaImageView. Reason unkown." } };
+                }
+            }
+
+            return imageView;
+        }
     }
 
     VulkanFactory::VulkanFactory(DevicePointer devicePtr, QueueFamilyIndices queueFamilyIndices)
@@ -344,7 +384,7 @@ namespace garlic::clove {
         VkExtent2D const swapchainExtent{ chooseSwapExtent(surfaceSupport.capabilities, windowExtent) };
 
         //Request one more than the minimum images the swap chain can support because sometimes we might need to wait for the driver
-        uint32_t imageCount = surfaceSupport.capabilities.minImageCount + 1;
+        uint32_t imageCount{ surfaceSupport.capabilities.minImageCount + 1 };
         if(surfaceSupport.capabilities.maxImageCount > 0 && imageCount > surfaceSupport.capabilities.maxImageCount) {
             imageCount = surfaceSupport.capabilities.maxImageCount;
         }
@@ -390,7 +430,33 @@ namespace garlic::clove {
             }
         }
 
-        return std::unique_ptr<GhaSwapchain>{ std::make_unique<VulkanSwapchain>(devicePtr, swapchain, surfaceFormat.format, swapchainExtent) };
+        std::vector<VkImage> images{};
+        std::vector<std::shared_ptr<VulkanImageView>> imageViews{};
+
+        GhaImage::Format const imageFormat{ VulkanImage::convertFormat(surfaceFormat.format) };
+        vec2ui const swapchainSize{ swapchainExtent.width, swapchainExtent.height };
+
+        GhaImageView::Descriptor const viewDescriptor{
+            .type = GhaImageView::Type::_2D,
+        };
+
+        uint32_t createdImageCount{ 0 };
+        vkGetSwapchainImagesKHR(devicePtr.get(), swapchain, &createdImageCount, nullptr);
+        images.resize(createdImageCount);
+        vkGetSwapchainImagesKHR(devicePtr.get(), swapchain, &createdImageCount, images.data());
+
+        imageViews.resize(images.size());
+        for(size_t i{ 0 }; i < images.size(); ++i) {
+            auto result{ createVkImageView(devicePtr.get(), images[i], viewDescriptor, imageFormat) };
+            if(!result.hasValue()) {
+                vkDestroySwapchainKHR(devicePtr.get(), swapchain, nullptr);
+                return Unexpected{ result.getError() };
+            }
+
+            imageViews[i] = std::make_shared<VulkanImageView>(imageFormat, swapchainSize, devicePtr.get(), result.getValue());
+        }
+
+        return std::unique_ptr<GhaSwapchain>{ std::make_unique<VulkanSwapchain>(devicePtr, swapchain, surfaceFormat.format, swapchainExtent, std::move(imageViews)) };
     }
 
     Expected<std::unique_ptr<GhaShader>, std::runtime_error> VulkanFactory::createShaderFromFile(std::filesystem::path const &file, GhaShader::Stage shaderStage) {
@@ -1014,6 +1080,17 @@ namespace garlic::clove {
         }
 
         return std::unique_ptr<GhaImage>{ std::make_unique<VulkanImage>(devicePtr, image, descriptor, memoryAllocator) };
+    }
+
+    Expected<std::unique_ptr<GhaImageView>, std::runtime_error> VulkanFactory::createImageView(GhaImage const &image, GhaImageView::Descriptor descriptor) {
+        GhaImage::Descriptor const imageDescriptor{ image.getDescriptor() };
+
+        auto result{ createVkImageView(devicePtr.get(), polyCast<VulkanImage const>(&image)->getImage(), descriptor, imageDescriptor.format) };
+        if(!result.hasValue()) {
+            return Unexpected{ result.getError() };
+        }
+
+        return std::unique_ptr<GhaImageView>{ std::make_unique<VulkanImageView>(imageDescriptor.format, imageDescriptor.dimensions, devicePtr.get(), result.getValue()) };
     }
 
     Expected<std::unique_ptr<GhaSampler>, std::runtime_error> VulkanFactory::createSampler(GhaSampler::Descriptor descriptor) {

@@ -6,7 +6,7 @@ namespace garlic::clove {
 	MetalImageView::MetalImageView(GhaImage::Format viewedFormat, vec2ui viewedDimensions, GhaImage *viewedImage, id<MTLTexture> texture)
 		: viewedFormat{ viewedFormat }
         , viewedDimensions{ std::move(viewedDimensions) }
-		, texture{ texture } {
+		, texture{ [texture retain] } {
 	}
 	
 	MetalImageView::MetalImageView(MetalImageView &&other) noexcept = default;
@@ -27,5 +27,19 @@ namespace garlic::clove {
 	
 	id<MTLTexture> MetalImageView::getTexture() const {
 		return texture;
+	}
+
+	MTLTextureType MetalImageView::convertImageViewType(GhaImageView::Type type) {
+		switch (type) {
+			case GhaImageView::Type::_2D:
+				return MTLTextureType2D;
+			case GhaImageView::Type::_3D:
+				return MTLTextureType3D;
+			case GhaImageView::Type::Cube:
+				return MTLTextureTypeCube;
+			default:
+				CLOVE_ASSERT(false, "{0}: Unkown type passed", CLOVE_FUNCTION_NAME_PRETTY);
+				return MTLTextureType2D;
+		}
 	}
 }

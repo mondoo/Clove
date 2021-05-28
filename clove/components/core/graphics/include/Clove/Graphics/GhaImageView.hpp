@@ -10,7 +10,6 @@ namespace garlic::clove {
      * @brief Represents a view on a subset of a GhaImage.
      * @details GhaImages are not directly accessed by shaders for reading / writing.
      * Instead, a view onto that image is used.
-     * @see GhaImage::createView
      */
     class GhaImageView {
         //TYPES

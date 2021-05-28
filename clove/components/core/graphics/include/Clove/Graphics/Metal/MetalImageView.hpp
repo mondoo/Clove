@@ -31,5 +31,7 @@ namespace garlic::clove {
         vec2ui const &getImageDimensions() const override;
 
         id<MTLTexture> getTexture() const;
-	};
+
+        static MTLTextureType convertType(GhaImageView::Type type);
+    };
 }

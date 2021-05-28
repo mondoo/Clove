@@ -6,20 +6,11 @@
 #include <Clove/Log/Log.hpp>
 
 namespace garlic::clove {
-	MetalSwapchain::MetalSwapchain(std::vector<std::shared_ptr<GhaImage>> images, GhaImage::Format imageFormat, vec2ui imageSize)
+	MetalSwapchain::MetalSwapchain(std::vector<std::shared_ptr<GhaImage>> images, std::vector<std::shared_ptr<GhaImageView>> imageViews, GhaImage::Format imageFormat, vec2ui imageSize)
 		: images{ std::move(images) }
+		, imageViews{ std::move(imageViews) }
 		, imageFormat{ imageFormat }
 		, imageSize{ imageSize } {
-		imageViews.reserve(this->images.size());
-			
-		GhaImageView::Descriptor const viewDescriptor{
-			.type = GhaImageView::Type::_2D,
-		};
-			
-		for(size_t i{ 0 }; i < this->images.size(); ++i) {
-			imageViews.emplace_back(this->images[i]->createView(viewDescriptor));
-			imageQueue.push(i);
-		}
 	}
 	
 	MetalSwapchain::MetalSwapchain(MetalSwapchain &&other) noexcept = default;

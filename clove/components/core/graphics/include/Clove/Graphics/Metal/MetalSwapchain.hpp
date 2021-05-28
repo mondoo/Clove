@@ -23,9 +23,9 @@ namespace garlic::clove {
 		//FUNCTIONS
 	public:
 		MetalSwapchain() = delete;
-		MetalSwapchain(std::vector<std::shared_ptr<GhaImage>> images, GhaImage::Format imageFormat, vec2ui imageSize);
-		
-		MetalSwapchain(MetalSwapchain const &other) = delete;
+        MetalSwapchain(std::vector<std::shared_ptr<GhaImage>> images, std::vector<std::shared_ptr<GhaImageView>> imageViews, GhaImage::Format imageFormat, vec2ui imageSize);
+
+        MetalSwapchain(MetalSwapchain const &other) = delete;
 		MetalSwapchain(MetalSwapchain &&other) noexcept;
 		
 		MetalSwapchain& operator=(MetalSwapchain const &other) = delete;
