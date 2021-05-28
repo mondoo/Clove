@@ -9,6 +9,7 @@
 #include <Clove/Graphics/GhaFramebuffer.hpp>
 #include <Clove/Graphics/GhaGraphicsCommandBuffer.hpp>
 #include <Clove/Graphics/GhaImage.hpp>
+#include <Clove/Graphics/GhaImageView.hpp>
 #include <Clove/Graphics/GhaTransferCommandBuffer.hpp>
 #include <memory>
 #include <unordered_map>
@@ -66,7 +67,9 @@ namespace garlic::clove {
         void reset();
 
         std::shared_ptr<GhaBuffer> allocateBuffer(GhaBuffer::Descriptor descriptor);
+
         std::shared_ptr<GhaImage> allocateImage(GhaImage::Descriptor descriptor);
+        std::shared_ptr<GhaImageView> allocateImageView(GhaImage const &image, GhaImageView::Descriptor descriptor);
 
         std::shared_ptr<GhaFramebuffer> allocateFramebuffer(GhaFramebuffer::Descriptor descriptor);
 

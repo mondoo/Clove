@@ -238,14 +238,14 @@ namespace garlic::clove {
             for(auto &renderTarget : descriptor.renderTargets) {
                 //TEMP: Just create the view when we need it
                 if(!allocatedImageViews.contains(renderTarget.target)) {
-                    allocatedImageViews[renderTarget.target] = allocatedImages.at(renderTarget.target)->createView(GhaImageView::Descriptor{ .type = GhaImageView::Type::_2D });
+                    allocatedImageViews[renderTarget.target] = frameCache.allocateImageView(*allocatedImages.at(renderTarget.target), GhaImageView::Descriptor{ .type = GhaImageView::Type::_2D });
                 }
                 attachments.push_back(allocatedImageViews.at(renderTarget.target));
             }
             attachments.push_back(allocatedImageViews.at(descriptor.depthStencil.target));
             //TEMP: Just create the view when we need it
             if(!allocatedImageViews.contains(descriptor.depthStencil.target)) {
-                allocatedImageViews[descriptor.depthStencil.target] = allocatedImages.at(descriptor.depthStencil.target)->createView(GhaImageView::Descriptor{ .type = GhaImageView::Type::_2D });
+                allocatedImageViews[descriptor.depthStencil.target] = frameCache.allocateImageView(*allocatedImages.at(descriptor.depthStencil.target), GhaImageView::Descriptor{ .type = GhaImageView::Type::_2D });
             }
 
             allocatedFramebuffers[id] = frameCache.allocateFramebuffer(GhaFramebuffer::Descriptor{

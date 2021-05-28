@@ -60,6 +60,11 @@ namespace garlic::clove {
         return imagePool.allocated.find(imageId)->second;
     }
 
+    std::shared_ptr<GhaImageView> RgFrameCache::allocateImageView(GhaImage const &image, GhaImageView::Descriptor descriptor) {
+        //No need to cache the views. Just forward the allocation along
+        return ghaFactory->createImageView(image, std::move(descriptor)).getValue();
+    }
+
     std::shared_ptr<GhaFramebuffer> RgFrameCache::allocateFramebuffer(GhaFramebuffer::Descriptor descriptor) {
         auto const &renderPassDesc{ descriptor.renderPass->getDescriptor() };
         auto const hashAttachment = [](PoolId &id, AttachmentDescriptor const &attachment) {
@@ -72,7 +77,7 @@ namespace garlic::clove {
         };
 
         PoolId framebufferId{ 0 };
-        for(auto &attachment : renderPassDesc.colourAttachments){
+        for(auto &attachment : renderPassDesc.colourAttachments) {
             hashAttachment(framebufferId, attachment);
         }
         hashAttachment(framebufferId, renderPassDesc.depthAttachment);
@@ -91,7 +96,7 @@ namespace garlic::clove {
 
     std::shared_ptr<GhaDescriptorPool> RgFrameCache::allocateDescriptorPool(GhaDescriptorPool::Descriptor descriptor) {
         PoolId poolId{ 0 };
-        for(auto &poolType : descriptor.poolTypes){
+        for(auto &poolType : descriptor.poolTypes) {
             CacheUtils::hashCombine(poolId, poolType.type);
             CacheUtils::hashCombine(poolId, poolType.count);
         }
