@@ -1,5 +1,8 @@
 #pragma once
 
+#include "Clove/Graphics/GhaImage.hpp"
+
+#include <Clove/Maths/Vector.hpp>
 #include <cinttypes>
 
 namespace garlic::clove {
@@ -27,5 +30,17 @@ namespace garlic::clove {
         //FUNCTIONS
     public:
         virtual ~GhaImageView() = default;
+
+        /**
+         * @brief Returns the format of the viewed image.
+         * @return 
+         */
+        virtual GhaImage::Format getImageFormat() const = 0;
+
+        /**
+         * @brief Returns the dimensions of the viewed image.
+         * @return 
+         */
+        virtual vec2ui const &getImageDimensions() const = 0;
     };
 }

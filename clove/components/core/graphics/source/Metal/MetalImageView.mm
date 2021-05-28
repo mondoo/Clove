@@ -1,8 +1,12 @@
 #include "Clove/Graphics/Metal/MetalImageView.hpp"
 
+#include "Clove/Graphics/GhaImageView.hpp"
+
 namespace garlic::clove {
-	MetalImageView::MetalImageView(id<MTLTexture> texture)
-		: texture{ texture }{
+	MetalImageView::MetalImageView(GhaImage::Format viewedFormat, vec2ui viewedDimensions, GhaImage *viewedImage, id<MTLTexture> texture)
+		: viewedFormat{ viewedFormat }
+        , viewedDimensions{ std::move(viewedDimensions) }
+		, texture{ texture } {
 	}
 	
 	MetalImageView::MetalImageView(MetalImageView &&other) noexcept = default;
@@ -11,6 +15,14 @@ namespace garlic::clove {
 	
 	MetalImageView::~MetalImageView() {
 		[texture release];
+	}
+
+	GhaImage::Format MetalImageView::getImageFormat() const {
+		return viewedFormat;
+	}
+
+    vec2ui const &MetalImageView::getImageDimensions() const {
+		return viewedDimensions
 	}
 	
 	id<MTLTexture> MetalImageView::getTexture() const {

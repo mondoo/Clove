@@ -57,7 +57,8 @@ namespace garlic::clove {
         }
 
         VkImageAspectFlags const aspectFlags{ static_cast<VkImageAspectFlags>(descriptor.format == GhaImage::Format::D32_SFLOAT ? VK_IMAGE_ASPECT_DEPTH_BIT : VK_IMAGE_ASPECT_COLOR_BIT) };
-        return std::make_unique<VulkanImageView>(device.get(), VulkanImageView::create(device.get(), image, getImageViewType(viewDescriptor.type), convertFormat(descriptor.format), aspectFlags, viewDescriptor.layer, viewDescriptor.layerCount));
+        VkImageView imageView{ VulkanImageView::create(device.get(), image, getImageViewType(viewDescriptor.type), convertFormat(descriptor.format), aspectFlags, viewDescriptor.layer, viewDescriptor.layerCount) };
+        return std::make_unique<VulkanImageView>(descriptor.format, descriptor.dimensions, device.get(), imageView);
     }
 
     GhaImage::Format VulkanImage::convertFormat(VkFormat vulkanFormat) {

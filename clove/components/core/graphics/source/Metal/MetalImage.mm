@@ -49,7 +49,7 @@ namespace garlic::clove {
 		};
 		id<MTLTexture> textureView{ [texture newTextureViewWithPixelFormat:convertFormat(descriptor.format) textureType:convertImageViewType(viewDescriptor.type) levels:mipLevels slices:arraySlices] };
 		
-		return std::make_unique<MetalImageView>(textureView);
+		return std::make_unique<MetalImageView>(descriptor.format, descriptor.dimensions, textureView);
 	}
 	
 	id<MTLTexture> MetalImage::getTexture() const {

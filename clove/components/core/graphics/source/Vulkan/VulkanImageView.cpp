@@ -1,11 +1,15 @@
 #include "Clove/Graphics/Vulkan/VulkanImageView.hpp"
 
+#include "Clove/Graphics/GhaImageView.hpp"
+
 #include <Clove/Log/Log.hpp>
 
 namespace garlic::clove {
-    VulkanImageView::VulkanImageView(VkDevice device, VkImageView imageView)
-        : device(device)
-        , imageView(imageView) {
+    VulkanImageView::VulkanImageView(GhaImage::Format viewedFormat, vec2ui viewedDimensions, VkDevice device, VkImageView imageView)
+        : viewedFormat{ viewedFormat }
+        , viewedDimensions{ std::move(viewedDimensions) }
+        , device{ device }
+        , imageView{ imageView } {
     }
 
     VulkanImageView::VulkanImageView(VulkanImageView &&other) noexcept = default;
@@ -14,6 +18,14 @@ namespace garlic::clove {
 
     VulkanImageView::~VulkanImageView() {
         vkDestroyImageView(device, imageView, nullptr);
+    }
+
+    GhaImage::Format VulkanImageView::getImageFormat() const {
+        return viewedFormat;
+    }
+
+    vec2ui const &VulkanImageView::getImageDimensions() const {
+        return viewedDimensions;
     }
 
     VkImageView VulkanImageView::create(VkDevice device, VkImage image, VkImageViewType viewType, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t const baseLayer, uint32_t const layerCount) {

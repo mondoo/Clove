@@ -20,7 +20,8 @@ namespace garlic::clove {
 
         imageViews.resize(std::size(images));
         for(size_t i = 0; i < images.size(); ++i) {
-            imageViews[i] = std::make_shared<VulkanImageView>(this->device.get(), VulkanImageView::create(this->device.get(), images[i], VK_IMAGE_VIEW_TYPE_2D, swapChainImageFormat, VK_IMAGE_ASPECT_COLOR_BIT, 0, 1));
+            VkImageView imageView{ VulkanImageView::create(this->device.get(), images[i], VK_IMAGE_VIEW_TYPE_2D, swapChainImageFormat, VK_IMAGE_ASPECT_COLOR_BIT, 0, 1) };
+            imageViews[i] = std::make_shared<VulkanImageView>(getImageFormat(), getSize(), this->device.get(), imageView);
         }
     }
 
