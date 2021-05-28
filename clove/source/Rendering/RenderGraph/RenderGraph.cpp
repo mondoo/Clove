@@ -313,16 +313,20 @@ namespace garlic::clove {
     GhaImage::Format RenderGraph::getImageFormat(RgImage image) {
         if(imageDescriptors.contains(image)) {
             return imageDescriptors.at(image).format;
-        } else {
+        } else if(allocatedImages.contains(image)) {
             return allocatedImages.at(image)->getDescriptor().format;
+        } else {
+            return allocatedImageViews.at(image)->getImageFormat();
         }
     }
 
     vec2ui RenderGraph::getImageSize(RgImage image) {
         if(imageDescriptors.contains(image)) {
             return imageDescriptors.at(image).dimensions;
-        } else {
+        } else if(allocatedImages.contains(image)) {
             return allocatedImages.at(image)->getDescriptor().dimensions;
+        } else {
+            return allocatedImageViews.at(image)->getImageDimensions();
         }
     }
 }
