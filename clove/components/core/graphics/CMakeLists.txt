@@ -91,12 +91,20 @@ set(
 	MetalFiles
 		${INCLUDE}/Metal/MetalBuffer.hpp
 		${SOURCE}/Metal/MetalBuffer.mm
+		${INCLUDE}/Metal/MetalDescriptorPool.hpp
+		${SOURCE}/Metal/MetalDescriptorPool.mm
+		${INCLUDE}/Metal/MetalDescriptorSet.hpp
+		${INCLUDE}/Metal/MetalDescriptorSet.inl
+		${SOURCE}/Metal/MetalDescriptorSet.mm
+		${INCLUDE}/Metal/MetalDescriptorSetLayout.hpp
+		${SOURCE}/Metal/MetalDescriptorSetLayout.mm
 		${INCLUDE}/Metal/MetalDevice.hpp
 		${SOURCE}/Metal/MetalDevice.mm
 		${INCLUDE}/Metal/MetalFactory.hpp
 		${SOURCE}/Metal/MetalFactory.mm
 		${INCLUDE}/Metal/MetalFramebuffer.hpp
 		${SOURCE}/Metal/MetalFramebuffer.mm
+		${INCLUDE}/Metal/MetalGlobals.hpp
 		${INCLUDE}/Metal/MetalGraphicsCommandBuffer.hpp
 		${SOURCE}/Metal/MetalGraphicsCommandBuffer.mm
 		${INCLUDE}/Metal/MetalGraphicsPipelineObject.hpp
@@ -112,6 +120,9 @@ set(
 		${INCLUDE}/Metal/MetalRenderPass.hpp
 		${INCLUDE}/Metal/MetalRenderPass.inl
 		${SOURCE}/Metal/MetalRenderPass.mm
+		${INCLUDE}/Metal/MetalSampler.hpp
+		${INCLUDE}/Metal/MetalSampler.inl
+		${SOURCE}/Metal/MetalSampler.mm
 		${INCLUDE}/Metal/MetalShader.hpp
 		${SOURCE}/Metal/MetalShader.mm
 		${INCLUDE}/Metal/MetalSwapchain.hpp

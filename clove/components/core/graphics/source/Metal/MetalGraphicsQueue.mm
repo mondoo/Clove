@@ -7,7 +7,7 @@
 
 namespace garlic::clove {
 	MetalGraphicsQueue::MetalGraphicsQueue(id<MTLCommandQueue> commandQueue)
-		: commandQueue{ commandQueue } {
+		: commandQueue{ [commandQueue retain] } {
 	}
 	
 	MetalGraphicsQueue::MetalGraphicsQueue(MetalGraphicsQueue &&other) noexcept = default;
@@ -25,12 +25,17 @@ namespace garlic::clove {
 	}
 
 	void MetalGraphicsQueue::submit(std::vector<GraphicsSubmitInfo> const &submissions, GhaFence const *signalFence) {
-		for(auto &submission : submissions) {
-			//TODO: Fences / semahpores
-			//[currentEncoder updateFence:nullptr afterStages:MTLRenderStageFragment];
+		@autoreleasepool {
+			for(auto const &submission : submissions) {
+				//TODO: Fences / semahpores
+				//[currentEncoder updateFence:nullptr afterStages:MTLRenderStageFragment];
 			
-			for(auto &commandBuffer : submission.commandBuffers) {
-				polyCast<MetalGraphicsCommandBuffer>(commandBuffer.get())->executeCommands([commandQueue commandBuffer]);
+				for(auto const &commandBuffer : submission.commandBuffers) {
+					id<MTLCommandBuffer> mtlCommandBuffer{ [commandQueue commandBuffer] };
+				
+					polyCast<MetalGraphicsCommandBuffer>(commandBuffer.get())->executeCommands(mtlCommandBuffer);
+					//[mtlCommandBuffer release];
+				}
 			}
 		}
 	}

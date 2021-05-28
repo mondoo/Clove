@@ -126,8 +126,8 @@ std::ostream* GetOutputStream(const string_piece& output_filename,
 bool WriteFile(std::ostream* stream, const string_piece& output_data) {
   //GARLIC CHANGE - BEGIN
   if (output_data.size() > 0) { //NOLINT
-  //GARLIC CHANGE - END
-    stream->write(output_data.data(), output_data.size());
+    stream->write(output_data.data(), output_data.size());//NOLINT
+    //GARLIC CHANGE - END
     if (!stream->good()) {
       return false;
     }

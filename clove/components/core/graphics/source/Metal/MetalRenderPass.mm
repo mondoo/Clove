@@ -3,8 +3,8 @@
 namespace garlic::clove {
 	MetalRenderPass::MetalRenderPass(Descriptor descriptor, MTLRenderPipelineColorAttachmentDescriptorArray* colourAttachments, MTLPixelFormat depthPixelFormat)
 		: descriptor{ std::move(descriptor) }{
-		, colourAttachments{ std::move(colourAttachments) }
-		, depthPixelFormat{ std::move(depthPixelFormat) }{
+		, colourAttachments{ [colourAttachments retain] }
+		, depthPixelFormat{ depthPixelFormat }
 	}
 	
 	MetalRenderPass::MetalRenderPass(MetalRenderPass &&other) noexcept = default;

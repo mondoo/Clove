@@ -2,14 +2,18 @@
 
 #include "Clove/Graphics/ShaderCompiler.hpp"
 #include "Clove/Graphics/Metal/MetalBuffer.hpp"
+#include "Clove/Graphics/Metal/MetalDescriptorPool.hpp"
+#include "Clove/Graphics/Metal/MetalDescriptorSetLayout.hpp"
 #include "Clove/Graphics/Metal/MetalShader.hpp"
 #include "Clove/Graphics/Metal/MetalFramebuffer.hpp"
+#include "Clove/Graphics/Metal/MetalGlobals.hpp"
 #include "Clove/Graphics/Metal/MetalGraphicsPipelineObject.hpp"
 #include "Clove/Graphics/Metal/MetalGraphicsQueue.hpp"
 #include "Clove/Graphics/Metal/MetalImage.hpp"
 #include "Clove/Graphics/Metal/MetalImageView.hpp"
 #include "Clove/Graphics/Metal/MetalPresentQueue.hpp"
 #include "Clove/Graphics/Metal/MetalRenderPass.hpp"
+#include "Clove/Graphics/Metal/MetalSampler.hpp"
 #include "Clove/Graphics/Metal/MetalSwapchain.hpp"
 #include "Clove/Graphics/Metal/MetalView.hpp"
 
@@ -96,11 +100,39 @@ namespace garlic::clove {
 					return MTLStoreActionUnknown;
 			}
 		}
+		
+		MTLSamplerMinMagFilter convertMinMagFilter(GhaSampler::Filter filter) {
+			switch (filter) {
+				case GhaSampler::Filter::Nearest:
+					return MTLSamplerMinMagFilterNearest;
+				case GhaSampler::Filter::Linear:
+					return MTLSamplerMinMagFilterLinear;
+				default:
+					CLOVE_ASSERT(false, "{0}: Unkown filter", CLOVE_FUNCTION_NAME);
+					return MTLSamplerMinMagFilterNearest;
+			}
+		}
+		
+		MTLSamplerAddressMode convertAddressMode(GhaSampler::AddressMode addressMode) {
+			switch (addressMode) {
+				case GhaSampler::AddressMode::Repeat:
+					return MTLSamplerAddressModeRepeat;
+				case GhaSampler::AddressMode::MirroredRepeat:
+					return MTLSamplerAddressModeMirrorRepeat;
+				case GhaSampler::AddressMode::ClampToEdge:
+					return MTLSamplerAddressModeClampToEdge;
+				case GhaSampler::AddressMode::ClampToBorder:
+					return MTLSamplerAddressModeClampToBorderColor;
+				default:
+					CLOVE_ASSERT(false, "{0}: Unkown address mode", CLOVE_FUNCTION_NAME);
+					return MTLSamplerAddressModeRepeat;
+			}
+		}
 	}
 	
 	MetalFactory::MetalFactory(id<MTLDevice> device, MetalView *view)
-		: device{ device }
-		, view{ view } {
+		: device{ [device retain] }
+		, view{ [view retain] } {
 		commandQueue = [this->device newCommandQueue];
 	}
 	
@@ -116,11 +148,11 @@ namespace garlic::clove {
 
 	Expected<std::unique_ptr<GhaGraphicsQueue>, std::runtime_error> MetalFactory::createGraphicsQueue(CommandQueueDescriptor descriptor) {
 		//TODO: descriptor
-		return std::unique_ptr<GhaGraphicsQueue>{ std::make_unique<MetalGraphicsQueue>([commandQueue retain]) };
+		return std::unique_ptr<GhaGraphicsQueue>{ std::make_unique<MetalGraphicsQueue>(commandQueue) };
 	}
 	
 	Expected<std::unique_ptr<GhaPresentQueue>, std::runtime_error> MetalFactory::createPresentQueue() {
-		return std::unique_ptr<GhaPresentQueue>{ std::make_unique<MetalPresentQueue>([commandQueue retain], [view retain]) };
+		return std::unique_ptr<GhaPresentQueue>{ std::make_unique<MetalPresentQueue>(commandQueue, view) };
 	}
 	
 	Expected<std::unique_ptr<GhaTransferQueue>, std::runtime_error> MetalFactory::createTransferQueue(CommandQueueDescriptor descriptor) {
@@ -189,11 +221,15 @@ namespace garlic::clove {
 		
 		MTLPixelFormat depthPixelFormat{ MetalImage::convertFormat(descriptor.depthAttachment.format) };
 		
-		return std::unique_ptr<GhaRenderPass>{ std::make_unique<MetalRenderPass>(std::move(descriptor), std::move(colourAttachments), std::move(depthPixelFormat)) };
+		auto result{ std::unique_ptr<GhaRenderPass>{ std::make_unique<MetalRenderPass>(colourAttachments, depthPixelFormat, std::move(descriptor)) }};
+		
+		[colourAttachments release];
+		
+		return result;
 	}
 	
 	Expected<std::unique_ptr<GhaDescriptorSetLayout>, std::runtime_error> MetalFactory::createDescriptorSetLayout(GhaDescriptorSetLayout::Descriptor descriptor) {
-		return Unexpected{ std::runtime_error{ "Not implemented" } };
+		return std::unique_ptr<GhaDescriptorSetLayout>{ std::make_unique<MetalDescriptorSetLayout>(std::move(descriptor)) };
 	}
 
 	Expected<std::unique_ptr<GhaGraphicsPipelineObject>, std::runtime_error> MetalFactory::createGraphicsPipelineObject(GhaGraphicsPipelineObject::Descriptor descriptor) {
@@ -205,31 +241,38 @@ namespace garlic::clove {
 			id<MTLFunction> fragmentFunction{ polyCast<MetalShader>(descriptor.pixelShader.get())->getFunction() };
 		
 			//Vertex input
-			MTLVertexDescriptor *vertexDescriptor{ [[MTLVertexDescriptor alloc] init] };
-			vertexDescriptor.layouts[0].stride = descriptor.vertexInput.stride;
-			for(size_t i{0}; i < descriptor.vertexAttributes.size(); ++i){
+			MTLVertexDescriptor *vertexDescriptor{ [[[MTLVertexDescriptor alloc] init] autorelease]};
+			vertexDescriptor.layouts[vertexBufferBindingIndex].stride = descriptor.vertexInput.stride;
+			for(size_t i{ 0 }; i < descriptor.vertexAttributes.size(); ++i){
 				auto const &attribute{ descriptor.vertexAttributes[i] };
-				vertexDescriptor.attributes[i].bufferIndex = 0;
+				vertexDescriptor.attributes[i].bufferIndex = vertexBufferBindingIndex;
 				vertexDescriptor.attributes[i].format = convertAttributeFormat(attribute.format);
 				vertexDescriptor.attributes[i].offset = attribute.offset;
 			}
 		
-			//Topology
+			//Input assembly
 			MTLPrimitiveTopologyClass const topology{ MTLPrimitiveTopologyClassTriangle };
+			
+			//Rasteriser
+			MTLWinding const winding{ MTLWindingClockwise }; //TODO: Set inside the command encoder
 		
-			//Depth state
-			MTLDepthStencilDescriptor *depthStencil{ [[MTLDepthStencilDescriptor alloc] init]};
-			depthStencil.depthWriteEnabled = descriptor.depthState.depthWrite;
+			//Depth / Stencil
+			MTLDepthStencilDescriptor *depthStencil{ [[[MTLDepthStencilDescriptor alloc] init] autorelease] };
+			depthStencil.depthWriteEnabled = static_cast<BOOL>(descriptor.depthState.depthWrite);
 			if(descriptor.depthState.depthTest){
 				depthStencil.depthCompareFunction = MTLCompareFunctionLess;
 			}else{
 				depthStencil.depthCompareFunction = MTLCompareFunctionAlways;
 			}
 		
-			id<MTLDepthStencilState> depthStencilState{ [device newDepthStencilStateWithDescriptor:depthStencil] };
+			id<MTLDepthStencilState> depthStencilState{ [[device newDepthStencilStateWithDescriptor:depthStencil] autorelease] };
 		
 			//Render pass
 			MetalRenderPass const *const renderPass{ polyCast<MetalRenderPass>(descriptor.renderPass.get()) };
+			if(renderPass == nullptr) {
+				return Unexpected{ std::runtime_error{ "Failed to create GraphicsPipelineObject. RenderPass is nullptr" } };
+			}
+			
 			size_t const colourAttachmentCount{ renderPass->getDescriptor().colourAttachments.size() };
 			MTLRenderPipelineColorAttachmentDescriptorArray* colourAttachments{ renderPass->getColourAttachments() };
 			MTLPixelFormat const depthPixelFormat{ renderPass->getDepthPixelFormat() };
@@ -240,7 +283,7 @@ namespace garlic::clove {
 			//Push constants
 			//TODO:
 		
-			MTLRenderPipelineDescriptor *pipelineDesc{ [[MTLRenderPipelineDescriptor alloc] init] };
+			MTLRenderPipelineDescriptor *pipelineDesc{ [[[MTLRenderPipelineDescriptor alloc] init] autorelease] };
 			pipelineDesc.vertexFunction = vertexFunction;
 			pipelineDesc.fragmentFunction = fragmentFunction;
 			pipelineDesc.vertexDescriptor = vertexDescriptor;
@@ -249,7 +292,7 @@ namespace garlic::clove {
 				pipelineDesc.colorAttachments[i] = colourAttachments[i];
 			
 				//Blending
-				pipelineDesc.colorAttachments[i].blendingEnabled = descriptor.enableBlending;
+				pipelineDesc.colorAttachments[i].blendingEnabled = static_cast<BOOL>(descriptor.enableBlending);
 				pipelineDesc.colorAttachments[i].sourceRGBBlendFactor = MTLBlendFactorSourceAlpha;
 				pipelineDesc.colorAttachments[i].destinationRGBBlendFactor = MTLBlendFactorOneMinusSourceAlpha;
 				pipelineDesc.colorAttachments[i].rgbBlendOperation = MTLBlendOperationAdd;
@@ -260,7 +303,7 @@ namespace garlic::clove {
 			pipelineDesc.depthAttachmentPixelFormat = depthPixelFormat;
 		
 			NSError *error{ nullptr };
-			id<MTLRenderPipelineState> pipelineState{ [device newRenderPipelineStateWithDescriptor:pipelineDesc error:&error] };
+			id<MTLRenderPipelineState> pipelineState{ [[device newRenderPipelineStateWithDescriptor:pipelineDesc error:&error] autorelease] };
 			if(error != nullptr && error.code != 0) {
 				return Unexpected{ std::runtime_error{ [[error description] cStringUsingEncoding:[NSString defaultCStringEncoding]] } };
 			}
@@ -286,11 +329,15 @@ namespace garlic::clove {
 		frameBufferDescriptor.depthAttachment.loadAction = convertLoadOp(renderPassDescriptor.depthAttachment.loadOperation);
 		frameBufferDescriptor.depthAttachment.storeAction = convertStoreOp(renderPassDescriptor.depthAttachment.storeOperation);
 		
-		return std::unique_ptr<GhaFramebuffer>{ std::make_unique<MetalFramebuffer>(frameBufferDescriptor) };
+		auto result{ std::unique_ptr<GhaFramebuffer>{ std::make_unique<MetalFramebuffer>(frameBufferDescriptor) }};
+		
+		[frameBufferDescriptor release];
+		
+		return result;
 	}
 	
 	Expected<std::unique_ptr<GhaDescriptorPool>, std::runtime_error> MetalFactory::createDescriptorPool(GhaDescriptorPool::Descriptor descriptor) {
-		return Unexpected{ std::runtime_error{ "Not implemented" } };
+		return std::unique_ptr<GhaDescriptorPool>{ std::make_unique<MetalDescriptorPool>(std::move(descriptor)) };
 	}
 
 	Expected<std::unique_ptr<GhaSemaphore>, std::runtime_error> MetalFactory::createSemaphore() {
@@ -317,8 +364,11 @@ namespace garlic::clove {
 		}
 		
 		id<MTLBuffer> buffer{ [device newBufferWithLength:descriptor.size options:resourceOptions] };
+		auto result{ std::unique_ptr<GhaBuffer>{ std::make_unique<MetalBuffer>(buffer, descriptor) }};
 		
-		return std::unique_ptr<GhaBuffer>{ std::make_unique<MetalBuffer>(buffer, std::move(descriptor)) };
+		[buffer release];
+		
+		return result;
 	}
 	
 	Expected<std::unique_ptr<GhaImage>, std::runtime_error> MetalFactory::createImage(GhaImage::Descriptor descriptor) {
@@ -331,28 +381,50 @@ namespace garlic::clove {
 		mtlDescriptor.usage = getUsageFlags(descriptor.usageFlags);
 		
 		id<MTLTexture> texture{ [device newTextureWithDescriptor:mtlDescriptor] };
+		auto result{ std::unique_ptr<GhaImage>{ std::make_unique<MetalImage>(texture, descriptor) }};
 		
 		[mtlDescriptor release];
+		[texture release];
 		
-		return std::unique_ptr<GhaImage>{ std::make_unique<MetalImage>(texture, std::move(descriptor)) };
+		return result;
 	}
 
 	Expected<std::unique_ptr<GhaSampler>, std::runtime_error> MetalFactory::createSampler(GhaSampler::Descriptor descriptor) {
-		return Unexpected{ std::runtime_error{ "Not implemented" } };
+		MTLSamplerDescriptor *samplerDescriptor{ [[MTLSamplerDescriptor alloc] init] };
+		samplerDescriptor.minFilter = convertMinMagFilter(descriptor.minFilter);
+		samplerDescriptor.magFilter = convertMinMagFilter(descriptor.magFilter);
+		samplerDescriptor.sAddressMode = convertAddressMode(descriptor.addressModeU);
+		samplerDescriptor.tAddressMode = convertAddressMode(descriptor.addressModeV);
+		samplerDescriptor.rAddressMode = convertAddressMode(descriptor.addressModeW);
+		samplerDescriptor.maxAnisotropy = descriptor.maxAnisotropy;
+		
+		id<MTLSamplerState> samplerState{ [device newSamplerStateWithDescriptor:samplerDescriptor] };
+		
+		auto result{ std::unique_ptr<GhaSampler>{ std::make_unique<MetalSampler>(samplerState) } };
+		
+		[samplerDescriptor release];
+		[samplerState release];
+		
+		return result;
 	}
 	
 	Expected<std::unique_ptr<GhaShader>, std::runtime_error> MetalFactory::createShaderObject(std::span<uint32_t> spirvSource) {
 		@autoreleasepool {
+			NSString *librarySource{ [NSString stringWithCString:mslSource.c_str() encoding:[NSString defaultCStringEncoding]] };
+			if(librarySource == nullptr) {
+				return Unexpected{ std::runtime_error{ "Shader creation failed. Could not convert std::string to NSString" } };
+			}
+			
 			std::string const mslSource{ ShaderCompiler::spirvToMSL(spirvSource) };
 			
 			NSError *libError;
-			id<MTLLibrary> library{ [device newLibraryWithSource:[NSString stringWithCString:mslSource.c_str() encoding:[NSString defaultCStringEncoding]] options:nil error:&libError] };
+			id<MTLLibrary> library{ [device newLibraryWithSource:librarySource options:nil error:&libError] };
 		
 			if(libError != nullptr && libError.code != 0){
 				return Unexpected{ std::runtime_error{ [[libError description] cStringUsingEncoding:[NSString defaultCStringEncoding]] } };
 			}
 		
-			return std::unique_ptr<GhaShader>{ std::make_unique<MetalShader>([library newFunctionWithName:@"main0"]) }; //MSL can't have main so we use main0 (generated by spirv)
+			return std::unique_ptr<GhaShader>{ std::make_unique<MetalShader>([[library newFunctionWithName:@"main0"] autorelease]) }; //MSL can't have main so we use main0 (generated by spirv)
 		}
 	}
 }

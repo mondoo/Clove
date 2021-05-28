@@ -1,9 +1,12 @@
 #include "Clove/Graphics/Metal/MetalGraphicsCommandBuffer.hpp"
 
 #include "Clove/Graphics/Metal/MetalFramebuffer.hpp"
+#include "Clove/Graphics/Metal/MetalGlobals.hpp"
 #include "Clove/Graphics/Metal/MetalGraphicsPipelineObject.hpp"
 #include "Clove/Graphics/Metal/MetalBuffer.hpp"
 #include "Clove/Graphics/Metal/MetalRenderPass.hpp"
+#include "Clove/Graphics/Metal/MetalDescriptorSet.hpp"
+#include "Clove/Graphics/Metal/MetalDescriptorSetLayout.hpp"
 
 #include <Clove/Cast.hpp>
 
@@ -75,7 +78,7 @@ namespace garlic::clove {
 		};
 		
 		currentPass->commands.emplace_back([viewport](id<MTLRenderCommandEncoder> encoder){
-			[encoder setViewport:std::move(viewport)];
+			[encoder setViewport:viewport];
 		});
 	}
 	
@@ -88,7 +91,7 @@ namespace garlic::clove {
 		};
 		
 		currentPass->commands.emplace_back([scissorRect](id<MTLRenderCommandEncoder> encoder){
-			[encoder setScissorRect:std::move(scissorRect)];
+			[encoder setScissorRect:scissorRect];
 		});
 	}
 
@@ -102,7 +105,7 @@ namespace garlic::clove {
 		currentPass->commands.emplace_back([vertexBuffer = &vertexBuffer, offset](id<MTLRenderCommandEncoder> encoder){
 			[encoder setVertexBuffer:polyCast<MetalBuffer>(vertexBuffer)->getBuffer()
 							  offset:offset
-							 atIndex:0];
+							 atIndex:vertexBufferBindingIndex];
 		});
 	}
 	
@@ -117,16 +120,45 @@ namespace garlic::clove {
 	}
 	
 	void MetalGraphicsCommandBuffer::bindDescriptorSet(GhaDescriptorSet &descriptorSet, uint32_t const setNum) {
-		//TODO
+		currentPass->commands.emplace_back([descriptorSet = &descriptorSet, setNum](id<MTLRenderCommandEncoder> encoder){
+			auto *metalDescriptorSet{ polyCast<MetalDescriptorSet>(descriptorSet) };
+			
+			//TODO
+		});
 	}
 	
 	void MetalGraphicsCommandBuffer::pushConstant(GhaShader::Stage const stage, size_t const offset, size_t const size, void const *data) {
-		//TODO
+		uint8_t *cachedData{ reinterpret_cast<uint8_t*>(malloc(size)) };
+		memcpy(cachedData, data, size);
+		
+		currentPass->commands.emplace_back([stage, data = cachedData, size](id<MTLRenderCommandEncoder> encoder){
+			switch(stage) {
+				case GhaShader::Stage::Vertex:
+					[encoder setVertexBytes:data
+									 length:size
+									atIndex:pushConstantSlot];
+					break;
+				case GhaShader::Stage::Pixel:
+					[encoder setFragmentBytes:data
+									   length:size
+									  atIndex:pushConstantSlot];
+					break;
+				default:
+					CLOVE_ASSERT(false, "{0}: Unknown shader stage provided", CLOVE_FUNCTION_NAME_PRETTY);
+					break;
+			}
+			
+			delete data;
+		});
 	}
 
 	void MetalGraphicsCommandBuffer::drawIndexed(size_t const indexCount) {
 		currentPass->commands.emplace_back([cachedIndexBuffer = cachedIndexBuffer, indexCount](id<MTLRenderCommandEncoder> encoder){
-			[encoder drawIndexedPrimitives:MTLPrimitiveTypeTriangle indexCount:indexCount indexType:cachedIndexBuffer.indexType indexBuffer:cachedIndexBuffer.buffer indexBufferOffset:cachedIndexBuffer.offset];
+			[encoder drawIndexedPrimitives:MTLPrimitiveTypeTriangle
+								indexCount:indexCount
+								 indexType:cachedIndexBuffer.indexType
+							   indexBuffer:cachedIndexBuffer.buffer
+						 indexBufferOffset:cachedIndexBuffer.offset];
 		});
 	}
 

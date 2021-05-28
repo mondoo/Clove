@@ -8,7 +8,7 @@
 
 - (instancetype) initWithFrame:(CGRect)frame {
 	self = [super initWithFrame:frame];
-	if(self) {
+	if(self != nullptr) {
 		self.wantsLayer = YES;
 	}
 	return self;

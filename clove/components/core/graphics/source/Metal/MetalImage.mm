@@ -22,8 +22,8 @@ namespace garlic::clove {
 	}
 	
 	MetalImage::MetalImage(id<MTLTexture> texture, Descriptor descriptor)
-		: texture{ texture }
-		, descriptor{ std::move(descriptor) } {
+		: texture{ [texture retain] }
+		, descriptor{ descriptor } {
 	}
 	
 	MetalImage::MetalImage(MetalImage &&other) noexcept = default;

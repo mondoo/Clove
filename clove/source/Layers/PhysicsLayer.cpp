@@ -55,7 +55,7 @@ namespace garlic::clove {
             btRigidBody *rawBody{ proxyBody.get() };
 
             proxy.collisionObject = std::move(proxyBody);
-            proxy.collisionObject->setUserIndex(entity);
+            proxy.collisionObject->setUserIndex(static_cast<int>(entity));
 
             return rawBody;
         }
@@ -275,8 +275,8 @@ namespace garlic::clove {
         btVector3 const btEnd{ end.x, end.y, end.z };
 
         btCollisionWorld::ClosestRayResultCallback callBack{ btBegin, btEnd };
-        callBack.m_collisionFilterGroup = collisionGroup;
-        callBack.m_collisionFilterMask  = collisionMask;
+        callBack.m_collisionFilterGroup = static_cast<int>(collisionGroup);
+        callBack.m_collisionFilterMask  = static_cast<int>(collisionMask);
         dynamicsWorld->rayTest(btBegin, btEnd, callBack);
 
         if(callBack.m_collisionObject != nullptr) {
@@ -296,7 +296,7 @@ namespace garlic::clove {
         //Manually set the properties of the dummy collision object
         proxy.collisionObject->setCollisionShape(proxy.collisionShape.get());
         proxy.collisionObject->setCollisionFlags(btCollisionObject::CF_NO_CONTACT_RESPONSE);
-        proxy.collisionObject->setUserIndex(entity);
+        proxy.collisionObject->setUserIndex(static_cast<int>(entity));
 
         dynamicsWorld->addCollisionObject(proxy.collisionObject.get(), ~0, ~0);//Add the collider to every group and collide with every other group
 
@@ -312,7 +312,7 @@ namespace garlic::clove {
 
         btRigidBody *rawBody{ createProxyBody(proxy, body, entity) };
 
-        dynamicsWorld->addRigidBody(rawBody, body.collisionGroup, body.collisionMask);
+        dynamicsWorld->addRigidBody(rawBody, static_cast<int>(body.collisionGroup), static_cast<int>(body.collisionMask));
 
         entityManager->addComponent<PhysicsProxyComponent>(entity, std::move(proxy));
         entityManager->addComponent<BodyOnlyComponent>(entity);
@@ -324,7 +324,7 @@ namespace garlic::clove {
         createProxyShape(proxy, shape);
         btRigidBody *rawBody{ createProxyBody(proxy, body, entity) };
 
-        dynamicsWorld->addRigidBody(rawBody, body.collisionGroup, body.collisionMask);
+        dynamicsWorld->addRigidBody(rawBody, static_cast<int>(body.collisionGroup), static_cast<int>(body.collisionMask));
 
         entityManager->addComponent<PhysicsProxyComponent>(entity, std::move(proxy));
     }

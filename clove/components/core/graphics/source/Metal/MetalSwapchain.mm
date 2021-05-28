@@ -10,7 +10,7 @@ namespace garlic::clove {
 		: images{ std::move(images) }
 		, imageFormat{ imageFormat }
 		, imageSize{ imageSize } {
-		imageViews.reserve(images.size());
+		imageViews.reserve(this->images.size());
 			
 		GhaImageView::Descriptor const viewDescriptor{
 			.type = GhaImageView::Type::_2D,
@@ -32,7 +32,7 @@ namespace garlic::clove {
 		//TODO: will signal semaphore immediately semaphores
 		//TODO: Handle resizing;
 		
-		if(imageQueue.size() == 0) {
+		if(imageQueue.empty()) {
 			CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0} has no available images", CLOVE_FUNCTION_NAME_PRETTY);
 			return { -1, Result::Unkown };
 		}

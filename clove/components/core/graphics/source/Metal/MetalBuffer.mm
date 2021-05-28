@@ -4,8 +4,8 @@
 
 namespace garlic::clove {
 	MetalBuffer::MetalBuffer(id<MTLBuffer> buffer, Descriptor descriptor)
-		: buffer{ buffer }
-		, descriptor{ std::move(descriptor) }{
+		: buffer{ [buffer retain] }
+		, descriptor{ descriptor }{
 	}
 
 	MetalBuffer::MetalBuffer(MetalBuffer &&other) noexcept = default;
