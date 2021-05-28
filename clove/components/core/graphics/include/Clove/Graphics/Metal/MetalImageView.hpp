@@ -17,7 +17,7 @@ namespace garlic::clove {
 		//FUNCTIONS
 	public:
 		MetalImageView() = delete;
-        MetalImageView(GhaImage::Format viewedFormat, vec2ui viewedDimensions, GhaImage *viewedImage, id<MTLTexture> texture);
+        MetalImageView(GhaImage::Format viewedFormat, vec2ui viewedDimensions, id<MTLTexture> texture);
 
         MetalImageView(MetalImageView const &other) = delete;
 		MetalImageView(MetalImageView &&other) noexcept;

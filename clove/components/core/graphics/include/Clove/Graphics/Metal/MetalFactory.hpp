@@ -3,6 +3,7 @@
 #include "Clove/Graphics/GhaFactory.hpp"
 
 #include <MetalKit/MetalKit.h>
+#include <span>
 
 @class MetalView;
 

@@ -197,7 +197,7 @@ namespace garlic::clove {
 
 		swapchainImageViews.reserve(swapchainImageCount);
 		for(size_t i{ 0 }; i < swapchainImageCount; ++i) {
-			Expected<std::unique_ptr<GhaImageView>, std::runtime_error> imageViewResult{ createImageView(swapchainImages[i], imageViewDescriptor) };
+			Expected<std::unique_ptr<GhaImageView>, std::runtime_error> imageViewResult{ createImageView(*swapchainImages[i], imageViewDescriptor) };
 			if(imageViewResult.hasValue()) {
 				swapchainImageViews.emplace_back(std::move(imageViewResult.getValue()));
 			} else {
@@ -212,7 +212,7 @@ namespace garlic::clove {
 		Expected<std::vector<uint32_t>, std::runtime_error> compilationResult{ ShaderCompiler::compileFromFile(file, shaderStage) };
 		if(compilationResult.hasValue()) {
 			std::vector<uint32_t> spirvSource{ std::move(compilationResult.getValue()) };
-            return createShaderObject({ spirvSource.begin(), spirvSource.end() });
+            return createShaderObject(spirvSource);
 		} else {
 			return Unexpected{ std::move(compilationResult.getError()) };
 		}
@@ -222,7 +222,7 @@ namespace garlic::clove {
 		Expected<std::vector<uint32_t>, std::runtime_error> compilationResult{ ShaderCompiler::compileFromSource(source, std::move(includeSources), shaderName, shaderStage) };
 		if(compilationResult.hasValue()) {
 			std::vector<uint32_t> spirvSource{ std::move(compilationResult.getValue()) };
-            return createShaderObject({ spirvSource.begin(), spirvSource.end() });
+            return createShaderObject(spirvSource);
 		} else {
 			return Unexpected{ std::move(compilationResult.getError()) };
 		}
@@ -236,7 +236,7 @@ namespace garlic::clove {
 		
 		MTLPixelFormat depthPixelFormat{ MetalImage::convertFormat(descriptor.depthAttachment.format) };
 		
-		auto result{ std::unique_ptr<GhaRenderPass>{ std::make_unique<MetalRenderPass>(colourAttachments, depthPixelFormat, std::move(descriptor)) }};
+		auto result{ std::unique_ptr<GhaRenderPass>{ std::make_unique<MetalRenderPass>(std::move(descriptor), colourAttachments, depthPixelFormat) }};
 		
 		[colourAttachments release];
 		
@@ -405,6 +405,8 @@ namespace garlic::clove {
 	}
 
 	Expected<std::unique_ptr<GhaImageView>, std::runtime_error> MetalFactory::createImageView(GhaImage const &image, GhaImageView::Descriptor descriptor) {
+		GhaImage::Descriptor const &imageDescriptor{ image.getDescriptor() };
+		
 		NSRange const mipLevels{
 			.location = 0,
 			.length   = 1,
@@ -414,10 +416,10 @@ namespace garlic::clove {
 			.length   = descriptor.layerCount,
 		};
 
-		id<MTLTexture> mtlTexture{ polyCast<MetalImage>(&image)->getTexture() };
-		id<MTLTexture> textureView{ [mtlTexture newTextureViewWithPixelFormat:convertFormat(descriptor.format) textureType:convertImageViewType(viewDescriptor.type) levels:mipLevels slices:arraySlices] };
+		id<MTLTexture> mtlTexture{ polyCast<MetalImage const>(&image)->getTexture() };
+		id<MTLTexture> textureView{ [mtlTexture newTextureViewWithPixelFormat:MetalImage::convertFormat(imageDescriptor.format) textureType:MetalImageView::convertType(descriptor.type) levels:mipLevels slices:arraySlices] };
 		
-		auto result{ std::unique_ptr<GhaImageView>{ std::make_unique<MetalImageView>(descriptor.format, descriptor.dimensions, textureView) }};
+		auto result{ std::unique_ptr<GhaImageView>{ std::make_unique<MetalImageView>(imageDescriptor.format, imageDescriptor.dimensions, textureView) }};
 
 		[textureView release];
 
@@ -445,12 +447,12 @@ namespace garlic::clove {
 	
 	Expected<std::unique_ptr<GhaShader>, std::runtime_error> MetalFactory::createShaderObject(std::span<uint32_t> spirvSource) {
 		@autoreleasepool {
+			std::string const mslSource{ ShaderCompiler::spirvToMSL(spirvSource) };
+			
 			NSString *librarySource{ [NSString stringWithCString:mslSource.c_str() encoding:[NSString defaultCStringEncoding]] };
 			if(librarySource == nullptr) {
 				return Unexpected{ std::runtime_error{ "Shader creation failed. Could not convert std::string to NSString" } };
 			}
-			
-			std::string const mslSource{ ShaderCompiler::spirvToMSL(spirvSource) };
 			
 			NSError *libError;
 			id<MTLLibrary> library{ [device newLibraryWithSource:librarySource options:nil error:&libError] };

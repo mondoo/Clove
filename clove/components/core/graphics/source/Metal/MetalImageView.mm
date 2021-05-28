@@ -2,8 +2,10 @@
 
 #include "Clove/Graphics/GhaImageView.hpp"
 
+#include <Clove/Log/Log.hpp>
+
 namespace garlic::clove {
-	MetalImageView::MetalImageView(GhaImage::Format viewedFormat, vec2ui viewedDimensions, GhaImage *viewedImage, id<MTLTexture> texture)
+	MetalImageView::MetalImageView(GhaImage::Format viewedFormat, vec2ui viewedDimensions, id<MTLTexture> texture)
 		: viewedFormat{ viewedFormat }
         , viewedDimensions{ std::move(viewedDimensions) }
 		, texture{ [texture retain] } {
@@ -22,14 +24,14 @@ namespace garlic::clove {
 	}
 
     vec2ui const &MetalImageView::getImageDimensions() const {
-		return viewedDimensions
+		return viewedDimensions;
 	}
 	
 	id<MTLTexture> MetalImageView::getTexture() const {
 		return texture;
 	}
 
-	MTLTextureType MetalImageView::convertImageViewType(GhaImageView::Type type) {
+	MTLTextureType MetalImageView::convertType(GhaImageView::Type type) {
 		switch (type) {
 			case GhaImageView::Type::_2D:
 				return MTLTextureType2D;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cinttypes>
+#include <cstddef>
 
 namespace garlic::clove{
     using ResourceIdType = size_t;
