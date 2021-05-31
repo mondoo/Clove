@@ -47,6 +47,8 @@ namespace garlic::clove {
 	void MetalDescriptorSet::map(GhaImageView const &imageView, GhaSampler const &sampler, GhaImage::Layout const layout, uint32_t const bindingSlot) {
 		[pixelEncoder setTexture:polyCast<MetalImageView const>(&imageView)->getTexture()
 						 atIndex:bindingSlot];
+		[pixelEncoder setSamplerState:polyCast<MetalSampler const>(&sampler)->getSamplerState()
+							  atIndex:bindingSlot];
 	}
 	
 	void MetalDescriptorSet::map(std::span<std::shared_ptr<GhaImageView>> imageViews, GhaSampler const &sampler, GhaImage::Layout const layout, uint32_t const bindingSlot) {
@@ -57,7 +59,6 @@ namespace garlic::clove {
 		
 		[pixelEncoder setTextures:mtlTextures.data()
 						withRange:NSMakeRange(0, mtlTextures.size())];
-		
 		[pixelEncoder setSamplerState:polyCast<MetalSampler const>(&sampler)->getSamplerState()
 							  atIndex:bindingSlot];
 	}
