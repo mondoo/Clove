@@ -426,12 +426,12 @@ namespace garlic::clove {
 
 	Expected<std::unique_ptr<GhaSampler>, std::runtime_error> MetalFactory::createSampler(GhaSampler::Descriptor descriptor) {
 		MTLSamplerDescriptor *samplerDescriptor{ [[MTLSamplerDescriptor alloc] init] };
-		samplerDescriptor.minFilter = convertMinMagFilter(descriptor.minFilter);
-		samplerDescriptor.magFilter = convertMinMagFilter(descriptor.magFilter);
-		samplerDescriptor.sAddressMode = convertAddressMode(descriptor.addressModeU);
-		samplerDescriptor.tAddressMode = convertAddressMode(descriptor.addressModeV);
-		samplerDescriptor.rAddressMode = convertAddressMode(descriptor.addressModeW);
-		samplerDescriptor.maxAnisotropy = descriptor.maxAnisotropy;
+		samplerDescriptor.minFilter     = convertMinMagFilter(descriptor.minFilter);
+		samplerDescriptor.magFilter     = convertMinMagFilter(descriptor.magFilter);
+		samplerDescriptor.sAddressMode  = convertAddressMode(descriptor.addressModeU);
+		samplerDescriptor.tAddressMode  = convertAddressMode(descriptor.addressModeV);
+		samplerDescriptor.rAddressMode  = convertAddressMode(descriptor.addressModeW);
+		samplerDescriptor.maxAnisotropy = static_cast<NSUInteger>(descriptor.maxAnisotropy);
 		
 		id<MTLSamplerState> samplerState{ [device newSamplerStateWithDescriptor:samplerDescriptor] };
 		
