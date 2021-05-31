@@ -24,6 +24,11 @@ namespace garlic::clove {
 	Result MetalPresentQueue::present(PresentInfo const &presentInfo) {
 		@autoreleasepool{
 			MetalSwapchain *swapchain{ polyCast<MetalSwapchain>(presentInfo.swapChain.get()) };
+			if(swapchain == nullptr) {
+				//Upon receiving this error a new swapchain should be created. Hopefully fixing the nullptr
+				return Result::Error_SwapchainOutOfDate;
+			}
+			
 			id<MTLTexture> texture{ polyCast<MetalImageView>(swapchain->getImageViews()[presentInfo.imageIndex].get())->getTexture() };
 			id<CAMetalDrawable> drawable{ view.metalLayer.nextDrawable };
 		
@@ -37,6 +42,8 @@ namespace garlic::clove {
 			[commandBuffer commit];
 
 			swapchain->markIndexAsFree(presentInfo.imageIndex);
+			
+			return Result::Success;
 		}
 	}
 }
