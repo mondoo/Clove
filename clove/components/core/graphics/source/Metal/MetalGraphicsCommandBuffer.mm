@@ -123,7 +123,12 @@ namespace garlic::clove {
 		currentPass->commands.emplace_back([descriptorSet = &descriptorSet, setNum](id<MTLRenderCommandEncoder> encoder){
 			auto *metalDescriptorSet{ polyCast<MetalDescriptorSet>(descriptorSet) };
 			
-			//TODO
+			[encoder setVertexBuffer:metalDescriptorSet->getVertexBuffer()
+							  offset:0
+							 atIndex:setNum];
+			[encoder setFragmentBuffer:metalDescriptorSet->getPixelBuffer()
+								offset:0
+							   atIndex:setNum];
 		});
 	}
 	

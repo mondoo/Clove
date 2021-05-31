@@ -8,9 +8,11 @@
 #include <Clove/Cast.hpp>
 
 namespace garlic::clove {
-	MetalDescriptorSet::MetalDescriptorSet(id<MTLArgumentEncoder> vertexEncoder, id<MTLArgumentEncoder> pixelEncoder, std::shared_ptr<GhaDescriptorSetLayout> layout)
+	MetalDescriptorSet::MetalDescriptorSet(id<MTLArgumentEncoder> vertexEncoder, id<MTLBuffer> vertexEncoderBuffer, id<MTLArgumentEncoder> pixelEncoder, id<MTLBuffer> pixelEncoderBuffer, std::shared_ptr<GhaDescriptorSetLayout> layout)
 		: vertexEncoder{ [vertexEncoder retain] }
+		, vertexEncoderBuffer{ [vertexEncoderBuffer retain] }
 		, pixelEncoder{ [pixelEncoder retain] }
+		, pixelEncoderBuffer{ [pixelEncoderBuffer retain] }
 		, layout{ std::move(layout) } {
 	}
 	
@@ -20,11 +22,14 @@ namespace garlic::clove {
 	
 	MetalDescriptorSet::~MetalDescriptorSet() {
 		[vertexEncoder release];
+		[vertexEncoderBuffer release];
+		
 		[pixelEncoder release];
+		[pixelEncoderBuffer release];
 	}
 	
 	void MetalDescriptorSet::map(GhaBuffer const &buffer, size_t const offset, size_t const range, DescriptorType const descriptorType, uint32_t const bindingSlot) {
-		GhaShader::Stage shaderStage{ getStageFromBindingSlot(bindingSlot) };
+		GhaShader::Stage const shaderStage{ getStageFromBindingSlot(bindingSlot) };
 		id<MTLBuffer> mtlBuffer{ polyCast<MetalBuffer const>(&buffer)->getBuffer() };
 		
 		switch (shaderStage) {

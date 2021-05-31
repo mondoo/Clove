@@ -97,6 +97,7 @@ set(
 		${INCLUDE}/Metal/MetalDescriptorSet.inl
 		${SOURCE}/Metal/MetalDescriptorSet.mm
 		${INCLUDE}/Metal/MetalDescriptorSetLayout.hpp
+		${INCLUDE}/Metal/MetalDescriptorSetLayout.inl
 		${SOURCE}/Metal/MetalDescriptorSetLayout.mm
 		${INCLUDE}/Metal/MetalDevice.hpp
 		${SOURCE}/Metal/MetalDevice.mm

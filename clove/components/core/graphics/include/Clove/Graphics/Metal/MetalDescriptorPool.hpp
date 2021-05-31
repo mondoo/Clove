@@ -2,16 +2,20 @@
 
 #include "Clove/Graphics/GhaDescriptorPool.hpp"
 
+#include <MetalKit/MetalKit.h>
+
 namespace garlic::clove {
 	class MetalDescriptorPool : public GhaDescriptorPool {
 		//VARIABLES
 	private:
 		Descriptor descriptor{};
 		
+		id<MTLDevice> device{ nullptr };
+		
 		//FUNCTIONS
 	public:
 		MetalDescriptorPool() = delete;
-		MetalDescriptorPool(Descriptor descriptor);
+		MetalDescriptorPool(Descriptor descriptor, id<MTLDevice> device);
 		
 		MetalDescriptorPool(MetalDescriptorPool const &other) = delete;
 		MetalDescriptorPool(MetalDescriptorPool &&other) noexcept;

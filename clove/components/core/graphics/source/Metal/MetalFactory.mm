@@ -237,7 +237,36 @@ namespace garlic::clove {
 	}
 	
 	Expected<std::unique_ptr<GhaDescriptorSetLayout>, std::runtime_error> MetalFactory::createDescriptorSetLayout(GhaDescriptorSetLayout::Descriptor descriptor) {
-		return std::unique_ptr<GhaDescriptorSetLayout>{ std::make_unique<MetalDescriptorSetLayout>(std::move(descriptor)) };
+		@autoreleasepool {
+			NSMutableArray<MTLArgumentDescriptor *> *vertexDescriptors{ [[NSMutableArray<MTLArgumentDescriptor *> alloc] init] };
+			NSMutableArray<MTLArgumentDescriptor *> *pixelDescriptors{ [[NSMutableArray<MTLArgumentDescriptor *> alloc] init] };
+			
+			for(auto const &binding : descriptor.bindings) {
+				MTLArgumentDescriptor *bindingDescriptor{ [[MTLArgumentDescriptor alloc] init]};
+				[bindingDescriptor setIndex:binding.binding];
+				if(binding.type != DescriptorType::CombinedImageSampler){
+					[bindingDescriptor setDataType:MTLDataTypePointer];
+				} else {
+					//TODO: What about samplers?
+					[bindingDescriptor setDataType:MTLDataTypeTexture];
+					[bindingDescriptor setTextureType:MTLTextureType2D];//TODO: What about cube maps?
+				}
+				[bindingDescriptor setArrayLength:binding.arraySize];
+				switch (binding.stage) {
+					case GhaShader::Stage::Vertex:
+						[vertexDescriptors addObject:bindingDescriptor];
+						break;
+					case GhaShader::Stage::Pixel:
+						[pixelDescriptors addObject:bindingDescriptor];
+						break;
+					default:
+						CLOVE_ASSERT(false, "{0}: Shader stage not handled", CLOVE_FUNCTION_NAME_PRETTY);
+						break;
+				}
+			}
+		
+			return std::unique_ptr<GhaDescriptorSetLayout>{ std::make_unique<MetalDescriptorSetLayout>(std::move(descriptor), vertexDescriptors, pixelDescriptors) };
+		}
 	}
 
 	Expected<std::unique_ptr<GhaGraphicsPipelineObject>, std::runtime_error> MetalFactory::createGraphicsPipelineObject(GhaGraphicsPipelineObject::Descriptor descriptor) {
@@ -345,7 +374,7 @@ namespace garlic::clove {
 	}
 	
 	Expected<std::unique_ptr<GhaDescriptorPool>, std::runtime_error> MetalFactory::createDescriptorPool(GhaDescriptorPool::Descriptor descriptor) {
-		return std::unique_ptr<GhaDescriptorPool>{ std::make_unique<MetalDescriptorPool>(std::move(descriptor)) };
+		return std::unique_ptr<GhaDescriptorPool>{ std::make_unique<MetalDescriptorPool>(std::move(descriptor), device) };
 	}
 
 	Expected<std::unique_ptr<GhaSemaphore>, std::runtime_error> MetalFactory::createSemaphore() {
@@ -358,8 +387,6 @@ namespace garlic::clove {
 
 	Expected<std::unique_ptr<GhaBuffer>, std::runtime_error> MetalFactory::createBuffer(GhaBuffer::Descriptor descriptor) {
 		MTLResourceOptions resourceOptions{};
-		//Usage mode -- not needed
-		//Sharing mode -- not needed
 		switch (descriptor.memoryType) {
 			case MemoryType::VideoMemory:
 				resourceOptions |= MTLResourceStorageModePrivate;
