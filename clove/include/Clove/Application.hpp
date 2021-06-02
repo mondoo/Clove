@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Clove/FileSystem/VirtualFileSystem.hpp"
+#include "Clove/FileSystem/AssetManager.hpp"
 
 #include <Clove/Audio/Audio.hpp>
 #include <Clove/ECS/EntityManager.hpp>
@@ -52,6 +53,8 @@ namespace garlic::clove {
         std::unique_ptr<ForwardRenderer3D> renderer;
         EntityManager entityManager;
         std::shared_ptr<PhysicsLayer> physicsLayer;
+
+        AssetManager assetManager{};
         VirtualFileSystem fileSystem{};
 
         std::map<LayerGroup, std::vector<std::shared_ptr<Layer>>> layers;
@@ -118,6 +121,8 @@ namespace garlic::clove {
         inline ForwardRenderer3D *getRenderer() const;
         inline EntityManager *getEntityManager();
         inline std::shared_ptr<PhysicsLayer> getPhysicsLayer() const;
+
+        inline AssetManager *getAssetManager();
         inline VirtualFileSystem *getFileSystem();
 
     private:
