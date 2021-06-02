@@ -27,7 +27,7 @@ namespace garlic::clove {
         return physicsLayer;
     }
 
-    AssetManager *Application::getAssetManager() {
-        return &assetManager;
+    VirtualFileSystem *Application::getFileSystem() {
+        return &fileSystem;
     }
 }
