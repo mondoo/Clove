@@ -98,6 +98,8 @@ add_library(
 		${INCLUDE}/FileSystem/AssetPtr.inl
 		${INCLUDE}/FileSystem/AssetManager.hpp
 		${SOURCE}/FileSystem/AssetManager.cpp
+		${INCLUDE}/FileSystem/VirtualFileSystem.hpp
+		${SOURCE}/FileSystem/VirtualFileSystem.cpp
 
 		${INCLUDE}/Rendering/AnimationTypes.hpp
 		${INCLUDE}/Rendering/Animator.hpp
