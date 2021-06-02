@@ -3,6 +3,14 @@
 #include "Clove/ModelLoader.hpp"
 
 namespace garlic::clove {
+    AssetManager::AssetManager() = default;
+
+    AssetManager::AssetManager(AssetManager &&other) noexcept = default;
+
+    AssetManager &AssetManager::operator=(AssetManager &&other) noexcept = default;
+
+    AssetManager::~AssetManager() = default;
+
     AssetPtr<StaticModel> AssetManager::getStaticModel(std::filesystem::path const &filePath) {
         std::string const pathString{ filePath.string() };
 

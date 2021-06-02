@@ -1,13 +1,16 @@
 #pragma once
 
 #include "Clove/FileSystem/AssetPtr.hpp"
-#include "Clove/Rendering/Renderables/StaticModel.hpp"
 #include "Clove/Rendering/Renderables/AnimatedModel.hpp"
+#include "Clove/Rendering/Renderables/StaticModel.hpp"
 
-#include <unordered_map>
 #include <filesystem>
+#include <unordered_map>
 
 namespace garlic::clove {
+    /**
+     * @brief Manages the loading of assets from disk.
+     */
     class AssetManager {
         //VARIABLES
     private:
@@ -16,7 +19,15 @@ namespace garlic::clove {
 
         //FUNCTIONS
     public:
-        //TODO: Ctors
+        AssetManager();
+
+        AssetManager(AssetManager const &other) = delete;
+        AssetManager(AssetManager &&other) noexcept;
+
+        AssetManager &operator=(AssetManager const &other) = delete;
+        AssetManager &operator=(AssetManager &&other) noexcept;
+
+        ~AssetManager();
 
         AssetPtr<StaticModel> getStaticModel(std::filesystem::path const &filePath);
         AssetPtr<AnimatedModel> getAnimatedModel(std::filesystem::path const &filePath);
