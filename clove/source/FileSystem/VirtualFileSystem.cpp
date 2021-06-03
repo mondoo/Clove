@@ -12,15 +12,23 @@ namespace garlic::clove {
     VirtualFileSystem::~VirtualFileSystem() = default;
 
     void VirtualFileSystem::mount(std::filesystem::path systemPath, std::string const &alias) {
-        mountedPaths[alias] = systemPath;
+        mountedPaths[alias] = systemPath.make_preferred();
     }
 
-    std::filesystem::path VirtualFileSystem::resolve(std::string const &alias) {
-        if(mountedPaths.contains(alias)){
-            return mountedPaths.at(alias);
-        }else{
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: Unknown alias: {1}. Returning empty path", CLOVE_FUNCTION_NAME, alias);
-            return {};
+    std::filesystem::path VirtualFileSystem::resolve(std::filesystem::path const &vfsPath) {
+        std::string const vfsRoot{ vfsPath.begin()->string() };
+        std::filesystem::path fullPath{};
+
+        if(mountedPaths.contains(vfsRoot)) {
+            fullPath = mountedPaths.at(vfsRoot);
+            auto const relPath{ vfsPath.lexically_relative(vfsRoot) };
+            if(!relPath.empty() && relPath.string() != ".") {
+                fullPath /= relPath;
+            }
+        } else {
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: Unknown VFS root: \"{1}\". Returning empty path", CLOVE_FUNCTION_NAME, vfsRoot);
         }
+
+        return fullPath.make_preferred();
     }
 }
