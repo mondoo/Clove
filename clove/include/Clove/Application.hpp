@@ -54,8 +54,8 @@ namespace garlic::clove {
         EntityManager entityManager;
         std::shared_ptr<PhysicsLayer> physicsLayer;
 
-        AssetManager assetManager{};
         VirtualFileSystem fileSystem{};
+        AssetManager assetManager;
 
         std::map<LayerGroup, std::vector<std::shared_ptr<Layer>>> layers;
 

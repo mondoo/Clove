@@ -8,18 +8,25 @@
 #include <unordered_map>
 
 namespace garlic::clove {
+    class VirtualFileSystem;
+}
+
+namespace garlic::clove {
     /**
-     * @brief Manages the loading of assets from disk.
+     * @brief Manages the loading of assets.
      */
     class AssetManager {
         //VARIABLES
     private:
+        VirtualFileSystem *vfs{ nullptr };
+
         std::unordered_map<std::string, AssetPtr<StaticModel>> staticModels{};
         std::unordered_map<std::string, AssetPtr<AnimatedModel>> animatedModels{};
 
         //FUNCTIONS
     public:
-        AssetManager();
+        AssetManager() = delete;
+        AssetManager(VirtualFileSystem *vfs);
 
         AssetManager(AssetManager const &other) = delete;
         AssetManager(AssetManager &&other) noexcept;
@@ -29,7 +36,17 @@ namespace garlic::clove {
 
         ~AssetManager();
 
+        /**
+         * @brief Get a StaticModel
+         * @param filePath A VirtualFileSystem friendly file path
+         * @return An AssetPtr to the StaticModel
+         */
         AssetPtr<StaticModel> getStaticModel(std::filesystem::path const &filePath);
+        /**
+         * @brief Get an AnimatedModel
+         * @param filePath A VirtualFileSystem friendly file path
+         * @return An AssetPtr to the AnimatedModel
+         */
         AssetPtr<AnimatedModel> getAnimatedModel(std::filesystem::path const &filePath);
     };
 }
