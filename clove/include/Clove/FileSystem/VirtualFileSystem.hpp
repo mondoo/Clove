@@ -5,8 +5,10 @@
 
 namespace garlic::clove {
     /**
-     * @brief Manages a file system that will not change even on different
-     * platforms / install locations or even map into a BLOB or archive.
+     * @brief Manages a file system that mounts system paths to aliases.
+     * @details These aliases will not change between systems. Providing a way
+     * to keep asset locations consistent on any platform. This also allows
+     * BLOBs or archives to be mounted under an alias as well.
      */
     class VirtualFileSystem {
         //VARIABLES
