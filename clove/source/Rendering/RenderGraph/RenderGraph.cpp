@@ -124,9 +124,9 @@ namespace garlic::clove {
             }
 
             for(auto const &ubo : submission.shaderUbos) {
-                if(bufferDescriptors.contains(ubo.buffer.id)){
+                if(bufferDescriptors.contains(ubo.buffer.id)) {
                     bufferDescriptors.at(ubo.buffer.id).usageFlags |= GhaBuffer::UsageMode::UniformBuffer;
-                }else{
+                } else {
                     CLOVE_ASSERT(allocatedBuffers.contains(ubo.buffer.id), "RenderGraph does not know about UBO at slot {0}", ubo.slot);
                 }
             }
@@ -287,9 +287,19 @@ namespace garlic::clove {
         uint32_t totalSets{ 0 };
         for(auto &&[id, submissions] : passSubmissions) {
             for(auto &submission : submissions) {
-                bindingCount[DescriptorType::UniformBuffer] += submission.shaderUbos.size();
-                bindingCount[DescriptorType::CombinedImageSampler] += submission.shaderCombinedImageSamplers.size();
-                ++totalSets;//Allocating a single set per submission
+                bool const hasUbo{ !submission.shaderUbos.empty() };
+                bool const hasImageSampler{ !submission.shaderCombinedImageSamplers.empty() };
+
+                if(hasUbo) {
+                    bindingCount[DescriptorType::UniformBuffer] += submission.shaderUbos.size();
+                }
+                if(hasImageSampler) {
+                    bindingCount[DescriptorType::CombinedImageSampler] += submission.shaderCombinedImageSamplers.size();
+                }
+
+                if(hasUbo || hasImageSampler) {
+                    ++totalSets;//Allocating a single set per submission
+                }
             }
         }
 
