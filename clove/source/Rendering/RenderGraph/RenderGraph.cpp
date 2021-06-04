@@ -5,6 +5,7 @@
 #include "Clove/Rendering/Vertex.hpp"
 
 #include <Clove/Graphics/GhaDescriptorSetLayout.hpp>
+#include <Clove/Graphics/GhaDescriptorSet.hpp>
 #include <Clove/Log/Log.hpp>
 
 namespace garlic::clove {
@@ -230,7 +231,14 @@ namespace garlic::clove {
             graphicsBuffer.bindPipelineObject(*allocatedPipelines.at(pipelineId));
 
             for(size_t index{ 0 }; auto &submission : passSubmissions.at(pipelineId)) {
-                graphicsBuffer.bindDescriptorSet(*allocatedDescriptorSets.at(pipelineId)[index], 0);//TODO: Multiple sets / only set sets for a whole pass (i.e. view)
+                auto const &passDescriptor{ allocatedDescriptorSets.at(pipelineId)[index] };
+
+                for(auto const &ubo : submission.shaderUbos){
+                    //TODO: Handle different allocations within the same buffer
+                    passDescriptor->map(*allocatedBuffers.at(ubo.buffer.id), 0, bufferDescriptors.at(ubo.buffer.id).size, DescriptorType::UniformBuffer, ubo.slot);
+                }
+
+                graphicsBuffer.bindDescriptorSet(*passDescriptor, 0);//TODO: Multiple sets / only set sets for a whole pass (i.e. view)
 
                 graphicsBuffer.bindVertexBuffer(*allocatedBuffers.at(submission.vertexBuffer.id), submission.vertexBuffer.offset);
                 graphicsBuffer.bindIndexBuffer(*allocatedBuffers.at(submission.indexBuffer.id), submission.indexBuffer.offset, IndexType::Uint16);
