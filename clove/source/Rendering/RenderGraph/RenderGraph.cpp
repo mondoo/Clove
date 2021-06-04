@@ -4,8 +4,8 @@
 #include "Clove/Rendering/RenderGraph/RgGlobalCache.hpp"
 #include "Clove/Rendering/Vertex.hpp"
 
-#include <Clove/Graphics/GhaDescriptorSetLayout.hpp>
 #include <Clove/Graphics/GhaDescriptorSet.hpp>
+#include <Clove/Graphics/GhaDescriptorSetLayout.hpp>
 #include <Clove/Log/Log.hpp>
 
 namespace garlic::clove {
@@ -233,9 +233,12 @@ namespace garlic::clove {
             for(size_t index{ 0 }; auto &submission : passSubmissions.at(pipelineId)) {
                 auto const &passDescriptor{ allocatedDescriptorSets.at(pipelineId)[index] };
 
-                for(auto const &ubo : submission.shaderUbos){
+                for(auto const &ubo : submission.shaderUbos) {
                     //TODO: Handle different allocations within the same buffer
                     passDescriptor->map(*allocatedBuffers.at(ubo.buffer.id), 0, bufferDescriptors.at(ubo.buffer.id).size, DescriptorType::UniformBuffer, ubo.slot);
+                }
+                for(auto const &imageSampler : submission.shaderCombinedImageSamplers) {
+                    passDescriptor->map(*allocatedImageViews.at(imageSampler.image), *allocatedSamplers.at(imageSampler.image), GhaImage::Layout::ShaderReadOnlyOptimal, imageSampler.slot);
                 }
 
                 graphicsBuffer.bindDescriptorSet(*passDescriptor, 0);//TODO: Multiple sets / only set sets for a whole pass (i.e. view)
@@ -258,13 +261,17 @@ namespace garlic::clove {
 
     GraphicsSubmitInfo RenderGraph::execute() {
         //TEMP: Create all resources. Later we should only create the ones that are consumed
+        //Allocate buffers
         for(auto &&[id, descriptor] : bufferDescriptors) {
             allocatedBuffers[id] = frameCache.allocateBuffer(descriptor);
         }
+
+        //Allocate images
         for(auto &&[id, descriptor] : imageDescriptors) {
             allocatedImages[id] = frameCache.allocateImage(descriptor);
         }
 
+        //Allocate frame buffers
         //TODO: Currently there'll be a unique frame buffer per pass. If a group of passes write to the same images, they should use the same FB
         for(auto &&[id, descriptor] : passDescriptors) {
             std::vector<std::shared_ptr<GhaImageView>> attachments{};
@@ -287,6 +294,15 @@ namespace garlic::clove {
                 .width       = getImageSize(descriptor.renderTargets[0].target).x,//TEMP: Just using the first target as the size. This will need to be validated
                 .height      = getImageSize(descriptor.renderTargets[0].target).y,
             });
+        }
+
+        //Allocate samplers
+        for(auto &&[id, pass] : passSubmissions) {
+            for(auto const &submission : pass){
+                for(auto const &imageSampler : submission.shaderCombinedImageSamplers){
+                    allocatedSamplers[id] = globalCache.createSampler(imageSampler.samplerState);
+                }
+            }
         }
 
         //Allocate descriptor sets

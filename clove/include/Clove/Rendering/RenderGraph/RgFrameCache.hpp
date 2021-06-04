@@ -41,6 +41,7 @@ namespace garlic::clove {
 
         ResourcePool<GhaBuffer> bufferPool{};
         ResourcePool<GhaImage> imagePool{};
+        ResourcePool<GhaSampler> samplerPool{};
         ResourcePool<GhaFramebuffer> framebufferPool{};
         ResourcePool<GhaDescriptorPool> descriptorPoolPool{};
 

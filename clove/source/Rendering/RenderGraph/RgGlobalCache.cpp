@@ -51,6 +51,23 @@ namespace garlic::clove {
         return shaders.at(shaderSource);
     }
 
+    std::shared_ptr<GhaSampler> RgGlobalCache::createSampler(GhaSampler::Descriptor descriptor) {
+        PoolId samplerId{ 0 };
+        CacheUtils::hashCombine(samplerId, descriptor.minFilter);
+        CacheUtils::hashCombine(samplerId, descriptor.magFilter);
+        CacheUtils::hashCombine(samplerId, descriptor.addressModeU);
+        CacheUtils::hashCombine(samplerId, descriptor.addressModeV);
+        CacheUtils::hashCombine(samplerId, descriptor.addressModeV);
+        CacheUtils::hashCombine(samplerId, descriptor.enableAnisotropy);
+        CacheUtils::hashCombine(samplerId, descriptor.maxAnisotropy);
+
+        if(!samplers.contains(samplerId)) {
+            samplers[samplerId] = factory->createSampler(std::move(descriptor)).getValue();
+        }
+
+        return samplers.at(samplerId);
+    }
+
     std::shared_ptr<GhaRenderPass> RgGlobalCache::createRenderPass(GhaRenderPass::Descriptor descriptor) {
         auto const hashAttachment = [](PoolId &passId, AttachmentDescriptor const &attachment) {
             CacheUtils::hashCombine(passId, attachment.format);
