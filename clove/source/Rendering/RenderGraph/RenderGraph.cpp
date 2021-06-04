@@ -180,7 +180,7 @@ namespace garlic::clove {
         });
 
         vec2ui const renderSize{ getImageSize(passDescriptor.renderTargets[0].target) };//TEMP: Use the size of the first target
-        
+
         passDescriptors[pipelineId]    = std::move(passDescriptor);//NOTE: This will duplicate any descriptors
         passSubmissions[pipelineId]    = std::move(pass);
 
@@ -244,11 +244,11 @@ namespace garlic::clove {
                 }
                 attachments.push_back(allocatedImageViews.at(renderTarget.target));
             }
-            attachments.push_back(allocatedImageViews.at(descriptor.depthStencil.target));
             //TEMP: Just create the view when we need it
             if(!allocatedImageViews.contains(descriptor.depthStencil.target)) {
                 allocatedImageViews[descriptor.depthStencil.target] = frameCache.allocateImageView(*allocatedImages.at(descriptor.depthStencil.target), GhaImageView::Descriptor{ .type = GhaImageView::Type::_2D });
             }
+            attachments.push_back(allocatedImageViews.at(descriptor.depthStencil.target));
 
             allocatedFramebuffers[id] = frameCache.allocateFramebuffer(GhaFramebuffer::Descriptor{
                 .renderPass  = allocatedRenderPasses[id],
