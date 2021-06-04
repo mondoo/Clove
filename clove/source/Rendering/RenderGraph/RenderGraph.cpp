@@ -178,12 +178,14 @@ namespace garlic::clove {
             .descriptorSetLayouts = { descriptorSetLayouts.at(pipelineId) },
             .pushConstants        = {},
         });
+
+        vec2ui const renderSize{ getImageSize(passDescriptor.renderTargets[0].target) };//TEMP: Use the size of the first target
+        
         passDescriptors[pipelineId]    = std::move(passDescriptor);//NOTE: This will duplicate any descriptors
         passSubmissions[pipelineId]    = std::move(pass);
 
         //Record draw calls
-        vec2ui const renderSize{ getImageSize(passDescriptor.renderTargets[0].target) };//TEMP: Use the size of the first target
-        operations.emplace_back([this, pipelineId, pass = pass, renderSize](GhaGraphicsCommandBuffer &graphicsBuffer, GhaComputeCommandBuffer &computeBuffer, GhaTransferCommandBuffer &transferbuffer) {
+        operations.emplace_back([this, pipelineId, renderSize](GhaGraphicsCommandBuffer &graphicsBuffer, GhaComputeCommandBuffer &computeBuffer, GhaTransferCommandBuffer &transferbuffer) {
             //TODO: Batch operations by render pass and start the pass outside of the operation
             RenderArea renderArea{
                 .origin = { 0, 0 },
@@ -204,7 +206,7 @@ namespace garlic::clove {
 
             graphicsBuffer.bindPipelineObject(*allocatedPipelines.at(pipelineId));
 
-            for(size_t index{ 0 }; auto &submission : pass) {
+            for(size_t index{ 0 }; auto &submission : passSubmissions.at(pipelineId)) {
                 graphicsBuffer.bindDescriptorSet(*allocatedDescriptorSets.at(pipelineId)[index], 0);//TODO: Multiple sets / only set sets for a whole pass (i.e. view)
 
                 graphicsBuffer.bindVertexBuffer(*allocatedBuffers.at(submission.vertexBuffer.id), submission.vertexBuffer.offset);
