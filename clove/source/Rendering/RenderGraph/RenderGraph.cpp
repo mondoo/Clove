@@ -47,6 +47,8 @@ namespace garlic::clove {
         if(!allocatedBuffers.contains(buffer.id)) {
             //Update to system memory if a write has been recorded.
             bufferDescriptors[buffer.id].memoryType = MemoryType::SystemMemory;
+        } else {
+            CLOVE_ASSERT(false, "{0}: Trying to write to an already allocated buffer", CLOVE_FUNCTION_NAME);
         }
 
         operations.emplace_back([this, buffer](GhaGraphicsCommandBuffer &graphicsBuffer, GhaComputeCommandBuffer &computeBuffer, GhaTransferCommandBuffer &transferbuffer) {
@@ -107,6 +109,27 @@ namespace garlic::clove {
         } else {
             //Validate that the image exists
             CLOVE_ASSERT(allocatedImageViews.contains(passDescriptor.depthStencil.target), "RenderGraph does not know about the depth stencil target provided!");
+        }
+
+        for(auto const &submission : pass) {
+            if(bufferDescriptors.contains(submission.vertexBuffer.id)) {
+                bufferDescriptors.at(submission.vertexBuffer.id).usageFlags |= GhaBuffer::UsageMode::VertexBuffer;
+            } else {
+                CLOVE_ASSERT(allocatedBuffers.contains(submission.vertexBuffer.id), "RenderGraph does not know about the vertex buffer provided!");
+            }
+            if(bufferDescriptors.contains(submission.indexBuffer.id)) {
+                bufferDescriptors.at(submission.indexBuffer.id).usageFlags |= GhaBuffer::UsageMode::IndexBuffer;
+            } else {
+                CLOVE_ASSERT(allocatedBuffers.contains(submission.indexBuffer.id), "RenderGraph does not know about the index buffer provided!");
+            }
+
+            for(auto const &ubo : submission.shaderUbos) {
+                if(bufferDescriptors.contains(ubo.buffer.id)){
+                    bufferDescriptors.at(ubo.buffer.id).usageFlags |= GhaBuffer::UsageMode::UniformBuffer;
+                }else{
+                    CLOVE_ASSERT(allocatedBuffers.contains(ubo.buffer.id), "RenderGraph does not know about UBO at slot {0}", ubo.slot);
+                }
+            }
         }
 
         //Build the render pass
@@ -181,8 +204,8 @@ namespace garlic::clove {
 
         vec2ui const renderSize{ getImageSize(passDescriptor.renderTargets[0].target) };//TEMP: Use the size of the first target
 
-        passDescriptors[pipelineId]    = std::move(passDescriptor);//NOTE: This will duplicate any descriptors
-        passSubmissions[pipelineId]    = std::move(pass);
+        passDescriptors[pipelineId] = std::move(passDescriptor);//NOTE: This will duplicate any descriptors
+        passSubmissions[pipelineId] = std::move(pass);
 
         //Record draw calls
         operations.emplace_back([this, pipelineId, renderSize](GhaGraphicsCommandBuffer &graphicsBuffer, GhaComputeCommandBuffer &computeBuffer, GhaTransferCommandBuffer &transferbuffer) {
