@@ -41,10 +41,10 @@ namespace garlic::clove {
 
         ResourcePool<GhaBuffer> bufferPool{};
         ResourcePool<GhaImage> imagePool{};
-        ResourcePool<GhaImageView> imageViewPool{};
-        ResourcePool<GhaSampler> samplerPool{};
         ResourcePool<GhaFramebuffer> framebufferPool{};
         ResourcePool<GhaDescriptorPool> descriptorPoolPool{};
+
+        std::vector<std::shared_ptr<GhaImageView>> imageViews{};
 
         std::shared_ptr<GhaGraphicsCommandBuffer> graphicsCommandBuffer{ nullptr };
         std::shared_ptr<GhaComputeCommandBuffer> computeCommandBuffer{ nullptr };
@@ -59,7 +59,7 @@ namespace garlic::clove {
         RgFrameCache(RgFrameCache &&other) noexcept;
 
         RgFrameCache &operator=(RgFrameCache const &other) = delete;
-        RgFrameCache &operator                             =(RgFrameCache &&other) noexcept;
+        RgFrameCache &operator=(RgFrameCache &&other) noexcept;
 
         ~RgFrameCache();
 

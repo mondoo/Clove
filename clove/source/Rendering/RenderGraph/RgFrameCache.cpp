@@ -24,6 +24,8 @@ namespace garlic::clove {
         imagePool.reset();
         framebufferPool.reset();
         descriptorPoolPool.reset();
+        
+        imageViews.clear();
     }
 
     std::shared_ptr<GhaBuffer> RgFrameCache::allocateBuffer(GhaBuffer::Descriptor descriptor) {
@@ -55,21 +57,10 @@ namespace garlic::clove {
     }
 
     std::shared_ptr<GhaImageView> RgFrameCache::allocateImageView(GhaImage const &image, GhaImageView::Descriptor descriptor) {
-        PoolId const imageId{ getImageId(image.getDescriptor()) };
-        PoolId imageViewId{ 0 };
-
-        CacheUtils::hashCombine(imageViewId, imageId);
-        CacheUtils::hashCombine(imageViewId, descriptor.type);
-        CacheUtils::hashCombine(imageViewId, descriptor.layer);
-        CacheUtils::hashCombine(imageViewId, descriptor.layerCount);
-
-        if(imageViewPool.free.contains(imageViewId)) {
-            imageViewPool.allocated.insert(imageViewPool.free.extract(imageViewId));
-        } else {
-            imageViewPool.allocated.emplace(imageViewId, ghaFactory->createImageView(image, std::move(descriptor)).getValue());
-        }
-
-        return imageViewPool.allocated.find(imageViewId)->second;
+        //Image views are a bit more tricky to cache and reuse as they are tied to a specific image. However we still need to
+        //keep track of them as the RenderGraph can be destroyed before the GPU has finished rendering that frame.
+        imageViews.emplace_back(ghaFactory->createImageView(image, std::move(descriptor)).getValue());
+        return imageViews.back();
     }
 
     std::shared_ptr<GhaFramebuffer> RgFrameCache::allocateFramebuffer(GhaFramebuffer::Descriptor descriptor) {
