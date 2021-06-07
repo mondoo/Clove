@@ -3,6 +3,7 @@
 #include "Clove/Graphics/Metal/MetalView.hpp"
 #include "Clove/Graphics/Metal/MetalSwapchain.hpp"
 #include "Clove/Graphics/Metal/MetalImageView.hpp"
+#include "Clove/Graphics/Metal/MetalSemaphore.hpp"
 
 #include <Clove/Cast.hpp>
 
@@ -35,6 +36,9 @@ namespace garlic::clove {
 			id<MTLCommandBuffer> commandBuffer{ [commandQueue commandBuffer] };
 		
 			id<MTLBlitCommandEncoder> encoder{ [commandBuffer blitCommandEncoder] };
+			for(auto const &semaphore : presentInfo.waitSemaphores) {
+				[encoder waitForFence:polyCast<MetalSemaphore const>(semaphore.get())->getFence()];
+			}
 			[encoder copyFromTexture:texture toTexture:drawable.texture];
 			[encoder endEncoding];
 		
