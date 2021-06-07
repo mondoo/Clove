@@ -14,6 +14,7 @@
 #include "Clove/Graphics/Metal/MetalPresentQueue.hpp"
 #include "Clove/Graphics/Metal/MetalRenderPass.hpp"
 #include "Clove/Graphics/Metal/MetalSampler.hpp"
+#include "Clove/Graphics/Metal/MetalSemaphore.hpp"
 #include "Clove/Graphics/Metal/MetalSwapchain.hpp"
 #include "Clove/Graphics/Metal/MetalView.hpp"
 
@@ -378,7 +379,12 @@ namespace garlic::clove {
 	}
 
 	Expected<std::unique_ptr<GhaSemaphore>, std::runtime_error> MetalFactory::createSemaphore() {
-		return Unexpected{ std::runtime_error{ "Not implemented" } };
+		id<MTLFence> fence{ [device newFence] };
+		auto result{ std::unique_ptr<GhaSemaphore>{ std::make_unique<MetalSemaphore>(fence) } };
+		
+		[fence release];
+		
+		return result;
 	}
 	
 	Expected<std::unique_ptr<GhaFence>, std::runtime_error> MetalFactory::createFence(GhaFence::Descriptor descriptor) {

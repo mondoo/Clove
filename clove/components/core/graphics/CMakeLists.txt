@@ -124,6 +124,9 @@ set(
 		${INCLUDE}/Metal/MetalSampler.hpp
 		${INCLUDE}/Metal/MetalSampler.inl
 		${SOURCE}/Metal/MetalSampler.mm
+		${INCLUDE}/Metal/MetalSemaphore.hpp
+		${INCLUDE}/Metal/MetalSemaphore.inl
+		${SOURCE}/Metal/MetalSemaphore.mm
 		${INCLUDE}/Metal/MetalShader.hpp
 		${SOURCE}/Metal/MetalShader.mm
 		${INCLUDE}/Metal/MetalSwapchain.hpp
