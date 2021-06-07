@@ -4,7 +4,7 @@
 #include "Clove/Graphics/Metal/MetalBuffer.hpp"
 #include "Clove/Graphics/Metal/MetalDescriptorPool.hpp"
 #include "Clove/Graphics/Metal/MetalDescriptorSetLayout.hpp"
-#include "Clove/Graphics/Metal/MetalShader.hpp"
+#include "Clove/Graphics/Metal/MetalFence.hpp"
 #include "Clove/Graphics/Metal/MetalFramebuffer.hpp"
 #include "Clove/Graphics/Metal/MetalGlobals.hpp"
 #include "Clove/Graphics/Metal/MetalGraphicsPipelineObject.hpp"
@@ -15,6 +15,7 @@
 #include "Clove/Graphics/Metal/MetalRenderPass.hpp"
 #include "Clove/Graphics/Metal/MetalSampler.hpp"
 #include "Clove/Graphics/Metal/MetalSemaphore.hpp"
+#include "Clove/Graphics/Metal/MetalShader.hpp"
 #include "Clove/Graphics/Metal/MetalSwapchain.hpp"
 #include "Clove/Graphics/Metal/MetalView.hpp"
 
@@ -388,7 +389,16 @@ namespace garlic::clove {
 	}
 	
 	Expected<std::unique_ptr<GhaFence>, std::runtime_error> MetalFactory::createFence(GhaFence::Descriptor descriptor) {
-		return Unexpected{ std::runtime_error{ "Not implemented" } };
+		dispatch_semaphore_t semaphore{ dispatch_semaphore_create(0) };
+		if(descriptor.signaled) {
+			dispatch_semaphore_signal(semaphore);
+		}
+		
+		auto result{ std::unique_ptr<GhaFence>{ std::make_unique<MetalFence>(semaphore) } };
+		
+		[semaphore release];
+		
+		return result;
 	}
 
 	Expected<std::unique_ptr<GhaBuffer>, std::runtime_error> MetalFactory::createBuffer(GhaBuffer::Descriptor descriptor) {
