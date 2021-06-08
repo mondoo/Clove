@@ -347,7 +347,7 @@ namespace garlic::clove::ModelLoader {
     StaticModel loadStaticModel(std::filesystem::path const &modelFilePath) {
         CLOVE_PROFILE_FUNCTION();
 
-        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Debug, "Loading static model: {0}", modelFilePath.string());
+        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Loading static model: {0}", modelFilePath.string());
 
         std::vector<std::shared_ptr<Mesh>> meshes;
 
@@ -363,7 +363,7 @@ namespace garlic::clove::ModelLoader {
             meshes.emplace_back(processMesh(mesh, scene, MeshType::Default));
         }
 
-        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Info, "Finished loading static model: {0}", modelFilePath.string());
+        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Debug, "Finished loading static model: {0}", modelFilePath.string());
         //TEMP: Storing the path of the model for serialisation purposes
         StaticModel model{ meshes, std::make_shared<Material>() };
         model.setAssetPath(modelFilePath);
@@ -373,7 +373,7 @@ namespace garlic::clove::ModelLoader {
     AnimatedModel loadAnimatedModel(std::filesystem::path const &modelFilePath) {
         CLOVE_PROFILE_FUNCTION();
 
-        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Debug, "Loading animated model: {0}", modelFilePath.string());
+        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Loading animated model: {0}", modelFilePath.string());
 
         std::vector<std::shared_ptr<Mesh>> meshes;
         std::unique_ptr<Skeleton> skeleton{ std::make_unique<Skeleton>() };//TODO: Support multiple skeletons?
@@ -479,7 +479,7 @@ namespace garlic::clove::ModelLoader {
             }
         }
 
-        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Info, "Finished loading animated model: {0}", modelFilePath.string());
+        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Debug, "Finished loading animated model: {0}", modelFilePath.string());
         return { meshes, std::make_shared<Material>(), std::move(skeleton), std::move(animationClips) };
     }
 }
