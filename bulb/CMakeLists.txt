@@ -15,6 +15,8 @@ add_executable(
 
 	    ${SOURCE}/AssemblyInfo.cs
         
+		${SOURCE}/Models/FileSystemExplorerService.cs
+
 	    ${SOURCE}/Views/MainWindow.xaml
 		${SOURCE}/Views/MainWindow.xaml.cs
 		${SOURCE}/Views/Vector3Box.xaml
