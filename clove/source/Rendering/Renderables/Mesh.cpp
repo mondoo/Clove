@@ -6,11 +6,29 @@
 #include <Clove/Graphics/GhaFactory.hpp>
 
 namespace garlic::clove {
+    namespace {
+        void copyFullBuffer(GhaBuffer &source, GhaBuffer &dest, size_t const size) {
+            GhaFactory &factory{ *Application::get().getGraphicsDevice()->getGraphicsFactory() };
+
+            auto transferQueue{ *factory.createTransferQueue({ QueueFlags::Transient }) };
+            std::shared_ptr<GhaTransferCommandBuffer> transferCommandBuffer{ transferQueue->allocateCommandBuffer() };
+
+            transferCommandBuffer->beginRecording(CommandBufferUsage::OneTimeSubmit);
+            transferCommandBuffer->copyBufferToBuffer(source, 0, dest, 0, size);
+            transferCommandBuffer->endRecording();
+
+            auto transferQueueFinishedFence{ *factory.createFence({ false }) };
+
+            transferQueue->submit({ TransferSubmitInfo{ .commandBuffers = { transferCommandBuffer } } }, transferQueueFinishedFence.get());
+
+            transferQueueFinishedFence->wait();
+            transferQueue->freeCommandBuffer(*transferCommandBuffer);
+        }
+    }
+
     Mesh::Mesh(std::vector<Vertex> vertices, std::vector<uint16_t> indices)
         : vertices(std::move(vertices))
         , indices(std::move(indices)) {
-        using namespace garlic::clove;
-
         GhaFactory &factory{ *Application::get().getGraphicsDevice()->getGraphicsFactory() };
 
         vertexBufferSize = sizeof(Vertex) * this->vertices.size();
@@ -21,16 +39,15 @@ namespace garlic::clove {
         indexOffset  = vertexBufferSize;
 
         auto transferQueue{ *factory.createTransferQueue({ QueueFlags::Transient }) };
-
         std::shared_ptr<GhaTransferCommandBuffer> transferCommandBuffer{ transferQueue->allocateCommandBuffer() };
 
         //Staging buffer
-        auto stagingBuffer = *factory.createBuffer(GhaBuffer::Descriptor{
+        auto stagingBuffer{ *factory.createBuffer(GhaBuffer::Descriptor{
             .size        = totalSize,
             .usageFlags  = GhaBuffer::UsageMode::TransferSource,
             .sharingMode = SharingMode::Exclusive,
             .memoryType  = MemoryType::SystemMemory,
-        });
+        }) };
 
         //VertexBuffer
         vertexBuffer = *factory.createBuffer(GhaBuffer::Descriptor{
@@ -43,7 +60,7 @@ namespace garlic::clove {
         //Combined Buffer
         combinedBuffer = *factory.createBuffer(GhaBuffer::Descriptor{
             .size        = totalSize,
-            .usageFlags  = GhaBuffer::UsageMode::TransferDestination | GhaBuffer::UsageMode::StorageBuffer | GhaBuffer::UsageMode::VertexBuffer | GhaBuffer::UsageMode::IndexBuffer,
+            .usageFlags  = GhaBuffer::UsageMode::TransferSource | GhaBuffer::UsageMode::TransferDestination | GhaBuffer::UsageMode::StorageBuffer | GhaBuffer::UsageMode::VertexBuffer | GhaBuffer::UsageMode::IndexBuffer,
             .sharingMode = SharingMode::Concurrent,
             .memoryType  = MemoryType::VideoMemory,
         });
@@ -66,11 +83,42 @@ namespace garlic::clove {
         transferQueue->freeCommandBuffer(*transferCommandBuffer);
     }
 
-    Mesh::Mesh(Mesh const &other) = default;
+    Mesh::Mesh(Mesh const &other)
+        : vertices{ other.vertices }
+        , indices{ other.indices }
+        , vertexOffset{ other.vertexOffset }
+        , vertexBufferSize{ other.vertexBufferSize }
+        , indexOffset{ other.indexOffset } {
+        //Can share vertex buffer as this should never change
+        vertexBuffer = other.vertexBuffer;
+
+        //Create a copy of the combined buffer as this will change per mesh
+        size_t const indexBufferSize{ sizeof(uint16_t) * this->indices.size() };
+        size_t const totalSize{ vertexBufferSize + indexBufferSize };
+
+        copyFullBuffer(*other.combinedBuffer, *combinedBuffer, totalSize);
+    }
 
     Mesh::Mesh(Mesh &&other) noexcept = default;
 
-    Mesh &Mesh::operator=(Mesh const &other) = default;
+    Mesh &Mesh::operator=(Mesh const &other) {
+        vertices         = other.vertices;
+        indices          = other.indices;
+        vertexOffset     = other.vertexOffset;
+        vertexBufferSize = other.vertexBufferSize;
+        indexOffset      = other.indexOffset;
+
+        //Can share vertex buffer as this should never change
+        vertexBuffer = other.vertexBuffer;
+
+        //Create a copy of the combined buffer as this will change per mesh
+        size_t const indexBufferSize{ sizeof(uint16_t) * this->indices.size() };
+        size_t const totalSize{ vertexBufferSize + indexBufferSize };
+
+        copyFullBuffer(*other.combinedBuffer, *combinedBuffer, totalSize);
+
+        return *this;
+    }
 
     Mesh &Mesh::operator=(Mesh &&other) noexcept = default;
 
