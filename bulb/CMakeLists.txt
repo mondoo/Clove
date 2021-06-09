@@ -24,6 +24,9 @@ add_executable(
 		${SOURCE}/Views/Viewport.xaml
 		${SOURCE}/Views/Viewport.xaml.cs
 		
+
+		${SOURCE}/ViewModels/FileExplorer/DirectoryViewModel.cs
+
 		${SOURCE}/ViewModels/ComponentMenuItemViewModel.cs
 		${SOURCE}/ViewModels/EditorSessionViewModel.cs
 		${SOURCE}/ViewModels/SceneViewModel.cs
