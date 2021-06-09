@@ -4,6 +4,14 @@ using System.Collections.Generic;
 using Membrane = garlic.membrane;
 using System;
 
+//TODO: This will have to be refactored to work through the VFS and only know about directories that it is aware of.
+//Leaving it like this for now just to follow the tutorial. Luckily because MVVM just this will change.
+
+/*
+Or would it? The editor will be mounting the the VFS locations so it'll know. the VFS is purely there for the engine's benefit.
+-- it can just resolve the content location and go from there.
+*/
+
 namespace Garlic.Bulb {
     /// <summary>
     /// Gets file system information.

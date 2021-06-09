@@ -15,7 +15,7 @@ add_executable(
 
 	    ${SOURCE}/AssemblyInfo.cs
         
-		${SOURCE}/Models/FileSystemExplorerService.cs
+		${SOURCE}/Models/FileExplorer/FileSystemExplorerService.cs
 
 	    ${SOURCE}/Views/MainWindow.xaml
 		${SOURCE}/Views/MainWindow.xaml.cs
@@ -24,6 +24,10 @@ add_executable(
 		${SOURCE}/Views/Viewport.xaml
 		${SOURCE}/Views/Viewport.xaml.cs
 		
+		${SOURCE}/ViewModels/Components/ComponentViewModel.cs
+		${SOURCE}/ViewModels/Components/CollisionShapeComponentViewModel.cs
+		${SOURCE}/ViewModels/Components/RigidBodyComponentViewModel.cs
+		${SOURCE}/ViewModels/Components/TransformComponentViewModel.cs
 
 		${SOURCE}/ViewModels/FileExplorer/DirectoryViewModel.cs
 
