@@ -39,6 +39,7 @@ add_executable(
 		${SOURCE}/ViewModels/Components/TransformComponentViewModel.cs
 
 		${SOURCE}/ViewModels/FileExplorer/DirectoryItemViewModel.cs
+		${SOURCE}/ViewModels/FileExplorer/DirectoryViewModel.cs
 
 		${SOURCE}/ViewModels/ComponentMenuItemViewModel.cs
 		${SOURCE}/ViewModels/EditorSessionViewModel.cs
