@@ -41,7 +41,7 @@ namespace Garlic.Bulb {
         }
         private bool isSelected = false;
 
-        DirectoryItemViewModel(DirectoryInfo directory) {
+        public DirectoryItemViewModel(DirectoryInfo directory) {
             Name = directory.Name;
             Root = directory.Root.Name;
             Path = directory.FullName;
@@ -55,7 +55,7 @@ namespace Garlic.Bulb {
             }
         }
 
-        DirectoryItemViewModel(FileInfo file) {
+        public DirectoryItemViewModel(FileInfo file) {
             Name = file.Name;
             Path = file.FullName;
             Size = $"{file.Length / 1024} KB";
