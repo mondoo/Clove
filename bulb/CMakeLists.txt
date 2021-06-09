@@ -4,8 +4,17 @@ include(CSharpUtilities)
 project(Garlic-Editor LANGUAGES CSharp)
 
 set(SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/source)
+set(RESOURCE ${CMAKE_CURRENT_SOURCE_DIR}/resource)
 
 add_subdirectory(components)
+
+#Resources
+set(
+	RESOURCES
+		${RESOURCE}/FileExplorer/png/001-folder-closed-black-shape.png
+		${RESOURCE}/FileExplorer/png/002-file.png
+		${RESOURCE}/FileExplorer/png/003-open-folder.png
+)
 
 #Executable
 add_executable(
@@ -36,10 +45,9 @@ add_executable(
 		${SOURCE}/ViewModels/SceneViewModel.cs
 		${SOURCE}/ViewModels/EntityViewModel.cs
 		${SOURCE}/ViewModels/LogViewModel.cs
-		${SOURCE}/ViewModels/ComponentViewModel.cs
-		${SOURCE}/ViewModels/CollisionShapeComponentViewModel.cs
-		${SOURCE}/ViewModels/RigidBodyComponentViewModel.cs
-		${SOURCE}/ViewModels/TransformComponentViewModel.cs
+		
+
+		${RESOURCES}
 )
 
 #Libraries
@@ -72,6 +80,7 @@ csharp_set_xaml_cs_properties(
 
 #File properties
 set_source_files_properties(${SOURCE}/EditorApp.xaml PROPERTIES VS_XAML_TYPE "ApplicationDefinition")
+set_property(SOURCE ${RESOURCES} PROPERTY VS_TOOL_OVERRIDE "Resource")
 
 #Target properties
 set_target_properties(Bulb PROPERTIES
