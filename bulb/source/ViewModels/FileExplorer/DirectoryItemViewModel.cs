@@ -18,6 +18,9 @@ namespace Garlic.Bulb {
         public string Extension { get; set; }
         public ObjectType Type { get; set; }
 
+        /// <summary>
+        /// A list of all files and directories this item views.
+        /// </summary>
         public ObservableCollection<DirectoryItemViewModel> SubDirectories { get; } = new ObservableCollection<DirectoryItemViewModel>();
 
         public bool IsExpanded {
@@ -43,6 +46,13 @@ namespace Garlic.Bulb {
             Root = directory.Root.Name;
             Path = directory.FullName;
             Type = ObjectType.Directory;
+
+            foreach(var dir in directory.EnumerateDirectories()) {
+                SubDirectories.Add(new DirectoryItemViewModel(dir));
+            }
+            foreach(var file in directory.EnumerateFiles()) {
+                SubDirectories.Add(new DirectoryItemViewModel(file));
+            }
         }
 
         DirectoryItemViewModel(FileInfo file) {
