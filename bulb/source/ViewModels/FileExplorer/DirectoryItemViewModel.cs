@@ -8,9 +8,9 @@ namespace Garlic.Bulb {
     }
 
     /// <summary>
-    /// Contains information for a Directory or File.
+    /// Contains information for a single Directory or File.
     /// </summary>
-    public class DirectoryViewModel : ViewModel {
+    public class DirectoryItemViewModel : ViewModel {
         public string Name { get; set; }
         public string Path { get; set; }
         public string Root { get; set; }
@@ -18,7 +18,7 @@ namespace Garlic.Bulb {
         public string Extension { get; set; }
         public ObjectType Type { get; set; }
 
-        public ObservableCollection<DirectoryViewModel> SubDirectories { get; } = new ObservableCollection<DirectoryViewModel>();
+        public ObservableCollection<DirectoryItemViewModel> SubDirectories { get; } = new ObservableCollection<DirectoryItemViewModel>();
 
         public bool IsExpanded {
             get { return isExpanded; }
@@ -38,14 +38,14 @@ namespace Garlic.Bulb {
         }
         private bool isSelected = false;
 
-        DirectoryViewModel(DirectoryInfo directory) {
+        DirectoryItemViewModel(DirectoryInfo directory) {
             Name = directory.Name;
             Root = directory.Root.Name;
             Path = directory.FullName;
             Type = ObjectType.Directory;
         }
 
-        DirectoryViewModel(FileInfo file) {
+        DirectoryItemViewModel(FileInfo file) {
             Name = file.Name;
             Path = file.FullName;
             Size = $"{file.Length / 1024} KB";
