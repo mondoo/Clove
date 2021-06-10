@@ -261,6 +261,7 @@ namespace garlic::clove {
 
     GraphicsSubmitInfo RenderGraph::execute() {
         //TEMP: Create all resources. Later we should only create the ones that are consumed
+        
         //Allocate buffers
         for(auto &&[id, descriptor] : bufferDescriptors) {
             allocatedBuffers[id] = frameCache.allocateBuffer(descriptor);
@@ -278,13 +279,13 @@ namespace garlic::clove {
             for(auto &renderTarget : descriptor.renderTargets) {
                 //TEMP: Just create the view when we need it
                 if(!allocatedImageViews.contains(renderTarget.target)) {
-                    allocatedImageViews[renderTarget.target] = frameCache.allocateImageView(*allocatedImages.at(renderTarget.target), GhaImageView::Descriptor{ .type = GhaImageView::Type::_2D });
+                    allocatedImageViews[renderTarget.target] = frameCache.allocateImageView(allocatedImages.at(renderTarget.target).get(), GhaImageView::Descriptor{ .type = GhaImageView::Type::_2D });
                 }
                 attachments.push_back(allocatedImageViews.at(renderTarget.target));
             }
             //TEMP: Just create the view when we need it
             if(!allocatedImageViews.contains(descriptor.depthStencil.target)) {
-                allocatedImageViews[descriptor.depthStencil.target] = frameCache.allocateImageView(*allocatedImages.at(descriptor.depthStencil.target), GhaImageView::Descriptor{ .type = GhaImageView::Type::_2D });
+                allocatedImageViews[descriptor.depthStencil.target] = frameCache.allocateImageView(allocatedImages.at(descriptor.depthStencil.target).get(), GhaImageView::Descriptor{ .type = GhaImageView::Type::_2D });
             }
             attachments.push_back(allocatedImageViews.at(descriptor.depthStencil.target));
 

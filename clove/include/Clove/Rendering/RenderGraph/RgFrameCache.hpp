@@ -41,10 +41,9 @@ namespace garlic::clove {
 
         ResourcePool<GhaBuffer> bufferPool{};
         ResourcePool<GhaImage> imagePool{};
+        ResourcePool<GhaImageView> imageViewPool{};
         ResourcePool<GhaFramebuffer> framebufferPool{};
         ResourcePool<GhaDescriptorPool> descriptorPoolPool{};
-
-        std::vector<std::shared_ptr<GhaImageView>> imageViews{};
 
         std::shared_ptr<GhaGraphicsCommandBuffer> graphicsCommandBuffer{ nullptr };
         std::shared_ptr<GhaComputeCommandBuffer> computeCommandBuffer{ nullptr };
@@ -71,7 +70,7 @@ namespace garlic::clove {
         std::shared_ptr<GhaBuffer> allocateBuffer(GhaBuffer::Descriptor descriptor);
 
         std::shared_ptr<GhaImage> allocateImage(GhaImage::Descriptor descriptor);
-        std::shared_ptr<GhaImageView> allocateImageView(GhaImage const &image, GhaImageView::Descriptor descriptor);
+        std::shared_ptr<GhaImageView> allocateImageView(GhaImage const *const image, GhaImageView::Descriptor descriptor);
 
         std::shared_ptr<GhaFramebuffer> allocateFramebuffer(GhaFramebuffer::Descriptor descriptor);
 
@@ -80,8 +79,5 @@ namespace garlic::clove {
         std::shared_ptr<GhaGraphicsCommandBuffer> getGraphicsCommandBuffer();
         std::shared_ptr<GhaComputeCommandBuffer> getComputeCommandBuffer();
         std::shared_ptr<GhaTransferCommandBuffer> getTransferCommandBuffer();
-
-    private:
-        static PoolId getImageId(GhaImage::Descriptor const &descriptor);
     };
 }

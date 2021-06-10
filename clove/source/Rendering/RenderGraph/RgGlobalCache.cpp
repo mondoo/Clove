@@ -154,20 +154,10 @@ namespace garlic::clove {
 
         CacheUtils::hashCombine(pipelineId, descriptor.enableBlending);
 
-        for(auto &&[id, renderPass] : renderPasses) {
-            if(renderPass == descriptor.renderPass) {
-                CacheUtils::hashCombine(pipelineId, id);
-                break;
-            }
-        }
+        CacheUtils::hashCombine(pipelineId, descriptor.renderPass.get());
 
         for(auto const &descriptorSetLayout : descriptor.descriptorSetLayouts) {
-            for(auto &&[id, cachedLayout] : descriptorSetLayouts) {
-                if(descriptorSetLayout == cachedLayout) {
-                    CacheUtils::hashCombine(pipelineId, id);
-                    break;
-                }
-            }
+            CacheUtils::hashCombine(pipelineId, descriptorSetLayout.get());
         }
 
         for(auto const &pushConstantDescriptor : descriptor.pushConstants) {

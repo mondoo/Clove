@@ -22,10 +22,9 @@ namespace garlic::clove {
     void RgFrameCache::reset() {
         bufferPool.reset();
         imagePool.reset();
+        imageViewPool.reset();
         framebufferPool.reset();
         descriptorPoolPool.reset();
-        
-        imageViews.clear();
     }
 
     std::shared_ptr<GhaBuffer> RgFrameCache::allocateBuffer(GhaBuffer::Descriptor descriptor) {
@@ -45,7 +44,13 @@ namespace garlic::clove {
     }
 
     std::shared_ptr<GhaImage> RgFrameCache::allocateImage(GhaImage::Descriptor descriptor) {
-        PoolId const imageId{ getImageId(descriptor) };
+        PoolId imageId{ 0 };
+        CacheUtils::hashCombine(imageId, descriptor.type);
+        CacheUtils::hashCombine(imageId, descriptor.usageFlags);
+        CacheUtils::hashCombine(imageId, descriptor.dimensions.x);
+        CacheUtils::hashCombine(imageId, descriptor.dimensions.y);
+        CacheUtils::hashCombine(imageId, descriptor.format);
+        CacheUtils::hashCombine(imageId, descriptor.sharingMode);
 
         if(imagePool.free.contains(imageId)) {
             imagePool.allocated.insert(imagePool.free.extract(imageId));
@@ -56,30 +61,28 @@ namespace garlic::clove {
         return imagePool.allocated.find(imageId)->second;
     }
 
-    std::shared_ptr<GhaImageView> RgFrameCache::allocateImageView(GhaImage const &image, GhaImageView::Descriptor descriptor) {
-        //Image views are a bit more tricky to cache and reuse as they are tied to a specific image. However we still need to
-        //keep track of them as the RenderGraph can be destroyed before the GPU has finished rendering that frame.
-        imageViews.emplace_back(ghaFactory->createImageView(image, std::move(descriptor)).getValue());
-        return imageViews.back();
+    std::shared_ptr<GhaImageView> RgFrameCache::allocateImageView(GhaImage const *const image, GhaImageView::Descriptor descriptor) {
+        PoolId viewId{ 0 };
+        CacheUtils::hashCombine(viewId, image);
+        CacheUtils::hashCombine(viewId, descriptor.type);
+        CacheUtils::hashCombine(viewId, descriptor.layer);
+        CacheUtils::hashCombine(viewId, descriptor.layerCount);
+
+        if(imageViewPool.free.contains(viewId)) {
+            imageViewPool.allocated.insert(imageViewPool.free.extract(viewId));
+        } else {
+            imageViewPool.allocated.emplace(viewId, ghaFactory->createImageView(*image, std::move(descriptor)).getValue());
+        }
+
+        return imageViewPool.allocated.find(viewId)->second;
     }
 
     std::shared_ptr<GhaFramebuffer> RgFrameCache::allocateFramebuffer(GhaFramebuffer::Descriptor descriptor) {
-        auto const &renderPassDesc{ descriptor.renderPass->getDescriptor() };
-        auto const hashAttachment = [](PoolId &id, AttachmentDescriptor const &attachment) {
-            CacheUtils::hashCombine(id, attachment.format);
-            CacheUtils::hashCombine(id, attachment.loadOperation);
-            CacheUtils::hashCombine(id, attachment.storeOperation);
-            CacheUtils::hashCombine(id, attachment.initialLayout);
-            CacheUtils::hashCombine(id, attachment.usedLayout);
-            CacheUtils::hashCombine(id, attachment.finalLayout);
-        };
-
         PoolId framebufferId{ 0 };
-        for(auto &attachment : renderPassDesc.colourAttachments) {
-            hashAttachment(framebufferId, attachment);
+        CacheUtils::hashCombine(framebufferId, descriptor.renderPass.get());
+        for(auto const &imageView : descriptor.attachments) {
+            CacheUtils::hashCombine(framebufferId, imageView.get());
         }
-        hashAttachment(framebufferId, renderPassDesc.depthAttachment);
-        CacheUtils::hashCombine(framebufferId, descriptor.attachments.size());
         CacheUtils::hashCombine(framebufferId, descriptor.width);
         CacheUtils::hashCombine(framebufferId, descriptor.height);
 
@@ -120,17 +123,5 @@ namespace garlic::clove {
 
     std::shared_ptr<GhaTransferCommandBuffer> RgFrameCache::getTransferCommandBuffer() {
         return transferCommandBuffer;
-    }
-
-    RgFrameCache::PoolId RgFrameCache::getImageId(GhaImage::Descriptor const &descriptor) {
-        PoolId imageId{ 0 };
-        CacheUtils::hashCombine(imageId, descriptor.type);
-        CacheUtils::hashCombine(imageId, descriptor.usageFlags);
-        CacheUtils::hashCombine(imageId, descriptor.dimensions.x);
-        CacheUtils::hashCombine(imageId, descriptor.dimensions.y);
-        CacheUtils::hashCombine(imageId, descriptor.format);
-        CacheUtils::hashCombine(imageId, descriptor.sharingMode);
-
-        return imageId;
     }
 }
