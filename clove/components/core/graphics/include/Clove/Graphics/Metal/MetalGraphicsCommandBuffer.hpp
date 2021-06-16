@@ -9,16 +9,17 @@
 namespace garlic::clove {
 	class MetalGraphicsCommandBuffer : public GhaGraphicsCommandBuffer {
 		//TYPES
+	public:
+		struct RenderPass {
+			std::function<id<MTLRenderCommandEncoder>(id<MTLCommandBuffer>)> begin{};
+			std::vector<std::function<void(id<MTLRenderCommandEncoder>)>> commands{};
+		};
+		
 	private:
 		struct CachedIndexBufferData {
 			id<MTLBuffer> buffer{};
 			MTLIndexType indexType{};
 			NSUInteger offset{};
-		};
-		
-		struct RenderPass {
-			std::function<id<MTLRenderCommandEncoder>(id<MTLCommandBuffer>)> begin{};
-			std::vector<std::function<void(id<MTLRenderCommandEncoder>)>> commands{};
 		};
 		
 		//VARIABLES
@@ -62,6 +63,8 @@ namespace garlic::clove {
 		void bufferMemoryBarrier(GhaBuffer &buffer, BufferMemoryBarrierInfo const &barrierInfo, PipelineStage sourceStage, PipelineStage destinationStage) override;
 		void imageMemoryBarrier(GhaImage &image, ImageMemoryBarrierInfo const &barrierInfo, PipelineStage sourceStage, PipelineStage destinationStage) override;
 		
-		void executeCommands(id<MTLCommandBuffer> commandBuffer);
+		inline std::vector<RenderPass> const &getEncodedRenderPasses() const;
 	};
 }
+
+#include "Clove/Graphics/Metal/MetalGraphicsCommandBuffer.inl"

@@ -110,6 +110,7 @@ set(
 		${SOURCE}/Metal/MetalFramebuffer.mm
 		${INCLUDE}/Metal/MetalGlobals.hpp
 		${INCLUDE}/Metal/MetalGraphicsCommandBuffer.hpp
+		${INCLUDE}/Metal/MetalGraphicsCommandBuffer.inl
 		${SOURCE}/Metal/MetalGraphicsCommandBuffer.mm
 		${INCLUDE}/Metal/MetalGraphicsPipelineObject.hpp
 		${SOURCE}/Metal/MetalGraphicsPipelineObject.mm

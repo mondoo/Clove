@@ -173,20 +173,11 @@ namespace garlic::clove {
 
 	void MetalGraphicsCommandBuffer::bufferMemoryBarrier(GhaBuffer &buffer, BufferMemoryBarrierInfo const &barrierInfo, PipelineStage sourceStage, PipelineStage destinationStage) {
 		//TODO
+		//MTLResourceStateCommandEncoder ?
 	}
 	
 	void MetalGraphicsCommandBuffer::imageMemoryBarrier(GhaImage &image, ImageMemoryBarrierInfo const &barrierInfo, PipelineStage sourceStage, PipelineStage destinationStage) {
 		//TODO
-	}
-	
-	void MetalGraphicsCommandBuffer::executeCommands(id<MTLCommandBuffer> commandBuffer) {
-		for(auto &pass : passes) {
-			id<MTLRenderCommandEncoder> encoder{ pass.begin(commandBuffer) };
-			for(auto &command : pass.commands) {
-				command(encoder);
-			}
-		}
-		
-		[commandBuffer commit];
+		//MTLResourceStateCommandEncoder ?
 	}
 }
