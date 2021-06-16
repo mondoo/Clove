@@ -36,14 +36,17 @@ namespace garlic::clove {
 				}
 			}
 			
+			//Signal fence when all submissions are completed
 			if(signalFence != nullptr) {
 				//Create a separate command buffer to enqueue at the end that signals the semaphore
-				id<MTLCommandBuffer> mtlCommandBuffer{ [commandQueue commandBuffer] };
+				id<MTLCommandBuffer> signalBuffer{ [commandQueue commandBuffer] };
 				
 				__block dispatch_semaphore_t block_semaphore{ polyCast<MetalFence const>(signalFence)->getSemaphore() };
-				[mtlCommandBuffer addCompletedHandler:^(id<MTLCommandBuffer> buffer) {
+				[signalBuffer addCompletedHandler:^(id<MTLCommandBuffer> buffer) {
 					 dispatch_semaphore_signal(block_semaphore);
 				 }];
+				
+				[signalBuffer commit];
 			}
 		}
 	}
