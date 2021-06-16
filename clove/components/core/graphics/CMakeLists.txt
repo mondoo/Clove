@@ -120,6 +120,8 @@ set(
 		${SOURCE}/Metal/MetalImage.mm
 		${INCLUDE}/Metal/MetalImageView.hpp
 		${SOURCE}/Metal/MetalImageView.mm
+		${INCLUDE}/Metal/MetalPipelineObject.hpp
+		${SOURCE}/Metal/MetalPipelineObject.mm
 		${INCLUDE}/Metal/MetalPresentQueue.hpp
 		${SOURCE}/Metal/MetalPresentQueue.mm
 		${INCLUDE}/Metal/MetalRenderPass.hpp
