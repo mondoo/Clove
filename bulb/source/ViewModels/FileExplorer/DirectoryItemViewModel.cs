@@ -13,10 +13,6 @@ namespace Garlic.Bulb {
     /// </summary>
     public class DirectoryItemViewModel : ViewModel {
         public string Name { get; }
-        public string Path { get; }
-        public string Root { get; }
-        public string Size { get; }
-        public string Extension { get; }
         public ObjectType Type { get; }
 
         public ICommand OpenCommand;
@@ -25,38 +21,44 @@ namespace Garlic.Bulb {
         public OpenHandler OnOpened;
 
         /// <summary>
-        /// A list of all directories this item views.
+        /// A list of all directories within this directory.
         /// </summary>
         public ObservableCollection<DirectoryItemViewModel> SubDirectories { get; } = new ObservableCollection<DirectoryItemViewModel>();
-        
+
         /// <summary>
-        /// A list of all files this item views.
+        /// A list of all files within this directory.
         /// </summary>
         public ObservableCollection<DirectoryItemViewModel> Files { get; } = new ObservableCollection<DirectoryItemViewModel>();
+
+        /// <summary>
+        /// A list of every single item within this directory.
+        /// </summary>
+        public ObservableCollection<DirectoryItemViewModel> AllItems { get; } = new ObservableCollection<DirectoryItemViewModel>();
 
         public DirectoryItemViewModel(string directoryPath) : this(new DirectoryInfo(directoryPath)) { }
 
         public DirectoryItemViewModel(DirectoryInfo directory) : this() {
             Name = directory.Name;
-            Root = directory.Root.Name;
-            Path = directory.FullName;
             Type = ObjectType.Directory;
 
             foreach (var dir in directory.EnumerateDirectories()) {
-                SubDirectories.Add(new DirectoryItemViewModel(dir));
+                var vm = new DirectoryItemViewModel(dir);
+                
+                SubDirectories.Add(vm);
+                AllItems.Add(vm);
                 //TODO: OnOpened
             }
             foreach (var file in directory.EnumerateFiles()) {
-                Files.Add(new DirectoryItemViewModel(file));
+                var vm = new DirectoryItemViewModel(file);
+
+                Files.Add(vm);
+                AllItems.Add(vm);
                 //TODO: OnOpened
             }
         }
 
         public DirectoryItemViewModel(FileInfo file) : this() {
             Name = file.Name;
-            Path = file.FullName;
-            Size = $"{file.Length / 1024} KB";
-            Extension = file.Extension;
             Type = ObjectType.File;
         }
 
