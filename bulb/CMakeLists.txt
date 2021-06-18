@@ -24,9 +24,7 @@ add_executable(
 
 	    ${SOURCE}/AssemblyInfo.cs
         
-		${SOURCE}/Models/FileExplorer/FileSystemExplorerService.cs
-
-	    ${SOURCE}/Views/FileExplorer/DirectoryTree.xaml
+		${SOURCE}/Views/FileExplorer/DirectoryTree.xaml
 		${SOURCE}/Views/FileExplorer/DirectoryTree.xaml.cs
 		${SOURCE}/Views/FileExplorer/DirectoryTreeItem.xaml
 		${SOURCE}/Views/FileExplorer/DirectoryTreeItem.xaml.cs
