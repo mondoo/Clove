@@ -26,6 +26,10 @@ add_executable(
         
 		${SOURCE}/Models/FileExplorer/FileSystemExplorerService.cs
 
+	    ${SOURCE}/Views/FileExplorer/DirectoryTree.xaml
+		${SOURCE}/Views/FileExplorer/DirectoryTree.xaml.cs
+		${SOURCE}/Views/FileExplorer/DirectoryTreeItem.xaml
+		${SOURCE}/Views/FileExplorer/DirectoryTreeItem.xaml.cs
 	    ${SOURCE}/Views/MainWindow.xaml
 		${SOURCE}/Views/MainWindow.xaml.cs
 		${SOURCE}/Views/Vector3Box.xaml
@@ -66,8 +70,14 @@ csharp_set_designer_cs_properties(
 )
 
 csharp_set_xaml_cs_properties(
-	${SOURCE}/Views/EditorApp.xaml
-    ${SOURCE}/Views/EditorApp.xaml.cs
+	${SOURCE}/EditorApp.xaml
+    ${SOURCE}/EditorApp.xaml.cs
+
+	${SOURCE}/Views/FileExplorer/DirectoryTree.xaml
+	${SOURCE}/Views/FileExplorer/DirectoryTree.xaml.cs
+
+	${SOURCE}/Views/FileExplorer/DirectoryTreeItem.xaml
+	${SOURCE}/Views/FileExplorer/DirectoryTreeItem.xaml.cs
 
 	${SOURCE}/Views/MainWindow.xaml
     ${SOURCE}/Views/MainWindow.xaml.cs
