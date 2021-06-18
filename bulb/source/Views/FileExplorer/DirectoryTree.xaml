@@ -6,12 +6,13 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:local="clr-namespace:Garlic.Bulb"
              mc:Ignorable="d" d:DesignWidth="272.344" d:DesignHeight="141.615">
-
-	<ListBox ItemsSource="{Binding SubDirectories}" HorizontalContentAlignment="Stretch" ScrollViewer.CanContentScroll="False">
-		<ListBox.ItemTemplate>
-			<DataTemplate>
-				<local:DirectoryTreeItem/>
-			</DataTemplate>
-		</ListBox.ItemTemplate>
-	</ListBox>
+	<ScrollViewer>
+		<ItemsControl ItemsSource="{Binding SubDirectories}" HorizontalContentAlignment="Stretch">
+			<ItemsControl.ItemTemplate>
+				<DataTemplate>
+					<local:DirectoryTreeItem/>
+				</DataTemplate>
+			</ItemsControl.ItemTemplate>
+		</ItemsControl>
+	</ScrollViewer>
 </UserControl>

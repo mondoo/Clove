@@ -15,9 +15,9 @@ namespace Garlic.Bulb {
         public string Name { get; }
         public ObjectType Type { get; }
 
-        public ICommand OpenCommand;
+        public ICommand OpenCommand { get; }
 
-        public delegate void OpenHandler();
+        public delegate void OpenHandler(DirectoryItemViewModel item);
         public OpenHandler OnOpened;
 
         /// <summary>
@@ -43,17 +43,17 @@ namespace Garlic.Bulb {
 
             foreach (var dir in directory.EnumerateDirectories()) {
                 var vm = new DirectoryItemViewModel(dir);
-                
+                vm.OnOpened += (DirectoryItemViewModel item) => OnItemOpened(item);
+
                 SubDirectories.Add(vm);
                 AllItems.Add(vm);
-                //TODO: OnOpened
             }
             foreach (var file in directory.EnumerateFiles()) {
                 var vm = new DirectoryItemViewModel(file);
+                vm.OnOpened += (DirectoryItemViewModel item) => OnItemOpened(item);
 
                 Files.Add(vm);
                 AllItems.Add(vm);
-                //TODO: OnOpened
             }
         }
 
@@ -63,7 +63,11 @@ namespace Garlic.Bulb {
         }
 
         private DirectoryItemViewModel() {
-            OpenCommand = new RelayCommand(() => OnOpened?.Invoke());
+            OpenCommand = new RelayCommand(() => OnItemOpened(this));
+        }
+
+        private void OnItemOpened(DirectoryItemViewModel item) {
+            OnOpened?.Invoke(item);
         }
     }
 }

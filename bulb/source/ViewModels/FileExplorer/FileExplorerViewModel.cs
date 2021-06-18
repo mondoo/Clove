@@ -30,19 +30,24 @@ namespace Garlic.Bulb {
         private DirectoryItemViewModel currentDirectory;
 
         public FileExplorerViewModel(string rootPath) {
-            RootDirectory = new DirectoryItemViewModel(rootPath);
-            CurrentDirectory = new DirectoryItemViewModel(rootPath);
+            var directoryViewModel = new DirectoryItemViewModel(rootPath);
+            directoryViewModel.OnOpened += OnItemOpened;
 
-            //RootDirectory.OnOpened += OnItemOpened;
-            //CurrentDirectory.OnOpened += OnItemOpened;
+            rootDirectory = directoryViewModel;
+            CurrentDirectory = directoryViewModel;
         }
 
-        //private void OnItemOpened(DirectoryItemViewModel item) {
-        //    //TODO: Support opening files
-        //    if (item.Type == ObjectType.Directory) {
-        //        CurrentDirectory = new DirectoryViewModel(item);
-        //        CurrentDirectory.OnItemOpened += OnItemOpened;
-        //    }
-        //}
+        private void OnItemOpened(DirectoryItemViewModel item) {
+            if (item.Type == ObjectType.Directory) {
+                if(CurrentDirectory != RootDirectory) {
+                    CurrentDirectory.OnOpened -= OnItemOpened;
+                }
+
+                CurrentDirectory = item;
+                CurrentDirectory.OnOpened += OnItemOpened;
+            }
+
+            //TODO: Support opening files
+        }
     }
 }
