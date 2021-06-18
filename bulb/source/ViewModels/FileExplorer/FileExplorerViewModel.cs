@@ -8,43 +8,41 @@ namespace Garlic.Bulb {
         /// <summary>
         /// The root directory this explorer views from.
         /// </summary>
-        public DirectoryViewModel RootDirectory {
+        public DirectoryItemViewModel RootDirectory {
             get { return rootDirectory; }
             private set {
                 rootDirectory = value;
                 OnPropertyChanged(nameof(RootDirectory));
             }
         }
-        private DirectoryViewModel rootDirectory;
+        private DirectoryItemViewModel rootDirectory;
 
         /// <summary>
         /// The current directory this explorer has opened into.
         /// </summary>
-        public DirectoryViewModel CurrentDirectory {
+        public DirectoryItemViewModel CurrentDirectory {
             get { return currentDirectory; }
             private set {
                 currentDirectory = value;
                 OnPropertyChanged(nameof(currentDirectory));
             }
         }
-        private DirectoryViewModel currentDirectory;
+        private DirectoryItemViewModel currentDirectory;
 
         public FileExplorerViewModel(string rootPath) {
-            var directory = new DirectoryItemViewModel(Directory.CreateDirectory(rootPath));
+            RootDirectory = new DirectoryItemViewModel(rootPath);
+            CurrentDirectory = new DirectoryItemViewModel(rootPath);
 
-            RootDirectory = new DirectoryViewModel(directory);
-            CurrentDirectory = new DirectoryViewModel(directory);
-
-            RootDirectory.OnItemOpened += OnItemOpened;
-            CurrentDirectory.OnItemOpened += OnItemOpened;
+            //RootDirectory.OnOpened += OnItemOpened;
+            //CurrentDirectory.OnOpened += OnItemOpened;
         }
 
-        private void OnItemOpened(DirectoryItemViewModel item) {
-            //TODO: Support opening files
-            if(item.Type == ObjectType.Directory) {
-                CurrentDirectory = new DirectoryViewModel(item);
-                CurrentDirectory.OnItemOpened += OnItemOpened;
-            }
-        }
+        //private void OnItemOpened(DirectoryItemViewModel item) {
+        //    //TODO: Support opening files
+        //    if (item.Type == ObjectType.Directory) {
+        //        CurrentDirectory = new DirectoryViewModel(item);
+        //        CurrentDirectory.OnItemOpened += OnItemOpened;
+        //    }
+        //}
     }
 }
