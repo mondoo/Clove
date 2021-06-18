@@ -4,7 +4,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-			 xmlns:local="clr-namespace:Garlic.Bulb"
+			 xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              mc:Ignorable="d" d:DesignWidth="267.396" d:DesignHeight="155.156">
 	<ListBox ItemsSource="{Binding AllItems}" 
 			 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
@@ -16,7 +16,23 @@
 		
 		<ListBox.ItemTemplate>
 			<DataTemplate>
-				<local:DirectoryViewItem/>
+				<StackPanel>
+					<Image>
+						<Image.Style>
+							<Style TargetType="{x:Type Image}">
+								<Style.Triggers>
+									<DataTrigger Binding="{Binding Type}" Value="0">
+										<Setter Property="Source" Value="/resource/FileExplorer/png/001-folder-closed-black-shape.png"/>
+									</DataTrigger>
+									<DataTrigger Binding="{Binding Type}" Value="1">
+										<Setter Property="Source" Value="/resource/FileExplorer/png/002-file.png"/>
+									</DataTrigger>
+								</Style.Triggers>
+							</Style>
+						</Image.Style>
+					</Image>
+					<TextBlock Text="{Binding Name}"/>
+				</StackPanel>
 			</DataTemplate>
 		</ListBox.ItemTemplate>
 	</ListBox>
