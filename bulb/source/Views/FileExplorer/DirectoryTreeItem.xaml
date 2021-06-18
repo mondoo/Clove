@@ -8,8 +8,12 @@
 	<StackPanel >
 		<StackPanel Orientation="Horizontal">
 			<Button x:Name="ExpandIcon"/>
-			<!--TODO: Icon -->
-			<Button x:Name="Header" Margin="3 0 0 0" Content="{Binding Name}"/>
+			<Image Source="/resource/FileExplorer/png/001-folder-closed-black-shape.png" 
+				   Width="20"
+				   Margin="3 0 0 0"/>
+			<TextBlock x:Name="Header" 
+					   Margin="3 0 0 0" 
+					   Text="{Binding Name}"/>
 		</StackPanel>
 		<StackPanel x:Name="ContentPanel" Margin="10 0 0 0"/>
 	</StackPanel>
