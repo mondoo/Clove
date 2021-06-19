@@ -11,6 +11,7 @@
 #include <Clove/Graphics/GhaImage.hpp>
 #include <Clove/Graphics/GhaImageView.hpp>
 #include <Clove/Graphics/GhaTransferCommandBuffer.hpp>
+#include <functional>
 #include <memory>
 #include <unordered_map>
 #include <vector>
@@ -26,9 +27,35 @@ namespace garlic::clove {
 
         template<typename T>
         struct ResourcePool {
-            std::unordered_multimap<PoolId, std::shared_ptr<T>> free{};
-            std::unordered_multimap<PoolId, std::shared_ptr<T>> allocated{};
+            std::unordered_map<PoolId, std::vector<std::shared_ptr<T>>> free{};
+            std::unordered_map<PoolId, std::vector<std::shared_ptr<T>>> allocated{};
 
+            /**
+             * @brief Retrieve an element from the pool. Allocating a new one if necessary.
+             * @param id Unique id of an element to retrieve.
+             * @param createItem Functor that will be called if a new item needs to be created.
+             * @return 
+             */
+            std::shared_ptr<T> retrieve(PoolId const id, std::function<std::shared_ptr<T>()> createItem) {
+                std::shared_ptr<T> item{};
+
+                bool const containsFreeElement{ free.contains(id) && !free.at(id).empty() };
+                if(containsFreeElement) {
+                    auto &freeVec{ free.at(id) };
+
+                    item = std::move(freeVec.back());
+                    freeVec.pop_back();
+                } else {
+                    item = createItem();
+                }
+                allocated[id].emplace_back(item);
+
+                return item;
+            }
+
+            /**
+             * @brief Resets the pool marking all allocated elements as free.
+             */
             void reset() {
                 free = allocated;//TODO: This can unintentionally destroy objects if not all freed ones are allocated
                 allocated.clear();
@@ -58,7 +85,7 @@ namespace garlic::clove {
         RgFrameCache(RgFrameCache &&other) noexcept;
 
         RgFrameCache &operator=(RgFrameCache const &other) = delete;
-        RgFrameCache &operator=(RgFrameCache &&other) noexcept;
+        RgFrameCache &operator                             =(RgFrameCache &&other) noexcept;
 
         ~RgFrameCache();
 

@@ -34,13 +34,9 @@ namespace garlic::clove {
         CacheUtils::hashCombine(bufferId, descriptor.sharingMode);
         CacheUtils::hashCombine(bufferId, descriptor.memoryType);
 
-        if(bufferPool.free.contains(bufferId)) {
-            bufferPool.allocated.insert(bufferPool.free.extract(bufferId));
-        } else {
-            bufferPool.allocated.emplace(bufferId, ghaFactory->createBuffer(std::move(descriptor)).getValue());
-        }
-
-        return bufferPool.allocated.find(bufferId)->second;
+        return bufferPool.retrieve(bufferId, [&]() {
+            return ghaFactory->createBuffer(std::move(descriptor)).getValue();
+        });
     }
 
     std::shared_ptr<GhaImage> RgFrameCache::allocateImage(GhaImage::Descriptor descriptor) {
@@ -52,13 +48,9 @@ namespace garlic::clove {
         CacheUtils::hashCombine(imageId, descriptor.format);
         CacheUtils::hashCombine(imageId, descriptor.sharingMode);
 
-        if(imagePool.free.contains(imageId)) {
-            imagePool.allocated.insert(imagePool.free.extract(imageId));
-        } else {
-            imagePool.allocated.emplace(imageId, ghaFactory->createImage(std::move(descriptor)).getValue());
-        }
-
-        return imagePool.allocated.find(imageId)->second;
+        return imagePool.retrieve(imageId, [&]() {
+            return ghaFactory->createImage(std::move(descriptor)).getValue();
+        });
     }
 
     std::shared_ptr<GhaImageView> RgFrameCache::allocateImageView(GhaImage const *const image, GhaImageView::Descriptor descriptor) {
@@ -68,13 +60,9 @@ namespace garlic::clove {
         CacheUtils::hashCombine(viewId, descriptor.layer);
         CacheUtils::hashCombine(viewId, descriptor.layerCount);
 
-        if(imageViewPool.free.contains(viewId)) {
-            imageViewPool.allocated.insert(imageViewPool.free.extract(viewId));
-        } else {
-            imageViewPool.allocated.emplace(viewId, ghaFactory->createImageView(*image, std::move(descriptor)).getValue());
-        }
-
-        return imageViewPool.allocated.find(viewId)->second;
+        return imageViewPool.retrieve(viewId, [&]() {
+            return ghaFactory->createImageView(*image, std::move(descriptor)).getValue();
+        });
     }
 
     std::shared_ptr<GhaFramebuffer> RgFrameCache::allocateFramebuffer(GhaFramebuffer::Descriptor descriptor) {
@@ -86,13 +74,9 @@ namespace garlic::clove {
         CacheUtils::hashCombine(framebufferId, descriptor.width);
         CacheUtils::hashCombine(framebufferId, descriptor.height);
 
-        if(framebufferPool.free.contains(framebufferId)) {
-            framebufferPool.allocated.insert(framebufferPool.free.extract(framebufferId));
-        } else {
-            framebufferPool.allocated.emplace(framebufferId, ghaFactory->createFramebuffer(std::move(descriptor)).getValue());
-        }
-
-        return framebufferPool.allocated.find(framebufferId)->second;
+        return framebufferPool.retrieve(framebufferId, [&]() {
+            return ghaFactory->createFramebuffer(std::move(descriptor)).getValue();
+        });
     }
 
     std::shared_ptr<GhaDescriptorPool> RgFrameCache::allocateDescriptorPool(GhaDescriptorPool::Descriptor descriptor) {
@@ -104,13 +88,9 @@ namespace garlic::clove {
         CacheUtils::hashCombine(poolId, descriptor.flag);
         CacheUtils::hashCombine(poolId, descriptor.maxSets);
 
-        if(descriptorPoolPool.free.contains(poolId)) {
-            descriptorPoolPool.allocated.insert(descriptorPoolPool.free.extract(poolId));
-        } else {
-            descriptorPoolPool.allocated.emplace(poolId, ghaFactory->createDescriptorPool(std::move(descriptor)).getValue());
-        }
-
-        return descriptorPoolPool.allocated.find(poolId)->second;
+        return descriptorPoolPool.retrieve(poolId, [&]() {
+            return ghaFactory->createDescriptorPool(std::move(descriptor)).getValue();
+        });
     }
 
     std::shared_ptr<GhaGraphicsCommandBuffer> RgFrameCache::getGraphicsCommandBuffer() {
