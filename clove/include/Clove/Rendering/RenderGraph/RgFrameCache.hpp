@@ -48,7 +48,7 @@ namespace garlic::clove {
                 } else {
                     item = createItem();
                 }
-                allocated[id].emplace_back(item);
+                allocated[id].push_back(item);
 
                 return item;
             }
@@ -57,7 +57,9 @@ namespace garlic::clove {
              * @brief Resets the pool marking all allocated elements as free.
              */
             void reset() {
-                free = allocated;//TODO: This can unintentionally destroy objects if not all freed ones are allocated
+                for(auto&&[key, vec] : allocated){
+                    free[key].insert(free[key].end(), vec.begin(), vec.end());
+                }
                 allocated.clear();
             }
         };
