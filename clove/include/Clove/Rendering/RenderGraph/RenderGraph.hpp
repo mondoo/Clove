@@ -73,7 +73,8 @@ namespace garlic::clove {
             vec2i viewportPosition{ 0 };
             vec2ui viewportSize{ 0 };
             //TODO: raster state
-            //TODO: depth state
+            bool depthTest{ true };
+            bool depthWrite{ true };
             //TODO: Blending
 
             //NOTE: Will be used to create the render pass.

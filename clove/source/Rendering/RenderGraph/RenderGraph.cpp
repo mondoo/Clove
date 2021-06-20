@@ -198,6 +198,10 @@ namespace garlic::clove {
             .vertexAttributes     = vertexAttributes,
             .viewportDescriptor   = viewScissorArea,
             .scissorDescriptor    = viewScissorArea,
+            .depthState = {
+                .depthTest = passDescriptor.depthTest,
+                .depthWrite = passDescriptor.depthWrite,
+            }
             .renderPass           = allocatedRenderPasses.at(pipelineId),
             .descriptorSetLayouts = { descriptorSetLayouts.at(pipelineId) },
             .pushConstants        = {},
