@@ -68,16 +68,13 @@ namespace garlic::clove {
             RgShader vertexShader{};
             RgShader pixelShader{};
 
-            //NOTE: Will create the vertex input based off of clove's uber vertex
-
             vec2i viewportPosition{ 0 };
             vec2ui viewportSize{ 0 };
             //TODO: raster state
             bool depthTest{ true };
             bool depthWrite{ true };
-            //TODO: Blending
+            bool enableBlending{ true };
 
-            //NOTE: Will be used to create the render pass.
             std::vector<RenderTargetBinding> renderTargets{};
             DepthStencilBinding depthStencil{};
         };

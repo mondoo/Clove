@@ -201,7 +201,8 @@ namespace garlic::clove {
             .depthState = {
                 .depthTest = passDescriptor.depthTest,
                 .depthWrite = passDescriptor.depthWrite,
-            }
+            },
+            .enableBlending = passDescriptor.enableBlending,
             .renderPass           = allocatedRenderPasses.at(pipelineId),
             .descriptorSetLayouts = { descriptorSetLayouts.at(pipelineId) },
             .pushConstants        = {},
