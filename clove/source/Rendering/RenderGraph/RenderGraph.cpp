@@ -203,30 +203,30 @@ namespace garlic::clove {
             .pushConstants        = {},
         });
 
-        vec2ui const renderSize{ getImageSize(passDescriptor.renderTargets[0].target) };//TEMP: Use the size of the first target
-
         passDescriptors[pipelineId] = std::move(passDescriptor);//NOTE: This will duplicate any descriptors
         passSubmissions[pipelineId] = std::move(pass);
 
         //Record draw calls
-        operations.emplace_back([this, pipelineId, renderSize](GhaGraphicsCommandBuffer &graphicsBuffer, GhaComputeCommandBuffer &computeBuffer, GhaTransferCommandBuffer &transferbuffer) {
+        operations.emplace_back([this, pipelineId](GhaGraphicsCommandBuffer &graphicsBuffer, GhaComputeCommandBuffer &computeBuffer, GhaTransferCommandBuffer &transferbuffer) {
+            GraphicsPassDescriptor const &passDescriptor{ passDescriptors.at(pipelineId) };
+
             //TODO: Batch operations by render pass and start the pass outside of the operation
             RenderArea renderArea{
-                .origin = { 0, 0 },
-                .size   = renderSize
+                .origin = passDescriptor.viewportPosition,
+                .size   = passDescriptor.viewportSize,
             };
 
             std::vector<ClearValue> clearValues{};
-            for(auto &target : passDescriptors.at(pipelineId).renderTargets) {
+            for(auto &target : passDescriptor.renderTargets) {
                 clearValues.push_back(target.clearColour);
             }
-            clearValues.push_back(passDescriptors.at(pipelineId).depthStencil.clearValue);
+            clearValues.push_back(passDescriptor.depthStencil.clearValue);
 
             graphicsBuffer.beginRenderPass(*allocatedRenderPasses.at(pipelineId), *allocatedFramebuffers.at(pipelineId), renderArea, clearValues);
 
             //TODO: Only do this if viewport is dynamic
-            graphicsBuffer.setViewport({ 0, 0 }, renderSize);
-            graphicsBuffer.setScissor({ 0, 0 }, renderSize);
+            graphicsBuffer.setViewport(passDescriptor.viewportPosition, passDescriptor.viewportSize);
+            graphicsBuffer.setScissor({ 0, 0 }, passDescriptor.viewportSize);
 
             graphicsBuffer.bindPipelineObject(*allocatedPipelines.at(pipelineId));
 

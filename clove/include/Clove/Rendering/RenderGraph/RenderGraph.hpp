@@ -65,12 +65,13 @@ namespace garlic::clove {
         };
 
         struct GraphicsPassDescriptor {
-            RgShader vertexShader;
-            RgShader pixelShader;
+            RgShader vertexShader{};
+            RgShader pixelShader{};
 
             //NOTE: Will create the vertex input based off of clove's uber vertex
 
-            //TODO: Viewport / scissor
+            vec2i viewportPosition{ 0 };
+            vec2ui viewportSize{ 0 };
             //TODO: raster state
             //TODO: depth state
             //TODO: Blending
