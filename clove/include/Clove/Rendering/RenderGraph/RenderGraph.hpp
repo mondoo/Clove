@@ -6,13 +6,13 @@
 #include "Clove/Rendering/RenderGraph/RgShader.hpp"
 
 #include <Clove/Graphics/GhaBuffer.hpp>
+#include <Clove/Graphics/GhaFramebuffer.hpp>
 #include <Clove/Graphics/GhaGraphicsPipelineObject.hpp>
 #include <Clove/Graphics/GhaGraphicsQueue.hpp>
 #include <Clove/Graphics/GhaImage.hpp>
+#include <Clove/Graphics/GhaRenderPass.hpp>
 #include <Clove/Graphics/GhaSampler.hpp>
 #include <Clove/Graphics/GhaShader.hpp>
-#include <Clove/Graphics/GhaRenderPass.hpp>
-#include <Clove/Graphics/GhaFramebuffer.hpp>
 #include <Clove/Maths/Vector.hpp>
 #include <filesystem>
 #include <functional>
@@ -50,7 +50,7 @@ namespace garlic::clove {
             RgImage image{};
         };
 
-        struct RenderTargetBinding {//TODO: RenderTargetDescriptor?
+        struct RenderTargetBinding {
             LoadOperation loadOp{};
             StoreOperation storeOp{};
             ColourValue clearColour{};
@@ -78,6 +78,7 @@ namespace garlic::clove {
             std::vector<RenderTargetBinding> renderTargets{};
             DepthStencilBinding depthStencil{};
         };
+
         struct ComputePassDescriptor {
             //TODO
         };
@@ -89,7 +90,6 @@ namespace garlic::clove {
             RgBuffer vertexBuffer{};
             RgBuffer indexBuffer{};
 
-            //NOTE: Will be used to create descriptor sets
             std::vector<BufferBinding> shaderUbos{};
             std::vector<ImageBindng> shaderCombinedImageSamplers{};
 
@@ -102,7 +102,6 @@ namespace garlic::clove {
         struct ComputeSubmission {
             vec3ui dispatchSize{ 1, 1, 1 };
 
-            //NOTE: Will be used to create descriptor sets
             std::vector<BufferBinding> shaderStorageBuffers{};
             std::vector<ImageBindng> shaderStorageImages{};//TODO: Sampler not required on compute passes
         };
@@ -114,13 +113,20 @@ namespace garlic::clove {
             size_t size;
         };
 
+        struct RenderPass{
+            GraphicsPassDescriptor passDescriptor{};
+            std::vector<GraphicsSubmission> submissions{};
+        };
+
         //VARIABLES
     private:
         RgFrameCache &frameCache;
         RgGlobalCache &globalCache;
         ResourceIdType nextId{ 1 };
 
-        std::vector<std::function<void(GhaGraphicsCommandBuffer &, GhaComputeCommandBuffer &, GhaTransferCommandBuffer&)>> operations{}; /**< Every operation (pass, copy, write, etc.) recorded into the graph in order. */
+        std::unordered_map<ResourceIdType, RenderPass> renderPasses{}; /**< Each recorded render pass. */
+
+        std::vector<std::function<void(GhaGraphicsCommandBuffer &, GhaComputeCommandBuffer &, GhaTransferCommandBuffer &)>> operations{}; /**< Every operation (pass, copy, write, etc.) recorded into the graph in order. */
 
         std::unordered_map<ResourceIdType, GhaBuffer::Descriptor> bufferDescriptors{};
         std::unordered_map<ResourceIdType, BufferWrite> bufferWrites{};
@@ -132,8 +138,6 @@ namespace garlic::clove {
 
         std::unordered_map<ResourceIdType, std::shared_ptr<GhaSampler>> allocatedSamplers{};
 
-        std::unordered_map<ResourceIdType, GraphicsPassDescriptor> passDescriptors{};
-        std::unordered_map<ResourceIdType, std::vector<GraphicsSubmission>> passSubmissions{};
         std::unordered_map<ResourceIdType, std::shared_ptr<GhaShader>> allocatedShaders{};
         std::unordered_map<ResourceIdType, std::shared_ptr<GhaRenderPass>> allocatedRenderPasses{};
         std::unordered_map<ResourceIdType, std::shared_ptr<GhaFramebuffer>> allocatedFramebuffers{};
@@ -146,7 +150,7 @@ namespace garlic::clove {
         RenderGraph() = delete;
         RenderGraph(RgFrameCache &frameCache, RgGlobalCache &globalCache);
 
-        RenderGraph(RenderGraph const &other) = delete;
+        RenderGraph(RenderGraph const &other)     = delete;
         RenderGraph(RenderGraph &&other) noexcept = delete;
 
         RenderGraph &operator=(RenderGraph const &other) = delete;
@@ -211,8 +215,13 @@ namespace garlic::clove {
          */
         RgShader createShader(std::string_view source, std::unordered_map<std::string, std::string> includeSources, std::string_view shaderName, GhaShader::Stage shaderStage);
 
-        void addGraphicsPass(GraphicsPassDescriptor passDescriptor, std::vector<GraphicsSubmission> pass);
-        void addComputePass(ComputePassDescriptor const &passDescriptor, std::vector<ComputeSubmission> pass);
+        /**
+         * @brief Add a graphics pass into the graph.
+         * @param passDescriptor Descriptor of the pass itself. Contains any output resources and what shaders to run.
+         * @param passSubmission Each individual submission for the pass. Encapsulates any input resources required for a single unit of work.
+         */
+        void addGraphicsPass(GraphicsPassDescriptor passDescriptor, std::vector<GraphicsSubmission> passSubmission);
+        void addComputePass(ComputePassDescriptor passDescriptor, std::vector<ComputeSubmission> pass);
 
         /**
          * @brief Executes the RenderGraph. Creating any objects required and submitting commands to the relevant queues.
@@ -227,5 +236,17 @@ namespace garlic::clove {
     private:
         GhaImage::Format getImageFormat(RgImage image);
         vec2ui getImageSize(RgImage image);
+
+        /**
+         * @brief Allocates a buffer ready for usage in the graph
+         * @param buffer 
+         */
+        void allocateBuffer(ResourceIdType bufferId);
+
+        /**
+         * @brief Allocates an image ready for usage in the graph. Will create both the image and view if necessary.
+         * @param image 
+         */
+        void allocateImage(RgImage imageId);
     };
 }

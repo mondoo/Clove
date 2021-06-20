@@ -87,7 +87,7 @@ namespace garlic::clove {
         RgFrameCache(RgFrameCache &&other) noexcept;
 
         RgFrameCache &operator=(RgFrameCache const &other) = delete;
-        RgFrameCache &operator                             =(RgFrameCache &&other) noexcept;
+        RgFrameCache &operator=(RgFrameCache &&other) noexcept;
 
         ~RgFrameCache();
 
