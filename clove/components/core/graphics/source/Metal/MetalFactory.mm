@@ -246,14 +246,20 @@ namespace garlic::clove {
 			for(auto const &binding : descriptor.bindings) {
 				MTLArgumentDescriptor *bindingDescriptor{ [[MTLArgumentDescriptor alloc] init]};
 				[bindingDescriptor setIndex:binding.binding];
-				if(binding.type != DescriptorType::CombinedImageSampler){
-					[bindingDescriptor setDataType:MTLDataTypePointer];
-				} else {
-					//TODO: What about samplers?
-					[bindingDescriptor setDataType:MTLDataTypeTexture];
-					[bindingDescriptor setTextureType:MTLTextureType2D];//TODO: What about cube maps?
+				switch(binding.type) {
+					case DescriptorType::SampledImage:
+						[bindingDescriptor setDataType:MTLDataTypeTexture];
+						[bindingDescriptor setTextureType:MTLTextureType2D];//TODO: What about cube maps?
+						break;
+					case DescriptorType::Sampler:
+						[bindingDescriptor setDataType:MTLDataTypeSampler];
+						break;
+					default:
+						[bindingDescriptor setDataType:MTLDataTypePointer];
+						break;
 				}
 				[bindingDescriptor setArrayLength:binding.arraySize];
+				
 				switch (binding.stage) {
 					case GhaShader::Stage::Vertex:
 						[vertexDescriptors addObject:bindingDescriptor];
