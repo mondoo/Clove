@@ -50,30 +50,6 @@ namespace garlic::clove {
 
         skinningSetLayout = createSkinningDescriptorSetLayout(*ghaFactory);
 
-        createRenderpass();
-        createShadowMapRenderpass();
-
-        //Create the geometry passes this renderer supports
-        geometryPasses[GeometryPass::getId<ForwardColourPass>()]    = std::make_unique<ForwardColourPass>(*ghaFactory, renderPass);
-        geometryPasses[GeometryPass::getId<DirectionalLightPass>()] = std::make_unique<DirectionalLightPass>(*ghaFactory, shadowMapRenderPass);
-        geometryPasses[GeometryPass::getId<PointLightPass>()]       = std::make_unique<PointLightPass>(*ghaFactory, shadowMapRenderPass);
-        geometryPasses[GeometryPass::getId<SkinningPass>()]         = std::make_unique<SkinningPass>(*ghaFactory);
-
-        createUiPipeline();
-
-        createRenderTargetResources();
-
-        //Create semaphores for frame synchronisation
-        for(auto &shadowFinishedSemaphore : shadowFinishedSemaphores) {
-            shadowFinishedSemaphore = *ghaFactory->createSemaphore();
-        }
-        for(auto &cubeShadowFinishedSemaphore : cubeShadowFinishedSemaphores) {
-            cubeShadowFinishedSemaphore = *ghaFactory->createSemaphore();
-        }
-        for(auto &skinningFinishedSemaphore : skinningFinishedSemaphores) {
-            skinningFinishedSemaphore = *ghaFactory->createSemaphore();
-        }
-
         float constexpr anisotropy{ 16.0f };
         textureSampler = *ghaFactory->createSampler(GhaSampler::Descriptor{
             .minFilter        = GhaSampler::Filter::Linear,
@@ -102,6 +78,30 @@ namespace garlic::clove {
             .addressModeW     = GhaSampler::AddressMode::ClampToBorder,
             .enableAnisotropy = false,
         });
+
+        createRenderpass();
+        createShadowMapRenderpass();
+
+        //Create the geometry passes this renderer supports
+        geometryPasses[GeometryPass::getId<ForwardColourPass>()]    = std::make_unique<ForwardColourPass>(*ghaFactory, renderPass);
+        geometryPasses[GeometryPass::getId<DirectionalLightPass>()] = std::make_unique<DirectionalLightPass>(*ghaFactory, shadowMapRenderPass);
+        geometryPasses[GeometryPass::getId<PointLightPass>()]       = std::make_unique<PointLightPass>(*ghaFactory, shadowMapRenderPass);
+        geometryPasses[GeometryPass::getId<SkinningPass>()]         = std::make_unique<SkinningPass>(*ghaFactory);
+
+        createUiPipeline();
+
+        createRenderTargetResources();
+
+        //Create semaphores for frame synchronisation
+        for(auto &shadowFinishedSemaphore : shadowFinishedSemaphores) {
+            shadowFinishedSemaphore = *ghaFactory->createSemaphore();
+        }
+        for(auto &cubeShadowFinishedSemaphore : cubeShadowFinishedSemaphores) {
+            cubeShadowFinishedSemaphore = *ghaFactory->createSemaphore();
+        }
+        for(auto &skinningFinishedSemaphore : skinningFinishedSemaphores) {
+            skinningFinishedSemaphore = *ghaFactory->createSemaphore();
+        }
 
         std::vector<Vertex> const uiVertices{
             Vertex{
@@ -237,8 +237,8 @@ namespace garlic::clove {
         currentImageData.frameDataBuffer->write(&currentFrameData, 0, sizeof(currentFrameData));
 
         //Map any non-UBO pieces of data (such as textures / shadow maps)
-        currentImageData.lightingDescriptorSet->map(currentImageData.shadowMapViews, *shadowSampler, GhaImage::Layout::ShaderReadOnlyOptimal, 3);
-        currentImageData.lightingDescriptorSet->map(currentImageData.cubeShadowMapViews, *shadowSampler, GhaImage::Layout::ShaderReadOnlyOptimal, 4);
+        currentImageData.lightingDescriptorSet->map(currentImageData.shadowMapViews, GhaImage::Layout::ShaderReadOnlyOptimal, 3);
+        currentImageData.lightingDescriptorSet->map(currentImageData.cubeShadowMapViews, GhaImage::Layout::ShaderReadOnlyOptimal, 4);
 
         //Allocate a descriptor set for each mesh to be drawn
         std::vector<std::shared_ptr<GhaDescriptorSet>> meshSets;
@@ -291,10 +291,10 @@ namespace garlic::clove {
             writeObjectBuffer(currentImageData.objectBuffers[index], layout);
 
             std::shared_ptr<GhaDescriptorSet> &meshDescriptorSet = meshSets[index];
-            meshDescriptorSet->map(*meshInfo.material->diffuseView, *textureSampler, GhaImage::Layout::ShaderReadOnlyOptimal, 0);
-            meshDescriptorSet->map(*meshInfo.material->specularView, *textureSampler, GhaImage::Layout::ShaderReadOnlyOptimal, 1);
-            meshDescriptorSet->map(*currentImageData.objectBuffers[index], offsetof(MeshUBOLayout, model), sizeof(ModelData), DescriptorType::UniformBuffer, 2);
-            //meshDescriptorSet->map(*currentImageData.objectBuffers[index], offsetof(MeshUBOLayout, matrixPallet), sizeof(mat4f) * MAX_JOINTS, DescriptorType::UniformBuffer, 3);
+            meshDescriptorSet->map(*currentImageData.objectBuffers[index], offsetof(MeshUBOLayout, model), sizeof(ModelData), DescriptorType::UniformBuffer, 0);
+            meshDescriptorSet->map(*meshInfo.material->diffuseView, GhaImage::Layout::ShaderReadOnlyOptimal, 1);
+            meshDescriptorSet->map(*meshInfo.material->specularView, GhaImage::Layout::ShaderReadOnlyOptimal, 2);
+            meshDescriptorSet->map(*textureSampler, 3);
             meshDescriptorSet->map(*currentImageData.objectBuffers[index], offsetof(MeshUBOLayout, colour), sizeof(vec4f), DescriptorType::UniformBuffer, 4);
 
             ++index;
@@ -460,7 +460,8 @@ namespace garlic::clove {
             for(size_t index{ 0 }; auto &&[texture, modelProj] : currentFrameData.widgets) {
                 vec4f constexpr colour{ 1.0f };//Temp colour
 
-                uiSets[index]->map(*texture, *uiSampler, GhaImage::Layout::ShaderReadOnlyOptimal, 0);
+                uiSets[index]->map(*texture, GhaImage::Layout::ShaderReadOnlyOptimal, 0);
+                uiSets[index]->map(*uiSampler, 1);
 
                 currentImageData.commandBuffer->bindDescriptorSet(*uiSets[index], 0);
                 currentImageData.commandBuffer->pushConstant(GhaShader::Stage::Vertex, 0, sizeof(modelProj), &modelProj);
@@ -476,7 +477,8 @@ namespace garlic::clove {
             for(size_t index{ widgetCount }; auto &&[texture, modelProj] : currentFrameData.text) {
                 vec4f constexpr colour{ 1.0f };//Temp colour
 
-                uiSets[index]->map(*texture, *uiSampler, GhaImage::Layout::ShaderReadOnlyOptimal, 0);
+                uiSets[index]->map(*texture, GhaImage::Layout::ShaderReadOnlyOptimal, 0);
+                uiSets[index]->map(*uiSampler, 1);
 
                 currentImageData.commandBuffer->bindDescriptorSet(*uiSets[index], 0);
                 currentImageData.commandBuffer->pushConstant(GhaShader::Stage::Vertex, 0, sizeof(modelProj), &modelProj);
@@ -563,6 +565,7 @@ namespace garlic::clove {
             imageData.lightingDescriptorSet->map(*imageData.frameDataBuffer, offsetof(FrameData::BufferData, lights), sizeof(currentFrameData.bufferData.lights), DescriptorType::UniformBuffer, 0);
             imageData.lightingDescriptorSet->map(*imageData.frameDataBuffer, offsetof(FrameData::BufferData, numLights), sizeof(currentFrameData.bufferData.numLights), DescriptorType::UniformBuffer, 1);
             imageData.lightingDescriptorSet->map(*imageData.frameDataBuffer, offsetof(FrameData::BufferData, directionalShadowTransforms), sizeof(currentFrameData.bufferData.directionalShadowTransforms), DescriptorType::UniformBuffer, 2);
+            imageData.lightingDescriptorSet->map(*shadowSampler, 5);
 
             //Create the shadow maps for each frame
             for(size_t i = 0; i < MAX_LIGHTS; ++i) {
