@@ -1,5 +1,7 @@
 #include "Clove/Graphics/ShaderCompiler.hpp"
 
+#include "Clove/Graphics/Metal/MetalGlobals.hpp"
+
 #include <Clove/Definitions.hpp>
 #include <Clove/Log/Log.hpp>
 #include <glslc/file_includer.h>
@@ -148,20 +150,22 @@ namespace garlic::clove::ShaderCompiler {
     Expected<std::string, std::runtime_error> spirvToMSL(std::span<uint32_t> spirvSource) {
         spirv_cross::CompilerMSL msl{ spirvSource.data(), spirvSource.size() };
 		msl.set_msl_options(spirv_cross::CompilerMSL::Options{
-			.platform 		  = spirv_cross::CompilerMSL::Options::Platform::macOS,
-			.msl_version 	  = spirv_cross::CompilerMSL::Options::make_msl_version(2, 0),
-			.argument_buffers = true,
+			.platform                  = spirv_cross::CompilerMSL::Options::Platform::macOS,
+			.msl_version               = spirv_cross::CompilerMSL::Options::make_msl_version(2, 0),
+			.argument_buffers          = true,
+			.enable_decoration_binding = true,
 		});
 
 		spirv_cross::ShaderResources resources{ msl.get_shader_resources() };
 		
-		//Remove the padding added onto push constants when using an offset. The offset is not required in metal
-		//as pushing small chunks of data works much like uploading a buffer.
 		if(!resources.push_constant_buffers.empty()) {
-			spirv_cross::ID const bufferId{ resources.push_constant_buffers.front().id };
-			spirv_cross::TypeID const bufferTypeId{ resources.push_constant_buffers.front().base_type_id };
+			auto const &resource{ resources.push_constant_buffers.front() };
+			spirv_cross::ID const bufferId{ resource.id };
+			spirv_cross::TypeID const bufferTypeId{ resource.base_type_id };
 			spirv_cross::SmallVector<spirv_cross::BufferRange> const bufferRanges{ msl.get_active_buffer_ranges(bufferId) };
 			
+			//Remove the padding added onto push constants when using an offset. The offset is not required in metal
+			//as pushing small chunks of data works much like uploading a buffer.
 			if(!bufferRanges.empty()) {
 				size_t const initialOffset{ msl.get_member_decoration(bufferTypeId, bufferRanges.front().index, spv::Decoration::DecorationOffset) };
 				for(auto const &range : bufferRanges) {
@@ -169,7 +173,11 @@ namespace garlic::clove::ShaderCompiler {
 					msl.set_member_decoration(bufferTypeId, range.index, spv::Decoration::DecorationOffset, range.offset - initialOffset);
 				}
 			}
+			
+			//Remap the slot the push constant is in to stop overlap with descriptor sets.
+			msl.set_decoration(bufferId, spv::Decoration::DecorationBinding, pushConstantSlot);
 		}
+		
 		
         return msl.compile();
     }

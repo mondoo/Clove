@@ -15,5 +15,5 @@ namespace garlic::clove {
 	 * @brief Push constants in metal work like regular buffer bindings so this
 	 * slot is reserved for push constant uploads.
 	 */
-	static int32_t constexpr pushConstantSlot{ 0 };
+	static int32_t constexpr pushConstantSlot{ 5 };
 }
