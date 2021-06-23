@@ -12,8 +12,4 @@ namespace garlic::clove {
 	MetalShader::~MetalShader() {
 		[function release];
 	}
-	
-	id<MTLFunction> MetalShader::getFunction() const {
-		return function;
-	}
 }
