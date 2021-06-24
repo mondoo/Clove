@@ -76,6 +76,11 @@ namespace garlic::membrane {
     public ref class Editor_LoadScene : public EditorMessage {};
     public ref class Editor_Play : public EditorMessage {};
     public ref class Editor_Stop : public EditorMessage {};
+    public ref class Editor_CopyFile : public EditorMessage {
+    public:
+        System::String ^originalPath; //Original path on disk
+        System::String ^newPath;      //Path to add this file to
+    };
 
     //Messages sent from Clove
     public ref class Engine_OnEntityCreated : public EngineMessage {

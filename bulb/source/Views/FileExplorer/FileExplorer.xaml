@@ -12,7 +12,11 @@
 			<ColumnDefinition Width="3*"/>
 		</Grid.ColumnDefinitions>
 		
-		<local:DirectoryTree x:Name="TreeView" DataContext="{Binding RootDirectory}" Grid.Column="0"/>
-		<local:DirectoryView x:Name="CurrentDirectoryView" DataContext="{Binding CurrentDirectory}" Grid.Column="1"/>
+		<local:DirectoryTree x:Name="TreeView" 
+							 DataContext="{Binding RootDirectory}" 
+							 Grid.Column="0"/>
+		<local:DirectoryView x:Name="CurrentDirectoryView" 
+							 DataContext="{Binding CurrentDirectory}" 
+							 Grid.Column="1"/>
 	</Grid>
 </UserControl>

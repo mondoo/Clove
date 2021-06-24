@@ -13,6 +13,7 @@ namespace garlic::membrane {
     class ViewportSurface;
     ref class Editor_Stop;
     ref class Editor_Play;
+    ref class Editor_CopyFile;
 }
 
 namespace garlic::membrane {
@@ -48,5 +49,7 @@ public ref class Application {
     private:
         void setEditorMode(Editor_Stop ^message);
         void setRuntimeMode(Editor_Play ^message);
+
+        void copyFile(Editor_CopyFile ^message);
     };
 }

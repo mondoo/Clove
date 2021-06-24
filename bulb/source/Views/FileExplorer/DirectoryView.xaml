@@ -7,7 +7,10 @@
 			 xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
              mc:Ignorable="d" d:DesignWidth="267.396" d:DesignHeight="155.156">
 	<ItemsControl ItemsSource="{Binding AllItems}" 
-			 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+				  ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
+				  AllowDrop="True"
+				  Drop="ItemsControl_Drop"
+				  Background="Orange"> <!-- TODO: Can only drag and drop with a background. This is likely a sizing issue. Needs investigation -->
 		<ItemsControl.ItemsPanel>
 			<ItemsPanelTemplate>
 				<WrapPanel Orientation="Horizontal" ItemWidth="50"/>

@@ -66,7 +66,7 @@
 							KeyUp="EditorViewport_Key" KeyDown="EditorViewport_Key"
 							MouseUp="EditorViewport_MouseButton" MouseDown="EditorViewport_MouseButton"/>
 
-			<TabControl Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1" >
+			<TabControl Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1">
 				<TabItem Header="Content">
 					<Grid>
 						<local:FileExplorer DataContext="{Binding FileExplorer}"/>
