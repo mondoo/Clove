@@ -47,6 +47,12 @@ namespace garlic::membrane {
 
         MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_Stop ^>(this, &Application::setEditorMode));
         MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_Play ^>(this, &Application::setRuntimeMode));
+
+        //Mount editor paths
+        auto *vfs{ app->getFileSystem() };
+        vfs->mount(std::filesystem::current_path() / "data", ".");//TODO: Root path of editor is unlikely to be it's working directory
+  
+        std::filesystem::create_directories(vfs->resolve("."));
     }
 
     Application::~Application() {
@@ -84,6 +90,10 @@ namespace garlic::membrane {
 
         this->width  = width;
         this->height = height;
+    }
+
+    System::String ^Application::resolveRootPath() {
+        return gcnew System::String(app->getFileSystem()->resolve(".").c_str());
     }
 
     void Application::setEditorMode(Editor_Stop ^message) {

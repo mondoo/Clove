@@ -65,10 +65,19 @@
 							Focusable="True" IsTabStop="True"
 							KeyUp="EditorViewport_Key" KeyDown="EditorViewport_Key"
 							MouseUp="EditorViewport_MouseButton" MouseDown="EditorViewport_MouseButton"/>
-			
-			<ScrollViewer Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1" BorderThickness="0" VerticalScrollBarVisibility="Auto">
-				<TextBlock x:Name="Log" Text="{Binding Log.LogText}" Background="#FF1F1F1F" Foreground="#FFD8D8D8"/>
-			</ScrollViewer>
+
+			<TabControl Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1" >
+				<TabItem Header="Content">
+					<Grid>
+						<local:FileExplorer DataContext="{Binding FileExplorer}"/>
+					</Grid>
+				</TabItem>
+				<TabItem Header="Log">
+					<ScrollViewer BorderThickness="0" VerticalScrollBarVisibility="Auto">
+						<TextBlock x:Name="Log" Text="{Binding Log.LogText}" Background="#FF1F1F1F" Foreground="#FFD8D8D8"/>
+					</ScrollViewer>
+				</TabItem>
+			</TabControl>
 
 			<StackPanel x:Name="EntityView" Grid.Column="2" Visibility="{Binding Scene.EntityViewVisibility}">
 				<TextBox Text="{Binding Scene.SelectedEntity.Name, Mode=TwoWay}"/>

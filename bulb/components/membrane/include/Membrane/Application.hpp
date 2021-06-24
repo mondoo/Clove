@@ -43,6 +43,8 @@ public ref class Application {
 
         void resize(int width, int height);
 
+        System::String ^resolveRootPath();
+
     private:
         void setEditorMode(Editor_Stop ^message);
         void setRuntimeMode(Editor_Play ^message);

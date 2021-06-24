@@ -25,7 +25,11 @@ namespace Garlic.Bulb {
         private Size size = new Size(1, 1);
 
         private void EditorStartup(object sender, StartupEventArgs e) {
-            sessionViewModel = new EditorSessionViewModel();
+            //Initialise the engine
+            engineApp = new Membrane.Application((int)size.Width, (int)size.Height);
+
+            //Set up the engine session
+            sessionViewModel = new EditorSessionViewModel(engineApp.resolveRootPath());
 
             Membrane.Log.addSink((string message) => sessionViewModel.Log.LogText += message, "%v");
 
@@ -38,9 +42,7 @@ namespace Garlic.Bulb {
             editorWindow.Show();
             MainWindow = editorWindow;
 
-            //Initialise the engine
-            engineApp = new Membrane.Application((int)size.Width, (int)size.Height);
-
+            //Run the engine thread
             engineThread = new Thread(new ThreadStart(RunEngineApplication));
             engineThread.Name = "Garlic application thread";
             engineThread.Start();
