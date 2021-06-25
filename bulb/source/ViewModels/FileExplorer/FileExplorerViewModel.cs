@@ -1,4 +1,5 @@
 using System.IO;
+using System.Windows.Input;
 
 namespace Garlic.Bulb {
     /// <summary>
@@ -25,9 +26,13 @@ namespace Garlic.Bulb {
             private set {
                 currentDirectory = value;
                 OnPropertyChanged(nameof(currentDirectory));
+                OnPropertyChanged(nameof(CanStepBack));
             }
         }
         private DirectoryItemViewModel currentDirectory;
+
+        public ICommand StepBackCommand { get; }
+        public bool CanStepBack => CurrentDirectory.Parent != null;
 
         public FileExplorerViewModel(string rootPath) {
             var directoryViewModel = new DirectoryItemViewModel(rootPath);
@@ -35,11 +40,17 @@ namespace Garlic.Bulb {
 
             rootDirectory = directoryViewModel;
             CurrentDirectory = directoryViewModel;
+
+            StepBackCommand = new RelayCommand(() => {
+                if (CanStepBack) {
+                    CurrentDirectory = CurrentDirectory.Parent;
+                }
+            });
         }
 
         private void OnItemOpened(DirectoryItemViewModel item) {
             if (item.Type == ObjectType.Directory) {
-                if(CurrentDirectory != RootDirectory) {
+                if (CurrentDirectory != RootDirectory) {
                     CurrentDirectory.OnOpened -= OnItemOpened;
                 }
 

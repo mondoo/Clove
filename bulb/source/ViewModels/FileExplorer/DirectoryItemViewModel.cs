@@ -26,6 +26,8 @@ namespace Garlic.Bulb {
 
         public ObjectType Type { get; }
 
+        public DirectoryItemViewModel Parent { get; private set; }
+
         public ICommand OpenCommand { get; }
 
         public delegate void OpenHandler(DirectoryItemViewModel item);
@@ -62,15 +64,13 @@ namespace Garlic.Bulb {
             //TODO: Other file system events
 
             foreach (var dir in directory.EnumerateDirectories()) {
-                var vm = new DirectoryItemViewModel(dir);
-                vm.OnOpened += (DirectoryItemViewModel item) => OnItemOpened(item);
+                var vm = CreateItem(dir);
 
                 SubDirectories.Add(vm);
                 AllItems.Add(vm);
             }
             foreach (var file in directory.EnumerateFiles()) {
-                var vm = new DirectoryItemViewModel(file);
-                vm.OnOpened += (DirectoryItemViewModel item) => OnItemOpened(item);
+                var vm = CreateItem(file);
 
                 Files.Add(vm);
                 AllItems.Add(vm);
@@ -111,12 +111,27 @@ namespace Garlic.Bulb {
             var file = new FileInfo(e.FullPath);
 
             EditorApp.Current.Dispatcher.Invoke((Action)(() => {
-                var vm = new DirectoryItemViewModel(file);
-                vm.OnOpened += (DirectoryItemViewModel item) => OnItemOpened(item);
+                var vm = CreateItem(file);
 
                 Files.Add(vm);
                 AllItems.Add(vm);
             }));
+        }
+
+        private DirectoryItemViewModel CreateItem(DirectoryInfo directory) {
+            var vm = new DirectoryItemViewModel(directory);
+            vm.OnOpened += (DirectoryItemViewModel item) => OnItemOpened(item);
+            vm.Parent = this;
+
+            return vm;
+        }
+
+        private DirectoryItemViewModel CreateItem(FileInfo file) {
+            var vm = new DirectoryItemViewModel(file);
+            vm.OnOpened += (DirectoryItemViewModel item) => OnItemOpened(item);
+            vm.Parent = this;
+
+            return vm;
         }
     }
 }
