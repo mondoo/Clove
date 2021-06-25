@@ -90,12 +90,10 @@ namespace Garlic.Bulb {
         /// <param name="file">The full path of the file</param>
         public void OnFileDropped(string file) {
             var fileInfo = new FileInfo(file);
-            var message = new Membrane.Editor_CopyFile(); //TODO: Always copy or move files? We don't have a custom format for now so we don't need to perform any conversions
+            string originalPath = file;
+            string newPath = Path.Combine(FullName, fileInfo.Name);
 
-            message.originalPath = file;
-            message.newPath = Path.Combine(FullName, fileInfo.Name);
-
-            Membrane.MessageHandler.sendMessage(message);
+            File.Copy(originalPath, newPath);
         }
 
         private DirectoryItemViewModel() {

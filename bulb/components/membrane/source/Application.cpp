@@ -48,7 +48,6 @@ namespace garlic::membrane {
 
         MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_Stop ^>(this, &Application::setEditorMode));
         MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_Play ^>(this, &Application::setRuntimeMode));
-        MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_CopyFile ^>(this, &Application::copyFile));
 
         //Mount editor paths
         auto *vfs{ app->getFileSystem() };
@@ -106,15 +105,5 @@ namespace garlic::membrane {
     void Application::setRuntimeMode(Editor_Play ^message) {
         app->popLayer(*editorLayer);
         app->pushLayer(*runtimeLayer);
-    }
-
-    void Application::copyFile(Editor_CopyFile ^message) {
-        System::String ^ rawOriginalPath{ message->originalPath };
-        System::String ^ rawNewPath{ message->newPath };
-
-        std::filesystem::path originalPath{ msclr::interop::marshal_as<std::string>(rawOriginalPath) };
-        std::filesystem::path newlPath{ msclr::interop::marshal_as<std::string>(rawNewPath) };
-
-        std::filesystem::copy_file(originalPath, newlPath);
     }
 }
