@@ -1,9 +1,9 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
+using System.Windows;
 using System.Windows.Input;
-
-using Membrane = garlic.membrane;
 
 namespace Garlic.Bulb {
     public enum ObjectType {
@@ -18,14 +18,25 @@ namespace Garlic.Bulb {
         /// <summary>
         /// Name of this item.
         /// </summary>
-        public string Name { get; }
+        public string Name {
+            get => name;
+            set {
+                name = value;
+                OnPropertyChanged(nameof(Name));
+            }
+        }
+        private string name;
+
         /// <summary>
         /// Full path of this item.
         /// </summary>
-        public string FullName { get; }
+        public string FullName { get; set; }
 
         public ObjectType Type { get; }
 
+        /// <summary>
+        /// Parent directory of this item.
+        /// </summary>
         public DirectoryItemViewModel Parent { get; private set; }
 
         public ICommand OpenCommand { get; }
@@ -34,17 +45,17 @@ namespace Garlic.Bulb {
         public OpenHandler OnOpened;
 
         /// <summary>
-        /// A list of all directories within this directory.
+        /// A list of all directories within this directory. Will be empty if this item is a file.
         /// </summary>
         public ObservableCollection<DirectoryItemViewModel> SubDirectories { get; } = new ObservableCollection<DirectoryItemViewModel>();
 
         /// <summary>
-        /// A list of all files within this directory.
+        /// A list of all files within this directory. Will be empty if this item is a file.
         /// </summary>
         public ObservableCollection<DirectoryItemViewModel> Files { get; } = new ObservableCollection<DirectoryItemViewModel>();
 
         /// <summary>
-        /// A list of every single item within this directory.
+        /// A list of every single item within this directory. Will be empty if this item is a file.
         /// </summary>
         public ObservableCollection<DirectoryItemViewModel> AllItems { get; } = new ObservableCollection<DirectoryItemViewModel>();
 
@@ -58,19 +69,21 @@ namespace Garlic.Bulb {
 
             Type = ObjectType.Directory;
 
-            watcher = new FileSystemWatcher(FullName, "*.*");
-            watcher.EnableRaisingEvents = true;
+            watcher = new FileSystemWatcher(FullName, "*.*") {
+                EnableRaisingEvents = true
+            };
             watcher.Created += OnFileCreated;
-            //TODO: Other file system events
+            watcher.Deleted += OnFileDeleted;
+            watcher.Renamed += OnFileRenamed;
 
-            foreach (var dir in directory.EnumerateDirectories()) {
-                var vm = CreateItem(dir);
+            foreach (DirectoryInfo dir in directory.EnumerateDirectories()) {
+                DirectoryItemViewModel vm = CreateItem(dir);
 
                 SubDirectories.Add(vm);
                 AllItems.Add(vm);
             }
-            foreach (var file in directory.EnumerateFiles()) {
-                var vm = CreateItem(file);
+            foreach (FileInfo file in directory.EnumerateFiles()) {
+                DirectoryItemViewModel vm = CreateItem(file);
 
                 Files.Add(vm);
                 AllItems.Add(vm);
@@ -85,10 +98,12 @@ namespace Garlic.Bulb {
         }
 
         /// <summary>
-        /// Called by the view when a file has been dropped onto it
+        /// Called by the view when a file has been dropped onto it. Only works if this item is a directory.
         /// </summary>
         /// <param name="file">The full path of the file</param>
         public void OnFileDropped(string file) {
+            Debug.Assert(Type == ObjectType.Directory, "Cannot performa a drop operation on a file");
+
             var fileInfo = new FileInfo(file);
             string originalPath = file;
             string newPath = Path.Combine(FullName, fileInfo.Name);
@@ -105,15 +120,47 @@ namespace Garlic.Bulb {
         }
 
         private void OnFileCreated(object sender, FileSystemEventArgs e) {
-            //TODO: Assuming it's always a file
-            var file = new FileInfo(e.FullPath);
-
-            EditorApp.Current.Dispatcher.Invoke((Action)(() => {
-                var vm = CreateItem(file);
-
+            Application.Current.Dispatcher.Invoke(() => {
+                DirectoryItemViewModel vm = File.GetAttributes(e.FullPath).HasFlag(FileAttributes.Directory)
+                    ? CreateItem(new DirectoryInfo(e.FullPath))
+                    : CreateItem(new FileInfo(e.FullPath));
                 Files.Add(vm);
                 AllItems.Add(vm);
-            }));
+            });
+        }
+
+        private void OnFileDeleted(object sender, FileSystemEventArgs e) {
+            Application.Current.Dispatcher.Invoke(() => {
+                DirectoryItemViewModel itemVm = null;
+                foreach (var item in AllItems) {
+                    if (item.Name == e.Name) {
+                        itemVm = item;
+                        break;
+                    }
+                }
+
+                if (itemVm != null) {
+                    AllItems.Remove(itemVm);
+                    //Item no longer exists to quiery for data so try to remove from both lists
+                    SubDirectories.Remove(itemVm);
+                    Files.Remove(itemVm);
+                }
+            });
+        }
+
+        private void OnFileRenamed(object sender, RenamedEventArgs e) {
+            Application.Current.Dispatcher.Invoke(() => {
+                DirectoryItemViewModel itemVm = null;
+                foreach (var item in AllItems) {
+                    if (item.Name == e.OldName) {
+                        itemVm = item;
+                        break;
+                    }
+                }
+
+                itemVm.Name = e.Name;
+                itemVm.FullName = e.FullPath;
+            });
         }
 
         private DirectoryItemViewModel CreateItem(DirectoryInfo directory) {
