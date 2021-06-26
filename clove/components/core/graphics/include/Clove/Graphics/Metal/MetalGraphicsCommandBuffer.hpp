@@ -30,9 +30,11 @@ namespace garlic::clove {
 		//Metal's drawIndexed call takes an index buffer directly so we need to cache the one provided from bindIndexBuffer
 		CachedIndexBufferData cachedIndexBuffer;
 		
+		//Validation
 		CommandBufferUsage currentUsage{ CommandBufferUsage::Default };
 		bool hasBeenUsed{ false }; /**< Will be true if this buffer has been used before being rerecorded. */
 		bool allowReuse{ false }; /**< Will be true if this can be reused (recorded to multiple times without beeing freed) */
+		bool endRecordingCalled{ false };
 		
 		//FUNCTIONS
 	public:
