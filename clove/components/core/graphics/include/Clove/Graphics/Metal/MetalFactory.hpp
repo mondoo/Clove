@@ -14,6 +14,7 @@ namespace garlic::clove {
 		MetalView *view{ nullptr };
 		
 		id<MTLCommandQueue> graphicsPresentCommandQueue{ nullptr };
+		id<MTLCommandQueue> transferCommandQueue{ nullptr };
 		
 		//FUNCTIONS
 	public:

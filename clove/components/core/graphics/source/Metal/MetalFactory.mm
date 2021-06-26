@@ -17,6 +17,7 @@
 #include "Clove/Graphics/Metal/MetalSemaphore.hpp"
 #include "Clove/Graphics/Metal/MetalShader.hpp"
 #include "Clove/Graphics/Metal/MetalSwapchain.hpp"
+#include "Clove/Graphics/Metal/MetalTransferQueue.hpp"
 #include "Clove/Graphics/Metal/MetalView.hpp"
 
 #include <Clove/Cast.hpp>
@@ -136,6 +137,7 @@ namespace garlic::clove {
 		: device{ [device retain] }
 		, view{ [view retain] } {
 		graphicsPresentCommandQueue = [this->device newCommandQueue];
+		transferCommandQueue = [this->device newCommandQueue];
 	}
 	
 	MetalFactory::MetalFactory(MetalFactory &&other) noexcept = default;
@@ -146,6 +148,7 @@ namespace garlic::clove {
 		[device release];
 		[view release];
 		[graphicsPresentCommandQueue release];
+		[transferCommandQueue release];
 	}
 
 	Expected<std::unique_ptr<GhaGraphicsQueue>, std::runtime_error> MetalFactory::createGraphicsQueue(CommandQueueDescriptor descriptor) {
@@ -153,12 +156,11 @@ namespace garlic::clove {
 	}
 	
 	Expected<std::unique_ptr<GhaPresentQueue>, std::runtime_error> MetalFactory::createPresentQueue() {
-		return std::unique_ptr<GhaPresentQueue>{ std::make_unique<MetalPresentQueue>(commandQueue, view) };
+		return std::unique_ptr<GhaPresentQueue>{ std::make_unique<MetalPresentQueue>(graphicsPresentCommandQueue, view) };
 	}
 	
 	Expected<std::unique_ptr<GhaTransferQueue>, std::runtime_error> MetalFactory::createTransferQueue(CommandQueueDescriptor descriptor) {
-		//NOTE: For async a new queue would be needed (like the the family indicies)
-		return Unexpected{ std::runtime_error{ "Not implemented" } };
+		return std::unique_ptr<GhaTransferQueue>{ std::make_unique<MetalTransferQueue>(transferCommandQueue) };
 	}
 	
 	Expected<std::unique_ptr<GhaComputeQueue>, std::runtime_error> MetalFactory::createComputeQueue(CommandQueueDescriptor descriptor) {
@@ -248,7 +250,9 @@ namespace garlic::clove {
 				switch(binding.type) {
 					case DescriptorType::SampledImage:
 						[bindingDescriptor setDataType:MTLDataTypeTexture];
-						[bindingDescriptor setTextureType:MTLTextureType2D];//TODO: What about cube maps?
+						//TODO: Come back to this when I can inspect shader code. Maybe I can just use the pointer?
+						//[bindingDescriptor setTextureType:MTLTextureType2D];//TODO: What about cube maps?
+						
 						break;
 					case DescriptorType::Sampler:
 						[bindingDescriptor setDataType:MTLDataTypeSampler];

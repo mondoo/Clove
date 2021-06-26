@@ -139,7 +139,10 @@ set(
 		${INCLUDE}/Metal/MetalSwapchain.hpp
 		${SOURCE}/Metal/MetalSwapchain.mm
 		${INCLUDE}/Metal/MetalTransferCommandBuffer.hpp
+		${INCLUDE}/Metal/MetalTransferCommandBuffer.inl
 		${SOURCE}/Metal/MetalTransferCommandBuffer.mm
+		${INCLUDE}/Metal/MetalTransferQueue.hpp
+		${SOURCE}/Metal/MetalTransferQueue.mm
 		${INCLUDE}/Metal/MetalView.hpp
 		${SOURCE}/Metal/MetalView.mm
 )

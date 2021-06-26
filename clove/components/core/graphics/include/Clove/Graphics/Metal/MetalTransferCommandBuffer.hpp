@@ -34,6 +34,9 @@ namespace garlic::clove {
 
 		void bufferMemoryBarrier(GhaBuffer &buffer, BufferMemoryBarrierInfo const &barrierInfo, PipelineStage sourceStage, PipelineStage destinationStage) override;
 		void imageMemoryBarrier(GhaImage &image, ImageMemoryBarrierInfo const &barrierInfo, PipelineStage sourceStage, PipelineStage destinationStage) override;
+		
+		inline std::vector<std::function<void(id<MTLBlitCommandEncoder>)>> const &getCommands() const;
 	};
 }
 
+#include "MetalTransferCommandBuffer.inl"
