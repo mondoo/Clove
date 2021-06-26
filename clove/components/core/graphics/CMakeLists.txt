@@ -138,6 +138,8 @@ set(
 		${SOURCE}/Metal/MetalShader.mm
 		${INCLUDE}/Metal/MetalSwapchain.hpp
 		${SOURCE}/Metal/MetalSwapchain.mm
+		${INCLUDE}/Metal/MetalTransferCommandBuffer.hpp
+		${SOURCE}/Metal/MetalTransferCommandBuffer.mm
 		${INCLUDE}/Metal/MetalView.hpp
 		${SOURCE}/Metal/MetalView.mm
 )
