@@ -9,8 +9,9 @@
 #include <Clove/Cast.hpp>
 
 namespace garlic::clove {
-	MetalGraphicsQueue::MetalGraphicsQueue(id<MTLCommandQueue> commandQueue)
+	MetalGraphicsQueue::MetalGraphicsQueue(clove::CommandQueueDescriptor descriptor, id<MTLCommandQueue> commandQueue)
 		: commandQueue{ [commandQueue retain] } {
+		allowBufferReuse = (descriptor.flags & QueueFlags::ReuseBuffers) != 0;
 	}
 	
 	MetalGraphicsQueue::MetalGraphicsQueue(MetalGraphicsQueue &&other) noexcept = default;
@@ -20,7 +21,7 @@ namespace garlic::clove {
 	MetalGraphicsQueue::~MetalGraphicsQueue() = default;
 	
 	std::unique_ptr<GhaGraphicsCommandBuffer> MetalGraphicsQueue::allocateCommandBuffer() {
-		return std::make_unique<MetalGraphicsCommandBuffer>();
+		return std::make_unique<MetalGraphicsCommandBuffer>(allowBufferReuse);
 	}
 	
 	void MetalGraphicsQueue::freeCommandBuffer(GhaGraphicsCommandBuffer &buffer) {

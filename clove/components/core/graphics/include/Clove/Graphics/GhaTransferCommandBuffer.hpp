@@ -21,6 +21,10 @@ namespace garlic::clove {
     public:
         virtual ~GhaTransferCommandBuffer() = default;
 
+        /**
+         * @brief Begin recording commands on the buffer. This will implicitly reset the buffer.
+         * @param usageFlag 
+         */
         virtual void beginRecording(CommandBufferUsage usageFlag) = 0;
         virtual void endRecording()                               = 0;
 

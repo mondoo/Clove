@@ -135,7 +135,7 @@ namespace garlic::clove {
 	MetalFactory::MetalFactory(id<MTLDevice> device, MetalView *view)
 		: device{ [device retain] }
 		, view{ [view retain] } {
-		commandQueue = [this->device newCommandQueue];
+		graphicsPresentCommandQueue = [this->device newCommandQueue];
 	}
 	
 	MetalFactory::MetalFactory(MetalFactory &&other) noexcept = default;
@@ -145,12 +145,11 @@ namespace garlic::clove {
 	MetalFactory::~MetalFactory() {
 		[device release];
 		[view release];
-		[commandQueue release];
+		[graphicsPresentCommandQueue release];
 	}
 
 	Expected<std::unique_ptr<GhaGraphicsQueue>, std::runtime_error> MetalFactory::createGraphicsQueue(CommandQueueDescriptor descriptor) {
-		//TODO: descriptor
-		return std::unique_ptr<GhaGraphicsQueue>{ std::make_unique<MetalGraphicsQueue>(commandQueue) };
+		return std::unique_ptr<GhaGraphicsQueue>{ std::make_unique<MetalGraphicsQueue>(std::move(descriptor), graphicsPresentCommandQueue) };
 	}
 	
 	Expected<std::unique_ptr<GhaPresentQueue>, std::runtime_error> MetalFactory::createPresentQueue() {

@@ -32,10 +32,12 @@ namespace garlic::clove {
 		
 		CommandBufferUsage currentUsage{ CommandBufferUsage::Default };
 		bool hasBeenUsed{ false }; /**< Will be true if this buffer has been used before being rerecorded. */
+		bool allowReuse{ false }; /**< Will be true if this can be reused (recorded to multiple times without beeing freed) */
 		
 		//FUNCTIONS
 	public:
-		MetalGraphicsCommandBuffer();
+		MetalGraphicsCommandBuffer() = delete;
+		MetalGraphicsCommandBuffer(bool allowReuse);
 		
 		MetalGraphicsCommandBuffer(MetalGraphicsCommandBuffer const &other) = delete;
 		MetalGraphicsCommandBuffer(MetalGraphicsCommandBuffer &&other) noexcept;
