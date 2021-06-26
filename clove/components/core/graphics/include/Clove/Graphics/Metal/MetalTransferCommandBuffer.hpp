@@ -12,9 +12,16 @@ namespace garlic::clove {
 	private:
 		std::vector<std::function<void(id<MTLBlitCommandEncoder>)>> commands{};
 		
+		//Validation
+		CommandBufferUsage currentUsage{ CommandBufferUsage::Default };
+		bool hasBeenUsed{ false }; /**< Will be true if this buffer has been used before being rerecorded. */
+		bool allowReuse{ false }; /**< Will be true if this can be reused (recorded to multiple times without beeing freed) */
+		bool endRecordingCalled{ false };
+		
 		//FUNCTIONS
 	public:
-		MetalTransferCommandBuffer();
+		MetalTransferCommandBuffer() = delete;
+		MetalTransferCommandBuffer(bool allowReuse);
 		
 		MetalTransferCommandBuffer(MetalTransferCommandBuffer const &other) = delete;
 		MetalTransferCommandBuffer(MetalTransferCommandBuffer &&other) noexcept;
@@ -36,6 +43,10 @@ namespace garlic::clove {
 		void imageMemoryBarrier(GhaImage &image, ImageMemoryBarrierInfo const &barrierInfo, PipelineStage sourceStage, PipelineStage destinationStage) override;
 		
 		inline std::vector<std::function<void(id<MTLBlitCommandEncoder>)>> const &getCommands() const;
+		
+		inline CommandBufferUsage getCommandBufferUsage() const;
+		inline void markAsUsed();
+		inline bool bufferHasBeenUsed() const;
 	};
 }
 

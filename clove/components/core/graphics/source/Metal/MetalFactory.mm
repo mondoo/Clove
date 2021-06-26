@@ -160,7 +160,7 @@ namespace garlic::clove {
 	}
 	
 	Expected<std::unique_ptr<GhaTransferQueue>, std::runtime_error> MetalFactory::createTransferQueue(CommandQueueDescriptor descriptor) {
-		return std::unique_ptr<GhaTransferQueue>{ std::make_unique<MetalTransferQueue>(transferCommandQueue) };
+		return std::unique_ptr<GhaTransferQueue>{ std::make_unique<MetalTransferQueue>(std::move(descriptor), transferCommandQueue) };
 	}
 	
 	Expected<std::unique_ptr<GhaComputeQueue>, std::runtime_error> MetalFactory::createComputeQueue(CommandQueueDescriptor descriptor) {

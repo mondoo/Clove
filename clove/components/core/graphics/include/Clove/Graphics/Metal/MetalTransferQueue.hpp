@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Clove/Graphics/GhaTransferQueue.hpp"
+#include "Clove/Graphics/Queue.hpp"
 
 #include <MetalKit/MetalKit.h>
 
@@ -10,10 +11,12 @@ namespace garlic::clove {
 	private:
 		id<MTLCommandQueue> commandQueue;
 		
+		bool allowBufferReuse{ false };
+		
 		//FUNCTIONS
 	public:
 		MetalTransferQueue() = delete;
-		MetalTransferQueue(id<MTLCommandQueue> commandQueue);
+		MetalTransferQueue(CommandQueueDescriptor descriptor, id<MTLCommandQueue> commandQueue);
 		
 		MetalTransferQueue(MetalTransferQueue const &other) = delete;
 		MetalTransferQueue(MetalTransferQueue &&other) noexcept;

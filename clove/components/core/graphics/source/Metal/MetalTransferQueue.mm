@@ -8,8 +8,9 @@
 #include <Clove/Cast.hpp>
 
 namespace garlic::clove {
-	MetalTransferQueue::MetalTransferQueue(id<MTLCommandQueue> commandQueue)
+	MetalTransferQueue::MetalTransferQueue(CommandQueueDescriptor descriptor, id<MTLCommandQueue> commandQueue)
 		: commandQueue{ [commandQueue retain] } {
+		allowBufferReuse = (descriptor.flags & QueueFlags::ReuseBuffers) != 0;
 	}
 	
 	MetalTransferQueue::MetalTransferQueue(MetalTransferQueue &&other) noexcept = default;
@@ -21,7 +22,7 @@ namespace garlic::clove {
 	}
 
 	std::unique_ptr<GhaTransferCommandBuffer> MetalTransferQueue::allocateCommandBuffer() {
-		return std::make_unique<MetalTransferCommandBuffer>();
+		return std::make_unique<MetalTransferCommandBuffer>(allowBufferReuse);
 	}
 	
 	void MetalTransferQueue::freeCommandBuffer(GhaTransferCommandBuffer &buffer) {
@@ -34,7 +35,12 @@ namespace garlic::clove {
 				for(auto const &commandBuffer : submission.commandBuffers) {
 					id<MTLCommandBuffer> executionBuffer{ [commandQueue commandBuffer] };
 					id<MTLBlitCommandEncoder> encoder{ [executionBuffer blitCommandEncoder] };
-					auto *metalTransferBuffer{ polyCast<MetalTransferCommandBuffer>(commandBuffer.get()) };
+					auto *metalCommandBuffer{ polyCast<MetalTransferCommandBuffer>(commandBuffer.get()) };
+					
+					if(metalCommandBuffer->getCommandBufferUsage() == CommandBufferUsage::OneTimeSubmit && metalCommandBuffer->bufferHasBeenUsed()){
+						CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "GraphicsCommandBuffer recorded with CommandBufferUsage::OneTimeSubmit has already been used. Only buffers recorded with CommandBufferUsage::Default can submitted multiples times after being recorded once.");
+						break;
+					}
 					
 					//Inject the wait semaphore into each buffer
 					for (auto const &semaphore : submission.waitSemaphores) {
@@ -44,11 +50,13 @@ namespace garlic::clove {
 					}
 					
 					//Excute all recorded commands for the encoder
-					for(auto &command : metalTransferBuffer->getCommands()) {
+					for(auto &command : metalCommandBuffer->getCommands()) {
 						command(encoder);
 					}
 					
 					[executionBuffer commit];
+					
+					metalCommandBuffer->markAsUsed();
 				}
 				
 				//Signal all semaphores at the end of each submission. Similar to how vulkan does it.
