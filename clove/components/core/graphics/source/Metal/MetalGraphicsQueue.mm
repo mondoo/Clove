@@ -31,10 +31,16 @@ namespace garlic::clove {
 		@autoreleasepool {
 			for(auto const &submission : submissions) {
 				for(auto const &commandBuffer : submission.commandBuffers) {
-					id<MTLCommandBuffer> mtlCommandBuffer{ [commandQueue commandBuffer] };
+					id<MTLCommandBuffer> executionBuffer{ [commandQueue commandBuffer] };
+					auto *metalCommandBuffer{ polyCast<MetalGraphicsCommandBuffer>(commandBuffer.get()) };
 					
-					for(auto &pass : polyCast<MetalGraphicsCommandBuffer>(commandBuffer.get())->getEncodedRenderPasses()) {
-						id<MTLRenderCommandEncoder> encoder{ pass.begin(mtlCommandBuffer) };
+					if(metalCommandBuffer->getCommandBufferUsage() == CommandBufferUsage::OneTimeSubmit && metalCommandBuffer->bufferHasBeenUsed()){
+						CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "GraphicsCommandBuffer recorded with CommandBufferUsage::OneTimeSubmit has already been used. Only buffers recorded with CommandBufferUsage::Default can submitted multiples times after being recorded once.");
+						break;
+					}
+					
+					for(auto &pass : metalCommandBuffer->getEncodedRenderPasses()) {
+						id<MTLRenderCommandEncoder> encoder{ pass.begin(executionBuffer) };
 						
 						//Inject the wait semaphore into each buffer
 						for (auto const &semaphore : submission.waitSemaphores) {
@@ -51,7 +57,9 @@ namespace garlic::clove {
 						}
 					}
 					
-					[mtlCommandBuffer commit];
+					[executionBuffer commit];
+					
+					metalCommandBuffer->markAsUsed();
 				}
 				
 				//Signal all semaphores at the end of each submission. Similar to how vulkan does it.

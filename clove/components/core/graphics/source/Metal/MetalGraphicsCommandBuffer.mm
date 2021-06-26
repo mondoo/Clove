@@ -34,6 +34,8 @@ namespace garlic::clove {
 	MetalGraphicsCommandBuffer::~MetalGraphicsCommandBuffer() = default;
 	
 	void MetalGraphicsCommandBuffer::beginRecording(CommandBufferUsage usageFlag) {
+		currentUsage = usageFlag;
+		hasBeenUsed = false;
 		passes.clear();
 	}
 	

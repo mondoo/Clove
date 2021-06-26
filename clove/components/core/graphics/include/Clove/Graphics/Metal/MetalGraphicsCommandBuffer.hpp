@@ -28,7 +28,10 @@ namespace garlic::clove {
 		RenderPass *currentPass{ nullptr };
 		
 		//Metal's drawIndexed call takes an index buffer directly so we need to cache the one provided from bindIndexBuffer
-		CachedIndexBufferData cachedIndexBuffer; 
+		CachedIndexBufferData cachedIndexBuffer;
+		
+		CommandBufferUsage currentUsage{ CommandBufferUsage::Default };
+		bool hasBeenUsed{ false }; /**< Will be true if this buffer has been used before being rerecorded. */
 		
 		//FUNCTIONS
 	public:
@@ -64,6 +67,10 @@ namespace garlic::clove {
 		void imageMemoryBarrier(GhaImage &image, ImageMemoryBarrierInfo const &barrierInfo, PipelineStage sourceStage, PipelineStage destinationStage) override;
 		
 		inline std::vector<RenderPass> const &getEncodedRenderPasses() const;
+		
+		inline CommandBufferUsage getCommandBufferUsage() const;
+		inline void markAsUsed();
+		inline bool bufferHasBeenUsed() const;
 	};
 }
 
