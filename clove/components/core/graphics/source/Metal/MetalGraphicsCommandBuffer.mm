@@ -4,9 +4,11 @@
 #include "Clove/Graphics/Metal/MetalGlobals.hpp"
 #include "Clove/Graphics/Metal/MetalGraphicsPipelineObject.hpp"
 #include "Clove/Graphics/Metal/MetalBuffer.hpp"
+#include "Clove/Graphics/Metal/MetalImage.hpp"
 #include "Clove/Graphics/Metal/MetalRenderPass.hpp"
 #include "Clove/Graphics/Metal/MetalDescriptorSet.hpp"
 #include "Clove/Graphics/Metal/MetalDescriptorSetLayout.hpp"
+#include "Clove/Graphics/Metal/MetalPipelineObject.hpp"
 
 #include <Clove/Cast.hpp>
 
@@ -172,12 +174,22 @@ namespace garlic::clove {
 	}
 
 	void MetalGraphicsCommandBuffer::bufferMemoryBarrier(GhaBuffer &buffer, BufferMemoryBarrierInfo const &barrierInfo, PipelineStage sourceStage, PipelineStage destinationStage) {
-		//TODO
-		//MTLResourceStateCommandEncoder ?
+		currentPass->commands.emplace_back([buffer = &buffer, sourceStage, destinationStage](id<MTLRenderCommandEncoder> encoder){
+			id<MTLBuffer> mtlBuffer{ polyCast<MetalBuffer>(buffer)->getBuffer() };
+			[encoder memoryBarrierWithResources:&mtlBuffer
+										  count:1
+									afterStages:convertStage(sourceStage)
+								   beforeStages:convertStage(destinationStage)];
+		});
 	}
 	
 	void MetalGraphicsCommandBuffer::imageMemoryBarrier(GhaImage &image, ImageMemoryBarrierInfo const &barrierInfo, PipelineStage sourceStage, PipelineStage destinationStage) {
-		//TODO
-		//MTLResourceStateCommandEncoder ?
+		currentPass->commands.emplace_back([image = &image, sourceStage, destinationStage](id<MTLRenderCommandEncoder> encoder){
+			id<MTLTexture> mtlTexture{ polyCast<MetalImage>(image)->getTexture() };
+			[encoder memoryBarrierWithResources:&mtlTexture
+										  count:1
+									afterStages:convertStage(sourceStage)
+								   beforeStages:convertStage(destinationStage)];
+		});
 	}
 }
