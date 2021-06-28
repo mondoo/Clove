@@ -7,8 +7,9 @@
 #include <Clove/Cast.hpp>
 
 namespace garlic::clove {
-	MetalComputeQueue::MetalComputeQueue(id<MTLCommandQueue> commandQueue)
+	MetalComputeQueue::MetalComputeQueue(CommandQueueDescriptor descriptor, id<MTLCommandQueue> commandQueue)
 		: commandQueue{ [commandQueue retain] } {
+		allowBufferReuse = (descriptor.flags & QueueFlags::ReuseBuffers) != 0;
 	}
 	
 	MetalComputeQueue::MetalComputeQueue(MetalComputeQueue &&other) noexcept = default;
@@ -35,6 +36,11 @@ namespace garlic::clove {
 					id<MTLComputeCommandEncoder> encoder{ [executionBuffer computeCommandEncoder] };
 					auto *metalCommandBuffer{ polyCast<MetalComputeCommandBuffer>(commandBuffer.get()) };
 					
+					if(metalCommandBuffer->getCommandBufferUsage() == CommandBufferUsage::OneTimeSubmit && metalCommandBuffer->bufferHasBeenUsed()){
+						CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "ComputeCommandBuffer recorded with CommandBufferUsage::OneTimeSubmit has already been used. Only buffers recorded with CommandBufferUsage::Default can submitted multiples times after being recorded once.");
+						break;
+					}
+					
 					//Inject the wait semaphore into each buffer
 					for (auto const &semaphore : submission.waitSemaphores) {
 						auto *metalSemaphore{ polyCast<MetalSemaphore const>(semaphore.first.get()) };
@@ -48,6 +54,8 @@ namespace garlic::clove {
 					}
 					
 					[executionBuffer commit];
+					
+					metalCommandBuffer->markAsUsed();
 				}
 				
 				//Signal all semaphores at the end of each submission. Similar to how vulkan does it.
