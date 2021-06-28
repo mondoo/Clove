@@ -267,19 +267,14 @@ namespace garlic::clove {
 				}
 				[bindingDescriptor setArrayLength:binding.arraySize];
 				
-				switch (binding.stage) {
-					case GhaShader::Stage::Vertex:
-						[vertexDescriptors addObject:bindingDescriptor];
-						break;
-					case GhaShader::Stage::Pixel:
-						[pixelDescriptors addObject:bindingDescriptor];
-						break;
-					case GhaShader::Stage::Compute:
-						[computeDescriptors addObject:bindingDescriptor];
-						break;
-					default:
-						CLOVE_ASSERT(false, "{0}: Shader stage not handled", CLOVE_FUNCTION_NAME_PRETTY);
-						break;
+				if((binding.stage & GhaShader::Stage::Vertex) != 0){
+					[vertexDescriptors addObject:bindingDescriptor];
+				}
+				if((binding.stage & GhaShader::Stage::Pixel) != 0){
+					[pixelDescriptors addObject:bindingDescriptor];
+				}
+				if((binding.stage & GhaShader::Stage::Compute) != 0){
+					[computeDescriptors addObject:bindingDescriptor];
 				}
 			}
 		
