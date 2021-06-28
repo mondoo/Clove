@@ -92,10 +92,13 @@ set(
 		${INCLUDE}/Metal/MetalBuffer.hpp
 		${SOURCE}/Metal/MetalBuffer.mm
 		${INCLUDE}/Metal/MetalComputeCommandBuffer.hpp
+		${INCLUDE}/Metal/MetalComputeCommandBuffer.inl
 		${SOURCE}/Metal/MetalComputeCommandBuffer.mm
 		${INCLUDE}/Metal/MetalComputePipelineObject.hpp
 		${INCLUDE}/Metal/MetalComputePipelineObject.inl
 		${SOURCE}/Metal/MetalComputePipelineObject.mm
+		${INCLUDE}/Metal/MetalComputeQueue.hpp
+		${SOURCE}/Metal/MetalComputeQueue.mm
 		${INCLUDE}/Metal/MetalDescriptorPool.hpp
 		${SOURCE}/Metal/MetalDescriptorPool.mm
 		${INCLUDE}/Metal/MetalDescriptorSet.hpp

@@ -2,6 +2,8 @@
 
 #include "Clove/Graphics/ShaderCompiler.hpp"
 #include "Clove/Graphics/Metal/MetalBuffer.hpp"
+#include "Clove/Graphics/Metal/MetalComputePipelineObject.hpp"
+#include "Clove/Graphics/Metal/MetalComputeQueue.hpp"
 #include "Clove/Graphics/Metal/MetalDescriptorPool.hpp"
 #include "Clove/Graphics/Metal/MetalDescriptorSetLayout.hpp"
 #include "Clove/Graphics/Metal/MetalFence.hpp"
@@ -138,6 +140,7 @@ namespace garlic::clove {
 		, view{ [view retain] } {
 		graphicsPresentCommandQueue = [this->device newCommandQueue];
 		transferCommandQueue = [this->device newCommandQueue];
+		computeCommandQueue = [this->device newCommandQueue];
 	}
 	
 	MetalFactory::MetalFactory(MetalFactory &&other) noexcept = default;
@@ -149,6 +152,7 @@ namespace garlic::clove {
 		[view release];
 		[graphicsPresentCommandQueue release];
 		[transferCommandQueue release];
+		[computeCommandQueue release];
 	}
 
 	Expected<std::unique_ptr<GhaGraphicsQueue>, std::runtime_error> MetalFactory::createGraphicsQueue(CommandQueueDescriptor descriptor) {
@@ -164,8 +168,7 @@ namespace garlic::clove {
 	}
 	
 	Expected<std::unique_ptr<GhaComputeQueue>, std::runtime_error> MetalFactory::createComputeQueue(CommandQueueDescriptor descriptor) {
-		//NOTE: For async a new queue would be needed (like the the family indicies)
-		return Unexpected{ std::runtime_error{ "Not implemented" } };
+		return std::unique_ptr<GhaComputeQueue>{ std::make_unique<MetalComputeQueue>(computeCommandQueue) };
 	}
 
 	Expected<std::unique_ptr<GhaSwapchain>, std::runtime_error> MetalFactory::createSwapChain(GhaSwapchain::Descriptor descriptor) {

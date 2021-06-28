@@ -15,6 +15,7 @@ namespace garlic::clove {
 		
 		id<MTLCommandQueue> graphicsPresentCommandQueue{ nullptr };
 		id<MTLCommandQueue> transferCommandQueue{ nullptr };
+		id<MTLCommandQueue> computeCommandQueue{ nullptr };
 		
 		//FUNCTIONS
 	public:
