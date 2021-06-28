@@ -91,6 +91,9 @@ set(
 	MetalFiles
 		${INCLUDE}/Metal/MetalBuffer.hpp
 		${SOURCE}/Metal/MetalBuffer.mm
+		${INCLUDE}/Metal/MetalComputePipelineObject.hpp
+		${INCLUDE}/Metal/MetalComputePipelineObject.inl
+		${SOURCE}/Metal/MetalComputePipelineObject.mm
 		${INCLUDE}/Metal/MetalDescriptorPool.hpp
 		${SOURCE}/Metal/MetalDescriptorPool.mm
 		${INCLUDE}/Metal/MetalDescriptorSet.hpp

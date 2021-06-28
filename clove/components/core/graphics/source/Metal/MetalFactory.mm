@@ -325,12 +325,6 @@ namespace garlic::clove {
 			MTLRenderPipelineColorAttachmentDescriptorArray* colourAttachments{ renderPass->getColourAttachments() };
 			MTLPixelFormat const depthPixelFormat{ renderPass->getDepthPixelFormat() };
 		
-			//Descriptors
-			//TODO:
-		
-			//Push constants
-			//TODO:
-		
 			MTLRenderPipelineDescriptor *pipelineDesc{ [[[MTLRenderPipelineDescriptor alloc] init] autorelease] };
 			pipelineDesc.vertexFunction = vertexFunction;
 			pipelineDesc.fragmentFunction = fragmentFunction;
@@ -361,7 +355,19 @@ namespace garlic::clove {
 	}
 	
 	Expected<std::unique_ptr<GhaComputePipelineObject>, std::runtime_error> MetalFactory::createComputePipelineObject(GhaComputePipelineObject::Descriptor descriptor) {
-		return Unexpected{ std::runtime_error{ "Not implemented" } };
+		@autoreleasepool {
+			id<MTLFunction> function{ polyCast<MetalShader>(descriptor.shader.get())->getFunction() };
+		
+			NSError *error{ nullptr };
+			id<MTLComputePipelineState> pipelineState{ [device newComputePipelineStateWithFunction:function
+																							 error:&error] };
+			if(error != nullptr && error.code != 0) {
+				return Unexpected{ std::runtime_error{ [[error description]
+														cStringUsingEncoding:[NSString defaultCStringEncoding]] } };
+			}
+			
+			return std::unique_ptr<GhaComputePipelineObject>{ std::make_unique<MetalComputePipelineObject>(pipelineState) };
+		}
 	}
 
 	Expected<std::unique_ptr<GhaFramebuffer>, std::runtime_error> MetalFactory::createFramebuffer(GhaFramebuffer::Descriptor descriptor) {
