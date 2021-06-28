@@ -8,11 +8,13 @@
 #include <Clove/Cast.hpp>
 
 namespace garlic::clove {
-	MetalDescriptorSet::MetalDescriptorSet(id<MTLArgumentEncoder> vertexEncoder, id<MTLBuffer> vertexEncoderBuffer, id<MTLArgumentEncoder> pixelEncoder, id<MTLBuffer> pixelEncoderBuffer, std::shared_ptr<GhaDescriptorSetLayout> layout)
+	MetalDescriptorSet::MetalDescriptorSet(id<MTLArgumentEncoder> vertexEncoder, id<MTLBuffer> vertexEncoderBuffer, id<MTLArgumentEncoder> pixelEncoder, id<MTLBuffer> pixelEncoderBuffer, id<MTLArgumentEncoder> computeEncoder, id<MTLBuffer> computeEncoderBuffer, std::shared_ptr<GhaDescriptorSetLayout> layout)
 		: vertexEncoder{ [vertexEncoder retain] }
 		, vertexEncoderBuffer{ [vertexEncoderBuffer retain] }
 		, pixelEncoder{ [pixelEncoder retain] }
 		, pixelEncoderBuffer{ [pixelEncoderBuffer retain] }
+		, computeEndoder{ [computeEndoder retain] }
+		, computeEncoderBuffer{ [computeEncoderBuffer retain] }
 		, layout{ std::move(layout) } {
 	}
 	
@@ -26,6 +28,9 @@ namespace garlic::clove {
 		
 		[pixelEncoder release];
 		[pixelEncoderBuffer release];
+		
+		[computeEndoder release];
+		[computeEncoderBuffer release];
 	}
 	
 	void MetalDescriptorSet::map(GhaBuffer const &buffer, size_t const offset, size_t const range, DescriptorType const descriptorType, uint32_t const bindingSlot) {
@@ -42,6 +47,11 @@ namespace garlic::clove {
 				[pixelEncoder setBuffer:mtlBuffer
 								 offset:offset
 								atIndex:bindingSlot];
+				break;
+			case GhaShader::Stage::Compute:
+				[computeEndoder setBuffer:mtlBuffer
+								   offset:offset
+								  atIndex:bindingSlot];
 				break;
 			default:
 				CLOVE_ASSERT(false, "{0}: Stage not handled", CLOVE_FUNCTION_NAME_PRETTY)

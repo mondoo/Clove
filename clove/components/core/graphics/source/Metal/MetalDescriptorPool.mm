@@ -58,7 +58,16 @@ namespace garlic::clove {
 					[pixelEncoder setArgumentBuffer:pixelEncoderBuffer offset:0];
 				}
 				
-				descriptorSets.emplace_back(std::make_shared<MetalDescriptorSet>(vertexEncoder, vertexEncoderBuffer, pixelEncoder, pixelEncoderBuffer, layouts[i]));
+				id<MTLArgumentEncoder> computeEncoder{ nullptr };
+				id<MTLBuffer> computeEncoderBuffer{ nullptr };
+				if(metalDescriptorSets[i]->getComputeDescriptors().count > 0){
+					computeEncoder       = [device newArgumentEncoderWithArguments:metalDescriptorSets[i]->getComputeDescriptors()];
+					computeEncoderBuffer = [device newBufferWithLength:computeEncoder.encodedLength options:0];
+					
+					[computeEncoder setArgumentBuffer:computeEncoderBuffer offset:0];
+				}
+				
+				descriptorSets.emplace_back(std::make_shared<MetalDescriptorSet>(vertexEncoder, vertexEncoderBuffer, pixelEncoder, pixelEncoderBuffer, computeEncoder, computeEncoderBuffer, layouts[i]));
 			}
 		}
 		

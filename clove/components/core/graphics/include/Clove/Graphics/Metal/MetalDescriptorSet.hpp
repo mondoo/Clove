@@ -17,16 +17,18 @@ namespace garlic::clove {
 	private:
 		id<MTLArgumentEncoder> vertexEncoder{ nullptr };
 		id<MTLArgumentEncoder> pixelEncoder{ nullptr };
+		id<MTLArgumentEncoder> computeEndoder{ nullptr };
 		
 		id<MTLBuffer> vertexEncoderBuffer{ nullptr }; /**< The buffer backing the vertex encoder. */
 		id<MTLBuffer> pixelEncoderBuffer{ nullptr }; /**< The buffer backing the pixel encoder. */
+		id<MTLBuffer> computeEncoderBuffer{ nullptr }; /**< The buffer backing the compute encoder */
 		
 		std::shared_ptr<GhaDescriptorSetLayout> layout{ nullptr };
 		
 		//FUNCTIONS
 	public:
 		MetalDescriptorSet() = delete;
-		MetalDescriptorSet(id<MTLArgumentEncoder> vertexEncoder, id<MTLBuffer> vertexEncoderBuffer, id<MTLArgumentEncoder> pixelEncoder, id<MTLBuffer> pixelEncoderBuffer, std::shared_ptr<GhaDescriptorSetLayout> layout);
+		MetalDescriptorSet(id<MTLArgumentEncoder> vertexEncoder, id<MTLBuffer> vertexEncoderBuffer, id<MTLArgumentEncoder> pixelEncoder, id<MTLBuffer> pixelEncoderBuffer, id<MTLArgumentEncoder> computeEncoder, id<MTLBuffer> computeEncoderBuffer, std::shared_ptr<GhaDescriptorSetLayout> layout);
 		
 		MetalDescriptorSet(MetalDescriptorSet const &other) = delete;
 		MetalDescriptorSet(MetalDescriptorSet &&other) noexcept;
@@ -45,6 +47,7 @@ namespace garlic::clove {
 
         inline id<MTLBuffer> getVertexBuffer() const;
 		inline id<MTLBuffer> getPixelBuffer() const;
+		inline id<MTLBuffer> getComputeBuffer() const;
 		
 	private:
 		GhaShader::Stage getStageFromBindingSlot(uint32_t const bindingSlot);

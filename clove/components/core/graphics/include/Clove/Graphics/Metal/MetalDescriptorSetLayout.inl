@@ -6,4 +6,8 @@ namespace garlic::clove {
 	NSArray<MTLArgumentDescriptor *> *MetalDescriptorSetLayout::getPixelDescriptors() const {
 		return pixelDescriptors;
 	}
+	
+	NSArray<MTLArgumentDescriptor *> *MetalDescriptorSetLayout::getComputeDescriptors() const {
+		return computeDescriptors;
+	}
 }

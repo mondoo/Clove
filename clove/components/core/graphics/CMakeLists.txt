@@ -91,6 +91,8 @@ set(
 	MetalFiles
 		${INCLUDE}/Metal/MetalBuffer.hpp
 		${SOURCE}/Metal/MetalBuffer.mm
+		${INCLUDE}/Metal/MetalComputeCommandBuffer.hpp
+		${SOURCE}/Metal/MetalComputeCommandBuffer.mm
 		${INCLUDE}/Metal/MetalComputePipelineObject.hpp
 		${INCLUDE}/Metal/MetalComputePipelineObject.inl
 		${SOURCE}/Metal/MetalComputePipelineObject.mm

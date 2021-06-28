@@ -243,6 +243,7 @@ namespace garlic::clove {
 		@autoreleasepool {
 			NSMutableArray<MTLArgumentDescriptor *> *vertexDescriptors{ [[NSMutableArray<MTLArgumentDescriptor *> alloc] init] };
 			NSMutableArray<MTLArgumentDescriptor *> *pixelDescriptors{ [[NSMutableArray<MTLArgumentDescriptor *> alloc] init] };
+			NSMutableArray<MTLArgumentDescriptor *> *computeDescriptors{ [[NSMutableArray<MTLArgumentDescriptor *> alloc] init] };
 			
 			for(auto const &binding : descriptor.bindings) {
 				MTLArgumentDescriptor *bindingDescriptor{ [[MTLArgumentDescriptor alloc] init]};
@@ -270,13 +271,16 @@ namespace garlic::clove {
 					case GhaShader::Stage::Pixel:
 						[pixelDescriptors addObject:bindingDescriptor];
 						break;
+					case GhaShader::Stage::Compute:
+						[computeDescriptors addObject:bindingDescriptor];
+						break;
 					default:
 						CLOVE_ASSERT(false, "{0}: Shader stage not handled", CLOVE_FUNCTION_NAME_PRETTY);
 						break;
 				}
 			}
 		
-			return std::unique_ptr<GhaDescriptorSetLayout>{ std::make_unique<MetalDescriptorSetLayout>(std::move(descriptor), vertexDescriptors, pixelDescriptors) };
+			return std::unique_ptr<GhaDescriptorSetLayout>{ std::make_unique<MetalDescriptorSetLayout>(std::move(descriptor), vertexDescriptors, pixelDescriptors, computeDescriptors) };
 		}
 	}
 

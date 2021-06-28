@@ -12,11 +12,12 @@ namespace garlic::clove {
 		
 		NSArray<MTLArgumentDescriptor *> *vertexDescriptors{ nullptr };
 		NSArray<MTLArgumentDescriptor *> *pixelDescriptors{ nullptr };
+		NSArray<MTLArgumentDescriptor *> *computeDescriptors{ nullptr };
 		
 		//FUNCTIONS
 	public:
 		MetalDescriptorSetLayout() = delete;
-		MetalDescriptorSetLayout(Descriptor descriptor, NSArray<MTLArgumentDescriptor *> *vertexDescriptors, NSArray<MTLArgumentDescriptor *> *pixelDescriptors);
+		MetalDescriptorSetLayout(Descriptor descriptor, NSArray<MTLArgumentDescriptor *> *vertexDescriptors, NSArray<MTLArgumentDescriptor *> *pixelDescriptors, NSArray<MTLArgumentDescriptor *> *computeDescriptors);
 		
 		MetalDescriptorSetLayout(MetalDescriptorSetLayout const &other) = delete;
 		MetalDescriptorSetLayout(MetalDescriptorSetLayout &&other) noexcept;
@@ -30,6 +31,7 @@ namespace garlic::clove {
 		
 		inline NSArray<MTLArgumentDescriptor *> *getVertexDescriptors() const;
 		inline NSArray<MTLArgumentDescriptor *> *getPixelDescriptors() const;
+		inline NSArray<MTLArgumentDescriptor *> *getComputeDescriptors() const;
 	};
 }
 
