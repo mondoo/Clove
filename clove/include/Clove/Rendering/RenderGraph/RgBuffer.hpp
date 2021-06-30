@@ -1,6 +1,13 @@
 #pragma once
 
-#include "Clove/Rendering/RenderGraph/RgId.hpp"
+#include "Clove/Rendering/RenderGraph/RgResource.hpp"
+
+#include <Clove/Graphics/GhaBuffer.hpp>
+#include <memory>
+
+namespace garlic::clove {
+    class GhaFactory;
+}
 
 namespace garlic::clove {
     /**
@@ -8,30 +15,44 @@ namespace garlic::clove {
      * @details Can be used to later create a GhaBuffer when executing the graph
      * or track an exisiting GhaBuffer.
      */
-    class RgBuffer {
-        friend class RenderGraph;
-
+    class RgBuffer : public RgResource {
         //VARIABLES
     private:
-        ResourceIdType id{ INVALID_ID };
+        std::shared_ptr<GhaBuffer> ghaBuffer{ nullptr };
+        GhaBuffer::Descriptor ghaBufferDescriptor{};
+        bool externalBuffer{ false }; /**< Will be true if this was registered with an external buffer. Preventing the descriptor being built. */
 
         size_t offset{ 0 }; /**< Offset into the GhaBuffer this buffer represents. */
         size_t size{ 0 };   /**< Size of the region in the GhaBuffer this buffer represents. */
 
         //FUNCTIONS
     public:
-        RgBuffer();
+        RgBuffer() = delete;
+        RgBuffer(ResourceIdType id, size_t size);
+        RgBuffer(ResourceIdType id, std::shared_ptr<GhaBuffer> ghaBuffer, size_t offset, size_t size);
 
-        RgBuffer(RgBuffer const &other);
+        RgBuffer(RgBuffer const &other) = delete;
         RgBuffer(RgBuffer &&other) noexcept;
 
-        RgBuffer &operator=(RgBuffer const &other);
+        RgBuffer &operator=(RgBuffer const &other) = delete;
         RgBuffer &operator=(RgBuffer &&other) noexcept;
 
         ~RgBuffer();
 
-    private:
-        RgBuffer(ResourceIdType id);
-        RgBuffer(ResourceIdType id, size_t offset, size_t size);
+        /**
+         * @brief Get the GhaBuffer for this object. Will create one if possible.
+         * @param ghaFactory 
+         * @return 
+         */
+        std::shared_ptr<GhaBuffer> getGhaBuffer(GhaFactory &ghaFactory);
+
+        inline bool isExternalBuffer() const;
+
+        inline size_t getBufferOffset() const;
+        inline size_t getBufferSize() const;
+
+        void addBufferUsage(GhaBuffer::UsageMode usage);
     };
 }
+
+#include "RgBuffer.inl"
