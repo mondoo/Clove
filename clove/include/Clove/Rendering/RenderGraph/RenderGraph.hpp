@@ -45,6 +45,8 @@ namespace garlic::clove {
         ResourceIdType nextResourceId{ 1 };
         PassIdType nextPassId{ 1 };
 
+        ResourceIdType outputResource{}; /**< The final output of the graph. */
+
         std::unordered_map<ResourceIdType, std::unique_ptr<RgBuffer>> buffers{};
         std::unordered_map<ResourceIdType, std::unique_ptr<RgImage>> images{};
 
@@ -106,10 +108,12 @@ namespace garlic::clove {
         ResourceIdType createImage(std::shared_ptr<GhaImageView> ghaImageView);
 
         /**
-         * @brief Registers an RgImage as the final output of the enter graph.
-         * @param image 
+         * @brief Registers a resource as the final output of the graph.
+         * @details The graph will be traversed starting from this resource and build
+         * the list of passes it will execute bassed on this output's dependencies.
+         * @param resource 
          */
-        void registerImageAsOutput(RgImage image);
+        void registerGraphOutput(ResourceIdType resource);
 
         /**
          * @brief Creates a new RgShader from a source file.

@@ -49,8 +49,8 @@ namespace garlic::clove {
         return imageId;
     }
 
-    void RenderGraph::registerImageAsOutput(RgImage image) {
-        //TODO
+    void RenderGraph::registerGraphOutput(ResourceIdType resource) {
+        outputResource = resource;
     }
 
     RgShader RenderGraph::createShader(std::filesystem::path const &file, GhaShader::Stage shaderStage) {
