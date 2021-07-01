@@ -139,6 +139,8 @@ add_library(
 		${SOURCE}/Rendering/RenderGraph/RgGlobalCache.cpp
 		${INCLUDE}/Rendering/RenderGraph/RgId.hpp
 		${INCLUDE}/Rendering/RenderGraph/RgImage.hpp
+		${INCLUDE}/Rendering/RenderGraph/RgImage.inl
+		${SOURCE}/Rendering/RenderGraph/RgImage.cpp
 		${INCLUDE}/Rendering/RenderGraph/RgResource.hpp
 		${INCLUDE}/Rendering/RenderGraph/RgResource.inl
 		${SOURCE}/Rendering/RenderGraph/RgResource.cpp
