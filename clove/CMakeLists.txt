@@ -141,6 +141,9 @@ add_library(
 		${INCLUDE}/Rendering/RenderGraph/RgImage.hpp
 		${INCLUDE}/Rendering/RenderGraph/RgImage.inl
 		${SOURCE}/Rendering/RenderGraph/RgImage.cpp
+		${INCLUDE}/Rendering/RenderGraph/RgPass.hpp
+		${INCLUDE}/Rendering/RenderGraph/RgPass.inl
+		${SOURCE}/Rendering/RenderGraph/RgPass.cpp
 		${INCLUDE}/Rendering/RenderGraph/RgResource.hpp
 		${INCLUDE}/Rendering/RenderGraph/RgResource.inl
 		${SOURCE}/Rendering/RenderGraph/RgResource.cpp
