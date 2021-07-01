@@ -2,6 +2,8 @@
 
 #include "Clove/Rendering/RenderGraph/RgFrameCache.hpp"
 
+#include <Clove/Log/Log.hpp>
+
 namespace garlic::clove {
     namespace {
         GhaImageView::Type getViewType(GhaImage::Type imageType) {
@@ -43,7 +45,7 @@ namespace garlic::clove {
         if(ghaImageView == nullptr) {
             CLOVE_ASSERT(!externalImage, "RgImage is registered as an external image but does not have a valid GhaImageView.");
             ghaImage     = cache.allocateImage(ghaImageDescriptor);
-            ghaImageView = cache.allocateImageView(*ghaImage, GhaImageView::Descriptor{ .type = getViewType(ghaImageDescriptor.type) });
+            ghaImageView = cache.allocateImageView(ghaImage.get(), GhaImageView::Descriptor{ .type = getViewType(ghaImageDescriptor.type) });
         }
 
         return ghaImageView;

@@ -1,6 +1,7 @@
 #include "Clove/Rendering/RenderGraph/RgBuffer.hpp"
 
-#include <Clove/Graphics/GhaFactory.hpp>
+#include "Clove/Rendering/RenderGraph/RgFrameCache.hpp"
+
 #include <Clove/Log/Log.hpp>
 
 namespace garlic::clove {

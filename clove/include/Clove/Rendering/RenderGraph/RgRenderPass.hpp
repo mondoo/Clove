@@ -1,7 +1,12 @@
 #pragma once
 
 #include "Clove/Rendering/RenderGraph/RgPass.hpp"
+#include "Clove/Rendering/RenderGraph/RgShader.hpp"
 
+#include <Clove/Graphics/GhaGraphicsCommandBuffer.hpp>
+#include <Clove/Graphics/GhaGraphicsPipelineObject.hpp>
+#include <Clove/Graphics/GhaRenderPass.hpp>
+#include <Clove/Graphics/GhaSampler.hpp>
 #include <vector>
 
 namespace garlic::clove {

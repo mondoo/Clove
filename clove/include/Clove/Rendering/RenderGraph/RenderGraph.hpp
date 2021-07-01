@@ -2,16 +2,10 @@
 
 #include "Clove/Rendering/RenderGraph/RgBuffer.hpp"
 #include "Clove/Rendering/RenderGraph/RgImage.hpp"
-#include "Clove/Rendering/RenderGraph/RgShader.hpp"
 #include "Clove/Rendering/RenderGraph/RgRenderPass.hpp"
+#include "Clove/Rendering/RenderGraph/RgShader.hpp"
 
-#include <Clove/Graphics/GhaBuffer.hpp>
-#include <Clove/Graphics/GhaFramebuffer.hpp>
-#include <Clove/Graphics/GhaGraphicsPipelineObject.hpp>
 #include <Clove/Graphics/GhaGraphicsQueue.hpp>
-#include <Clove/Graphics/GhaImage.hpp>
-#include <Clove/Graphics/GhaRenderPass.hpp>
-#include <Clove/Graphics/GhaSampler.hpp>
 #include <Clove/Graphics/GhaShader.hpp>
 #include <Clove/Maths/Vector.hpp>
 #include <filesystem>

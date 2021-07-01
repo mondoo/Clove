@@ -92,6 +92,7 @@ namespace garlic::clove {
         }
 
         renderPasses[renderPassId] = std::move(pass);
+        return renderPassId;
     }
 
     void RenderGraph::addRenderSubmission(PassIdType const renderPass, RgRenderPass::Submission submission) {
