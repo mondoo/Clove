@@ -61,7 +61,7 @@ namespace garlic::clove {
     }
 
     RgShader RenderGraph::createShader(std::string_view source, std::unordered_map<std::string, std::string> includeSources, std::string_view shaderName, GhaShader::Stage shaderStage) {
-        RgShader const shader{ nextId++ };
+        RgShader const shader{ nextResourceId++ };
         allocatedShaders[shader] = globalCache.createShader(source, std::move(includeSources), shaderName, shaderStage);//Allocate straight away as it's usage does not define it's properties
 
         return shader;
@@ -100,7 +100,7 @@ namespace garlic::clove {
         {
             ResourceIdType const bufferId{ submission.vertexBuffer };
 
-            auto &buffer{ buffers.at(bufferIdr) };
+            auto &buffer{ buffers.at(bufferId) };
             buffer->addBufferUsage(GhaBuffer::UsageMode::VertexBuffer);
             buffer->addReadPass(renderPass);
 

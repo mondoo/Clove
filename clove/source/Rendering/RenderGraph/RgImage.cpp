@@ -41,7 +41,7 @@ namespace garlic::clove {
 
     std::shared_ptr<GhaImageView> RgImage::getGhaImageView(RgFrameCache &cache) {
         if(ghaImageView == nullptr) {
-            CLOVE_ASSERT(!externalBuffer, "RgImage is registered as an external image but does not have a valid GhaImageView.");
+            CLOVE_ASSERT(!externalImage, "RgImage is registered as an external image but does not have a valid GhaImageView.");
             ghaImage     = cache.allocateImage(ghaImageDescriptor);
             ghaImageView = cache.allocateImageView(*ghaImage, GhaImageView::Descriptor{ .type = getViewType(ghaImageDescriptor.type) });
         }
@@ -50,7 +50,7 @@ namespace garlic::clove {
     }
 
     void RgImage::addImageUsage(GhaImage::UsageMode usage) {
-        CLOVE_ASSERT(!externalBuffer, "Cannot change usage mode. RgImage is registered as an external image.");
+        CLOVE_ASSERT(!externalImage, "Cannot change usage mode. RgImage is registered as an external image.");
         ghaImageDescriptor.usageFlags |= usage;
     }
 }
