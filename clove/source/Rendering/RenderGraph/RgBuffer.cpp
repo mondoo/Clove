@@ -29,10 +29,10 @@ namespace garlic::clove {
 
     RgBuffer::~RgBuffer() = default;
 
-    std::shared_ptr<GhaBuffer> RgBuffer::getGhaBuffer(GhaFactory &ghaFactory) {
+    std::shared_ptr<GhaBuffer> RgBuffer::getGhaBuffer(RgFrameCache &cache) {
         if(ghaBuffer == nullptr) {
             CLOVE_ASSERT(!externalBuffer, "RgBuffer is registered as an external buffer but does not have a valid GhaBuffer.");
-            ghaBuffer = ghaFactory.createBuffer(ghaBufferDescriptor).getValue();
+            ghaBuffer = cache.allocateBuffer(ghaBufferDescriptor);
         }
 
         return ghaBuffer;

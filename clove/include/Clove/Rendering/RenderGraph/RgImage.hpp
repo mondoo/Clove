@@ -7,7 +7,7 @@
 #include <memory>
 
 namespace garlic::clove {
-    class GhaFactory;
+    class RgFrameCache;
 }
 
 namespace garlic::clove {
@@ -42,7 +42,7 @@ namespace garlic::clove {
          * @param ghaFactory 
          * @return 
          */
-        std::shared_ptr<GhaImageView> getGhaImageView(GhaFactory &ghaFactory);
+        std::shared_ptr<GhaImageView> getGhaImageView(RgFrameCache &cache);
 
         inline bool isExternalImage() const;
 
