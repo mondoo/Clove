@@ -1,6 +1,6 @@
 namespace garlic::clove {
     bool RgBuffer::isExternalBuffer() const {
-        return isExternalBuffer;
+        return externalBuffer;
     }
 
     size_t RgBuffer::getBufferOffset() const {
