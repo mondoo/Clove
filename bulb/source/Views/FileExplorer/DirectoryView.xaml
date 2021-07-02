@@ -29,6 +29,20 @@
 									Command="{Binding DeleteCommand}"/>
 					</Button.InputBindings>
 
+					<Button.Style>
+						<Style TargetType="{x:Type Button}">
+							<Style.Triggers>
+								<Trigger Property="IsFocused" Value="True">
+									<Setter Property="BorderBrush" Value="Red" />
+									<Setter Property="BorderThickness" Value="2" />
+								</Trigger>
+								<Trigger Property="IsFocused" Value="False">
+									<Setter Property="BorderBrush" Value="Transparent" />
+								</Trigger>
+							</Style.Triggers>
+						</Style>
+					</Button.Style>
+
 					<StackPanel>
 						<Image HorizontalAlignment="Center"
 							   Width="50">
