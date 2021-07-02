@@ -70,11 +70,13 @@ namespace garlic::clove {
 
         //VARIABLES
     private:
-        
+        Descriptor descriptor{};
+        std::vector<Submission> submissions{};
+
         //FUNCTIONS
     public:
         RgRenderPass() = delete;
-        RgRenderPass(PassIdType id);
+        RgRenderPass(PassIdType id, Descriptor descriptor);
 
         RgRenderPass(RgRenderPass const &other) = delete;
         RgRenderPass(RgRenderPass &&other) noexcept;
@@ -83,5 +85,7 @@ namespace garlic::clove {
         RgRenderPass &operator=(RgRenderPass &&other) noexcept;
 
         ~RgRenderPass();
+
+        inline void addSubmission(Submission submission);
     };
 }

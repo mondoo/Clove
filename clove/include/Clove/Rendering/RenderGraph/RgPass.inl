@@ -11,11 +11,11 @@ namespace garlic::clove {
         return id;
     }
 
-    std::unordered_set<ResourceIdType> const &RgPass::getInputResource() const {
+    std::unordered_set<ResourceIdType> const &RgPass::getInputResources() const {
         return inputResources;
     }
 
-    std::unordered_set<ResourceIdType> const &RgPass::getOutputResource() const {
+    std::unordered_set<ResourceIdType> const &RgPass::getOutputResources() const {
         return outputResources;
     }
 }

@@ -34,8 +34,8 @@ namespace garlic::clove {
 
         inline PassIdType getId() const;
 
-        inline std::unordered_set<ResourceIdType> const &getInputResource() const;
-        inline std::unordered_set<ResourceIdType> const &getOutputResource() const;
+        inline std::unordered_set<ResourceIdType> const &getInputResources() const;
+        inline std::unordered_set<ResourceIdType> const &getOutputResources() const;
     };
 }
 

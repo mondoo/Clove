@@ -39,7 +39,7 @@ namespace garlic::clove {
         ResourceIdType nextResourceId{ 1 };
         PassIdType nextPassId{ 1 };
 
-        ResourceIdType outputResource{}; /**< The final output of the graph. */
+        ResourceIdType outputResource{ INVALID_RESOURCE_ID }; /**< The final output of the graph. */
 
         std::unordered_map<ResourceIdType, std::unique_ptr<RgBuffer>> buffers{};
         std::unordered_map<ResourceIdType, std::unique_ptr<RgImage>> images{};
@@ -147,5 +147,11 @@ namespace garlic::clove {
          * @return Returns the GraphicsSubmitInfo used to render the final result of the graph.
          */
         GraphicsSubmitInfo execute();
+
+    private:
+        void buildExecutionPasses(std::vector<PassIdType> &passes, ResourceIdType resourceId);
+
+        RgResource *getResourceFromId(ResourceIdType resourceId);
+        RgPass *getPassFromId(PassIdType passId);
     };
 }
