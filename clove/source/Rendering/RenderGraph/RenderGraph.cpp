@@ -69,7 +69,6 @@ namespace garlic::clove {
 
     PassIdType RenderGraph::addRenderPass(RgRenderPass::Descriptor passDescriptor) {
         PassIdType const renderPassId{ nextPassId };
-        auto pass{ std::make_unique<RgRenderPass>(renderPassId, passDescriptor) };
 
         for(auto &renderTarget : passDescriptor.renderTargets) {
             ResourceIdType const imageId{ renderTarget.target };
@@ -77,8 +76,6 @@ namespace garlic::clove {
             auto &image{ images.at(imageId) };
             image->addImageUsage(GhaImage::UsageMode::ColourAttachment);
             image->addWritePass(renderPassId);
-
-            pass->addOutputResource(imageId);
         }
 
         {
@@ -87,11 +84,10 @@ namespace garlic::clove {
             auto &image{ images.at(imageId) };
             image->addImageUsage(GhaImage::UsageMode::DepthStencilAttachment);
             image->addWritePass(renderPassId);
-
-            pass->addOutputResource(imageId);
         }
 
-        renderPasses[renderPassId] = std::move(pass);
+        renderPasses[renderPassId] = std::make_unique<RgRenderPass>(renderPassId, std::move(passDescriptor));
+
         return renderPassId;
     }
 
@@ -104,8 +100,6 @@ namespace garlic::clove {
             auto &buffer{ buffers.at(bufferId) };
             buffer->addBufferUsage(GhaBuffer::UsageMode::VertexBuffer);
             buffer->addReadPass(renderPass);
-
-            pass->addInputResource(bufferId);
         }
 
         {
@@ -114,8 +108,6 @@ namespace garlic::clove {
             auto &buffer{ buffers.at(bufferId) };
             buffer->addBufferUsage(GhaBuffer::UsageMode::IndexBuffer);
             buffer->addReadPass(renderPass);
-
-            pass->addInputResource(bufferId);
         }
 
         for(auto const &ubo : submission.shaderUbos) {
@@ -124,8 +116,6 @@ namespace garlic::clove {
             auto &buffer{ buffers.at(bufferId) };
             buffer->addBufferUsage(GhaBuffer::UsageMode::UniformBuffer);
             buffer->addReadPass(renderPass);
-
-            pass->addInputResource(bufferId);
         }
 
         for(auto const &imageSampler : submission.shaderCombinedImageSamplers) {
@@ -134,8 +124,6 @@ namespace garlic::clove {
             auto &image{ images.at(imageId) };
             image->addImageUsage(GhaImage::UsageMode::Sampled);
             image->addReadPass(renderPass);
-
-            pass->addInputResource(imageId);
         }
 
         pass->addSubmission(std::move(submission));

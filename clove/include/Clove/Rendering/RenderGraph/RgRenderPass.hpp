@@ -4,10 +4,13 @@
 #include "Clove/Rendering/RenderGraph/RgShader.hpp"
 
 #include <Clove/Graphics/GhaGraphicsCommandBuffer.hpp>
-#include <Clove/Graphics/GhaGraphicsPipelineObject.hpp>
 #include <Clove/Graphics/GhaRenderPass.hpp>
 #include <Clove/Graphics/GhaSampler.hpp>
 #include <vector>
+
+namespace {
+    class RgGlobalCache;
+}
 
 namespace garlic::clove {
     struct BufferBinding {
@@ -37,6 +40,9 @@ namespace garlic::clove {
 }
 
 namespace garlic::clove {
+    /**
+     * @brief Represents an entire render pass in the graph.
+     */
     class RgRenderPass : public RgPass {
         //TYPES
     public:
@@ -86,6 +92,11 @@ namespace garlic::clove {
 
         ~RgRenderPass();
 
+        std::unordered_set<ResourceIdType> getInputResources() const override;
+        std::unordered_set<ResourceIdType> getOutputResources() const override;
+
         inline void addSubmission(Submission submission);
     };
 }
+
+#include "RgRenderPass.inl"

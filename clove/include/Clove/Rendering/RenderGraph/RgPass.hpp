@@ -13,9 +13,6 @@ namespace garlic::clove {
     private:
         PassIdType id{ INVALID_PASS_ID };
 
-        std::unordered_set<ResourceIdType> inputResources{};
-        std::unordered_set<ResourceIdType> outputResources{};
-
         //FUNCTIONS
     public:
         RgPass() = delete;
@@ -29,13 +26,10 @@ namespace garlic::clove {
 
         ~RgPass();
 
-        inline void addInputResource(ResourceIdType resource);
-        inline void addOutputResource(ResourceIdType resource);
-
         inline PassIdType getId() const;
 
-        inline std::unordered_set<ResourceIdType> const &getInputResources() const;
-        inline std::unordered_set<ResourceIdType> const &getOutputResources() const;
+        virtual std::unordered_set<ResourceIdType> getInputResources() const = 0;
+        virtual std::unordered_set<ResourceIdType> getOutputResources() const = 0;
     };
 }
 
