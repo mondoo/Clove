@@ -4,7 +4,7 @@ namespace garlic::membrane {
     // clang-format off
     public enum class ComponentType {
         Transform,
-        Mesh,
+        StaticModel,
         PointLight,
         RigidBody,
         CollisionShape

@@ -233,7 +233,7 @@ namespace garlic::membrane {
                 editorEntity->components->Add(ComponentType::Transform);
             }
             if(currentScene.hasComponent<clove::StaticModelComponent>(entity)) {
-                editorEntity->components->Add(ComponentType::Mesh);
+                editorEntity->components->Add(ComponentType::StaticModel);
             }
             if(currentScene.hasComponent<clove::PointLightComponent>(entity)) {
                 editorEntity->components->Add(ComponentType::PointLight);
@@ -272,7 +272,7 @@ namespace garlic::membrane {
                     added = true;
                 }
                 break;
-            case ComponentType::Mesh:
+            case ComponentType::StaticModel:
                 if(!currentScene.hasComponent<clove::StaticModelComponent>(entity)) {
                     currentScene.addComponent<clove::StaticModelComponent>(entity, clove::ModelLoader::loadStaticModel(ASSET_DIR "/cube.obj"));//TEMP: Hard coding to a cube for now
                     added = true;

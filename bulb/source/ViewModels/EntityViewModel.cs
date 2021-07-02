@@ -76,6 +76,13 @@ namespace Garlic.Bulb {
                     componentVm = transformComp;
                 }
                 break;
+                case Membrane.ComponentType.StaticModel: {
+                    var modelComp = new StaticModelComponentViewModel($"{type}", type);
+                    modelComp.FilePath = "/temp/file/path"; //TODO
+
+                    componentVm = modelComp;
+                }
+                break;
                 case Membrane.ComponentType.RigidBody: {
                     var rigidBodyComp = new RigidBodyComponentViewModel($"{type}", type);
                     rigidBodyComp.OnRigidBodyChanged = UpdateRigidBody;

@@ -45,6 +45,7 @@ add_executable(
 		${SOURCE}/ViewModels/Components/ComponentViewModel.cs
 		${SOURCE}/ViewModels/Components/CollisionShapeComponentViewModel.cs
 		${SOURCE}/ViewModels/Components/RigidBodyComponentViewModel.cs
+		${SOURCE}/ViewModels/Components/StaticModelComponentViewModel.cs
 		${SOURCE}/ViewModels/Components/TransformComponentViewModel.cs
 
 		${SOURCE}/ViewModels/FileExplorer/DirectoryItemViewModel.cs
