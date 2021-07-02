@@ -33,6 +33,8 @@ add_executable(
 		${SOURCE}/Views/FileExplorer/FileExplorer.xaml
 		${SOURCE}/Views/FileExplorer/FileExplorer.xaml.cs
 
+		${SOURCE}/Views/EntityInfo.xaml
+		${SOURCE}/Views/EntityInfo.xaml.cs
 		${SOURCE}/Views/MainWindow.xaml
 		${SOURCE}/Views/MainWindow.xaml.cs
 		${SOURCE}/Views/Vector3Box.xaml
@@ -87,6 +89,9 @@ csharp_set_xaml_cs_properties(
 
 	${SOURCE}/Views/FileExplorer/FileExplorer.xaml
 	${SOURCE}/Views/FileExplorer/FileExplorer.xaml.cs
+
+	${SOURCE}/Views/EntityInfo.xaml
+	${SOURCE}/Views/EntityInfo.xaml.cs
 
 	${SOURCE}/Views/MainWindow.xaml
     ${SOURCE}/Views/MainWindow.xaml.cs
