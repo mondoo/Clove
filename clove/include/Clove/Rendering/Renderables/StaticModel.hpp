@@ -23,9 +23,6 @@ namespace garlic::clove {
 
         std::vector<Technique> techniques{};
 
-        //TEMP: Storing the path of the model for serialisation purposes
-        std::filesystem::path assetPath{};
-
         //FUNCTIONS
     public:
         StaticModel() = delete;
@@ -51,14 +48,6 @@ namespace garlic::clove {
         inline void removeTechnique(Technique const &technique);
 
         inline std::shared_ptr<Mesh> &operator[](size_t index);
-
-        //TEMP: Storing the path of the model for serialisation purposes
-        inline void setAssetPath(std::filesystem::path path) {
-            assetPath = std::move(path);
-        };
-        inline std::filesystem::path getAssetPath() const {
-            return assetPath;
-        };
     };
 }
 

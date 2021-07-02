@@ -38,6 +38,13 @@ namespace garlic::membrane {
         app          = pair.first.release();
         renderTarget = pair.second;
 
+        //Mount editor paths
+        auto *vfs{ app->getFileSystem() };
+        vfs->mount(std::filesystem::current_path() / "data", ".");//TODO: Root path of editor is unlikely to be it's working directory
+
+        std::filesystem::create_directories(vfs->resolve("."));
+
+        //Push layers
         editorLayer  = new std::shared_ptr<EditorLayer>();
         *editorLayer = std::make_shared<EditorLayer>();
 
@@ -48,12 +55,6 @@ namespace garlic::membrane {
 
         MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_Stop ^>(this, &Application::setEditorMode));
         MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_Play ^>(this, &Application::setRuntimeMode));
-
-        //Mount editor paths
-        auto *vfs{ app->getFileSystem() };
-        vfs->mount(std::filesystem::current_path() / "data", ".");//TODO: Root path of editor is unlikely to be it's working directory
-  
-        std::filesystem::create_directories(vfs->resolve("."));
     }
 
     Application::~Application() {

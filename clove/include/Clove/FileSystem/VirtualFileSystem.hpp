@@ -38,7 +38,7 @@ namespace garlic::clove {
         /**
          * @brief Resolves a vfs path into a system path.
          * @details For example mounting 'data' as 'C:/files/data' then resolving
-         * '/data/model.obj' will return 'C:/files/data/model.obj'.
+         * 'data/model.obj' will return 'C:/files/data/model.obj'.
          * @param vfsPath A path inside the VFS. THe path should begin with a mounted alias.
          * @return The resolved system path.
          */

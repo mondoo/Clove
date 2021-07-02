@@ -274,7 +274,7 @@ namespace garlic::membrane {
                 break;
             case ComponentType::StaticModel:
                 if(!currentScene.hasComponent<clove::StaticModelComponent>(entity)) {
-                    currentScene.addComponent<clove::StaticModelComponent>(entity, clove::ModelLoader::loadStaticModel(ASSET_DIR "/cube.obj"));//TEMP: Hard coding to a cube for now
+                    currentScene.addComponent<clove::StaticModelComponent>(entity, clove::Application::get().getAssetManager()->getStaticModel("./cube.obj"));//TEMP: Hard coding to a cube for now
                     added = true;
                 }
                 break;
