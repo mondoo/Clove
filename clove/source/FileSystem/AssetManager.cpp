@@ -19,7 +19,9 @@ namespace garlic::clove {
         std::string const pathString{ filePath.string() };
 
         if(!staticModels.contains(pathString)) {
-            staticModels[pathString] = AssetPtr<StaticModel>{ fullSystemPath, &ModelLoader::loadStaticModel };
+            staticModels[pathString] = AssetPtr<StaticModel>{ filePath, [fullSystemPath]() {
+                                                                 return ModelLoader::loadStaticModel(fullSystemPath);
+                                                             } };
         }
 
         return staticModels.at(pathString);
@@ -30,7 +32,9 @@ namespace garlic::clove {
         std::string const pathString{ filePath.string() };
 
         if(!animatedModels.contains(pathString)) {
-            animatedModels[pathString] = AssetPtr<AnimatedModel>{ fullSystemPath, &ModelLoader::loadAnimatedModel };
+            animatedModels[pathString] = AssetPtr<AnimatedModel>{ filePath, [fullSystemPath]() {
+                                                                     return ModelLoader::loadAnimatedModel(fullSystemPath);
+                                                                 } };
         }
 
         return animatedModels.at(pathString);

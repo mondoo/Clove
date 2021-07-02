@@ -8,8 +8,8 @@ namespace garlic::clove {
     }
 
     template<typename AssetType>
-    AssetPtr<AssetType>::AssetPtr(std::filesystem::path assetPath, std::function<AssetType(std::filesystem::path const &)> loadFunction)
-        : assetPath{ std::make_shared<std::filesystem::path>(std::move(assetPath)) }
+    AssetPtr<AssetType>::AssetPtr(std::filesystem::path assetVfsPath, std::function<AssetType()> loadFunction)
+        : assetPath{ std::make_shared<std::filesystem::path>(std::move(assetVfsPath)) }
         , loadFunction{ std::move(loadFunction) }
         , asset{ std::make_shared<std::optional<AssetType>>() } {
     }
@@ -31,7 +31,7 @@ namespace garlic::clove {
 
     template<typename AssetType>
     bool AssetPtr<AssetType>::isValid() const {
-        return !assetPath->empty();
+        return !assetPath->empty() && loadFunction != nullptr;
     }
 
     template<typename AssetType>
@@ -44,7 +44,7 @@ namespace garlic::clove {
         CLOVE_ASSERT(isValid(), "{0}: AssetPtr requires a valid path before it can load");
 
         if(!isLoaded()) {
-            *asset = loadFunction(*assetPath);
+            *asset = loadFunction();
         }
 
         return asset->value();
@@ -55,10 +55,15 @@ namespace garlic::clove {
         CLOVE_ASSERT(isValid(), "{0}: AssetPtr requires a valid path before it can load");
 
         if(!isLoaded()) {
-            *asset = loadFunction(*assetPath);
+            *asset = loadFunction();
         }
 
         return asset->value();
+    }
+
+    template<typename AssetType>
+    std::filesystem::path const &AssetPtr<AssetType>::getPath() const {
+        return *assetPath;
     }
 
     template<typename AssetType>

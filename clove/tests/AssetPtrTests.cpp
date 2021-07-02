@@ -9,7 +9,7 @@ public:
 };
 
 namespace {
-    MockFile loadMockFile(std::filesystem::path const &filePath) {
+    MockFile loadMockFile() {
         return MockFile{ true };
     }
 }
@@ -22,10 +22,18 @@ TEST(AssetPtrTest, ProperlyDefaultInitialises) {
 }
 
 TEST(AssetPtrTest, CanInitialiseWithAFilePath) {
-    AssetPtr<MockFile> asset{ "random/file/path.txt", &loadMockFile };
+    std::filesystem::path path{ "random/file/path.txt" };
+    AssetPtr<MockFile> asset{ path, &loadMockFile };
 
     EXPECT_TRUE(asset.isValid());
     EXPECT_FALSE(asset.isLoaded());
+}
+
+TEST(AssetPtrTest, CanGetFilePath) {
+    std::filesystem::path path{ "random/file/path.txt" };
+    AssetPtr<MockFile> asset{ path, &loadMockFile };
+
+    EXPECT_EQ(path, asset.getPath());
 }
 
 TEST(AssetPtrTest, CanLoadFileWhenRequested) {
@@ -58,8 +66,9 @@ TEST(AssetPtrTest, CanLoadFileWhenRequested) {
 
 TEST(AssetPtrTest, CanPointToSameAssetButOnlyLoadOnce) {
     int32_t callCount{ 0 };
+    int32_t constexpr expectedCallAmount{ 1 };
 
-    auto const loadMockFileCount = [&callCount](std::filesystem::path const &path) mutable {
+    auto const loadMockFileCount = [&callCount]() mutable {
         ++callCount;
         return MockFile{ true };
     };
@@ -75,7 +84,7 @@ TEST(AssetPtrTest, CanPointToSameAssetButOnlyLoadOnce) {
     ASSERT_TRUE(assetCopy.isLoaded());
     EXPECT_EQ(asset.isLoaded(), assetCopy.isLoaded());
     EXPECT_TRUE(asset->isLoaded);
-    EXPECT_EQ(callCount, 1);
+    EXPECT_EQ(callCount, expectedCallAmount);
 
     AssetPtr<MockFile> invalidAsset{};
     AssetPtr<MockFile> invalidCopy{ invalidAsset };
