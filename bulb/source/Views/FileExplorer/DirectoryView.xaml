@@ -20,10 +20,13 @@
 		<ItemsControl.ItemTemplate>
 			<DataTemplate>
 				<Button Background="Transparent"
-						BorderBrush="Transparent">
+						Focusable="True"
+						IsTabStop="True">
 					<Button.InputBindings>
 						<MouseBinding Gesture="LeftDoubleClick" 
 									  Command="{Binding OpenCommand}"/>
+						<KeyBinding Key="Delete"
+									Command="{Binding DeleteCommand}"/>
 					</Button.InputBindings>
 
 					<StackPanel>

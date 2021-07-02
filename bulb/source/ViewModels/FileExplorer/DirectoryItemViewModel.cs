@@ -40,9 +40,11 @@ namespace Garlic.Bulb {
         public DirectoryItemViewModel Parent { get; private set; }
 
         public ICommand OpenCommand { get; }
+        public ICommand DeleteCommand { get; }
 
-        public delegate void OpenHandler(DirectoryItemViewModel item);
-        public OpenHandler OnOpened;
+        public delegate void ItemEventHandler(DirectoryItemViewModel item);
+        public ItemEventHandler OnOpened;
+        public ItemEventHandler OnDeleted;
 
         /// <summary>
         /// A list of all directories within this directory. Will be empty if this item is a file.
@@ -97,12 +99,17 @@ namespace Garlic.Bulb {
             Type = ObjectType.File;
         }
 
+        private DirectoryItemViewModel() {
+            OpenCommand = new RelayCommand(() => OnOpened?.Invoke(this));
+            DeleteCommand = new RelayCommand(() => OnDeleted?.Invoke(this));
+        }
+
         /// <summary>
         /// Called by the view when a file has been dropped onto it. Only works if this item is a directory.
         /// </summary>
         /// <param name="file">The full path of the file</param>
         public void OnFileDropped(string file) {
-            Debug.Assert(Type == ObjectType.Directory, "Cannot performa a drop operation on a file");
+            Debug.Assert(Type == ObjectType.Directory, "Cannot perform a drop operation on a file");
 
             var fileInfo = new FileInfo(file);
             string originalPath = file;
@@ -111,14 +118,19 @@ namespace Garlic.Bulb {
             File.Copy(originalPath, newPath);
         }
 
-        private DirectoryItemViewModel() {
-            OpenCommand = new RelayCommand(() => OnItemOpened(this));
-        }
-
+        #region Item view model events
         private void OnItemOpened(DirectoryItemViewModel item) {
+            //Not handled here. Just pipe up
             OnOpened?.Invoke(item);
         }
 
+        private void OnItemDeleted(DirectoryItemViewModel item) {
+            //Delete through the OS. The file system watcher will handle the even back to us.
+            File.Delete(item.FullName);
+        }
+        #endregion
+
+        #region File system events
         private void OnFileCreated(object sender, FileSystemEventArgs e) {
             Application.Current.Dispatcher.Invoke(() => {
                 DirectoryItemViewModel vm = File.GetAttributes(e.FullPath).HasFlag(FileAttributes.Directory)
@@ -140,10 +152,7 @@ namespace Garlic.Bulb {
                 }
 
                 if (itemVm != null) {
-                    AllItems.Remove(itemVm);
-                    //Item no longer exists to quiery for data so try to remove from both lists
-                    SubDirectories.Remove(itemVm);
-                    Files.Remove(itemVm);
+                    DeleteItem(itemVm);
                 }
             });
         }
@@ -162,10 +171,12 @@ namespace Garlic.Bulb {
                 itemVm.FullName = e.FullPath;
             });
         }
+        #endregion
 
         private DirectoryItemViewModel CreateItem(DirectoryInfo directory) {
             var vm = new DirectoryItemViewModel(directory);
             vm.OnOpened += (DirectoryItemViewModel item) => OnItemOpened(item);
+            vm.OnDeleted += (DirectoryItemViewModel item) => OnItemDeleted(item);
             vm.Parent = this;
 
             return vm;
@@ -174,9 +185,19 @@ namespace Garlic.Bulb {
         private DirectoryItemViewModel CreateItem(FileInfo file) {
             var vm = new DirectoryItemViewModel(file);
             vm.OnOpened += (DirectoryItemViewModel item) => OnItemOpened(item);
+            vm.OnDeleted += (DirectoryItemViewModel item) => OnItemDeleted(item);
             vm.Parent = this;
 
             return vm;
+        }
+
+        private void DeleteItem(DirectoryItemViewModel item) {
+            AllItems.Remove(item);
+            if (item.Type == ObjectType.Directory) {
+                SubDirectories.Remove(item);
+            } else {
+                Files.Remove(item);
+            }
         }
     }
 }
