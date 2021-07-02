@@ -52,7 +52,13 @@ namespace garlic::clove {
 
     template<typename AssetType>
     AssetType const &AssetPtr<AssetType>::get() const {
-        return get();
+        CLOVE_ASSERT(isValid(), "{0}: AssetPtr requires a valid path before it can load");
+
+        if(!isLoaded()) {
+            *asset = loadFunction(*assetPath);
+        }
+
+        return asset->value();
     }
 
     template<typename AssetType>

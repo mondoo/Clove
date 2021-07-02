@@ -34,9 +34,13 @@ TEST(AssetPtrTest, CanLoadFileWhenRequested) {
     EXPECT_DEATH(MockFile const &invalidFile{ emptyPtr.get() }, "");
 
     AssetPtr<MockFile> asset{ "random/file/path.txt", &loadMockFile };
+    AssetPtr<MockFile> const constAsset{ "random/file/path.txt", &loadMockFile };
 
     ASSERT_TRUE(asset.isValid());
     ASSERT_FALSE(asset.isLoaded());
+
+    ASSERT_TRUE(constAsset.isValid());
+    ASSERT_FALSE(constAsset.isLoaded());
 
     MockFile const &loadedFile{ asset.get() };
     MockFile &fileRef{ *asset };
@@ -45,6 +49,11 @@ TEST(AssetPtrTest, CanLoadFileWhenRequested) {
     EXPECT_TRUE(asset->isLoaded);
     EXPECT_TRUE(loadedFile.isLoaded);
     EXPECT_TRUE(fileRef.isLoaded);
+
+    MockFile const &loadedConstFile{ constAsset.get() };
+
+    EXPECT_TRUE(constAsset.isLoaded());
+    EXPECT_TRUE(loadedConstFile.isLoaded);
 }
 
 TEST(AssetPtrTest, CanPointToSameAssetButOnlyLoadOnce) {
