@@ -30,6 +30,8 @@ add_executable(
 		${SOURCE}/Views/FileExplorer/DirectoryTreeItem.xaml.cs
 		${SOURCE}/Views/FileExplorer/DirectoryView.xaml
 		${SOURCE}/Views/FileExplorer/DirectoryView.xaml.cs
+		${SOURCE}/Views/FileExplorer/DirectoryViewItem.xaml
+		${SOURCE}/Views/FileExplorer/DirectoryViewItem.xaml.cs
 		${SOURCE}/Views/FileExplorer/FileExplorer.xaml
 		${SOURCE}/Views/FileExplorer/FileExplorer.xaml.cs
 
@@ -87,6 +89,9 @@ csharp_set_xaml_cs_properties(
 
 	${SOURCE}/Views/FileExplorer/DirectoryView.xaml
 	${SOURCE}/Views/FileExplorer/DirectoryView.xaml.cs
+	
+	${SOURCE}/Views/FileExplorer/DirectoryViewItem.xaml
+	${SOURCE}/Views/FileExplorer/DirectoryViewItem.xaml.cs
 
 	${SOURCE}/Views/FileExplorer/FileExplorer.xaml
 	${SOURCE}/Views/FileExplorer/FileExplorer.xaml.cs
