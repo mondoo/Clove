@@ -46,13 +46,6 @@ namespace garlic::clove {
          * @param bindingSlot The binding slot inside the shader to map to.
          */
         virtual void map(GhaImageView const &imageView, GhaImage::Layout const layout, uint32_t const bindingSlot) = 0;
-        /**
-         * @brief Maps an array of image views into a binding inside a shader.
-         * @param imageViews The image views to map.
-         * @param layout The layout of the image being mapped.
-         * @param bindingSlot The binding slot inside the shader to map to.
-         */
-        virtual void map(std::span<std::shared_ptr<GhaImageView>> imageViews, GhaImage::Layout const layout, uint32_t const bindingSlot) = 0;
 
         /**
          * @brief Maps a sampler into a binding inside a shader.

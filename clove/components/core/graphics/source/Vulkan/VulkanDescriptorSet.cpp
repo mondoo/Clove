@@ -69,33 +69,6 @@ namespace garlic::clove {
         vkUpdateDescriptorSets(device, 1, &writeInfo, 0, nullptr);
     }
 
-    void VulkanDescriptorSet::map(std::span<std::shared_ptr<GhaImageView>> imageViews, GhaImage::Layout const layout, uint32_t const bindingSlot) {
-        std::vector<VkDescriptorImageInfo> imageInfos(std::size(imageViews));
-
-        for(size_t i = 0; i < std::size(imageInfos); ++i) {
-            VkDescriptorImageInfo imageInfo{
-                .imageView   = polyCast<const VulkanImageView>(imageViews[i].get())->getImageView(),
-                .imageLayout = VulkanImage::convertLayout(layout),
-            };
-            imageInfos[i] = imageInfo;
-        }
-
-        VkWriteDescriptorSet writeInfo{
-            .sType            = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET,
-            .pNext            = nullptr,
-            .dstSet           = descriptorSet,
-            .dstBinding       = bindingSlot,
-            .dstArrayElement  = 0,
-            .descriptorCount  = static_cast<uint32_t>(std::size(imageInfos)),
-            .descriptorType   = VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE,
-            .pImageInfo       = std::data(imageInfos),
-            .pBufferInfo      = nullptr,
-            .pTexelBufferView = nullptr,
-        };
-
-        vkUpdateDescriptorSets(device, 1, &writeInfo, 0, nullptr);
-    }
-
     void VulkanDescriptorSet::map(GhaSampler const &sampler, uint32_t const bindingSlot) {
         auto const *vkSampler{ polyCast<VulkanSampler const>(&sampler) };
 
