@@ -6,14 +6,22 @@
 
 namespace garlic::clove {
 	namespace {
-		MTLTextureType convertImageViewType(GhaImageView::Type type) {
+		MTLTextureType convertImageViewType(GhaImageView::Type type, uint32_t arrayCount) {
 			switch (type) {
 				case GhaImageView::Type::_2D:
-					return MTLTextureType2D;
+					if(arrayCount > 1) {
+						return MTLTextureType2DArray;
+					} else {
+						return MTLTextureType2D;
+					}
 				case GhaImageView::Type::_3D:
 					return MTLTextureType3D;
 				case GhaImageView::Type::Cube:
-					return MTLTextureTypeCube;
+					if(arrayCount > 1) {
+						return MTLTextureTypeCubeArray;
+					} else {
+						return MTLTextureTypeCube;
+					}
 				default:
 					CLOVE_ASSERT(false, "{0}: Unkown type passed", CLOVE_FUNCTION_NAME_PRETTY);
 					return MTLTextureType2D;
@@ -47,7 +55,7 @@ namespace garlic::clove {
 			.location = viewDescriptor.layer,
 			.length   = viewDescriptor.layerCount,
 		};
-		id<MTLTexture> textureView{ [texture newTextureViewWithPixelFormat:convertFormat(descriptor.format) textureType:convertImageViewType(viewDescriptor.type) levels:mipLevels slices:arraySlices] };
+		id<MTLTexture> textureView{ [texture newTextureViewWithPixelFormat:convertFormat(descriptor.format) textureType:convertImageViewType(viewDescriptor.type, viewDescriptor.layerCount) levels:mipLevels slices:arraySlices] };
 		
 		return std::make_unique<MetalImageView>(textureView);
 	}
