@@ -16,7 +16,7 @@ namespace garlic::clove {
 		CommandBufferUsage currentUsage{ CommandBufferUsage::Default };
 		bool hasBeenUsed{ false }; /**< Will be true if this buffer has been used before being rerecorded. */
 		bool allowReuse{ false }; /**< Will be true if this can be reused (recorded to multiple times without beeing freed) */
-		bool endRecordingCalled{ false };
+		bool endRecordingCalled{ true };
 		
 		//FUNCTIONS
 	public:

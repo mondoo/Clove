@@ -32,13 +32,13 @@ namespace garlic::clove {
 		@autoreleasepool {
 			for(auto const &submission : submissions) {
 				for(auto const &commandBuffer : submission.commandBuffers) {
-					id<MTLCommandBuffer> executionBuffer{ [commandQueue commandBuffer] };
 					auto *metalCommandBuffer{ polyCast<MetalGraphicsCommandBuffer>(commandBuffer.get()) };
-					
 					if(metalCommandBuffer->getCommandBufferUsage() == CommandBufferUsage::OneTimeSubmit && metalCommandBuffer->bufferHasBeenUsed()){
 						CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "GraphicsCommandBuffer recorded with CommandBufferUsage::OneTimeSubmit has already been used. Only buffers recorded with CommandBufferUsage::Default can submitted multiples times after being recorded once.");
 						break;
 					}
+					
+					id<MTLCommandBuffer> executionBuffer{ [commandQueue commandBuffer] };
 					
 					for(auto &pass : metalCommandBuffer->getEncodedRenderPasses()) {
 						id<MTLRenderCommandEncoder> encoder{ pass.begin(executionBuffer) };

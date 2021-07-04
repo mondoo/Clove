@@ -18,7 +18,7 @@ namespace garlic::clove {
 	MetalTransferCommandBuffer::~MetalTransferCommandBuffer() = default;
 
 	void MetalTransferCommandBuffer::beginRecording(CommandBufferUsage usageFlag) {
-		if(!allowReuse) {
+		if(!allowReuse && hasBeenUsed) {
 			CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Command buffer re-recorded to. Command buffers cannot only be recorded to more than once unless the owning queue has been created with QueueFlags::ReuseBuffers set.");
 		}
 		

@@ -32,14 +32,14 @@ namespace garlic::clove {
 		@autoreleasepool {
 			for(auto const &submission : submissions) {
 				for(auto const &commandBuffer : submission.commandBuffers) {
-					id<MTLCommandBuffer> executionBuffer{ [commandQueue commandBuffer] };
-					id<MTLComputeCommandEncoder> encoder{ [executionBuffer computeCommandEncoder] };
 					auto *metalCommandBuffer{ polyCast<MetalComputeCommandBuffer>(commandBuffer.get()) };
-					
 					if(metalCommandBuffer->getCommandBufferUsage() == CommandBufferUsage::OneTimeSubmit && metalCommandBuffer->bufferHasBeenUsed()){
 						CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "ComputeCommandBuffer recorded with CommandBufferUsage::OneTimeSubmit has already been used. Only buffers recorded with CommandBufferUsage::Default can submitted multiples times after being recorded once.");
 						break;
 					}
+					
+					id<MTLCommandBuffer> executionBuffer{ [commandQueue commandBuffer] };
+					id<MTLComputeCommandEncoder> encoder{ [executionBuffer computeCommandEncoder] };
 					
 					//Inject the wait semaphore into each buffer
 					for (auto const &semaphore : submission.waitSemaphores) {
