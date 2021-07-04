@@ -56,6 +56,8 @@ namespace garlic::clove {
 						for(auto &command : pass.commands) {
 							command(encoder);
 						}
+						
+						[encoder endEncoding];
 					}
 					
 					[executionBuffer commit];

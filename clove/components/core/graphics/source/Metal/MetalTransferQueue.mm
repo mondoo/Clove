@@ -54,6 +54,7 @@ namespace garlic::clove {
 						command(encoder);
 					}
 					
+					[encoder endEncoding];
 					[executionBuffer commit];
 					
 					metalCommandBuffer->markAsUsed();
