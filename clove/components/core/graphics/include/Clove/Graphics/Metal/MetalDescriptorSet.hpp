@@ -17,7 +17,7 @@ namespace garlic::clove {
 	private:
 		id<MTLArgumentEncoder> vertexEncoder{ nullptr };
 		id<MTLArgumentEncoder> pixelEncoder{ nullptr };
-		id<MTLArgumentEncoder> computeEndoder{ nullptr };
+		id<MTLArgumentEncoder> computeEncoder{ nullptr };
 		
 		id<MTLBuffer> vertexEncoderBuffer{ nullptr }; /**< The buffer backing the vertex encoder. */
 		id<MTLBuffer> pixelEncoderBuffer{ nullptr }; /**< The buffer backing the pixel encoder. */

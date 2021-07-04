@@ -13,7 +13,7 @@ namespace garlic::clove {
 		, vertexEncoderBuffer{ vertexEncoderBuffer != nullptr ? [vertexEncoderBuffer retain] : nullptr }
 		, pixelEncoder{ pixelEncoder != nullptr ? [pixelEncoder retain] : nullptr }
 		, pixelEncoderBuffer{ pixelEncoderBuffer != nullptr ?  [pixelEncoderBuffer retain] : nullptr }
-		, computeEndoder{ computeEndoder != nullptr ? [computeEndoder retain] : nullptr }
+		, computeEncoder{ computeEncoder != nullptr ? [computeEncoder retain] : nullptr }
 		, computeEncoderBuffer{ computeEncoderBuffer != nullptr ? [computeEncoderBuffer retain] : nullptr }
 		, layout{ std::move(layout) } {
 	}
@@ -29,7 +29,7 @@ namespace garlic::clove {
 		[pixelEncoder release];
 		[pixelEncoderBuffer release];
 		
-		[computeEndoder release];
+		[computeEncoder release];
 		[computeEncoderBuffer release];
 	}
 	
@@ -48,7 +48,7 @@ namespace garlic::clove {
 							atIndex:bindingSlot];
 		}
 		if((shaderStage & GhaShader::Stage::Compute) != 0){
-			[computeEndoder setBuffer:mtlBuffer
+			[computeEncoder setBuffer:mtlBuffer
 							   offset:offset
 							  atIndex:bindingSlot];
 		}
