@@ -37,25 +37,20 @@ namespace garlic::clove {
 		GhaShader::Stage const shaderStage{ getStageFromBindingSlot(bindingSlot) };
 		id<MTLBuffer> mtlBuffer{ polyCast<MetalBuffer const>(&buffer)->getBuffer() };
 		
-		switch (shaderStage) {
-			case GhaShader::Stage::Vertex:
-				[vertexEncoder setBuffer:mtlBuffer
-								  offset:offset
-								 atIndex:bindingSlot];
-				break;
-			case GhaShader::Stage::Pixel:
-				[pixelEncoder setBuffer:mtlBuffer
-								 offset:offset
-								atIndex:bindingSlot];
-				break;
-			case GhaShader::Stage::Compute:
-				[computeEndoder setBuffer:mtlBuffer
-								   offset:offset
-								  atIndex:bindingSlot];
-				break;
-			default:
-				CLOVE_ASSERT(false, "{0}: Stage not handled", CLOVE_FUNCTION_NAME_PRETTY)
-				break;
+		if((shaderStage & GhaShader::Stage::Vertex) != 0){
+			[vertexEncoder setBuffer:mtlBuffer
+							  offset:offset
+							 atIndex:bindingSlot];
+		}
+		if((shaderStage & GhaShader::Stage::Pixel) != 0){
+			[pixelEncoder setBuffer:mtlBuffer
+							 offset:offset
+							atIndex:bindingSlot];
+		}
+		if((shaderStage & GhaShader::Stage::Compute) != 0){
+			[computeEndoder setBuffer:mtlBuffer
+							   offset:offset
+							  atIndex:bindingSlot];
 		}
 	}
 	
