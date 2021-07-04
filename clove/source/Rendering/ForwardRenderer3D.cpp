@@ -237,8 +237,8 @@ namespace garlic::clove {
         currentImageData.frameDataBuffer->write(&currentFrameData, 0, sizeof(currentFrameData));
 
         //Map any non-UBO pieces of data (such as textures / shadow maps)
-        currentImageData.lightingDescriptorSet->map(currentImageData.shadowMapViews, GhaImage::Layout::ShaderReadOnlyOptimal, 3);
-        currentImageData.lightingDescriptorSet->map(currentImageData.cubeShadowMapViews, GhaImage::Layout::ShaderReadOnlyOptimal, 4);
+        currentImageData.lightingDescriptorSet->map(*currentImageData.shadowMapViews, GhaImage::Layout::ShaderReadOnlyOptimal, 3);
+        currentImageData.lightingDescriptorSet->map(*currentImageData.cubeShadowMapViews, GhaImage::Layout::ShaderReadOnlyOptimal, 4);
 
         //Allocate a descriptor set for each mesh to be drawn
         std::vector<std::shared_ptr<GhaDescriptorSet>> meshSets;
@@ -369,8 +369,10 @@ namespace garlic::clove {
                 ImageMemoryBarrierInfo const memoryBarrier{
                     .currentImageLayout = GhaImage::Layout::Undefined,
                     .newImageLayout     = GhaImage::Layout::ShaderReadOnlyOptimal,
+                    .baseArrayLayer     = static_cast<uint32_t>(i),
+                    .layerCount         = 1,
                 };
-                currentImageData.shadowMapCommandBuffer->imageMemoryBarrier(*currentImageData.shadowMaps[i], memoryBarrier, PipelineStage::Top, PipelineStage::Top);
+                currentImageData.shadowMapCommandBuffer->imageMemoryBarrier(*currentImageData.shadowMaps, memoryBarrier, PipelineStage::Top, PipelineStage::Top);
             }
         }
         currentImageData.shadowMapCommandBuffer->endRecording();
@@ -386,8 +388,8 @@ namespace garlic::clove {
         //POINT LIGHT SHADOWS
         currentImageData.cubeShadowMapCommandBuffer->beginRecording(CommandBufferUsage::OneTimeSubmit);
         for(size_t i{ 0 }; i < MAX_LIGHTS; ++i) {
-            for(size_t j{ 0 }; j < cubeMapLayerCount; ++j) {
-                if(i < currentFrameData.bufferData.numLights.numPoint) {
+            if(i < currentFrameData.bufferData.numLights.numPoint) {
+                for(size_t j{ 0 }; j < cubeMapLayerCount; ++j) {
                     currentImageData.cubeShadowMapCommandBuffer->beginRenderPass(*shadowMapRenderPass, *currentImageData.cubeShadowMapFrameBuffers[i][j], shadowArea, shadowMapClearValues);
 
                     geometryPassData.currentPointLightTransform = &currentFrameData.pointShadowTransforms[i][j];
@@ -396,14 +398,16 @@ namespace garlic::clove {
                     geometryPasses[GeometryPass::getId<PointLightPass>()]->execute(*currentImageData.cubeShadowMapCommandBuffer, geometryPassData);
 
                     currentImageData.cubeShadowMapCommandBuffer->endRenderPass();
-                } else {
-                    //Make sure transition the layout of the images we don't render to as these get sent to colour pixel shader anyway
-                    ImageMemoryBarrierInfo const memoryBarrier{
-                        .currentImageLayout = GhaImage::Layout::Undefined,
-                        .newImageLayout     = GhaImage::Layout::ShaderReadOnlyOptimal,
-                    };
-                    currentImageData.cubeShadowMapCommandBuffer->imageMemoryBarrier(*currentImageData.cubeShadowMaps[i], memoryBarrier, PipelineStage::Top, PipelineStage::Top);
                 }
+            } else {
+                //Make sure transition the layout of the images we don't render to as these get sent to colour pixel shader anyway
+                ImageMemoryBarrierInfo const memoryBarrier{
+                    .currentImageLayout = GhaImage::Layout::Undefined,
+                    .newImageLayout     = GhaImage::Layout::ShaderReadOnlyOptimal,
+                    .baseArrayLayer     = static_cast<uint32_t>(i * cubeMapLayerCount),
+                    .layerCount         = cubeMapLayerCount,
+                };
+                currentImageData.cubeShadowMapCommandBuffer->imageMemoryBarrier(*currentImageData.cubeShadowMaps, memoryBarrier, PipelineStage::Top, PipelineStage::Top);
             }
         }
         currentImageData.cubeShadowMapCommandBuffer->endRecording();
@@ -568,44 +572,52 @@ namespace garlic::clove {
             imageData.lightingDescriptorSet->map(*shadowSampler, 5);
 
             //Create the shadow maps for each frame
+            //Directional
+            imageData.shadowMaps     = *ghaFactory->createImage(GhaImage::Descriptor{
+                .type        = GhaImage::Type::_2D,
+                .usageFlags  = GhaImage::UsageMode::Sampled | GhaImage::UsageMode::DepthStencilAttachment,
+                .dimensions  = { shadowMapSize, shadowMapSize },
+                .arrayCount  = MAX_LIGHTS,
+                .format      = GhaImage::Format::D32_SFLOAT,
+                .sharingMode = SharingMode::Exclusive,
+            });
+            imageData.shadowMapViews = imageData.shadowMaps->createView(GhaImageView::Descriptor{
+                .type       = GhaImageView::Type::_2D,
+                .layer      = 0,
+                .layerCount = MAX_LIGHTS,
+            });
+
+            //Point
+            imageData.cubeShadowMaps     = *ghaFactory->createImage(GhaImage::Descriptor{
+                .type        = GhaImage::Type::Cube,
+                .usageFlags  = GhaImage::UsageMode::Sampled | GhaImage::UsageMode::DepthStencilAttachment,
+                .dimensions  = { shadowMapSize, shadowMapSize },
+                .arrayCount  = MAX_LIGHTS,
+                .format      = GhaImage::Format::D32_SFLOAT,
+                .sharingMode = SharingMode::Exclusive,
+            });
+            imageData.cubeShadowMapViews = imageData.cubeShadowMaps->createView(GhaImageView::Descriptor{
+                .type       = GhaImageView::Type::Cube,
+                .layer      = 0,
+                .layerCount = cubeMapLayerCount * MAX_LIGHTS,
+            });
+
+            //Create a view for each element in the array / cube map for the frame buffer in the shadow passes
             for(size_t i = 0; i < MAX_LIGHTS; ++i) {
-                //Directional
-                imageData.shadowMaps[i]     = *ghaFactory->createImage(GhaImage::Descriptor{
-                    .type        = GhaImage::Type::_2D,
-                    .usageFlags  = GhaImage::UsageMode::Sampled | GhaImage::UsageMode::DepthStencilAttachment,
-                    .dimensions  = { shadowMapSize, shadowMapSize },
-                    .format      = GhaImage::Format::D32_SFLOAT,
-                    .sharingMode = SharingMode::Exclusive,
-                });
-                imageData.shadowMapViews[i] = imageData.shadowMaps[i]->createView(GhaImageView::Descriptor{
+                imageData.shadowMapArrayLayerViews[i] = imageData.shadowMaps->createView(GhaImageView::Descriptor{
                     .type       = GhaImageView::Type::_2D,
-                    .layer      = 0,
+                    .layer      = static_cast<uint32_t>(i),
                     .layerCount = 1,
                 });
-
-                imageData.shadowMapFrameBuffers[i] = *ghaFactory->createFramebuffer(GhaFramebuffer::Descriptor{
+                imageData.shadowMapFrameBuffers[i]    = *ghaFactory->createFramebuffer(GhaFramebuffer::Descriptor{
                     .renderPass  = shadowMapRenderPass,
-                    .attachments = { imageData.shadowMapViews[i] },
+                    .attachments = { imageData.shadowMapArrayLayerViews[i] },
                     .width       = shadowMapSize,
                     .height      = shadowMapSize,
                 });
 
-                //Point
-                imageData.cubeShadowMaps[i]     = *ghaFactory->createImage(GhaImage::Descriptor{
-                    .type        = GhaImage::Type::Cube,
-                    .usageFlags  = GhaImage::UsageMode::Sampled | GhaImage::UsageMode::DepthStencilAttachment,
-                    .dimensions  = { shadowMapSize, shadowMapSize },
-                    .format      = GhaImage::Format::D32_SFLOAT,
-                    .sharingMode = SharingMode::Exclusive,
-                });
-                imageData.cubeShadowMapViews[i] = imageData.cubeShadowMaps[i]->createView(GhaImageView::Descriptor{
-                    .type       = GhaImageView::Type::Cube,
-                    .layer      = 0,
-                    .layerCount = cubeMapLayerCount,
-                });
-
                 for(size_t j = 0; j < cubeMapLayerCount; ++j) {
-                    imageData.cubeShadowMapFaceViews[i][j] = imageData.cubeShadowMaps[i]->createView(GhaImageView::Descriptor{
+                    imageData.cubeShadowMapFaceViews[i][j] = imageData.cubeShadowMaps->createView(GhaImageView::Descriptor{
                         .type       = GhaImageView::Type::_2D,
                         .layer      = static_cast<uint32_t>(j),
                         .layerCount = 1,

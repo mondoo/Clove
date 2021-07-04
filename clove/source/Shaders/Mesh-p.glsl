@@ -6,8 +6,8 @@ layout(set = 0, binding = 1) uniform texture2D diffuseTexture;
 layout(set = 0, binding = 2) uniform texture2D specularTexture;
 layout(set = 0, binding = 3) uniform sampler meshSampler;
 
-layout(set = 2, binding = 3) uniform texture2D directionalDepthTexture[MAX_LIGHTS];
-layout(set = 2, binding = 4) uniform textureCube pointLightDepthTexture[MAX_LIGHTS];
+layout(set = 2, binding = 3) uniform texture2DArray directionalDepthTexture;
+layout(set = 2, binding = 4) uniform textureCubeArray pointLightDepthTexture;
 layout(Set = 2, binding = 5) uniform sampler shadowSampler;
 
 layout(set = SET_VIEW, binding = 1) uniform ViewPosition{
@@ -99,7 +99,7 @@ void main(){
 		projCoords.xy = projCoords.xy * 0.5f + 0.5f;
 
 		const float currentDepth = projCoords.z;
-		const float closetDepth = texture(sampler2D(directionalDepthTexture[i], shadowSampler), projCoords.xy).r;
+		const float closetDepth = texture(sampler2DArray(directionalDepthTexture, shadowSampler), vec3(projCoords.xy, i)).r;
 
 		shadow += currentDepth - adjustBias(minBias, maxBias, normal, lightDir) > closetDepth ? 1.0f : 0.0f;
 	}
@@ -136,7 +136,7 @@ void main(){
 		const vec3 lightToFrag = fragPos - pointLights[i].position;
 
 		const float currentDepth = length(lightToFrag);
-		const float closetDepth = texture(samplerCube(pointLightDepthTexture[i], shadowSampler), lightToFrag).r * pointLights[i].farplane;
+		const float closetDepth = texture(samplerCubeArray(pointLightDepthTexture, shadowSampler), vec4(lightToFrag, i)).r * pointLights[i].farplane;
 
 		shadow += currentDepth - adjustBias(minBias, maxBias, normal, lightDir) > closetDepth ? 1.0f : 0.0f;
 	}

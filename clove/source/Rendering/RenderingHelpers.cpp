@@ -107,14 +107,14 @@ namespace garlic::clove {
         DescriptorSetBindingInfo const directionalShadowMapBinding{
             .binding   = 3,
             .type      = DescriptorType::SampledImage,
-            .arraySize = MAX_LIGHTS,
+            .arraySize = 1,
             .stage     = GhaShader::Stage::Pixel,
         };
 
         DescriptorSetBindingInfo const pointShadowMapBinding{
             .binding   = 4,
             .type      = DescriptorType::SampledImage,
-            .arraySize = MAX_LIGHTS,
+            .arraySize = 1,
             .stage     = GhaShader::Stage::Pixel,
         };
 
