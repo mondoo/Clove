@@ -9,12 +9,12 @@
 
 namespace garlic::clove {
 	MetalDescriptorSet::MetalDescriptorSet(id<MTLArgumentEncoder> vertexEncoder, id<MTLBuffer> vertexEncoderBuffer, id<MTLArgumentEncoder> pixelEncoder, id<MTLBuffer> pixelEncoderBuffer, id<MTLArgumentEncoder> computeEncoder, id<MTLBuffer> computeEncoderBuffer, std::shared_ptr<GhaDescriptorSetLayout> layout)
-		: vertexEncoder{ [vertexEncoder retain] }
-		, vertexEncoderBuffer{ [vertexEncoderBuffer retain] }
-		, pixelEncoder{ [pixelEncoder retain] }
-		, pixelEncoderBuffer{ [pixelEncoderBuffer retain] }
-		, computeEndoder{ [computeEndoder retain] }
-		, computeEncoderBuffer{ [computeEncoderBuffer retain] }
+		: vertexEncoder{ vertexEncoder != nullptr ? [vertexEncoder retain] : nullptr}
+		, vertexEncoderBuffer{ vertexEncoderBuffer != nullptr ? [vertexEncoderBuffer retain] : nullptr }
+		, pixelEncoder{ pixelEncoder != nullptr ? [pixelEncoder retain] : nullptr }
+		, pixelEncoderBuffer{ pixelEncoderBuffer != nullptr ?  [pixelEncoderBuffer retain] : nullptr }
+		, computeEndoder{ computeEndoder != nullptr ? [computeEndoder retain] : nullptr }
+		, computeEncoderBuffer{ computeEncoderBuffer != nullptr ? [computeEncoderBuffer retain] : nullptr }
 		, layout{ std::move(layout) } {
 	}
 	
