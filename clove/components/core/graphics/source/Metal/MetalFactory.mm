@@ -474,6 +474,7 @@ namespace garlic::clove {
 		samplerDescriptor.tAddressMode  = convertAddressMode(descriptor.addressModeV);
 		samplerDescriptor.rAddressMode  = convertAddressMode(descriptor.addressModeW);
 		samplerDescriptor.maxAnisotropy = static_cast<NSUInteger>(descriptor.maxAnisotropy);
+		samplerDescriptor.supportArgumentBuffers = true;
 		
 		id<MTLSamplerState> samplerState{ [device newSamplerStateWithDescriptor:samplerDescriptor] };
 		
