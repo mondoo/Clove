@@ -151,6 +151,9 @@ add_library(
 		${INCLUDE}/Rendering/RenderGraph/RgResource.inl
 		${SOURCE}/Rendering/RenderGraph/RgResource.cpp
 		${INCLUDE}/Rendering/RenderGraph/RgShader.hpp
+		${INCLUDE}/Rendering/RenderGraph/RgTransferPass.hpp
+		${INCLUDE}/Rendering/RenderGraph/RgTransferPass.inl
+		${SOURCE}/Rendering/RenderGraph/RgTransferPass.cpp
 		
 		${INCLUDE}/Rendering/RenderPasses/ForwardColourPass.hpp
 		${SOURCE}/Rendering/RenderPasses/ForwardColourPass.cpp
