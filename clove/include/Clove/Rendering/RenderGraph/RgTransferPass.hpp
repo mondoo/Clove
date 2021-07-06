@@ -3,7 +3,7 @@
 #include "Clove/Rendering/RenderGraph/RgPass.hpp"
 
 namespace garlic::clove {
-    class RgTransferPass : RgPass {
+    class RgTransferPass : public RgPass {
         //TYPES
     public:
         struct BufferWrite {
