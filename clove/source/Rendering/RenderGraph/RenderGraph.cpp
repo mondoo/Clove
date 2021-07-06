@@ -180,7 +180,7 @@ namespace garlic::clove {
 
         for(int32_t i{ 0 }; i < passes.size(); ++i) {
             RgPassIdType const passId{ passes[i] };
-            if(!renderPasses.contains(passId)){
+            if(!renderPasses.contains(passId)) {
                 continue;
             }
 
@@ -219,7 +219,7 @@ namespace garlic::clove {
 
             allocatedRenderPasses[passId] = globalCache.createRenderPass(GhaRenderPass::Descriptor{ .colourAttachments = std::move(colourAttachments), .depthAttachment = std::move(depthStencilAttachment) });
 
-            //Build descriptor layouts using the first pass. 
+            //Build descriptor layouts using the first pass.
             //TODO: Get this infomation from shader reflection
             std::vector<DescriptorSetBindingInfo> descriptorBindings{};
             for(auto &ubo : passSubmissions[0].shaderUbos) {
@@ -335,11 +335,11 @@ namespace garlic::clove {
 
         graphicsCommandBufffer->beginRecording(CommandBufferUsage::OneTimeSubmit);
         for(RgPassIdType passId : passes) {
-            if(transferPasses.contains(passId)){
+            if(transferPasses.contains(passId)) {
                 RgTransferPass::BufferWrite const &writeOp{ transferPasses.at(passId)->getWriteOperation() };
                 std::unique_ptr<RgBuffer> const &buffer{ buffers.at(writeOp.bufferId) };
                 buffer->getGhaBuffer(frameCache)->write(writeOp.data.data(), buffer->getBufferOffset() + writeOp.offset, writeOp.size);
-                continue; //Move to next pass as the rest of this loop assume it's a render pass
+                continue;//Move to next pass as the rest of this loop assume it's a render pass
             }
 
             RgRenderPass::Descriptor const &passDescriptor{ renderPasses.at(passId)->getDescriptor() };
@@ -422,22 +422,22 @@ namespace garlic::clove {
             std::unique_ptr<RgRenderPass> const &renderPass{ renderPasses[passes[i]] };
 
             if(renderPass->getInputResources().contains(imageId)) {
-                for(auto const &submission : renderPass->getSubmissions()){
+                for(auto const &submission : renderPass->getSubmissions()) {
                     for(auto const &imageSamplers : submission.shaderCombinedImageSamplers) {
-                        if(imageSamplers.image == imageId){
+                        if(imageSamplers.image == imageId) {
                             return GhaImage::Layout::ShaderReadOnlyOptimal;
                         }
                     }
                 }
 
                 CLOVE_ASSERT(false, "ImageId is not in any render target's submissions even though it's marked as an input resource");
-            } else if(renderPass->getOutputResources().contains(imageId)){
-                for(auto const &renderTarget : renderPass->getDescriptor().renderTargets){
-                    if(renderTarget.target == imageId){
+            } else if(renderPass->getOutputResources().contains(imageId)) {
+                for(auto const &renderTarget : renderPass->getDescriptor().renderTargets) {
+                    if(renderTarget.target == imageId) {
                         return GhaImage::Layout::ColourAttachmentOptimal;
                     }
                 }
-                if(renderPass->getDescriptor().depthStencil.target == imageId){
+                if(renderPass->getDescriptor().depthStencil.target == imageId) {
                     return GhaImage::Layout::ColourAttachmentOptimal;
                 }
 
@@ -461,7 +461,10 @@ namespace garlic::clove {
     RgPass *RenderGraph::getPassFromId(RgPassIdType passId) {
         if(renderPasses.contains(passId)) {
             return renderPasses.at(passId).get();
+        } else if(transferPasses.contains(passId)) {
+            return transferPasses.at(passId).get();
         } else {
+            CLOVE_ASSERT(false, "Could not find pass ID");
             return nullptr;
         }
     }
