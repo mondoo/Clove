@@ -96,6 +96,9 @@ namespace garlic::clove {
         std::unordered_set<ResourceIdType> getOutputResources() const override;
 
         inline void addSubmission(Submission submission);
+
+        inline Descriptor const &getDescriptor() const;
+        inline std::vector<Submission> const &getSubmissions() const;
     };
 }
 

@@ -150,6 +150,7 @@ namespace garlic::clove {
 
     private:
         void buildExecutionPasses(std::vector<PassIdType> &passes, ResourceIdType resourceId);
+        GhaImage::Layout getPreviousLayout(std::vector<PassIdType> const &passes, int32_t const currentPassIndex, ResourceIdType const imageId);
 
         RgResource *getResourceFromId(ResourceIdType resourceId);
         RgPass *getPassFromId(PassIdType passId);

@@ -6,6 +6,10 @@
 
 #include <Clove/Graphics/GhaDescriptorSet.hpp>
 #include <Clove/Graphics/GhaDescriptorSetLayout.hpp>
+#include <Clove/Graphics/GhaGraphicsCommandBuffer.hpp>
+#include <Clove/Graphics/GhaGraphicsPipelineObject.hpp>
+#include <Clove/Graphics/GhaRenderPass.hpp>
+#include <Clove/Graphics/GhaSampler.hpp>
 #include <Clove/Log/Log.hpp>
 
 namespace garlic::clove {
@@ -32,7 +36,7 @@ namespace garlic::clove {
     }
 
     void RenderGraph::writeToBuffer(ResourceIdType buffer, void const *data, size_t const offset, size_t const size) {
-        //TODO
+        //TODO: Add a special pass type for transfers
     }
 
     ResourceIdType RenderGraph::createImage(GhaImage::Type imageType, GhaImage::Format format, vec2ui dimensions) {
@@ -150,12 +154,47 @@ namespace garlic::clove {
         }
         std::reverse(passes.begin(), passes.end());
 
+        //Allocate all of the GHA objects required for each pass
+        std::unordered_map<PassIdType, std::shared_ptr<GhaRenderPass>> allocatedRenderPasses{};
+        std::unordered_map<PassIdType, std::shared_ptr<GhaFramebuffer>> allocatedFramebuffers{};
+        std::unordered_map<PassIdType, std::shared_ptr<GhaGraphicsPipelineObject>> allocatedPipelines{};
+        std::unordered_map<PassIdType, std::shared_ptr<GhaDescriptorSetLayout>> descriptorSetLayouts{};
+        std::unordered_map<PassIdType, std::vector<std::shared_ptr<GhaDescriptorSet>>> allocatedDescriptorSets{};
+
+        for(int32_t i{ 0 }; i < passes.size(); ++i) {
+            PassIdType const passId{ passes[i] };
+
+            //Build and allocate the render pass
+            std::vector<AttachmentDescriptor> colourAttachments{};
+            for(auto &renderTarget : renderPasses.at(passId)->getDescriptor().renderTargets) {
+                colourAttachments.emplace_back(AttachmentDescriptor{
+                    .format         = images[renderTarget.target]->getGhaImageView(frameCache)->getImageFormat(),
+                    .loadOperation  = renderTarget.loadOp,
+                    .storeOperation = renderTarget.storeOp,
+                    .initialLayout  = getPreviousLayout(passes, i, renderTarget.target),
+                    .usedLayout     = GhaImage::Layout::ColourAttachmentOptimal,
+                    .finalLayout    = renderTarget.target == outputResource ? GhaImage::Layout::Present : GhaImage::Layout::ColourAttachmentOptimal,
+                });
+            }
+
+            DepthStencilBinding const &depthStencil{ renderPasses.at(passId)->getDescriptor().depthStencil };
+            AttachmentDescriptor depthStencilAttachment{
+                .format         = images[depthStencil.target]->getGhaImageView(frameCache)->getImageFormat(),
+                .loadOperation  = depthStencil.loadOp,
+                .storeOperation = depthStencil.storeOp,
+                .initialLayout  = getPreviousLayout(passes, i, depthStencil.target),
+                .usedLayout     = GhaImage::Layout::DepthStencilAttachmentOptimal,
+                .finalLayout    = GhaImage::Layout::DepthStencilAttachmentOptimal,
+            };
+
+            allocatedRenderPasses[passId] = globalCache.createRenderPass(GhaRenderPass::Descriptor{ .colourAttachments = std::move(colourAttachments), .depthAttachment = std::move(depthStencilAttachment) });
+        }
+
         //Record all of the commands of each individual pass
         std::shared_ptr<GhaGraphicsCommandBuffer> graphicsCommandBufffer{ frameCache.getGraphicsCommandBuffer() };
         //std::shared_ptr<GhaComputeCommandBuffer> computeCommandBufffer{ frameCache.getComputeCommandBuffer() };
         //std::shared_ptr<GhaTransferCommandBuffer> transferCommandBufffer{ frameCache.getTransferCommandBuffer() };
 
-        //NOTE: Only have render passes for now
         graphicsCommandBufffer->beginRecording(CommandBufferUsage::OneTimeSubmit);
         for(PassIdType passId : passes) {
             //TODO
@@ -181,6 +220,37 @@ namespace garlic::clove {
                 buildExecutionPasses(passes, resource);
             }
         }
+    }
+
+    GhaImage::Layout RenderGraph::getPreviousLayout(std::vector<PassIdType> const &passes, int32_t const currentPassIndex, ResourceIdType const imageId) {
+        for(int32_t i = currentPassIndex - 1; i >= 0; --i) {
+            std::unique_ptr<RgRenderPass> const &renderPass{ renderPasses[passes[i]] };
+
+            if(renderPass->getInputResources().contains(imageId)) {
+                for(auto const &submission : renderPass->getSubmissions()){
+                    for(auto const &imageSamplers : submission.shaderCombinedImageSamplers) {
+                        if(imageSamplers.image == imageId){
+                            return GhaImage::Layout::ShaderReadOnlyOptimal;
+                        }
+                    }
+                }
+
+                CLOVE_ASSERT(false, "ImageId is not in any render target's submissions even though it's marked as an input resource");
+            } else if(renderPass->getOutputResources().contains(imageId)){
+                for(auto const &renderTarget : renderPass->getDescriptor().renderTargets){
+                    if(renderTarget.target == imageId){
+                        return GhaImage::Layout::ColourAttachmentOptimal;
+                    }
+                }
+                if(renderPass->getDescriptor().depthStencil.target == imageId){
+                    return GhaImage::Layout::ColourAttachmentOptimal;
+                }
+
+                CLOVE_ASSERT(false, "ImageId is not in any render target's output even though it's marked as an output resource");
+            }
+        }
+
+        return GhaImage::Layout::Undefined;
     }
 
     RgResource *RenderGraph::getResourceFromId(ResourceIdType resourceId) {
