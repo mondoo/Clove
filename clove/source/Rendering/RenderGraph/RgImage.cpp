@@ -18,7 +18,7 @@ namespace garlic::clove {
         }
     }
 
-    RgImage::RgImage(ResourceIdType id, GhaImage::Type imageType, GhaImage::Format format, vec2ui dimensions)
+    RgImage::RgImage(RgResourceIdType id, GhaImage::Type imageType, GhaImage::Format format, vec2ui dimensions)
         : RgResource{ id } {
         ghaImageDescriptor = GhaImage::Descriptor{
             .type        = imageType,
@@ -29,7 +29,7 @@ namespace garlic::clove {
         };
     }
 
-    RgImage::RgImage(ResourceIdType id, std::shared_ptr<GhaImageView> ghaImageView)
+    RgImage::RgImage(RgResourceIdType id, std::shared_ptr<GhaImageView> ghaImageView)
         : RgResource{ id }
         , ghaImageView{ std::move(ghaImageView) } {
         externalImage = true;

@@ -5,7 +5,7 @@
 #include <Clove/Log/Log.hpp>
 
 namespace garlic::clove {
-    RgBuffer::RgBuffer(ResourceIdType id, size_t size)
+    RgBuffer::RgBuffer(RgResourceIdType id, size_t size)
         : RgResource{ id }
         , size{ size } {
         ghaBufferDescriptor = GhaBuffer::Descriptor{
@@ -16,7 +16,7 @@ namespace garlic::clove {
         };
     }
 
-    RgBuffer::RgBuffer(ResourceIdType id, std::shared_ptr<GhaBuffer> ghaBuffer, size_t offset, size_t size)
+    RgBuffer::RgBuffer(RgResourceIdType id, std::shared_ptr<GhaBuffer> ghaBuffer, size_t offset, size_t size)
         : RgResource{ id }
         , ghaBuffer{ std::move(ghaBuffer) }
         , offset{ offset }

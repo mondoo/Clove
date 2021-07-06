@@ -1,7 +1,7 @@
 #include "Clove/Rendering/RenderGraph/RgTransferPass.hpp"
 
 namespace garlic::clove {
-    RgTransferPass::RgTransferPass(PassIdType id, BufferWrite writePass)
+    RgTransferPass::RgTransferPass(RgPassIdType id, BufferWrite writePass)
         : RgPass{ id }
         , writePass{ std::move(writePass) } {
     }
@@ -12,11 +12,11 @@ namespace garlic::clove {
 
     RgTransferPass::~RgTransferPass() = default;
 
-    std::unordered_set<ResourceIdType> RgTransferPass::getInputResources() const {
+    std::unordered_set<RgResourceIdType> RgTransferPass::getInputResources() const {
         return {};
     }
 
-    std::unordered_set<ResourceIdType> RgTransferPass::getOutputResources() const {
+    std::unordered_set<RgResourceIdType> RgTransferPass::getOutputResources() const {
         return { writePass.bufferId };
     }
 }

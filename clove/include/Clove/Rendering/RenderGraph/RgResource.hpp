@@ -11,15 +11,15 @@ namespace garlic::clove {
     class RgResource {
         //VARIABLES
     private:
-        ResourceIdType id{ INVALID_RESOURCE_ID };
+        RgResourceIdType id{ INVALID_RESOURCE_ID };
 
-        std::unordered_set<PassIdType> writePasses{};
-        std::unordered_set<PassIdType> readPasses{};
+        std::unordered_set<RgPassIdType> writePasses{};
+        std::unordered_set<RgPassIdType> readPasses{};
 
         //FUNCTIONS
     public:
         RgResource() = delete;
-        RgResource(ResourceIdType id);
+        RgResource(RgResourceIdType id);
 
         RgResource(RgResource const &other) = delete;
         RgResource(RgResource &&other) noexcept;
@@ -29,13 +29,13 @@ namespace garlic::clove {
 
         ~RgResource();
 
-        inline void addWritePass(PassIdType pass);
-        inline void addReadPass(PassIdType pass);
+        inline void addWritePass(RgPassIdType pass);
+        inline void addReadPass(RgPassIdType pass);
 
-        inline ResourceIdType getId() const;
+        inline RgResourceIdType getId() const;
 
-        inline std::unordered_set<PassIdType> const &getWritePasses() const;
-        inline std::unordered_set<PassIdType> const &getReadPasses() const;
+        inline std::unordered_set<RgPassIdType> const &getWritePasses() const;
+        inline std::unordered_set<RgPassIdType> const &getReadPasses() const;
     };
 }
 

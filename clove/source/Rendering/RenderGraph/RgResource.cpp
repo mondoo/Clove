@@ -1,7 +1,7 @@
 #include "Clove/Rendering/RenderGraph/RgResource.hpp"
 
 namespace garlic::clove {
-    RgResource::RgResource(ResourceIdType id)
+    RgResource::RgResource(RgResourceIdType id)
         : id{ id } {
     }
 

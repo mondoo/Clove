@@ -28,8 +28,8 @@ namespace garlic::clove {
         //FUNCTIONS
     public:
         RgBuffer() = delete;
-        RgBuffer(ResourceIdType id, size_t size);
-        RgBuffer(ResourceIdType id, std::shared_ptr<GhaBuffer> ghaBuffer, size_t offset, size_t size);
+        RgBuffer(RgResourceIdType id, size_t size);
+        RgBuffer(RgResourceIdType id, std::shared_ptr<GhaBuffer> ghaBuffer, size_t offset, size_t size);
 
         RgBuffer(RgBuffer const &other) = delete;
         RgBuffer(RgBuffer &&other) noexcept;

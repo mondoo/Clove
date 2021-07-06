@@ -3,7 +3,7 @@
 #include "Clove/Rendering/RenderGraph/RgGlobalCache.hpp"
 
 namespace garlic::clove {
-    RgRenderPass::RgRenderPass(PassIdType id, Descriptor descriptor)
+    RgRenderPass::RgRenderPass(RgPassIdType id, Descriptor descriptor)
         : RgPass{ id }
         , descriptor{ std::move(descriptor) } {
     }
@@ -14,8 +14,8 @@ namespace garlic::clove {
 
     RgRenderPass::~RgRenderPass() = default;
 
-    std::unordered_set<ResourceIdType> RgRenderPass::getInputResources() const {
-        std::unordered_set<ResourceIdType> inputResources{};
+    std::unordered_set<RgResourceIdType> RgRenderPass::getInputResources() const {
+        std::unordered_set<RgResourceIdType> inputResources{};
         for(auto const &submission : submissions) {
             inputResources.emplace(submission.vertexBuffer);
             inputResources.emplace(submission.indexBuffer);
@@ -29,8 +29,8 @@ namespace garlic::clove {
         return inputResources;
     }
 
-    std::unordered_set<ResourceIdType> RgRenderPass::getOutputResources() const {
-        std::unordered_set<ResourceIdType> outputResources{};
+    std::unordered_set<RgResourceIdType> RgRenderPass::getOutputResources() const {
+        std::unordered_set<RgResourceIdType> outputResources{};
         for(auto const &renderTarget : descriptor.renderTargets){
             outputResources.emplace(renderTarget.target);
         }

@@ -1,5 +1,5 @@
 namespace garlic::clove {
-    PassIdType RgPass::getId() const {
+    RgPassIdType RgPass::getId() const {
         return id;
     }
 }

@@ -21,22 +21,22 @@ namespace garlic::clove {
 
     RenderGraph::~RenderGraph() = default;
 
-    ResourceIdType RenderGraph::createBuffer(size_t const bufferSize) {
-        ResourceIdType const bufferId{ nextResourceId++ };
+    RgResourceIdType RenderGraph::createBuffer(size_t const bufferSize) {
+        RgResourceIdType const bufferId{ nextResourceId++ };
         buffers[bufferId] = std::make_unique<RgBuffer>(bufferId, bufferSize);
 
         return bufferId;
     }
 
-    ResourceIdType RenderGraph::createBuffer(std::shared_ptr<GhaBuffer> buffer, size_t const offset, size_t const size) {
-        ResourceIdType const bufferId{ nextResourceId++ };
+    RgResourceIdType RenderGraph::createBuffer(std::shared_ptr<GhaBuffer> buffer, size_t const offset, size_t const size) {
+        RgResourceIdType const bufferId{ nextResourceId++ };
         buffers[bufferId] = std::make_unique<RgBuffer>(bufferId, std::move(buffer), size, offset);
 
         return bufferId;
     }
 
-    void RenderGraph::writeToBuffer(ResourceIdType buffer, void const *data, size_t const offset, size_t const size) {
-        PassIdType const transferPassId{ nextPassId };
+    void RenderGraph::writeToBuffer(RgResourceIdType buffer, void const *data, size_t const offset, size_t const size) {
+        RgPassIdType const transferPassId{ nextPassId };
 
         auto &rgBuffer{ buffers.at(buffer) };
         rgBuffer->makeCpuAccessable();
@@ -52,21 +52,21 @@ namespace garlic::clove {
         transferPasses[transferPassId] = std::make_unique<RgTransferPass>(transferPassId, std::move(write));
     }
 
-    ResourceIdType RenderGraph::createImage(GhaImage::Type imageType, GhaImage::Format format, vec2ui dimensions) {
-        ResourceIdType const imageId{ nextResourceId++ };
+    RgResourceIdType RenderGraph::createImage(GhaImage::Type imageType, GhaImage::Format format, vec2ui dimensions) {
+        RgResourceIdType const imageId{ nextResourceId++ };
         images[imageId] = std::make_unique<RgImage>(imageId, imageType, format, dimensions);
 
         return imageId;
     }
 
-    ResourceIdType RenderGraph::createImage(std::shared_ptr<GhaImageView> ghaImageView) {
-        ResourceIdType const imageId{ nextResourceId++ };
+    RgResourceIdType RenderGraph::createImage(std::shared_ptr<GhaImageView> ghaImageView) {
+        RgResourceIdType const imageId{ nextResourceId++ };
         images[imageId] = std::make_unique<RgImage>(imageId, std::move(ghaImageView));
 
         return imageId;
     }
 
-    void RenderGraph::registerGraphOutput(ResourceIdType resource) {
+    void RenderGraph::registerGraphOutput(RgResourceIdType resource) {
         outputResource = resource;
     }
 
@@ -84,11 +84,11 @@ namespace garlic::clove {
         return shader;
     }
 
-    PassIdType RenderGraph::addRenderPass(RgRenderPass::Descriptor passDescriptor) {
-        PassIdType const renderPassId{ nextPassId };
+    RgPassIdType RenderGraph::addRenderPass(RgRenderPass::Descriptor passDescriptor) {
+        RgPassIdType const renderPassId{ nextPassId };
 
         for(auto &renderTarget : passDescriptor.renderTargets) {
-            ResourceIdType const imageId{ renderTarget.target };
+            RgResourceIdType const imageId{ renderTarget.target };
 
             auto &image{ images.at(imageId) };
             image->addImageUsage(GhaImage::UsageMode::ColourAttachment);
@@ -96,7 +96,7 @@ namespace garlic::clove {
         }
 
         {
-            ResourceIdType const imageId{ passDescriptor.depthStencil.target };
+            RgResourceIdType const imageId{ passDescriptor.depthStencil.target };
 
             auto &image{ images.at(imageId) };
             image->addImageUsage(GhaImage::UsageMode::DepthStencilAttachment);
@@ -108,11 +108,11 @@ namespace garlic::clove {
         return renderPassId;
     }
 
-    void RenderGraph::addRenderSubmission(PassIdType const renderPass, RgRenderPass::Submission submission) {
+    void RenderGraph::addRenderSubmission(RgPassIdType const renderPass, RgRenderPass::Submission submission) {
         auto &pass{ renderPasses.at(renderPass) };
 
         {
-            ResourceIdType const bufferId{ submission.vertexBuffer };
+            RgResourceIdType const bufferId{ submission.vertexBuffer };
 
             auto &buffer{ buffers.at(bufferId) };
             buffer->addBufferUsage(GhaBuffer::UsageMode::VertexBuffer);
@@ -120,7 +120,7 @@ namespace garlic::clove {
         }
 
         {
-            ResourceIdType const bufferId{ submission.indexBuffer };
+            RgResourceIdType const bufferId{ submission.indexBuffer };
 
             auto &buffer{ buffers.at(bufferId) };
             buffer->addBufferUsage(GhaBuffer::UsageMode::IndexBuffer);
@@ -128,7 +128,7 @@ namespace garlic::clove {
         }
 
         for(auto const &ubo : submission.shaderUbos) {
-            ResourceIdType const bufferId{ ubo.buffer };
+            RgResourceIdType const bufferId{ ubo.buffer };
 
             auto &buffer{ buffers.at(bufferId) };
             buffer->addBufferUsage(GhaBuffer::UsageMode::UniformBuffer);
@@ -136,7 +136,7 @@ namespace garlic::clove {
         }
 
         for(auto const &imageSampler : submission.shaderCombinedImageSamplers) {
-            ResourceIdType const imageId{ imageSampler.image };
+            RgResourceIdType const imageId{ imageSampler.image };
 
             auto &image{ images.at(imageId) };
             image->addImageUsage(GhaImage::UsageMode::Sampled);
@@ -150,12 +150,12 @@ namespace garlic::clove {
         CLOVE_ASSERT(outputResource != INVALID_RESOURCE_ID, "No output resource has been specified");
 
         //Build an array of passes. This will be the execution order.
-        std::vector<PassIdType> passes{};
+        std::vector<RgPassIdType> passes{};
         buildExecutionPasses(passes, outputResource);
 
         //Filter out any duplicates and then reverse order so the output pass is at the end
         {
-            std::unordered_set<PassIdType> seenPasses{};
+            std::unordered_set<RgPassIdType> seenPasses{};
             for(auto iter{ passes.begin() }; iter != passes.end();) {
                 if(!seenPasses.contains(*iter)) {
                     seenPasses.emplace(*iter);
@@ -168,18 +168,18 @@ namespace garlic::clove {
         std::reverse(passes.begin(), passes.end());
 
         //Allocate all of the GHA objects required for each pass
-        std::unordered_map<PassIdType, std::shared_ptr<GhaRenderPass>> allocatedRenderPasses{};
-        std::unordered_map<PassIdType, std::shared_ptr<GhaFramebuffer>> allocatedFramebuffers{};
-        std::unordered_map<PassIdType, std::shared_ptr<GhaGraphicsPipelineObject>> allocatedPipelines{};
-        std::unordered_map<PassIdType, std::shared_ptr<GhaDescriptorSetLayout>> descriptorSetLayouts{};
-        std::unordered_map<PassIdType, std::vector<std::shared_ptr<GhaDescriptorSet>>> allocatedDescriptorSets{};
-        std::unordered_map<ResourceIdType, std::shared_ptr<GhaSampler>> allocatedSamplers{};
+        std::unordered_map<RgPassIdType, std::shared_ptr<GhaRenderPass>> allocatedRenderPasses{};
+        std::unordered_map<RgPassIdType, std::shared_ptr<GhaFramebuffer>> allocatedFramebuffers{};
+        std::unordered_map<RgPassIdType, std::shared_ptr<GhaGraphicsPipelineObject>> allocatedPipelines{};
+        std::unordered_map<RgPassIdType, std::shared_ptr<GhaDescriptorSetLayout>> descriptorSetLayouts{};
+        std::unordered_map<RgPassIdType, std::vector<std::shared_ptr<GhaDescriptorSet>>> allocatedDescriptorSets{};
+        std::unordered_map<RgResourceIdType, std::shared_ptr<GhaSampler>> allocatedSamplers{};
 
         std::unordered_map<DescriptorType, uint32_t> totalDescriptorBindingCount{};
         uint32_t totalDescriptorSets{ 0 };
 
         for(int32_t i{ 0 }; i < passes.size(); ++i) {
-            PassIdType const passId{ passes[i] };
+            RgPassIdType const passId{ passes[i] };
             if(!renderPasses.contains(passId)){
                 continue;
             }
@@ -207,7 +207,7 @@ namespace garlic::clove {
                 });
             }
 
-            DepthStencilBinding const &depthStencil{ passDescriptor.depthStencil };
+            RgDepthStencilBinding const &depthStencil{ passDescriptor.depthStencil };
             AttachmentDescriptor depthStencilAttachment{
                 .format         = images[depthStencil.target]->getGhaImageView(frameCache)->getImageFormat(),
                 .loadOperation  = depthStencil.loadOp,
@@ -334,7 +334,7 @@ namespace garlic::clove {
         //std::shared_ptr<GhaTransferCommandBuffer> transferCommandBufffer{ frameCache.getTransferCommandBuffer() };
 
         graphicsCommandBufffer->beginRecording(CommandBufferUsage::OneTimeSubmit);
-        for(PassIdType passId : passes) {
+        for(RgPassIdType passId : passes) {
             if(transferPasses.contains(passId)){
                 RgTransferPass::BufferWrite const &writeOp{ transferPasses.at(passId)->getWriteOperation() };
                 std::unique_ptr<RgBuffer> const &buffer{ buffers.at(writeOp.bufferId) };
@@ -399,25 +399,25 @@ namespace garlic::clove {
         };
     }
 
-    void RenderGraph::buildExecutionPasses(std::vector<PassIdType> &passes, ResourceIdType resourceId) {
+    void RenderGraph::buildExecutionPasses(std::vector<RgPassIdType> &passes, RgResourceIdType resourceId) {
         RgResource *resource{ getResourceFromId(resourceId) };
 
-        std::vector<PassIdType> resourceWritePasses{};
-        for(PassIdType passId : resource->getWritePasses()) {
+        std::vector<RgPassIdType> resourceWritePasses{};
+        for(RgPassIdType passId : resource->getWritePasses()) {
             resourceWritePasses.push_back(passId);
         }
 
         passes.insert(passes.end(), resourceWritePasses.begin(), resourceWritePasses.end());
 
-        for(PassIdType passId : resourceWritePasses) {
+        for(RgPassIdType passId : resourceWritePasses) {
             RgPass *pass{ getPassFromId(passId) };
-            for(ResourceIdType resource : pass->getInputResources()) {
+            for(RgResourceIdType resource : pass->getInputResources()) {
                 buildExecutionPasses(passes, resource);
             }
         }
     }
 
-    GhaImage::Layout RenderGraph::getPreviousLayout(std::vector<PassIdType> const &passes, int32_t const currentPassIndex, ResourceIdType const imageId) {
+    GhaImage::Layout RenderGraph::getPreviousLayout(std::vector<RgPassIdType> const &passes, int32_t const currentPassIndex, RgResourceIdType const imageId) {
         for(int32_t i = currentPassIndex - 1; i >= 0; --i) {
             std::unique_ptr<RgRenderPass> const &renderPass{ renderPasses[passes[i]] };
 
@@ -448,7 +448,7 @@ namespace garlic::clove {
         return GhaImage::Layout::Undefined;
     }
 
-    RgResource *RenderGraph::getResourceFromId(ResourceIdType resourceId) {
+    RgResource *RenderGraph::getResourceFromId(RgResourceIdType resourceId) {
         if(images.contains(resourceId)) {
             return images.at(resourceId).get();
         } else if(buffers.contains(resourceId)) {
@@ -458,7 +458,7 @@ namespace garlic::clove {
         }
     }
 
-    RgPass *RenderGraph::getPassFromId(PassIdType passId) {
+    RgPass *RenderGraph::getPassFromId(RgPassIdType passId) {
         if(renderPasses.contains(passId)) {
             return renderPasses.at(passId).get();
         } else {

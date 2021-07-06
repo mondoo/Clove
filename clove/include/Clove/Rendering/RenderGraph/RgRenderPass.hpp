@@ -13,29 +13,29 @@ namespace {
 }
 
 namespace garlic::clove {
-    struct BufferBinding {
+    struct RgBufferBinding {
         uint32_t slot{};
-        ResourceIdType buffer{};
+        RgResourceIdType buffer{};
     };
 
-    struct ImageBindng {
+    struct RgImageBindng {
         uint32_t slot{};
         GhaSampler::Descriptor samplerState{};//TODO: RG version?
-        ResourceIdType image{};
+        RgResourceIdType image{};
     };
 
-    struct RenderTargetBinding {
+    struct RgRenderTargetBinding {
         LoadOperation loadOp{};
         StoreOperation storeOp{};
         ColourValue clearColour{};
-        ResourceIdType target{};
+        RgResourceIdType target{};
     };
 
-    struct DepthStencilBinding {
+    struct RgDepthStencilBinding {
         LoadOperation loadOp{};
         StoreOperation storeOp{};
         DepthStencilValue clearValue{};
-        ResourceIdType target{};
+        RgResourceIdType target{};
     };
 }
 
@@ -57,19 +57,19 @@ namespace garlic::clove {
             bool depthWrite{ true };
             bool enableBlending{ true };
 
-            std::vector<RenderTargetBinding> renderTargets{};
-            DepthStencilBinding depthStencil{};
+            std::vector<RgRenderTargetBinding> renderTargets{};
+            RgDepthStencilBinding depthStencil{};
         };
 
         /**
          * @brief Represents a unit of work, single draw indexed call.
          */
         struct Submission {
-            ResourceIdType vertexBuffer{};
-            ResourceIdType indexBuffer{};
+            RgResourceIdType vertexBuffer{};
+            RgResourceIdType indexBuffer{};
 
-            std::vector<BufferBinding> shaderUbos{};
-            std::vector<ImageBindng> shaderCombinedImageSamplers{};
+            std::vector<RgBufferBinding> shaderUbos{};
+            std::vector<RgImageBindng> shaderCombinedImageSamplers{};
 
             size_t indexCount{ 0 };
         };
@@ -82,7 +82,7 @@ namespace garlic::clove {
         //FUNCTIONS
     public:
         RgRenderPass() = delete;
-        RgRenderPass(PassIdType id, Descriptor descriptor);
+        RgRenderPass(RgPassIdType id, Descriptor descriptor);
 
         RgRenderPass(RgRenderPass const &other) = delete;
         RgRenderPass(RgRenderPass &&other) noexcept;
@@ -92,8 +92,8 @@ namespace garlic::clove {
 
         ~RgRenderPass();
 
-        std::unordered_set<ResourceIdType> getInputResources() const override;
-        std::unordered_set<ResourceIdType> getOutputResources() const override;
+        std::unordered_set<RgResourceIdType> getInputResources() const override;
+        std::unordered_set<RgResourceIdType> getOutputResources() const override;
 
         inline void addSubmission(Submission submission);
 

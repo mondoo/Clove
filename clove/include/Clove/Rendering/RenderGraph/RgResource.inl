@@ -1,21 +1,21 @@
 namespace garlic::clove {
-    void RgResource::addWritePass(PassIdType pass) {
+    void RgResource::addWritePass(RgPassIdType pass) {
         writePasses.emplace(pass);
     }
 
-    void RgResource::addReadPass(PassIdType pass) {
+    void RgResource::addReadPass(RgPassIdType pass) {
         readPasses.emplace(pass);
     }
 
-    ResourceIdType RgResource::getId() const {
+    RgResourceIdType RgResource::getId() const {
         return id;
     }
 
-    std::unordered_set<PassIdType> const &RgResource::getWritePasses() const {
+    std::unordered_set<RgPassIdType> const &RgResource::getWritePasses() const {
         return writePasses;
     }
 
-    std::unordered_set<PassIdType> const &RgResource::getReadPasses() const {
+    std::unordered_set<RgPassIdType> const &RgResource::getReadPasses() const {
         return readPasses;
     }
 }

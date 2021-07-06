@@ -26,8 +26,8 @@ namespace garlic::clove {
         //FUNCTIONS
     public:
         RgImage() = delete;
-        RgImage(ResourceIdType id, GhaImage::Type imageType, GhaImage::Format format, vec2ui dimensions);
-        RgImage(ResourceIdType id, std::shared_ptr<GhaImageView> ghaImageView);
+        RgImage(RgResourceIdType id, GhaImage::Type imageType, GhaImage::Format format, vec2ui dimensions);
+        RgImage(RgResourceIdType id, std::shared_ptr<GhaImageView> ghaImageView);
 
         RgImage(RgImage const &other) = delete;
         RgImage(RgImage &&other) noexcept;

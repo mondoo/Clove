@@ -7,7 +7,7 @@ namespace garlic::clove {
         //TYPES
     public:
         struct BufferWrite {
-            ResourceIdType bufferId{};
+            RgResourceIdType bufferId{};
             std::vector<std::byte> data;
             size_t offset{};
             size_t size;
@@ -20,7 +20,7 @@ namespace garlic::clove {
         //FUNCTIONS
     public:
         RgTransferPass() = delete;
-        RgTransferPass(PassIdType id, BufferWrite writePass);
+        RgTransferPass(RgPassIdType id, BufferWrite writePass);
 
         RgTransferPass(RgTransferPass const &other) = delete;
         RgTransferPass(RgTransferPass &&other) noexcept;
@@ -30,8 +30,8 @@ namespace garlic::clove {
 
         ~RgTransferPass();
 
-        std::unordered_set<ResourceIdType> getInputResources() const override;
-        std::unordered_set<ResourceIdType> getOutputResources() const override;
+        std::unordered_set<RgResourceIdType> getInputResources() const override;
+        std::unordered_set<RgResourceIdType> getOutputResources() const override;
 
         inline BufferWrite const &getWriteOperation() const;
     };

@@ -6,5 +6,5 @@ namespace garlic::clove {
     /**
      * @brief Tracks the usage of shaders throughout the render graph.
      */
-    using RgShader = ResourceIdType;
+    using RgShader = RgResourceIdType;
 }
