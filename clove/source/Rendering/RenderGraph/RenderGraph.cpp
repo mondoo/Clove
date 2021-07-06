@@ -36,7 +36,20 @@ namespace garlic::clove {
     }
 
     void RenderGraph::writeToBuffer(ResourceIdType buffer, void const *data, size_t const offset, size_t const size) {
-        //TODO: Add a special pass type for transfers
+        PassIdType const transferPassId{ nextPassId };
+
+        auto &rgBuffer{ buffers.at(buffer) };
+        rgBuffer->makeCpuAccessable();
+        rgBuffer->addWritePass(transferPassId);
+
+        RgTransferPass::BufferWrite write{
+            .data   = std::vector<std::byte>(size),
+            .offset = offset,
+            .size   = size,
+        };
+        memcpy(write.data.data(), data, size);
+
+        transferPasses[transferPassId] = std::make_unique<RgTransferPass>(transferPassId, std::move(write));
     }
 
     ResourceIdType RenderGraph::createImage(GhaImage::Type imageType, GhaImage::Format format, vec2ui dimensions) {
@@ -167,6 +180,10 @@ namespace garlic::clove {
 
         for(int32_t i{ 0 }; i < passes.size(); ++i) {
             PassIdType const passId{ passes[i] };
+            if(!renderPasses.contains(passId)){
+                continue;
+            }
+
             RgRenderPass::Descriptor const &passDescriptor{ renderPasses.at(passId)->getDescriptor() };
             std::vector<RgRenderPass::Submission> const &passSubmissions{ renderPasses.at(passId)->getSubmissions() };
 
@@ -318,6 +335,13 @@ namespace garlic::clove {
 
         graphicsCommandBufffer->beginRecording(CommandBufferUsage::OneTimeSubmit);
         for(PassIdType passId : passes) {
+            if(transferPasses.contains(passId)){
+                RgTransferPass::BufferWrite const &writeOp{ transferPasses.at(passId)->getWriteOperation() };
+                std::unique_ptr<RgBuffer> const &buffer{ buffers.at(writeOp.bufferId) };
+                buffer->getGhaBuffer(frameCache)->write(writeOp.data.data(), buffer->getBufferOffset() + writeOp.offset, writeOp.size);
+                continue; //Move to next pass as the rest of this loop assume it's a render pass
+            }
+
             RgRenderPass::Descriptor const &passDescriptor{ renderPasses.at(passId)->getDescriptor() };
             std::vector<RgRenderPass::Submission> const &passSubmissions{ renderPasses.at(passId)->getSubmissions() };
 

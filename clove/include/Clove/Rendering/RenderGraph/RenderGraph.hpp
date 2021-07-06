@@ -3,6 +3,7 @@
 #include "Clove/Rendering/RenderGraph/RgBuffer.hpp"
 #include "Clove/Rendering/RenderGraph/RgImage.hpp"
 #include "Clove/Rendering/RenderGraph/RgRenderPass.hpp"
+#include "Clove/Rendering/RenderGraph/RgTransferPass.hpp"
 #include "Clove/Rendering/RenderGraph/RgShader.hpp"
 
 #include <Clove/Graphics/GhaGraphicsQueue.hpp>
@@ -45,6 +46,7 @@ namespace garlic::clove {
         std::unordered_map<ResourceIdType, std::unique_ptr<RgImage>> images{};
 
         std::unordered_map<PassIdType, std::unique_ptr<RgRenderPass>> renderPasses{};
+        std::unordered_map<PassIdType, std::unique_ptr<RgTransferPass>> transferPasses{};
 
         std::unordered_map<ResourceIdType, std::shared_ptr<GhaShader>> allocatedShaders{};
 

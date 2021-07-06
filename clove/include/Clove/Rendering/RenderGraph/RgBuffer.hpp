@@ -52,6 +52,11 @@ namespace garlic::clove {
         inline size_t getBufferSize() const;
 
         void addBufferUsage(GhaBuffer::UsageMode usage);
+        /**
+         * @brief Allows the CPU to access the buffer's memory.
+         * @details This will change the memory type from VideoMemory to SystemMemory.
+         */
+        void makeCpuAccessable();
     };
 }
 

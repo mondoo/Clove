@@ -43,4 +43,8 @@ namespace garlic::clove {
         CLOVE_ASSERT(!externalBuffer, "Cannot change usage mode. RgBuffer is registered as an external buffer.");
         ghaBufferDescriptor.usageFlags |= usage;
     }
+
+    void RgBuffer::makeCpuAccessable() {
+        ghaBufferDescriptor.memoryType = MemoryType::SystemMemory;
+    }
 }
