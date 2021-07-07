@@ -50,6 +50,7 @@ namespace garlic::membrane {
         void createComponent(clove::Entity entity, ComponentType componentType);
 
         void updateTransform(clove::Entity entity, clove::vec3f position, clove::vec3f rotation, clove::vec3f scale);
+        void updateStaticModel(clove::Entity entity, std::string vfsPath);
         void updateRigidBody(clove::Entity entity, float mass);
         void updateSphereShape(clove::Entity entity, float radius);
         void updateCubeShape(clove::Entity entity, clove::vec3f halfExtents);

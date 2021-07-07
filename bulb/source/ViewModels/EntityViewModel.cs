@@ -78,7 +78,8 @@ namespace Garlic.Bulb {
                 break;
                 case Membrane.ComponentType.StaticModel: {
                     var modelComp = new StaticModelComponentViewModel($"{type}", type);
-                    modelComp.FilePath = "/temp/file/path"; //TODO
+                    modelComp.OnStaticModelChanged = UpdateStaticModel;
+
 
                     componentVm = modelComp;
                 }
@@ -112,6 +113,14 @@ namespace Garlic.Bulb {
             message.position = position;
             message.rotation = rotation;
             message.scale = scale;
+
+            Membrane.MessageHandler.sendMessage(message);
+        }
+
+        private void UpdateStaticModel(string path) {
+            var message = new Membrane.Editor_UpdateStaticModel();
+            message.entity = EntityId;
+            message.vfsPath = path;
 
             Membrane.MessageHandler.sendMessage(message);
         }

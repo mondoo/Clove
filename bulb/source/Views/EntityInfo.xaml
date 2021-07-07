@@ -71,7 +71,8 @@
 								<TextBlock Text="{Binding FilePath, Mode=TwoWay}"
 										   AllowDrop="True"
 										   Drop="TextBox_Drop"
-										   Background="Transparent"/>
+										   Background="Transparent"
+										   MinWidth="30"/>
 							</Border>
 						</StackPanel>
 					</StackPanel>

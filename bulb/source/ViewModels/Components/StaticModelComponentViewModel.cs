@@ -6,10 +6,14 @@ namespace Garlic.Bulb {
             get => filePath;
             set {
                 filePath = value;
-                OnPropertyChanged(nameof(filePath));
+                OnPropertyChanged(nameof(FilePath));
+                OnStaticModelChanged?.Invoke(filePath);
             }
         }
-        private string filePath;
+        private string filePath = "";
+
+        public delegate void StaticModelChangedHandler(string path);
+        public StaticModelChangedHandler OnStaticModelChanged;
 
         public StaticModelComponentViewModel(string name, Membrane.ComponentType type) : base(name, type) { }
     }

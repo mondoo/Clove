@@ -27,6 +27,12 @@ namespace garlic::membrane {
         Vector3 rotation;
         Vector3 scale;
     };
+    public ref class Editor_UpdateStaticModel : public EditorMessage {
+    public:
+        System::UInt32 entity;
+
+        System::String ^vfsPath;
+    };
     public ref class Editor_UpdateRigidBody : public EditorMessage {
     public:
         System::UInt32 entity;

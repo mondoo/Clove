@@ -37,6 +37,7 @@ namespace garlic::membrane {
             MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_CreateComponent ^>(this, &EditorLayerMessageProxy::createComponent));
 
             MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_UpdateTransform ^>(this, &EditorLayerMessageProxy::updateTransform));
+            MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_UpdateStaticModel ^>(this, &EditorLayerMessageProxy::updateStaticModel));
             MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_UpdateRigidBody ^>(this, &EditorLayerMessageProxy::updateRigidBody));
             MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_UpdateSphereShape ^>(this, &EditorLayerMessageProxy::updateSphereShape));
             MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_UpdateCubeShape ^>(this, &EditorLayerMessageProxy::updateCubeShape));
@@ -61,6 +62,11 @@ namespace garlic::membrane {
             clove::vec3f const scale{message->scale.x, message->scale.y, message->scale.z};
 
             layer->updateTransform(message->entity, pos, rot, scale);
+        }
+
+        void updateStaticModel(Editor_UpdateStaticModel ^ message){
+            System::String ^path{ message->vfsPath };
+            layer->updateStaticModel(message->entity, msclr::interop::marshal_as<std::string>(path));
         }
 
         void updateRigidBody(Editor_UpdateRigidBody^ message){
@@ -312,6 +318,13 @@ namespace garlic::membrane {
             transform.position = position;
             transform.rotation = rotation;
             transform.scale    = scale;
+        }
+    }
+
+    void EditorLayer::updateStaticModel(clove::Entity entity, std::string vfsPath) {
+        if(currentScene.hasComponent<clove::StaticModelComponent>(entity)) {
+            auto &staticModel{ currentScene.getComponent<clove::StaticModelComponent>(entity) };
+            staticModel.model = clove::Application::get().getAssetManager()->getStaticModel(vfsPath);
         }
     }
 
