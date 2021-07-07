@@ -1,4 +1,3 @@
-using System.IO;
 using System.Windows.Input;
 
 namespace Garlic.Bulb {
@@ -10,7 +9,7 @@ namespace Garlic.Bulb {
         /// The root directory this explorer views from.
         /// </summary>
         public DirectoryItemViewModel RootDirectory {
-            get { return rootDirectory; }
+            get => rootDirectory;
             private set {
                 rootDirectory = value;
                 OnPropertyChanged(nameof(RootDirectory));
@@ -22,7 +21,7 @@ namespace Garlic.Bulb {
         /// The current directory this explorer has opened into.
         /// </summary>
         public DirectoryItemViewModel CurrentDirectory {
-            get { return currentDirectory; }
+            get => currentDirectory;
             private set {
                 currentDirectory = value;
                 OnPropertyChanged(nameof(currentDirectory));

@@ -16,7 +16,7 @@ namespace Garlic.Bulb {
                 //Only drag-drop files for now
                 if (viewModel.Type == ObjectType.File) {
                     DataObject data = new DataObject();
-                    data.SetData(DataFormats.StringFormat, viewModel.FullName);
+                    data.SetData(DataFormats.StringFormat, viewModel.VfsPath);
 
                     DragDrop.DoDragDrop(this, data, DragDropEffects.Copy);
                 }

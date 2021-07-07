@@ -1,10 +1,5 @@
-﻿using System;
-using System.Linq;
-using System.Threading;
+﻿using System.Threading;
 using System.Windows;
-using System.Windows.Threading;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.ComponentModel;
 
 using Membrane = garlic.membrane;
@@ -29,23 +24,29 @@ namespace Garlic.Bulb {
             engineApp = new Membrane.Application((int)size.Width, (int)size.Height);
 
             //Set up the engine session
-            sessionViewModel = new EditorSessionViewModel(engineApp.resolveRootPath());
+            sessionViewModel = new EditorSessionViewModel(".");
 
             Membrane.Log.addSink((string message) => sessionViewModel.Log.LogText += message, "%v");
 
             //Initialise the editor window
-            editorWindow = new MainWindow();
-
-            editorWindow.DataContext = sessionViewModel;
+            editorWindow = new MainWindow {
+                DataContext = sessionViewModel
+            };
             editorWindow.Closing += StopEngine;
 
             editorWindow.Show();
             MainWindow = editorWindow;
 
             //Run the engine thread
-            engineThread = new Thread(new ThreadStart(RunEngineApplication));
-            engineThread.Name = "Garlic application thread";
+            engineThread = new Thread(new ThreadStart(RunEngineApplication)) {
+                Name = "Garlic application thread"
+            };
             engineThread.Start();
+        }
+
+        public string resolveVfsPath(string path) {
+            //TODO: Currently no thread locking here. Will be fine in most situations as the mounted paths are unlikely to change once the app has initialised
+            return engineApp.resolveVfsPath(path);
         }
 
         private void StopEngine(object sender, CancelEventArgs e) {
@@ -71,7 +72,7 @@ namespace Garlic.Bulb {
                     editorWindow.EditorViewport.WriteToBackBuffer(engineApp.render);
 
                     //Send any engine events to the editor
-                    Membrane.MessageHandler.flushEngine(Application.Current.Dispatcher);
+                    Membrane.MessageHandler.flushEngine(Current.Dispatcher);
                 } else {
                     //Return to avoid calling shutdown if the app exits by itself
                     return;

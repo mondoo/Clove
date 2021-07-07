@@ -1,4 +1,3 @@
-using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
@@ -20,7 +19,7 @@ namespace Garlic.Bulb {
         /// </summary>
         public string Name {
             get => name;
-            set {
+            private set {
                 name = value;
                 OnPropertyChanged(nameof(Name));
             }
@@ -28,9 +27,14 @@ namespace Garlic.Bulb {
         private string name;
 
         /// <summary>
-        /// Full path of this item.
+        /// The Virtual File System path of this item.
         /// </summary>
-        public string FullName { get; set; }
+        public string VfsPath { get; private set; }
+
+        /// <summary>
+        /// Full system path of this item.
+        /// </summary>
+        public string FullPath => ConvertVfsPathToSystemPath(VfsPath);
 
         public ObjectType Type { get; }
 
@@ -61,17 +65,17 @@ namespace Garlic.Bulb {
         /// </summary>
         public ObservableCollection<DirectoryItemViewModel> AllItems { get; } = new ObservableCollection<DirectoryItemViewModel>();
 
-        public DirectoryItemViewModel(string directoryPath) : this(new DirectoryInfo(directoryPath)) { }
+        private readonly FileSystemWatcher watcher;
 
-        private FileSystemWatcher watcher;
+        public DirectoryItemViewModel(string vfsPath) : this(new DirectoryInfo(ConvertVfsPathToSystemPath(vfsPath))) { }
 
         public DirectoryItemViewModel(DirectoryInfo directory) : this() {
             Name = directory.Name;
-            FullName = directory.FullName;
+            VfsPath = ConvertSystemPathToVfsPath(directory.FullName);
 
             Type = ObjectType.Directory;
 
-            watcher = new FileSystemWatcher(FullName, "*.*") {
+            watcher = new FileSystemWatcher(FullPath, "*.*") {
                 EnableRaisingEvents = true
             };
             watcher.Created += OnFileCreated;
@@ -94,7 +98,7 @@ namespace Garlic.Bulb {
 
         public DirectoryItemViewModel(FileInfo file) : this() {
             Name = file.Name;
-            FullName = file.FullName;
+            VfsPath = ConvertSystemPathToVfsPath(file.FullName);
 
             Type = ObjectType.File;
         }
@@ -113,7 +117,7 @@ namespace Garlic.Bulb {
 
             var fileInfo = new FileInfo(file);
             string originalPath = file;
-            string newPath = Path.Combine(FullName, fileInfo.Name);
+            string newPath = Path.Combine(FullPath, fileInfo.Name);
 
             File.Copy(originalPath, newPath);
         }
@@ -125,8 +129,8 @@ namespace Garlic.Bulb {
         }
 
         private void OnItemDeleted(DirectoryItemViewModel item) {
-            //Delete through the OS. The file system watcher will handle the even back to us.
-            File.Delete(item.FullName);
+            //Delete through the OS. The file system watcher will handle the event back to us.
+            File.Delete(item.FullPath);
         }
         #endregion
 
@@ -168,7 +172,7 @@ namespace Garlic.Bulb {
                 }
 
                 itemVm.Name = e.Name;
-                itemVm.FullName = e.FullPath;
+                itemVm.VfsPath = ConvertSystemPathToVfsPath(e.FullPath);
             });
         }
         #endregion
@@ -198,6 +202,13 @@ namespace Garlic.Bulb {
             } else {
                 Files.Remove(item);
             }
+        }
+
+        private static string ConvertVfsPathToSystemPath(string vfsPath) => ((EditorApp)Application.Current).resolveVfsPath(vfsPath);
+
+        private static string ConvertSystemPathToVfsPath(string systemPath) {
+            string rootSystem = ConvertVfsPathToSystemPath(".");
+            return systemPath.Remove(0, rootSystem.Length).Replace("\\", "/").Insert(0, ".");
         }
     }
 }

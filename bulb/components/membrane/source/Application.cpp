@@ -94,8 +94,10 @@ namespace garlic::membrane {
         this->height = height;
     }
 
-    System::String ^Application::resolveRootPath() {
-        return gcnew System::String(app->getFileSystem()->resolve(".").c_str());
+    System::String ^Application::resolveVfsPath(System::String ^ path) {
+        System::String ^managedPath{ path };
+        std::string unManagedPath{ msclr::interop::marshal_as<std::string>(managedPath) };
+        return gcnew System::String(app->getFileSystem()->resolve(unManagedPath).c_str());
     }
 
     void Application::setEditorMode(Editor_Stop ^message) {

@@ -43,7 +43,7 @@ public ref class Application {
 
         void resize(int width, int height);
 
-        System::String ^resolveRootPath();
+        System::String ^resolveVfsPath(System::String ^path);
 
     private:
         void setEditorMode(Editor_Stop ^message);

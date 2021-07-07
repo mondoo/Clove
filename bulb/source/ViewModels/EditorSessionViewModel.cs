@@ -1,4 +1,3 @@
-using System;
 using System.Windows.Input;
 
 using Membrane = garlic.membrane;
@@ -14,7 +13,7 @@ namespace Garlic.Bulb {
         public ICommand StopCommand { get; }
 
         public SceneViewModel Scene {
-            get { return scene; }
+            get => scene;
             set {
                 scene = value;
                 OnPropertyChanged(nameof(Scene));
@@ -26,7 +25,7 @@ namespace Garlic.Bulb {
         public LogViewModel Log { get; } = new LogViewModel();
 
         public bool IsPlayButtonEnabled {
-            get { return isPlayButtonEnabled; }
+            get => isPlayButtonEnabled;
             set {
                 isPlayButtonEnabled = value;
                 OnPropertyChanged(nameof(IsPlayButtonEnabled));
@@ -35,7 +34,7 @@ namespace Garlic.Bulb {
         private bool isPlayButtonEnabled = true;
 
         public bool IsStopButtonEnabled {
-            get { return isStopButtonEnabled; }
+            get => isStopButtonEnabled;
             set {
                 isStopButtonEnabled = value;
                 OnPropertyChanged(nameof(IsStopButtonEnabled));
