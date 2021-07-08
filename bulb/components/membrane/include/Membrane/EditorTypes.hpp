@@ -10,6 +10,11 @@ namespace garlic::membrane {
         CollisionShape
     };
 
+    public enum class ShapeType {
+        Sphere,
+        Cube
+    };
+
     public value struct Vector3 {
         float x;
         float y;
@@ -20,6 +25,24 @@ namespace garlic::membrane {
             , y{ y }
             , z{ z } {
         }
+    };
+
+    public ref class StaticModelComponentInitData{
+    public:
+        System::String ^vfsPath;
+    };
+
+    public ref class RigidBodyComponentInitData{
+    public:
+        float mass;
+    };
+
+    public ref class CollisionShapeComponentInitData{
+    public:
+        ShapeType shapeType;
+
+        float radius;
+        Vector3 halfExtents;
     };
     // clang-format on
 }

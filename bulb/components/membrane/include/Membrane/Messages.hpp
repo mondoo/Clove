@@ -6,10 +6,14 @@
 namespace garlic::membrane {
     // clang-format off
     //Types
+    public ref struct Component{
+        ComponentType type;
+        System::Object ^initData;
+    };
     public ref struct Entity{
         System::UInt32 id;
         System::String ^name;
-        System::Collections::Generic::List<ComponentType> ^components;
+        System::Collections::Generic::List<Component^> ^components;
     };
 
     //Messages sent from Bulb
@@ -93,6 +97,7 @@ namespace garlic::membrane {
     public:
         System::UInt32 entity;
         ComponentType componentType;
+        System::Object ^data;
     };
     public ref class Engine_OnTransformChanged : public EngineMessage {
     public:

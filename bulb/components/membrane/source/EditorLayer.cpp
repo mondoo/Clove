@@ -232,23 +232,58 @@ namespace garlic::membrane {
             Entity ^ editorEntity { gcnew Entity };
             editorEntity->id         = entity;
             editorEntity->name       = gcnew System::String(currentScene.getComponent<NameComponent>(entity).name.c_str());
-            editorEntity->components = gcnew System::Collections::Generic::List<ComponentType>{};
+            editorEntity->components = gcnew System::Collections::Generic::List<Component^>{};
 
             //Add all of the component types for an entity
             if(currentScene.hasComponent<clove::TransformComponent>(entity)) {
-                editorEntity->components->Add(ComponentType::Transform);
+                Component ^ componentData = gcnew Component{};
+                componentData->type       = ComponentType::Transform;
+
+                editorEntity->components->Add(componentData);
             }
             if(currentScene.hasComponent<clove::StaticModelComponent>(entity)) {
-                editorEntity->components->Add(ComponentType::StaticModel);
+                StaticModelComponentInitData ^ initData = gcnew StaticModelComponentInitData{};
+                initData->vfsPath                       = gcnew System::String(currentScene.getComponent<clove::StaticModelComponent>(entity).model.getPath().c_str());
+
+                Component ^ componentData = gcnew Component{};
+                componentData->type       = ComponentType::StaticModel;
+                componentData->initData   = initData;
+
+                editorEntity->components->Add(componentData);
             }
             if(currentScene.hasComponent<clove::PointLightComponent>(entity)) {
-                editorEntity->components->Add(ComponentType::PointLight);
-            }
-            if(currentScene.hasComponent<clove::CollisionShapeComponent>(entity)) {
-                editorEntity->components->Add(ComponentType::CollisionShape);
+                Component ^ componentData = gcnew Component{};
+                componentData->type       = ComponentType::PointLight;
+
+                editorEntity->components->Add(componentData);
             }
             if(currentScene.hasComponent<clove::RigidBodyComponent>(entity)) {
-                editorEntity->components->Add(ComponentType::RigidBody);
+                RigidBodyComponentInitData ^ initData = gcnew RigidBodyComponentInitData{};
+                initData->mass                        = currentScene.getComponent<clove::RigidBodyComponent>(entity).mass;
+
+                Component ^ componentData = gcnew Component{};
+                componentData->type       = ComponentType::RigidBody;
+                componentData->initData   = initData;
+
+                editorEntity->components->Add(componentData);
+            }
+            if(currentScene.hasComponent<clove::CollisionShapeComponent>(entity)) {
+                auto &component{ currentScene.getComponent<clove::CollisionShapeComponent>(entity) };
+
+                CollisionShapeComponentInitData ^ initData = gcnew CollisionShapeComponentInitData{};
+                if(auto *sphere{ std::get_if<clove::CollisionShapeComponent::Sphere>(&component.shape) }) {
+                    initData->shapeType = ShapeType::Sphere;
+                    initData->radius    = sphere->radius;
+                } else if(auto *cube{ std::get_if<clove::CollisionShapeComponent::Cube>(&component.shape) }) {
+                    initData->shapeType = ShapeType::Cube;
+                    initData->halfExtents = Vector3(cube->halfExtents.x, cube->halfExtents.y, cube->halfExtents.z);
+                }
+
+                Component ^ componentData = gcnew Component{};
+                componentData->type       = ComponentType::CollisionShape;
+                componentData->initData   = initData;
+
+                editorEntity->components->Add(componentData);
             }
 
             loadMessage->entities->Add(editorEntity);
@@ -271,6 +306,8 @@ namespace garlic::membrane {
 
     void EditorLayer::createComponent(clove::Entity entity, ComponentType componentType) {
         bool added{ false };
+        System::Object ^initData;
+
         switch(componentType) {
             case ComponentType::Transform:
                 if(!currentScene.hasComponent<clove::TransformComponent>(entity)) {
@@ -280,8 +317,14 @@ namespace garlic::membrane {
                 break;
             case ComponentType::StaticModel:
                 if(!currentScene.hasComponent<clove::StaticModelComponent>(entity)) {
-                    currentScene.addComponent<clove::StaticModelComponent>(entity, clove::Application::get().getAssetManager()->getStaticModel("./cube.obj"));//TEMP: Hard coding to a cube for now
+                    std::string const vfsPath{ "./cube.obj" };//TEMP: Hard coding to a cube for now. This will either need to just be raw vertex data or an internal cube shipped with the editor
+                    currentScene.addComponent<clove::StaticModelComponent>(entity, clove::Application::get().getAssetManager()->getStaticModel(vfsPath));
+
+                    StaticModelComponentInitData ^ modelData = gcnew StaticModelComponentInitData{};
+                    modelData->vfsPath                       = gcnew System::String(vfsPath.c_str());
+
                     added = true;
+                    initData = modelData;
                 }
                 break;
             case ComponentType::PointLight:
@@ -293,13 +336,25 @@ namespace garlic::membrane {
             case ComponentType::RigidBody:
                 if(!currentScene.hasComponent<clove::RigidBodyComponent>(entity)) {
                     currentScene.addComponent<clove::RigidBodyComponent>(entity);
+
+                    RigidBodyComponentInitData ^ bodyData = gcnew RigidBodyComponentInitData{};
+                    bodyData->mass                        = currentScene.getComponent<clove::RigidBodyComponent>(entity).mass;
+
                     added = true;
+                    initData = bodyData;
                 }
                 break;
             case ComponentType::CollisionShape:
                 if(!currentScene.hasComponent<clove::CollisionShapeComponent>(entity)) {
-                    currentScene.addComponent<clove::CollisionShapeComponent>(entity, clove::CollisionShapeComponent::Sphere{ 1.0f });//TEMP: Defaulting as sphere. See CollisionShapeComponentViewModel
+                    float constexpr initRadius{ 1.0f };
+                    currentScene.addComponent<clove::CollisionShapeComponent>(entity, clove::CollisionShapeComponent::Sphere{ initRadius });
+
+                    CollisionShapeComponentInitData ^ shapeData = gcnew CollisionShapeComponentInitData{};
+                    shapeData->shapeType                        = ShapeType::Sphere;
+                    shapeData->radius                           = initRadius;
+
                     added = true;
+                    initData = shapeData;
                 }
                 break;
         }
@@ -308,6 +363,7 @@ namespace garlic::membrane {
             Engine_OnComponentCreated ^ message { gcnew Engine_OnComponentCreated };
             message->entity        = entity;
             message->componentType = componentType;
+            message->data          = initData;
             MessageHandler::sendMessage(message);
         }
     }

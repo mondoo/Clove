@@ -10,11 +10,14 @@ namespace Garlic.Bulb {
                 OnStaticModelChanged?.Invoke(filePath);
             }
         }
-        private string filePath = "";
+        private string filePath;
 
         public delegate void StaticModelChangedHandler(string path);
         public StaticModelChangedHandler OnStaticModelChanged;
 
-        public StaticModelComponentViewModel(string name, Membrane.ComponentType type) : base(name, type) { }
+        public StaticModelComponentViewModel(Membrane.StaticModelComponentInitData initData) 
+            : base($"{Membrane.ComponentType.StaticModel}", Membrane.ComponentType.StaticModel) {
+            filePath = initData?.vfsPath;
+        }
     }
 }
