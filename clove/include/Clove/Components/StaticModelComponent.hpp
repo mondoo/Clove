@@ -15,7 +15,7 @@ namespace garlic::clove {
     template<>
     inline serialiser::Node serialise(StaticModelComponent const &object) {
         serialiser::Node node{};
-        node["path"] = object.model.getPath().string(); //TODO: This returns the full path and not the VFS path
+        node["path"] = object.model.getPath().string();
         return node;
     }
 
