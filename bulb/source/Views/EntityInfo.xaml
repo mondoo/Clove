@@ -62,19 +62,44 @@
 					<StackPanel>
 						<TextBlock Text="{Binding Name}" 
 							   FontWeight="Bold"/>
-						<StackPanel Orientation="Horizontal"
-									Margin="10,0,0,0">
-							<TextBlock Text="File Path"
-									   Margin="0,0,5,0"/>
+						<Grid Margin="10, 0, 0, 0">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition/>
+								<ColumnDefinition/>
+							</Grid.ColumnDefinitions>
+							
+							<TextBlock Text="Mesh"
+									   Margin="0, 0, 5, 0"
+									   Grid.Column="0"/>
 							<Border BorderThickness="1"
-									BorderBrush="Black">
-								<TextBlock Text="{Binding FilePath, Mode=TwoWay}"
+									BorderBrush="Black"
+									Grid.Column="1">
+								<TextBlock Text="{Binding MeshPath, Mode=TwoWay}"
 										   AllowDrop="True"
 										   Drop="TextBox_Drop"
 										   Background="Transparent"
 										   MinWidth="30"/>
 							</Border>
-						</StackPanel>
+						</Grid>
+						<Grid Margin="10, 0, 0, 0">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition/>
+								<ColumnDefinition/>
+							</Grid.ColumnDefinitions>
+							
+							<TextBlock Text="Texture"
+									   Margin="0, 0, 5, 0"
+									   Grid.Column="0"/>
+							<Border BorderThickness="1"
+									BorderBrush="Black"
+									Grid.Column="1">
+								<TextBlock Text="{Binding TexturePath, Mode=TwoWay}"
+										   AllowDrop="True"
+										   Drop="TextBox_Drop"
+										   Background="Transparent"
+										   MinWidth="30"/>
+							</Border>
+						</Grid>
 					</StackPanel>
 				</DataTemplate>
 
