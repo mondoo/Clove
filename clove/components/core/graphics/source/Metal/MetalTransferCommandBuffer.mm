@@ -7,6 +7,24 @@
 #include <Clove/Cast.hpp>
 
 namespace garlic::clove {
+	namespace {
+		size_t getBytesPerPixel(GhaImage::Format imageFormat) {
+			switch (imageFormat) {
+				case GhaImage::Format::R8_UNORM:
+					return 1;
+				case GhaImage::Format::R8G8B8A8_SRGB:
+				case GhaImage::Format::B8G8R8A8_SRGB:
+				case GhaImage::Format::B8G8R8A8_UNORM:
+				case GhaImage::Format::D32_SFLOAT:
+					return 4;
+				case GhaImage::Format::Unkown:
+				default:
+					CLOVE_ASSERT(false, "Unknown format type");
+					return 0;
+			}
+		}
+	}
+	
 	MetalTransferCommandBuffer::MetalTransferCommandBuffer(bool allowReuse)
 		: allowReuse{ allowReuse } {
 	}
@@ -49,12 +67,15 @@ namespace garlic::clove {
 	
 	void MetalTransferCommandBuffer::copyBufferToImage(GhaBuffer &source, size_t const sourceOffset, GhaImage &destination, vec3i const &destinationOffset, vec3ui const &destinationExtent) {
 		commands.emplace_back([source = &source, sourceOffset, destination = &destination, destinationOffset, destinationExtent](id<MTLBlitCommandEncoder> encoder){
+			auto const *const metalImage{ polyCast<MetalImage>(destination) };
+			auto const &imageDescriptor{ metalImage->getDescriptor() };
+			
 			[encoder copyFromBuffer:polyCast<MetalBuffer>(source)->getBuffer()
 					   sourceOffset:sourceOffset
-				  sourceBytesPerRow:0//Tightly packed
-				sourceBytesPerImage:0//Tightly packed
+				  sourceBytesPerRow:getBytesPerPixel(imageDescriptor.format) * imageDescriptor.dimensions.x //Always assume the bytes per row is the same as the image's width. Metal does not consider 0 tightly packed like Vulkan does
+				sourceBytesPerImage:0//TODO: For 3D textures and texture arrays
 						 sourceSize:MTLSizeMake(destinationExtent.x, destinationExtent.y, 1)
-						  toTexture:polyCast<MetalImage>(destination)->getTexture()
+						  toTexture:metalImage->getTexture()
 				   destinationSlice:0
 				   destinationLevel:0
 				  destinationOrigin:MTLOriginMake(destinationOffset.x, destinationOffset.y, 0)];
@@ -63,15 +84,18 @@ namespace garlic::clove {
 
 	void MetalTransferCommandBuffer::copyImageToBuffer(GhaImage &source, vec3i const &sourceOffset, vec3ui const &sourceExtent, GhaBuffer &destination, size_t const destinationOffset) {
 		commands.emplace_back([source = &source, sourceOffset, sourceExtent, destination = &destination, destinationOffset](id<MTLBlitCommandEncoder> encoder){
-			[encoder copyFromTexture:polyCast<MetalImage>(source)->getTexture()
+			auto const *const metalImage{ polyCast<MetalImage>(source) };
+			auto const &imageDescriptor{ metalImage->getDescriptor() };
+			
+			[encoder copyFromTexture:metalImage->getTexture()
 						 sourceSlice:0
 						 sourceLevel:0
 						sourceOrigin:MTLOriginMake(sourceOffset.x, sourceOffset.y, 0)
 						  sourceSize:MTLSizeMake(sourceExtent.x, sourceExtent.y, 1)
 							toBuffer:polyCast<MetalBuffer>(destination)->getBuffer()
 				   destinationOffset:destinationOffset
-			  destinationBytesPerRow:0//Tightliy packed
-			destinationBytesPerImage:0];//Tightly packed
+			  destinationBytesPerRow:getBytesPerPixel(imageDescriptor.format) * imageDescriptor.dimensions.x //Always assume the bytes per row is the same as the image's width. Metal does not consider 0 tightly packed like Vulkan does
+			destinationBytesPerImage:0];//TODO: For 3D textures and texture arrays
 		});
 	}
 
