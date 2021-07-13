@@ -414,16 +414,7 @@ namespace garlic::clove {
 	}
 	
 	Expected<std::unique_ptr<GhaFence>, std::runtime_error> MetalFactory::createFence(GhaFence::Descriptor descriptor) {
-		dispatch_semaphore_t semaphore{ dispatch_semaphore_create(0) };
-		if(descriptor.signaled) {
-			dispatch_semaphore_signal(semaphore);
-		}
-		
-		auto result{ std::unique_ptr<GhaFence>{ std::make_unique<MetalFence>(semaphore) } };
-		
-		[semaphore release];
-		
-		return result;
+		return std::unique_ptr<GhaFence>{ std::make_unique<MetalFence>(descriptor.signaled) };
 	}
 
 	Expected<std::unique_ptr<GhaBuffer>, std::runtime_error> MetalFactory::createBuffer(GhaBuffer::Descriptor descriptor) {

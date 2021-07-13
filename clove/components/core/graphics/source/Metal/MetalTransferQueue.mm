@@ -29,7 +29,7 @@ namespace garlic::clove {
 		//no op
 	}
 
-	void MetalTransferQueue::submit(std::vector<TransferSubmitInfo> const &submissions, GhaFence const *signalFence) {
+	void MetalTransferQueue::submit(std::vector<TransferSubmitInfo> const &submissions, GhaFence *signalFence) {
 		@autoreleasepool {
 			for(auto const &submission : submissions) {
 				for(auto const &commandBuffer : submission.commandBuffers) {
@@ -78,10 +78,10 @@ namespace garlic::clove {
 			if(signalFence != nullptr) {
 				id<MTLCommandBuffer> signalBuffer{ [commandQueue commandBuffer] };
 				
-				__block dispatch_semaphore_t block_semaphore{ polyCast<MetalFence const>(signalFence)->getSemaphore() };
+				__block auto *fence{ polyCast<MetalFence>(signalFence) };
 				[signalBuffer addCompletedHandler:^(id<MTLCommandBuffer> buffer) {
-					 dispatch_semaphore_signal(block_semaphore);
-				 }];
+					fence->signal();
+				}];
 				
 				[signalBuffer commit];
 			}

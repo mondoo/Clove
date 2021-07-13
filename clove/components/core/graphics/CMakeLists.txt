@@ -112,7 +112,6 @@ set(
 		${INCLUDE}/Metal/MetalFactory.hpp
 		${SOURCE}/Metal/MetalFactory.mm
 		${INCLUDE}/Metal/MetalFence.hpp
-		${INCLUDE}/Metal/MetalFence.inl
 		${SOURCE}/Metal/MetalFence.mm
 		${INCLUDE}/Metal/MetalFramebuffer.hpp
 		${SOURCE}/Metal/MetalFramebuffer.mm

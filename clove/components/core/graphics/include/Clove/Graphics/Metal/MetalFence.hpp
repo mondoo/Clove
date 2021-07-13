@@ -3,32 +3,34 @@
 #include "Clove/Graphics/GhaFence.hpp"
 
 #include <MetalKit/MetalKit.h>
+#include <condition_variable>
+#include <mutex>
 
 namespace garlic::clove {
 	class MetalFence : public GhaFence {
 		//VARIABLES
 	private:
-		//In metal fences and semaphores are swapped. So a semaphore synchronises between CPU and GPU
-		dispatch_semaphore_t semaphore{ nullptr };
+		//dispatch_sempahore_t is a counting semaphore. We want to simulate vulkan's fence which acts as a bool so we manually handle it ourselves.
+		bool signaled{ false };
+		std::mutex signaledMutex{};
+		std::condition_variable conditionVariable{};
 		
 		//FUNCTIONS
 	public:
 		MetalFence() = delete;
-		MetalFence(dispatch_semaphore_t semaphore);
+		MetalFence(bool signaled);
 		
 		MetalFence(MetalFence const &other) = delete;
-		MetalFence(MetalFence &&other) noexcept;
+		MetalFence(MetalFence &&other) noexcept = delete;
 		
 		MetalFence &operator=(MetalFence const &other) = delete;
-		MetalFence &operator=(MetalFence &&other) noexcept;
+		MetalFence &operator=(MetalFence &&other) noexcept = delete;
 		
 		~MetalFence();
 		
 		void wait() override;
 		void reset() override;
 		
-		inline dispatch_semaphore_t getSemaphore() const;
+		void signal();
 	};
 }
-
-#include "MetalFence.inl"
