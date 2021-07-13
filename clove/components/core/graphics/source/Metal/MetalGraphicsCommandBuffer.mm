@@ -77,9 +77,7 @@ namespace garlic::clove {
 	}
 	
 	void MetalGraphicsCommandBuffer::endRenderPass() {
-		currentPass->commands.emplace_back([](id<MTLRenderCommandEncoder> encoder){
-			[encoder endEncoding];
-		});
+		currentPass = nullptr;
 	}
 
 	void MetalGraphicsCommandBuffer::setViewport(vec2i position, vec2ui size) {
