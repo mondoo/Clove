@@ -21,7 +21,7 @@ namespace garlic::clove {
 	}
 
 	std::unique_ptr<GhaComputeCommandBuffer> MetalComputeQueue::allocateCommandBuffer() {
-		return std::make_unique<MetalComputeCommandBuffer>();
+		return std::make_unique<MetalComputeCommandBuffer>(allowBufferReuse);
 	}
 	
 	void MetalComputeQueue::freeCommandBuffer(GhaComputeCommandBuffer &buffer) {

@@ -20,7 +20,8 @@ namespace garlic::clove {
 		
 		//FUNCTIONS
 	public:
-		MetalComputeCommandBuffer();
+		MetalComputeCommandBuffer() = delete;
+		MetalComputeCommandBuffer(bool allowReuse);
 		
 		MetalComputeCommandBuffer(MetalComputeCommandBuffer const &other) = delete;
 		MetalComputeCommandBuffer(MetalComputeCommandBuffer &&other) noexcept;

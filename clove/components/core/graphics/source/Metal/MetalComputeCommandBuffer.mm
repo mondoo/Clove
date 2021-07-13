@@ -9,7 +9,9 @@
 #include <Clove/Cast.hpp>
 
 namespace garlic::clove {
-	MetalComputeCommandBuffer::MetalComputeCommandBuffer() = default;
+	MetalComputeCommandBuffer::MetalComputeCommandBuffer(bool allowReuse)
+		: allowReuse{ allowReuse } {
+	}
 	
 	MetalComputeCommandBuffer::MetalComputeCommandBuffer(MetalComputeCommandBuffer &&other) noexcept = default;
 	
