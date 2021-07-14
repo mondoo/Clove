@@ -185,22 +185,26 @@ namespace garlic::clove {
 	}
 
 	void MetalGraphicsCommandBuffer::bufferMemoryBarrier(GhaBuffer &buffer, BufferMemoryBarrierInfo const &barrierInfo, PipelineStage sourceStage, PipelineStage destinationStage) {
-		currentPass->commands.emplace_back([buffer = &buffer, sourceStage, destinationStage](id<MTLRenderCommandEncoder> encoder){
-			id<MTLBuffer> mtlBuffer{ polyCast<MetalBuffer>(buffer)->getBuffer() };
-			[encoder memoryBarrierWithResources:&mtlBuffer
-										  count:1
-									afterStages:convertStage(sourceStage)
-								   beforeStages:convertStage(destinationStage)];
-		});
+		if(currentPass != nullptr) {
+			currentPass->commands.emplace_back([buffer = &buffer, sourceStage, destinationStage](id<MTLRenderCommandEncoder> encoder) {
+				id<MTLBuffer> mtlBuffer{ polyCast<MetalBuffer>(buffer)->getBuffer() };
+				[encoder memoryBarrierWithResources:&mtlBuffer
+											  count:1
+										afterStages:convertStage(sourceStage)
+									   beforeStages:convertStage(destinationStage)];
+			});
+		}
 	}
 	
 	void MetalGraphicsCommandBuffer::imageMemoryBarrier(GhaImage &image, ImageMemoryBarrierInfo const &barrierInfo, PipelineStage sourceStage, PipelineStage destinationStage) {
-		currentPass->commands.emplace_back([image = &image, sourceStage, destinationStage](id<MTLRenderCommandEncoder> encoder){
-			id<MTLTexture> mtlTexture{ polyCast<MetalImage>(image)->getTexture() };
-			[encoder memoryBarrierWithResources:&mtlTexture
-										  count:1
-									afterStages:convertStage(sourceStage)
-								   beforeStages:convertStage(destinationStage)];
-		});
+		if(currentPass != nullptr) {
+			currentPass->commands.emplace_back([image = &image, sourceStage, destinationStage](id<MTLRenderCommandEncoder> encoder) {
+				id<MTLTexture> mtlTexture{ polyCast<MetalImage>(image)->getTexture() };
+				[encoder memoryBarrierWithResources:&mtlTexture
+											  count:1
+										afterStages:convertStage(sourceStage)
+									   beforeStages:convertStage(destinationStage)];
+			});
+		} 
 	}
 }
