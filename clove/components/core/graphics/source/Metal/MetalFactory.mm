@@ -262,9 +262,6 @@ namespace garlic::clove {
 				switch(binding.type) {
 					case DescriptorType::SampledImage:
 						[bindingDescriptor setDataType:MTLDataTypeTexture];
-						//TODO: Come back to this when I can inspect shader code. Maybe I can just use the pointer?
-						//[bindingDescriptor setTextureType:MTLTextureType2D];//TODO: What about cube maps?
-						
 						break;
 					case DescriptorType::Sampler:
 						[bindingDescriptor setDataType:MTLDataTypeSampler];
@@ -310,10 +307,7 @@ namespace garlic::clove {
 		
 			//Input assembly
 			MTLPrimitiveTopologyClass const topology{ MTLPrimitiveTopologyClassTriangle };
-			
-			//Rasteriser
-			MTLWinding const winding{ MTLWindingClockwise }; //TODO: Set inside the command encoder
-		
+
 			//Depth / Stencil
 			MTLDepthStencilDescriptor *depthStencil{ [[[MTLDepthStencilDescriptor alloc] init] autorelease] };
 			depthStencil.depthWriteEnabled = static_cast<BOOL>(descriptor.depthState.depthWrite);

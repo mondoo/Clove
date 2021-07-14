@@ -74,6 +74,12 @@ namespace garlic::clove {
 			
 			return [commandBuffer renderCommandEncoderWithDescriptor:frameBufferDescriptor];
 		};
+		
+		//Set the winding order as the first command. In vulkan this is done as part of the rasteriser
+		currentPass->commands.emplace_back([](id<MTLRenderCommandEncoder> encoder) {
+			MTLWinding constexpr winding{ MTLWindingClockwise };
+			[encoder setFrontFacingWinding:winding];
+		});
 	}
 	
 	void MetalGraphicsCommandBuffer::endRenderPass() {
