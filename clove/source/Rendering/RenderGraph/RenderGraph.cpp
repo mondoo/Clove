@@ -85,7 +85,7 @@ namespace garlic::clove {
     }
 
     RgPassIdType RenderGraph::addRenderPass(RgRenderPass::Descriptor passDescriptor) {
-        RgPassIdType const renderPassId{ nextPassId };
+        RgPassIdType const renderPassId{ nextPassId++ };
 
         for(auto &renderTarget : passDescriptor.renderTargets) {
             RgResourceIdType const imageId{ renderTarget.target };
