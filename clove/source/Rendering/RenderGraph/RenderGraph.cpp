@@ -431,7 +431,10 @@ namespace garlic::clove {
 
     GhaImage::Layout RenderGraph::getPreviousLayout(std::vector<RgPassIdType> const &passes, int32_t const currentPassIndex, RgResourceIdType const imageId) {
         for(int32_t i = currentPassIndex - 1; i >= 0; --i) {
-            std::unique_ptr<RgRenderPass> const &renderPass{ renderPasses[passes[i]] };
+            if(!renderPasses.contains(passes[i])) {
+                continue;//Only evaluate renderpasses for now
+            }
+            std::unique_ptr<RgRenderPass> const &renderPass{ renderPasses.at(passes[i]) };
 
             if(renderPass->getInputResources().contains(imageId)) {
                 for(auto const &submission : renderPass->getSubmissions()) {
