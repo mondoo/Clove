@@ -91,7 +91,9 @@ namespace garlic::clove {
             RgResourceIdType const imageId{ renderTarget.target };
 
             auto &image{ images.at(imageId) };
-            image->addImageUsage(GhaImage::UsageMode::ColourAttachment);
+            if(!image->isExternalImage()) {
+                image->addImageUsage(GhaImage::UsageMode::ColourAttachment);
+            }
             image->addWritePass(renderPassId);
         }
 
@@ -99,7 +101,9 @@ namespace garlic::clove {
             RgResourceIdType const imageId{ passDescriptor.depthStencil.target };
 
             auto &image{ images.at(imageId) };
-            image->addImageUsage(GhaImage::UsageMode::DepthStencilAttachment);
+            if(!image->isExternalImage()) {
+                image->addImageUsage(GhaImage::UsageMode::DepthStencilAttachment);
+            }
             image->addWritePass(renderPassId);
         }
 
@@ -115,7 +119,9 @@ namespace garlic::clove {
             RgResourceIdType const bufferId{ submission.vertexBuffer };
 
             auto &buffer{ buffers.at(bufferId) };
-            buffer->addBufferUsage(GhaBuffer::UsageMode::VertexBuffer);
+            if(!buffer->isExternalBuffer()) {
+                buffer->addBufferUsage(GhaBuffer::UsageMode::VertexBuffer);
+            }
             buffer->addReadPass(renderPass);
         }
 
@@ -123,7 +129,9 @@ namespace garlic::clove {
             RgResourceIdType const bufferId{ submission.indexBuffer };
 
             auto &buffer{ buffers.at(bufferId) };
-            buffer->addBufferUsage(GhaBuffer::UsageMode::IndexBuffer);
+            if(!buffer->isExternalBuffer()) {
+                buffer->addBufferUsage(GhaBuffer::UsageMode::IndexBuffer);
+            }
             buffer->addReadPass(renderPass);
         }
 
@@ -131,7 +139,9 @@ namespace garlic::clove {
             RgResourceIdType const bufferId{ ubo.buffer };
 
             auto &buffer{ buffers.at(bufferId) };
-            buffer->addBufferUsage(GhaBuffer::UsageMode::UniformBuffer);
+            if(!buffer->isExternalBuffer()) {
+                buffer->addBufferUsage(GhaBuffer::UsageMode::UniformBuffer);
+            }
             buffer->addReadPass(renderPass);
         }
 
@@ -139,7 +149,9 @@ namespace garlic::clove {
             RgResourceIdType const imageId{ imageSampler.image };
 
             auto &image{ images.at(imageId) };
-            image->addImageUsage(GhaImage::UsageMode::Sampled);
+            if(!image->isExternalImage()) {
+                image->addImageUsage(GhaImage::UsageMode::Sampled);
+            }
             image->addReadPass(renderPass);
         }
 
