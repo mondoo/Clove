@@ -43,9 +43,10 @@ namespace garlic::clove {
         rgBuffer->addWritePass(transferPassId);
 
         RgTransferPass::BufferWrite write{
-            .data   = std::vector<std::byte>(size),
-            .offset = offset,
-            .size   = size,
+            .bufferId = buffer,
+            .data     = std::vector<std::byte>(size),
+            .offset   = offset,
+            .size     = size,
         };
         memcpy(write.data.data(), data, size);
 
