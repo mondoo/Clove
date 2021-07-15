@@ -130,9 +130,13 @@ add_library(
 		${INCLUDE}/Rendering/RenderGraph/CacheUtils.inl
 		${INCLUDE}/Rendering/RenderGraph/RenderGraph.hpp
 		${SOURCE}/Rendering/RenderGraph/RenderGraph.cpp
+		${INCLUDE}/Rendering/RenderGraph/Bindings.hpp
 		${INCLUDE}/Rendering/RenderGraph/RgBuffer.hpp
 		${INCLUDE}/Rendering/RenderGraph/RgBuffer.inl
 		${SOURCE}/Rendering/RenderGraph/RgBuffer.cpp
+		${INCLUDE}/Rendering/RenderGraph/RgComputePass.hpp
+		${INCLUDE}/Rendering/RenderGraph/RgComputePass.inl
+		${SOURCE}/Rendering/RenderGraph/RgComputePass.cpp
 		${INCLUDE}/Rendering/RenderGraph/RgFrameCache.hpp
 		${SOURCE}/Rendering/RenderGraph/RgFrameCache.cpp
 		${INCLUDE}/Rendering/RenderGraph/RgGlobalCache.hpp

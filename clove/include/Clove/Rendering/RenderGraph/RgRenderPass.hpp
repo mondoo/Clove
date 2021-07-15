@@ -1,42 +1,13 @@
 #pragma once
 
+#include "Clove/Rendering/RenderGraph/Bindings.hpp"
 #include "Clove/Rendering/RenderGraph/RgPass.hpp"
 #include "Clove/Rendering/RenderGraph/RgShader.hpp"
 
-#include <Clove/Graphics/GhaGraphicsCommandBuffer.hpp>
-#include <Clove/Graphics/GhaRenderPass.hpp>
-#include <Clove/Graphics/GhaSampler.hpp>
 #include <vector>
 
 namespace {
     class RgGlobalCache;
-}
-
-namespace garlic::clove {
-    struct RgBufferBinding {
-        uint32_t slot{};
-        RgResourceIdType buffer{};
-    };
-
-    struct RgImageBindng {
-        uint32_t slot{};
-        GhaSampler::Descriptor samplerState{};//TODO: RG version?
-        RgResourceIdType image{};
-    };
-
-    struct RgRenderTargetBinding {
-        LoadOperation loadOp{};
-        StoreOperation storeOp{};
-        ColourValue clearColour{};
-        RgResourceIdType target{};
-    };
-
-    struct RgDepthStencilBinding {
-        LoadOperation loadOp{};
-        StoreOperation storeOp{};
-        DepthStencilValue clearValue{};
-        RgResourceIdType target{};
-    };
 }
 
 namespace garlic::clove {
