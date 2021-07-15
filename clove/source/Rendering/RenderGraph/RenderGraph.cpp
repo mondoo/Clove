@@ -36,7 +36,7 @@ namespace garlic::clove {
     }
 
     void RenderGraph::writeToBuffer(RgResourceIdType buffer, void const *data, size_t const offset, size_t const size) {
-        RgPassIdType const transferPassId{ nextPassId };
+        RgPassIdType const transferPassId{ nextPassId++ };
 
         auto &rgBuffer{ buffers.at(buffer) };
         rgBuffer->makeCpuAccessable();
