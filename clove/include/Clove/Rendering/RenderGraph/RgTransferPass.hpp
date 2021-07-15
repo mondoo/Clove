@@ -2,6 +2,8 @@
 
 #include "Clove/Rendering/RenderGraph/RgPass.hpp"
 
+#include <vector>
+
 namespace garlic::clove {
     class RgTransferPass : public RgPass {
         //TYPES
