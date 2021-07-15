@@ -65,6 +65,7 @@ namespace garlic::clove {
 
         /**
          * @brief Constructs an RgBuffer with the specified size.
+         * @details Buffers are created in video memory unless written to from the CPU.
          * @param bufferSize 
          * @return 
          */
@@ -81,6 +82,7 @@ namespace garlic::clove {
 
         /**
          * @brief Write data into this buffer.
+         * @details Will transition this buffer from video memory to system memory if requierd.
          * @param data Pointer to data to write.
          * @param offset Offset into the buffer to write to. If the RgBuffer views an offset into a GhaBuffer then it'll be view offset + offset
          * @param size Size of the region in the buffer to write to.
