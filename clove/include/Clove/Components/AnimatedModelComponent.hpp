@@ -6,6 +6,6 @@
 namespace garlic::clove {
     struct AnimatedModelComponent {
         AnimatedModel model;
-        std::shared_ptr<Material> material;
+        std::shared_ptr<Material> material{ std::make_shared<Material>() };
     };
 }
