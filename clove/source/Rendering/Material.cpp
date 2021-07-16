@@ -9,10 +9,11 @@
 #include <Clove/Graphics/GhaImageView.hpp>
 
 namespace garlic::clove {
-    std::weak_ptr<GhaImage> Material::defaultImage{};
+    std::shared_ptr<GhaImage> Material::defaultImage{ nullptr };
+    std::shared_ptr<GhaImageView> Material::defaultView{ nullptr };
 
     Material::Material() {
-        if(defaultImage.use_count() == 0) {
+        if(defaultImage == nullptr) {
             GhaFactory &factory{ *Application::get().getGraphicsDevice()->getGraphicsFactory() };
 
             vec2f constexpr imageDimensions{ 1.0f, 1.0f };
@@ -30,22 +31,12 @@ namespace garlic::clove {
             std::shared_ptr<GhaImage> image{ createImageWithData(factory, imageDescriptor, &white, bytesPerTexel) };
 
             defaultImage = image;
-
-            diffuseImage  = image;
-            specularImage = image;
-        } else {
-            diffuseImage  = defaultImage.lock();
-            specularImage = defaultImage.lock();
+            defaultView  = defaultImage->createView(GhaImageView::Descriptor{
+                .type       = GhaImageView::Type::_2D,
+                .layer      = 0,
+                .layerCount = 1,
+            });
         }
-
-        GhaImageView::Descriptor const viewDescriptor{
-            .type       = GhaImageView::Type::_2D,
-            .layer      = 0,
-            .layerCount = 1,
-        };
-
-        diffuseView  = diffuseImage->createView(viewDescriptor);
-        specularView = specularImage->createView(viewDescriptor);
     }
 
     Material::Material(Material const &other) = default;
@@ -58,21 +49,19 @@ namespace garlic::clove {
 
     Material::~Material() = default;
 
-    void Material::setDiffuseTexture(std::shared_ptr<GhaImage> image) {
-        diffuseImage = std::move(image);
-        diffuseView  = diffuseImage->createView(GhaImageView::Descriptor{
-            .type       = GhaImageView::Type::_2D,
-            .layer      = 0,
-            .layerCount = 1,
-        });
+    std::shared_ptr<GhaImageView> Material::getDiffuseView() const {
+        if(diffuseTexture.isValid()) {
+            return diffuseTexture->getImageView();
+        } else {
+            return defaultView;
+        }
     }
 
-    void Material::setSpecularTexture(std::shared_ptr<GhaImage> image) {
-        specularImage = std::move(image);
-        specularView  = specularImage->createView(GhaImageView::Descriptor{
-            .type       = GhaImageView::Type::_2D,
-            .layer      = 0,
-            .layerCount = 1,
-        });
+    std::shared_ptr<GhaImageView> Material::getSpecularView() const {
+        if(specularTexture.isValid()) {
+            return specularTexture->getImageView();
+        } else {
+            return defaultView;
+        }
     }
 }

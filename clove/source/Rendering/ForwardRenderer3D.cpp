@@ -284,15 +284,15 @@ namespace garlic::clove {
                     meshInfo.transform,
                     inverse(transpose(meshInfo.transform)),
                 },
-                .colour       = meshInfo.material->colour,
+                .colour       = meshInfo.material->getColour(),
                 .matrixPallet = meshInfo.matrixPalet,
             };
 
             writeObjectBuffer(currentImageData.objectBuffers[index], layout);
 
             std::shared_ptr<GhaDescriptorSet> &meshDescriptorSet = meshSets[index];
-            meshDescriptorSet->map(*meshInfo.material->diffuseView, *textureSampler, GhaImage::Layout::ShaderReadOnlyOptimal, 0);
-            meshDescriptorSet->map(*meshInfo.material->specularView, *textureSampler, GhaImage::Layout::ShaderReadOnlyOptimal, 1);
+            meshDescriptorSet->map(*meshInfo.material->getDiffuseView(), *textureSampler, GhaImage::Layout::ShaderReadOnlyOptimal, 0);
+            meshDescriptorSet->map(*meshInfo.material->getSpecularView(), *textureSampler, GhaImage::Layout::ShaderReadOnlyOptimal, 1);
             meshDescriptorSet->map(*currentImageData.objectBuffers[index], offsetof(MeshUBOLayout, model), sizeof(ModelData), DescriptorType::UniformBuffer, 2);
             //meshDescriptorSet->map(*currentImageData.objectBuffers[index], offsetof(MeshUBOLayout, matrixPallet), sizeof(mat4f) * MAX_JOINTS, DescriptorType::UniformBuffer, 3);
             meshDescriptorSet->map(*currentImageData.objectBuffers[index], offsetof(MeshUBOLayout, colour), sizeof(vec4f), DescriptorType::UniformBuffer, 4);
