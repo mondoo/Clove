@@ -9,13 +9,11 @@
 #include <Clove/Graphics/GhaImageView.hpp>
 
 namespace garlic::clove {
-    std::weak_ptr<garlic::clove::GhaImage> Material::defaultImage{};
+    std::weak_ptr<GhaImage> Material::defaultImage{};
 
     Material::Material() {
-        using namespace garlic::clove;
-
         if(defaultImage.use_count() == 0) {
-            GhaFactory &factory = *Application::get().getGraphicsDevice()->getGraphicsFactory();
+            GhaFactory &factory{ *Application::get().getGraphicsDevice()->getGraphicsFactory() };
 
             vec2f constexpr imageDimensions{ 1.0f, 1.0f };
             uint32_t constexpr bytesPerTexel{ 4 };
@@ -29,7 +27,7 @@ namespace garlic::clove {
                 .sharingMode = SharingMode::Exclusive,
             };
 
-            std::shared_ptr<GhaImage> image = createImageWithData(factory, imageDescriptor, &white, bytesPerTexel);
+            std::shared_ptr<GhaImage> image{ createImageWithData(factory, imageDescriptor, &white, bytesPerTexel) };
 
             defaultImage = image;
 
@@ -60,19 +58,19 @@ namespace garlic::clove {
 
     Material::~Material() = default;
 
-    void Material::setDiffuseTexture(std::shared_ptr<garlic::clove::GhaImage> image) {
+    void Material::setDiffuseTexture(std::shared_ptr<GhaImage> image) {
         diffuseImage = std::move(image);
-        diffuseView  = diffuseImage->createView(garlic::clove::GhaImageView::Descriptor{
-            .type       = garlic::clove::GhaImageView::Type::_2D,
+        diffuseView  = diffuseImage->createView(GhaImageView::Descriptor{
+            .type       = GhaImageView::Type::_2D,
             .layer      = 0,
             .layerCount = 1,
         });
     }
 
-    void Material::setSpecularTexture(std::shared_ptr<garlic::clove::GhaImage> image) {
+    void Material::setSpecularTexture(std::shared_ptr<GhaImage> image) {
         specularImage = std::move(image);
-        specularView  = specularImage->createView(garlic::clove::GhaImageView::Descriptor{
-            .type       = garlic::clove::GhaImageView::Type::_2D,
+        specularView  = specularImage->createView(GhaImageView::Descriptor{
+            .type       = GhaImageView::Type::_2D,
             .layer      = 0,
             .layerCount = 1,
         });

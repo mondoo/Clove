@@ -4,10 +4,12 @@
 #include "Clove/Rendering/Renderables/StaticModel.hpp"
 #include "Clove/SerialisationCommon.hpp"
 #include "Clove/Application.hpp"
+#include "Clove/Rendering/Material.hpp"
 
 namespace garlic::clove {
     struct StaticModelComponent {
         AssetPtr<StaticModel> model;
+        std::shared_ptr<Material> material;
     };
 }
 

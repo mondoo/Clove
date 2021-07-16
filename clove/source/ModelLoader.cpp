@@ -355,7 +355,7 @@ namespace garlic::clove::ModelLoader {
         const aiScene *scene{ openFile(modelFilePath, importer) };
         if(scene == nullptr || ((scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE) != 0u) || scene->mRootNode == nullptr) {
             CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Assimp Error: {0}", importer.GetErrorString());
-            return { meshes, std::make_shared<Material>() };
+            return { meshes };
         }
 
         for(size_t i = 0; i < scene->mNumMeshes; ++i) {
@@ -365,7 +365,7 @@ namespace garlic::clove::ModelLoader {
 
         CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Debug, "Finished loading static model: {0}", modelFilePath.string());
         //TEMP: Storing the path of the model for serialisation purposes
-        StaticModel model{ meshes, std::make_shared<Material>() };
+        StaticModel model{ meshes };
         return model;
     }
 
@@ -381,7 +381,7 @@ namespace garlic::clove::ModelLoader {
         const aiScene *scene{ openFile(modelFilePath, importer) };
         if(scene == nullptr || ((scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE) != 0u) || scene->mRootNode == nullptr) {
             CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Assimp Error: {0}", importer.GetErrorString());
-            return { meshes, std::make_shared<Material>(), nullptr, {} };
+            return { meshes, nullptr, {} };
         }
 
         //Lookup maps
@@ -424,7 +424,7 @@ namespace garlic::clove::ModelLoader {
 
         if(skeleton->joints.size() > MAX_JOINTS) {
             CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0} has too many joints (Max supported {1}, current amount {2}). Could not import animations", modelFilePath.string(), MAX_JOINTS, skeleton->joints.size());
-            return { meshes, std::make_shared<Material>(), nullptr, {} };
+            return { meshes, nullptr, {} };
         }
 
         //Load animations
@@ -479,6 +479,6 @@ namespace garlic::clove::ModelLoader {
         }
 
         CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Debug, "Finished loading animated model: {0}", modelFilePath.string());
-        return { meshes, std::make_shared<Material>(), std::move(skeleton), std::move(animationClips) };
+        return { meshes, std::move(skeleton), std::move(animationClips) };
     }
 }

@@ -42,8 +42,8 @@ namespace garlic::clove {
 
         ~Material();
 
-        void setDiffuseTexture(std::shared_ptr<garlic::clove::GhaImage> image);
-        void setSpecularTexture(std::shared_ptr<garlic::clove::GhaImage> image);
+        void setDiffuseTexture(std::shared_ptr<GhaImage> image);
+        void setSpecularTexture(std::shared_ptr<GhaImage> image);
 
         inline void setColour(vec4f colour);
         inline void setShininess(float shininess);

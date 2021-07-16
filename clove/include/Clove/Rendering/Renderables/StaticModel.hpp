@@ -19,15 +19,14 @@ namespace garlic::clove {
         //VARIABLES
     private:
         std::vector<std::shared_ptr<Mesh>> meshes;
-        std::shared_ptr<Material> material;
 
         std::vector<Technique> techniques{};
 
         //FUNCTIONS
     public:
         StaticModel() = delete;
-        StaticModel(std::vector<std::shared_ptr<Mesh>> meshes, std::shared_ptr<Material> material);
-        StaticModel(std::vector<std::shared_ptr<Mesh>> meshes, std::shared_ptr<Material> material, std::vector<Technique> renderingTechniques);
+        StaticModel(std::vector<std::shared_ptr<Mesh>> meshes);
+        StaticModel(std::vector<std::shared_ptr<Mesh>> meshes, std::vector<Technique> renderingTechniques);
 
         StaticModel(StaticModel const &other);
         StaticModel(StaticModel &&other) noexcept;
@@ -36,9 +35,6 @@ namespace garlic::clove {
         StaticModel &operator=(StaticModel &&other) noexcept;
 
         ~StaticModel();
-
-        inline void setMaterial(std::shared_ptr<Material> material);
-        inline std::shared_ptr<Material> const &getMaterial() const;
 
         inline std::vector<std::shared_ptr<Mesh>> const &getMeshes() const;
 
