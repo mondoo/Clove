@@ -133,6 +133,9 @@ add_library(
 		${INCLUDE}/Rendering/Renderables/StaticModel.hpp
 		${INCLUDE}/Rendering/Renderables/StaticModel.inl
 		${SOURCE}/Rendering/Renderables/StaticModel.cpp
+		${INCLUDE}/Rendering/Renderables/Texture.hpp
+		${INCLUDE}/Rendering/Renderables/Texture.inl
+		${SOURCE}/Rendering/Renderables/Texture.cpp
 		${INCLUDE}/Rendering/RenderPasses/ForwardColourPass.hpp
 		${SOURCE}/Rendering/RenderPasses/ForwardColourPass.cpp
 		${INCLUDE}/Rendering/RenderPasses/DirectionalLightPass.hpp
