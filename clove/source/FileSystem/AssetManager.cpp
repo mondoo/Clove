@@ -53,4 +53,17 @@ namespace garlic::clove {
 
         return textures.at(pathString);
     }
+
+    AssetPtr<SoundFile> AssetManager::getSound(std::filesystem::path const &filePath) {
+        std::filesystem::path const fullSystemPath{ vfs->resolve(filePath) };
+        std::string const pathString{ filePath.string() };
+
+        if(!sounds.contains(pathString)) {
+            sounds[pathString] = AssetPtr<SoundFile>{ filePath, [fullSystemPath]() {
+                                                         return SoundFile{ fullSystemPath.string() };
+                                                     } };
+        }
+
+        return sounds.at(pathString);
+    }
 }
