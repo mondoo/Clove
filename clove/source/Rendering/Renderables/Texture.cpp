@@ -11,7 +11,7 @@
 namespace garlic::clove {
     Texture::Texture(std::unique_ptr<void, std::function<void(void *)>> buffer, vec2ui dimensions, int32_t channels)
         : buffer{ std::move(buffer) }
-        , dimensions{ std::move(dimensions) }
+        , dimensions{ dimensions }
         , channels{ channels } {
         GhaFactory &factory{ *Application::get().getGraphicsDevice()->getGraphicsFactory() };
 
