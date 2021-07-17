@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Clove/Rendering/Material.hpp"
 #include "Clove/Rendering/Techniques/Technique.hpp"
 
 #include <filesystem>
