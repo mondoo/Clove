@@ -34,7 +34,7 @@ namespace Garlic.Bulb {
         public bool CanStepBack => CurrentDirectory.Parent != null;
 
         public FileExplorerViewModel(string rootPath) {
-            var directoryViewModel = new DirectoryItemViewModel(rootPath);
+            var directoryViewModel = new FolderViewModel(rootPath);
             directoryViewModel.OnOpened += OnItemOpened;
 
             rootDirectory = directoryViewModel;

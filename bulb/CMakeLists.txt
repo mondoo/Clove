@@ -52,6 +52,8 @@ add_executable(
 
 		${SOURCE}/ViewModels/FileExplorer/DirectoryItemViewModel.cs
 		${SOURCE}/ViewModels/FileExplorer/FileExplorerViewModel.cs
+		${SOURCE}/ViewModels/FileExplorer/FileViewModel.cs
+		${SOURCE}/ViewModels/FileExplorer/FolderViewModel.cs
 
 		${SOURCE}/ViewModels/ComponentMenuItemViewModel.cs
 		${SOURCE}/ViewModels/EditorSessionViewModel.cs

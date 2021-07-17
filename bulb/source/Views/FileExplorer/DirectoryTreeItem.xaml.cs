@@ -20,7 +20,7 @@ namespace Garlic.Bulb {
             isExpanded = !isExpanded;
 
             if (isExpanded) {
-                var viewModel = (DirectoryItemViewModel)DataContext;
+                var viewModel = (FolderViewModel)DataContext;
                 foreach (var subDir in viewModel.SubDirectories) {
                     var item = new DirectoryTreeItem();
                     item.DataContext = subDir;
