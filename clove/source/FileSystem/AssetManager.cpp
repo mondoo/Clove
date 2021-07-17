@@ -2,6 +2,7 @@
 
 #include "Clove/FileSystem/VirtualFileSystem.hpp"
 #include "Clove/ModelLoader.hpp"
+#include "Clove/TextureLoader.hpp"
 
 namespace garlic::clove {
     AssetManager::AssetManager(VirtualFileSystem *vfs)
@@ -38,5 +39,18 @@ namespace garlic::clove {
         }
 
         return animatedModels.at(pathString);
+    }
+
+    AssetPtr<Texture> AssetManager::getTexture(std::filesystem::path const &filePath) {
+        std::filesystem::path const fullSystemPath{ vfs->resolve(filePath) };
+        std::string const pathString{ filePath.string() };
+
+        if(!textures.contains(pathString)) {
+            textures[pathString] = AssetPtr<Texture>{ filePath, [fullSystemPath]() {
+                                                         return TextureLoader::loadTexture(fullSystemPath).getValue();
+                                                     } };
+        }
+
+        return textures.at(pathString);
     }
 }
