@@ -385,8 +385,12 @@ namespace garlic::membrane {
         if(currentScene.hasComponent<clove::StaticModelComponent>(entity)) {
             auto &staticModel{ currentScene.getComponent<clove::StaticModelComponent>(entity) };
             staticModel.model = clove::Application::get().getAssetManager()->getStaticModel(meshPath);
-            staticModel.material->setDiffuseTexture(clove::Application::get().getAssetManager()->getTexture(diffusePath));
-            staticModel.material->setSpecularTexture(clove::Application::get().getAssetManager()->getTexture(specularPath));
+            if(!diffusePath.empty()) {
+                staticModel.material->setDiffuseTexture(clove::Application::get().getAssetManager()->getTexture(diffusePath));
+            }
+            if(!specularPath.empty()) {
+                staticModel.material->setSpecularTexture(clove::Application::get().getAssetManager()->getTexture(specularPath));
+            }
         }
     }
 

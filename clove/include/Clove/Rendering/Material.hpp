@@ -85,7 +85,7 @@ namespace garlic::clove {
             node["diffuse"] = "none";
         }
 
-        if(object.getDiffuseTexture().isValid()) {
+        if(object.getSpecularTexture().isValid()) {
             node["specular"] = object.getSpecularTexture().getPath().string();
         } else {
             node["specular"] = "none";
