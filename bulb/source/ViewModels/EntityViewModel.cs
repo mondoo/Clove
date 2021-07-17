@@ -116,10 +116,12 @@ namespace Garlic.Bulb {
             Membrane.MessageHandler.sendMessage(message);
         }
 
-        private void UpdateStaticModel(string path) {
+        private void UpdateStaticModel(string meshPath, string diffusePath, string specularPath) {
             var message = new Membrane.Editor_UpdateStaticModel();
             message.entity = EntityId;
-            message.vfsPath = path;
+            message.meshPath = meshPath;
+            message.diffusePath = diffusePath;
+            message.specularPath = specularPath;
 
             Membrane.MessageHandler.sendMessage(message);
         }

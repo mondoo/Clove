@@ -35,7 +35,9 @@ namespace garlic::membrane {
     public:
         System::UInt32 entity;
 
-        System::String ^vfsPath;
+        System::String ^meshPath;
+        System::String ^diffusePath;
+        System::String ^specularPath;
     };
     public ref class Editor_UpdateRigidBody : public EditorMessage {
     public:

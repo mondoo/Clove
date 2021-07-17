@@ -29,7 +29,9 @@ namespace garlic::membrane {
 
     public ref class StaticModelComponentInitData{
     public:
-        System::String ^vfsPath;
+        System::String ^meshPath;
+        System::String ^diffusePath;
+        System::String ^specularPath;
     };
 
     public ref class RigidBodyComponentInitData{

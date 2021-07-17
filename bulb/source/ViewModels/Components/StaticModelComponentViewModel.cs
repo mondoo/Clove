@@ -2,22 +2,44 @@ using Membrane = garlic.membrane;
 
 namespace Garlic.Bulb {
     class StaticModelComponentViewModel : ComponentViewModel {
-        public string FilePath {
-            get => filePath;
+        public string MeshPath {
+            get => meshPath;
             set {
-                filePath = value;
-                OnPropertyChanged(nameof(FilePath));
-                OnStaticModelChanged?.Invoke(filePath);
+                meshPath = value;
+                OnPropertyChanged(nameof(MeshPath));
+                OnStaticModelChanged?.Invoke(meshPath, diffuseTexturePath, specularTexturePath);
             }
         }
-        private string filePath;
+        private string meshPath;
 
-        public delegate void StaticModelChangedHandler(string path);
+        public string DiffuseTexturePath {
+            get => diffuseTexturePath;
+            set {
+                diffuseTexturePath = value;
+                OnPropertyChanged(nameof(DiffuseTexturePath));
+                OnStaticModelChanged?.Invoke(meshPath, diffuseTexturePath, specularTexturePath);
+            }
+        }
+        private string diffuseTexturePath;
+
+        public string SpecularTexturePath {
+            get => specularTexturePath;
+            set {
+                specularTexturePath = value;
+                OnPropertyChanged(nameof(SpecularTexturePath));
+                OnStaticModelChanged?.Invoke(meshPath, diffuseTexturePath, specularTexturePath);
+            }
+        }
+        private string specularTexturePath;
+
+        public delegate void StaticModelChangedHandler(string meshPath, string diffusePath, string specularPath);
         public StaticModelChangedHandler OnStaticModelChanged;
 
         public StaticModelComponentViewModel(Membrane.StaticModelComponentInitData initData) 
             : base($"{Membrane.ComponentType.StaticModel}", Membrane.ComponentType.StaticModel) {
-            filePath = initData?.vfsPath;
+            meshPath = initData.meshPath;
+            diffuseTexturePath = initData.diffusePath;
+            specularTexturePath = initData.specularPath;
         }
     }
 }

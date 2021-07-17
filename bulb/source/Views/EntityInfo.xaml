@@ -87,13 +87,32 @@
 								<ColumnDefinition/>
 							</Grid.ColumnDefinitions>
 							
-							<TextBlock Text="Texture"
+							<TextBlock Text="DiffuseTexture"
 									   Margin="0, 0, 5, 0"
 									   Grid.Column="0"/>
 							<Border BorderThickness="1"
 									BorderBrush="Black"
 									Grid.Column="1">
-								<TextBlock Text="{Binding TexturePath, Mode=TwoWay}"
+								<TextBlock Text="{Binding DiffuseTexturePath, Mode=TwoWay}"
+										   AllowDrop="True"
+										   Drop="TextBox_Drop"
+										   Background="Transparent"
+										   MinWidth="30"/>
+							</Border>
+						</Grid>
+						<Grid Margin="10, 0, 0, 0">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition/>
+								<ColumnDefinition/>
+							</Grid.ColumnDefinitions>
+
+							<TextBlock Text="SpecularTexture"
+									   Margin="0, 0, 5, 0"
+									   Grid.Column="0"/>
+							<Border BorderThickness="1"
+									BorderBrush="Black"
+									Grid.Column="1">
+								<TextBlock Text="{Binding SpecularTexturePath, Mode=TwoWay}"
 										   AllowDrop="True"
 										   Drop="TextBox_Drop"
 										   Background="Transparent"

@@ -65,8 +65,10 @@ namespace garlic::membrane {
         }
 
         void updateStaticModel(Editor_UpdateStaticModel ^ message){
-            System::String ^path{ message->vfsPath };
-            layer->updateStaticModel(message->entity, msclr::interop::marshal_as<std::string>(path));
+            System::String ^meshPath{ message->meshPath };
+            System::String ^diffusePath{ message->diffusePath };
+            System::String ^specularPath{ message->specularPath };
+            layer->updateStaticModel(message->entity, msclr::interop::marshal_as<std::string>(meshPath), msclr::interop::marshal_as<std::string>(diffusePath), msclr::interop::marshal_as<std::string>(specularPath));
         }
 
         void updateRigidBody(Editor_UpdateRigidBody^ message){
@@ -232,18 +234,20 @@ namespace garlic::membrane {
             Entity ^ editorEntity { gcnew Entity };
             editorEntity->id         = entity;
             editorEntity->name       = gcnew System::String(currentScene.getComponent<NameComponent>(entity).name.c_str());
-            editorEntity->components = gcnew System::Collections::Generic::List<Component^>{};
+            editorEntity->components = gcnew System::Collections::Generic::List<Component ^>{};
 
             //Add all of the component types for an entity
             if(currentScene.hasComponent<clove::TransformComponent>(entity)) {
-                Component ^ componentData = gcnew Component{};
-                componentData->type       = ComponentType::Transform;
+                Component ^ componentData { gcnew Component{} };
+                componentData->type = ComponentType::Transform;
 
                 editorEntity->components->Add(componentData);
             }
             if(currentScene.hasComponent<clove::StaticModelComponent>(entity)) {
-                StaticModelComponentInitData ^ initData = gcnew StaticModelComponentInitData{};
-                initData->vfsPath                       = gcnew System::String(currentScene.getComponent<clove::StaticModelComponent>(entity).model.getPath().c_str());
+                StaticModelComponentInitData ^ initData { gcnew StaticModelComponentInitData{} };
+                initData->meshPath     = gcnew System::String(currentScene.getComponent<clove::StaticModelComponent>(entity).model.getPath().c_str());
+                initData->diffusePath  = gcnew System::String(currentScene.getComponent<clove::StaticModelComponent>(entity).material->getDiffuseTexture().getPath().c_str());
+                initData->specularPath = gcnew System::String(currentScene.getComponent<clove::StaticModelComponent>(entity).material->getSpecularTexture().getPath().c_str());
 
                 Component ^ componentData = gcnew Component{};
                 componentData->type       = ComponentType::StaticModel;
@@ -270,12 +274,12 @@ namespace garlic::membrane {
             if(currentScene.hasComponent<clove::CollisionShapeComponent>(entity)) {
                 auto &component{ currentScene.getComponent<clove::CollisionShapeComponent>(entity) };
 
-                CollisionShapeComponentInitData ^ initData = gcnew CollisionShapeComponentInitData{};
+                CollisionShapeComponentInitData ^ initData { gcnew CollisionShapeComponentInitData{} };
                 if(auto *sphere{ std::get_if<clove::CollisionShapeComponent::Sphere>(&component.shape) }) {
                     initData->shapeType = ShapeType::Sphere;
                     initData->radius    = sphere->radius;
                 } else if(auto *cube{ std::get_if<clove::CollisionShapeComponent::Cube>(&component.shape) }) {
-                    initData->shapeType = ShapeType::Cube;
+                    initData->shapeType   = ShapeType::Cube;
                     initData->halfExtents = Vector3(cube->halfExtents.x, cube->halfExtents.y, cube->halfExtents.z);
                 }
 
@@ -306,7 +310,7 @@ namespace garlic::membrane {
 
     void EditorLayer::createComponent(clove::Entity entity, ComponentType componentType) {
         bool added{ false };
-        System::Object ^initData;
+        System::Object ^ initData;
 
         switch(componentType) {
             case ComponentType::Transform:
@@ -317,13 +321,13 @@ namespace garlic::membrane {
                 break;
             case ComponentType::StaticModel:
                 if(!currentScene.hasComponent<clove::StaticModelComponent>(entity)) {
-                    std::string const vfsPath{ "./cube.obj" };//TEMP: Hard coding to a cube for now. This will either need to just be raw vertex data or an internal cube shipped with the editor
-                    currentScene.addComponent<clove::StaticModelComponent>(entity, clove::Application::get().getAssetManager()->getStaticModel(vfsPath));
+                    std::string const meshPath{ "./cube.obj" };//TEMP: Hard coding to a cube for now. This will either need to just be raw vertex data or an internal cube shipped with the editor
+                    currentScene.addComponent<clove::StaticModelComponent>(entity, clove::Application::get().getAssetManager()->getStaticModel(meshPath));
 
-                    StaticModelComponentInitData ^ modelData = gcnew StaticModelComponentInitData{};
-                    modelData->vfsPath                       = gcnew System::String(vfsPath.c_str());
+                    StaticModelComponentInitData ^ modelData { gcnew StaticModelComponentInitData{} };
+                    modelData->meshPath = gcnew System::String(meshPath.c_str());
 
-                    added = true;
+                    added    = true;
                     initData = modelData;
                 }
                 break;
@@ -337,10 +341,10 @@ namespace garlic::membrane {
                 if(!currentScene.hasComponent<clove::RigidBodyComponent>(entity)) {
                     currentScene.addComponent<clove::RigidBodyComponent>(entity);
 
-                    RigidBodyComponentInitData ^ bodyData = gcnew RigidBodyComponentInitData{};
-                    bodyData->mass                        = currentScene.getComponent<clove::RigidBodyComponent>(entity).mass;
+                    RigidBodyComponentInitData ^ bodyData { gcnew RigidBodyComponentInitData{} };
+                    bodyData->mass = currentScene.getComponent<clove::RigidBodyComponent>(entity).mass;
 
-                    added = true;
+                    added    = true;
                     initData = bodyData;
                 }
                 break;
@@ -349,11 +353,11 @@ namespace garlic::membrane {
                     float constexpr initRadius{ 1.0f };
                     currentScene.addComponent<clove::CollisionShapeComponent>(entity, clove::CollisionShapeComponent::Sphere{ initRadius });
 
-                    CollisionShapeComponentInitData ^ shapeData = gcnew CollisionShapeComponentInitData{};
-                    shapeData->shapeType                        = ShapeType::Sphere;
-                    shapeData->radius                           = initRadius;
+                    CollisionShapeComponentInitData ^ shapeData { gcnew CollisionShapeComponentInitData{} };
+                    shapeData->shapeType = ShapeType::Sphere;
+                    shapeData->radius    = initRadius;
 
-                    added = true;
+                    added    = true;
                     initData = shapeData;
                 }
                 break;
@@ -377,10 +381,12 @@ namespace garlic::membrane {
         }
     }
 
-    void EditorLayer::updateStaticModel(clove::Entity entity, std::string vfsPath) {
+    void EditorLayer::updateStaticModel(clove::Entity entity, std::string meshPath, std::string diffusePath, std::string specularPath) {
         if(currentScene.hasComponent<clove::StaticModelComponent>(entity)) {
             auto &staticModel{ currentScene.getComponent<clove::StaticModelComponent>(entity) };
-            staticModel.model = clove::Application::get().getAssetManager()->getStaticModel(vfsPath);
+            staticModel.model = clove::Application::get().getAssetManager()->getStaticModel(meshPath);
+            staticModel.material->setDiffuseTexture(clove::Application::get().getAssetManager()->getTexture(diffusePath));
+            staticModel.material->setSpecularTexture(clove::Application::get().getAssetManager()->getTexture(specularPath));
         }
     }
 
