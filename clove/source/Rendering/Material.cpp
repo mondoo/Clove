@@ -9,11 +9,11 @@
 #include <Clove/Graphics/GhaImageView.hpp>
 
 namespace garlic::clove {
-    std::shared_ptr<GhaImage> Material::defaultImage{ nullptr };
-    std::shared_ptr<GhaImageView> Material::defaultView{ nullptr };
+    std::weak_ptr<GhaImage> Material::defaultImage{};
+    std::weak_ptr<GhaImageView> Material::defaultView{};
 
     Material::Material() {
-        if(defaultImage == nullptr) {
+        if(defaultImage.use_count() == 0) {
             GhaFactory &factory{ *Application::get().getGraphicsDevice()->getGraphicsFactory() };
 
             vec2f constexpr imageDimensions{ 1.0f, 1.0f };
@@ -30,12 +30,18 @@ namespace garlic::clove {
 
             std::shared_ptr<GhaImage> image{ createImageWithData(factory, imageDescriptor, &white, bytesPerTexel) };
 
-            defaultImage = image;
-            defaultView  = defaultImage->createView(GhaImageView::Descriptor{
+            localImage = image;
+            localView  = image->createView(GhaImageView::Descriptor{
                 .type       = GhaImageView::Type::_2D,
                 .layer      = 0,
                 .layerCount = 1,
             });
+
+            defaultImage = localImage;
+            defaultView  = localView;
+        } else {
+            localImage = defaultImage.lock();
+            localView  = defaultView.lock();
         }
     }
 
@@ -53,7 +59,7 @@ namespace garlic::clove {
         if(diffuseTexture.isValid()) {
             return diffuseTexture->getImageView();
         } else {
-            return defaultView;
+            return localView;
         }
     }
 
@@ -61,7 +67,7 @@ namespace garlic::clove {
         if(specularTexture.isValid()) {
             return specularTexture->getImageView();
         } else {
-            return defaultView;
+            return localView;
         }
     }
 }

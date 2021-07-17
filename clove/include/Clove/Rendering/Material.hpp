@@ -21,8 +21,11 @@ namespace garlic::clove {
         //VARIABLES
     private:
         //Default images and views - fall backs for if a texture hasn't been provided.
-        static std::shared_ptr<GhaImage> defaultImage;
-        static std::shared_ptr<GhaImageView> defaultView;
+        static std::weak_ptr<GhaImage> defaultImage;
+        static std::weak_ptr<GhaImageView> defaultView;
+
+        std::shared_ptr<GhaImage> localImage;
+        std::shared_ptr<GhaImageView> localView;
 
         AssetPtr<Texture> diffuseTexture;
         AssetPtr<Texture> specularTexture;
