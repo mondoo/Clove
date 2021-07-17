@@ -5,10 +5,6 @@
 
 #include <filesystem>
 
-namespace garlic::clove {
-    class GhaFactory;
-}
-
 namespace garlic::clove::ModelLoader {
     /**
      * @brief Loads a StaticModel from a given file path.

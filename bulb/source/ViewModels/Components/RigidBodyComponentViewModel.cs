@@ -3,20 +3,21 @@ using Membrane = garlic.membrane;
 namespace Garlic.Bulb {
     public class RigidBodyComponentViewModel : ComponentViewModel {
         public string Mass {
-            get { return mass.ToString(); }
+            get => mass.ToString();
             set {
-                float number;
-                float.TryParse(value, out number);
+                float.TryParse(value, out float number);
                 OnRigidBodyChanged?.Invoke(number);
             }
         }
-
-        private float mass = 1.0f;//TEMP: Initialise to 1 - should init to what the data is
+        private float mass;
 
         public delegate void RigdBodyChangedHandler(float mass);
         public RigdBodyChangedHandler OnRigidBodyChanged;
 
-        public RigidBodyComponentViewModel(string name, Membrane.ComponentType type) : base(name, type) { }
+        public RigidBodyComponentViewModel(Membrane.RigidBodyComponentInitData initData) 
+            : base($"{Membrane.ComponentType.RigidBody}", Membrane.ComponentType.RigidBody) {
+            mass = initData.mass;
+        }
 
         public void Update(float mass) {
             this.mass = mass;

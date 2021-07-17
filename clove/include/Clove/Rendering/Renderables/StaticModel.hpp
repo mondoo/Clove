@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Clove/Rendering/Material.hpp"
 #include "Clove/Rendering/Techniques/Technique.hpp"
 
 #include <filesystem>
@@ -19,18 +18,14 @@ namespace garlic::clove {
         //VARIABLES
     private:
         std::vector<std::shared_ptr<Mesh>> meshes;
-        std::shared_ptr<Material> material;
 
         std::vector<Technique> techniques{};
-
-        //TEMP: Storing the path of the model for serialisation purposes
-        std::filesystem::path assetPath{};
 
         //FUNCTIONS
     public:
         StaticModel() = delete;
-        StaticModel(std::vector<std::shared_ptr<Mesh>> meshes, std::shared_ptr<Material> material);
-        StaticModel(std::vector<std::shared_ptr<Mesh>> meshes, std::shared_ptr<Material> material, std::vector<Technique> renderingTechniques);
+        StaticModel(std::vector<std::shared_ptr<Mesh>> meshes);
+        StaticModel(std::vector<std::shared_ptr<Mesh>> meshes, std::vector<Technique> renderingTechniques);
 
         StaticModel(StaticModel const &other);
         StaticModel(StaticModel &&other) noexcept;
@@ -40,9 +35,6 @@ namespace garlic::clove {
 
         ~StaticModel();
 
-        inline void setMaterial(std::shared_ptr<Material> material);
-        inline std::shared_ptr<Material> const &getMaterial() const;
-
         inline std::vector<std::shared_ptr<Mesh>> const &getMeshes() const;
 
         inline std::vector<Technique> const &getTechniques() const;
@@ -51,14 +43,6 @@ namespace garlic::clove {
         inline void removeTechnique(Technique const &technique);
 
         inline std::shared_ptr<Mesh> &operator[](size_t index);
-
-        //TEMP: Storing the path of the model for serialisation purposes
-        inline void setAssetPath(std::filesystem::path path) {
-            assetPath = std::move(path);
-        };
-        inline std::filesystem::path getAssetPath() const {
-            return assetPath;
-        };
     };
 }
 

@@ -7,17 +7,12 @@ using Membrane = garlic.membrane;
 
 namespace Garlic.Bulb {
     public class CollisionShapeComponentViewModel : ComponentViewModel {
-        public enum ShapeType {
-            Sphere,
-            Cube
-        };
-
         public class ShapeTypeViewModel {
             public string Name { get; }
-            public ShapeType Type { get; }
+            public Membrane.ShapeType Type { get; }
             public ICommand OnSelectedCommand { get; }
 
-            public ShapeTypeViewModel(string name, ShapeType type, ICommand onSelectedCommand) {
+            public ShapeTypeViewModel(string name, Membrane.ShapeType type, ICommand onSelectedCommand) {
                 Name = name;
                 Type = type;
                 OnSelectedCommand = onSelectedCommand;
@@ -25,7 +20,7 @@ namespace Garlic.Bulb {
         }
 
         public string Radius {
-            get { return radius.ToString(); }
+            get => radius.ToString();
             set {
                 float.TryParse(value, out var number);
                 OnSphereShapeChanged?.Invoke(number);
@@ -34,21 +29,21 @@ namespace Garlic.Bulb {
         private float radius = 1.0f;
 
         public string HalfExtentsX {
-            get { return halfExtents.x.ToString(); }
+            get => halfExtents.x.ToString();
             set {
                 float.TryParse(value, out var number);
                 OnCubeShapeChanged?.Invoke(new Membrane.Vector3(number, halfExtents.y, halfExtents.z));
             }
         }
         public string HalfExtentsY {
-            get { return halfExtents.y.ToString(); }
+            get => halfExtents.y.ToString();
             set {
                 float.TryParse(value, out var number);
                 OnCubeShapeChanged?.Invoke(new Membrane.Vector3(halfExtents.x, number, halfExtents.z));
             }
         }
         public string HalfExtentsZ {
-            get { return halfExtents.z.ToString(); }
+            get => halfExtents.z.ToString();
             set {
                 float.TryParse(value, out var number);
                 OnCubeShapeChanged?.Invoke(new Membrane.Vector3(halfExtents.x, halfExtents.y, number));
@@ -56,19 +51,19 @@ namespace Garlic.Bulb {
         }
         private Membrane.Vector3 halfExtents = new Membrane.Vector3(0.5f, 0.5f, 0.5f);
 
-        public ShapeType CurrentShapeType {
-            get { return currentShapeType; }
+        public Membrane.ShapeType CurrentShapeType {
+            get => currentShapeType;
             private set {
                 currentShapeType = value;
                 OnPropertyChanged(nameof(CurrentShapeType));
             }
         }
-        private ShapeType currentShapeType;
+        private Membrane.ShapeType currentShapeType;
 
         public ObservableCollection<ShapeTypeViewModel> AvailableShapes { get; } = new ObservableCollection<ShapeTypeViewModel>();
 
         public Visibility RadiusVisibility {
-            get { return radiusVisibility; }
+            get => radiusVisibility;
             private set {
                 radiusVisibility = value;
                 OnPropertyChanged(nameof(RadiusVisibility));
@@ -91,9 +86,17 @@ namespace Garlic.Bulb {
         public CollisionShapeSphereChanged OnSphereShapeChanged;
         public CollisionShapeCubeChanged OnCubeShapeChanged;
 
-        public CollisionShapeComponentViewModel(string name, Membrane.ComponentType type) : base(name, type) {
-            //TODO: Hard coding as a sphere. Should be synced to what ever the component is added as
-            OnShapeTypeChanged(ShapeType.Sphere, false);
+        public CollisionShapeComponentViewModel(Membrane.CollisionShapeComponentInitData initData) 
+            : base($"{Membrane.ComponentType.CollisionShape}", Membrane.ComponentType.CollisionShape) {
+            OnShapeTypeChanged(initData.shapeType, false);
+            switch (initData.shapeType) {
+                case Membrane.ShapeType.Sphere:
+                    UpdateSphereShape(initData.radius);
+                    break;
+                case Membrane.ShapeType.Cube:
+                    UpdateCubeShape(initData.halfExtents);
+                    break;
+            }
         }
 
         public void UpdateSphereShape(float radius) {
@@ -108,18 +111,18 @@ namespace Garlic.Bulb {
             OnPropertyChanged(nameof(HalfExtentsZ));
         }
 
-        private void OnShapeTypeChanged(ShapeType newType, bool invokeDelegates = true) {
+        private void OnShapeTypeChanged(Membrane.ShapeType newType, bool invokeDelegates = true) {
             CurrentShapeType = newType;
 
             switch (CurrentShapeType) {
-                case ShapeType.Sphere:
+                case Membrane.ShapeType.Sphere:
                     RadiusVisibility = Visibility.Visible;
                     HalfExtentsVisibility = Visibility.Collapsed;
                     if (invokeDelegates) {
                         OnSphereShapeChanged?.Invoke(radius);
                     }
                     break;
-                case ShapeType.Cube:
+                case Membrane.ShapeType.Cube:
                     RadiusVisibility = Visibility.Collapsed;
                     HalfExtentsVisibility = Visibility.Visible;
                     if (invokeDelegates) {
@@ -129,10 +132,10 @@ namespace Garlic.Bulb {
             }
 
             //Update the available shapes to remove the selected one
-            var shapeTypes = Enum.GetValues(typeof(ShapeType)).Cast<ShapeType>();
+            var shapeTypes = Enum.GetValues(typeof(Membrane.ShapeType)).Cast<Membrane.ShapeType>();
 
             AvailableShapes.Clear();
-            foreach (ShapeType shape in shapeTypes) {
+            foreach (Membrane.ShapeType shape in shapeTypes) {
                 if (shape != CurrentShapeType) {
                     AvailableShapes.Add(new ShapeTypeViewModel($"{shape}", shape, new RelayCommand(() => OnShapeTypeChanged(shape))));
                 }

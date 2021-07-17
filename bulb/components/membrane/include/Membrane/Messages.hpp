@@ -6,10 +6,14 @@
 namespace garlic::membrane {
     // clang-format off
     //Types
+    public ref struct Component{
+        ComponentType type;
+        System::Object ^initData;
+    };
     public ref struct Entity{
         System::UInt32 id;
         System::String ^name;
-        System::Collections::Generic::List<ComponentType> ^components;
+        System::Collections::Generic::List<Component^> ^components;
     };
 
     //Messages sent from Bulb
@@ -26,6 +30,14 @@ namespace garlic::membrane {
         Vector3 position;
         Vector3 rotation;
         Vector3 scale;
+    };
+    public ref class Editor_UpdateStaticModel : public EditorMessage {
+    public:
+        System::UInt32 entity;
+
+        System::String ^meshPath;
+        System::String ^diffusePath;
+        System::String ^specularPath;
     };
     public ref class Editor_UpdateRigidBody : public EditorMessage {
     public:
@@ -87,6 +99,7 @@ namespace garlic::membrane {
     public:
         System::UInt32 entity;
         ComponentType componentType;
+        System::Object ^data;
     };
     public ref class Engine_OnTransformChanged : public EngineMessage {
     public:

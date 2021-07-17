@@ -45,9 +45,9 @@ namespace Garlic.Bulb {
             SelectedCommand = new RelayCommand(() => OnSelected?.Invoke(this));
         }
 
-        public EntityViewModel(List<Membrane.ComponentType> components) : this() {
-            foreach (var componentType in components) {
-                Components.Add(CreateComponentViewModel(componentType));
+        public EntityViewModel(List<Membrane.Component> components) : this() {
+            foreach (Membrane.Component component in components) {
+                Components.Add(CreateComponentViewModel(component.type, component.initData));
             }
         }
 
@@ -61,30 +61,37 @@ namespace Garlic.Bulb {
 
         private void OnComponentCreated(Membrane.Engine_OnComponentCreated message) {
             if (EntityId == message.entity) {
-                Components.Add(CreateComponentViewModel(message.componentType));
+                Components.Add(CreateComponentViewModel(message.componentType, message.data));
             }
         }
 
-        private ComponentViewModel CreateComponentViewModel(Membrane.ComponentType type) {
+        private ComponentViewModel CreateComponentViewModel(Membrane.ComponentType type, object initData) {
             ComponentViewModel componentVm;
 
             switch (type) {
                 case Membrane.ComponentType.Transform: {
-                    var transformComp = new TransformComponentViewModel($"{type}", type);
+                    var transformComp = new TransformComponentViewModel();
                     transformComp.OnTransformChanged = UpdateTransform;
 
                     componentVm = transformComp;
                 }
                 break;
+                case Membrane.ComponentType.StaticModel: {
+                    var modelComp = new StaticModelComponentViewModel((Membrane.StaticModelComponentInitData)initData);
+                    modelComp.OnStaticModelChanged = UpdateStaticModel;
+
+                    componentVm = modelComp;
+                }
+                break;
                 case Membrane.ComponentType.RigidBody: {
-                    var rigidBodyComp = new RigidBodyComponentViewModel($"{type}", type);
+                    var rigidBodyComp = new RigidBodyComponentViewModel((Membrane.RigidBodyComponentInitData)initData);
                     rigidBodyComp.OnRigidBodyChanged = UpdateRigidBody;
 
                     componentVm = rigidBodyComp;
                 }
                 break;
                 case Membrane.ComponentType.CollisionShape: {
-                    var collisionShapeComp = new CollisionShapeComponentViewModel($"{type}", type);
+                    var collisionShapeComp = new CollisionShapeComponentViewModel((Membrane.CollisionShapeComponentInitData)initData);
                     collisionShapeComp.OnSphereShapeChanged = UpdateSphereShape;
                     collisionShapeComp.OnCubeShapeChanged = UpdateCubeShape;
 
@@ -105,6 +112,16 @@ namespace Garlic.Bulb {
             message.position = position;
             message.rotation = rotation;
             message.scale = scale;
+
+            Membrane.MessageHandler.sendMessage(message);
+        }
+
+        private void UpdateStaticModel(string meshPath, string diffusePath, string specularPath) {
+            var message = new Membrane.Editor_UpdateStaticModel();
+            message.entity = EntityId;
+            message.meshPath = meshPath;
+            message.diffusePath = diffusePath;
+            message.specularPath = specularPath;
 
             Membrane.MessageHandler.sendMessage(message);
         }

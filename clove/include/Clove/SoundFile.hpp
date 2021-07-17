@@ -9,7 +9,9 @@ namespace garlic::clove {
 
 namespace garlic::clove {
     /**
-	 * @brief Opens a sound file (.wav etc.) and allows acess to the data
+	 * @brief Opens a sound file (.wav etc.) and allows acess to the data.
+     * @details SoundFile is setup in such a way that allows for audio files to be streamed and not
+     * loaded into memory all at once.
 	 */
     class SoundFile {
         //TYPES

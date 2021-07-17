@@ -262,20 +262,4 @@ namespace garlic::clove {
 
         return image;
     }
-
-    std::unique_ptr<GhaImage> createImageFromPath(GhaFactory &factory, std::filesystem::path const &path) {
-        TextureLoader::LoadedTextureData const textureData{ TextureLoader::loadTexture(path).getValue() };
-
-        GhaImage::Descriptor const textureDesc{
-            .type        = GhaImage::Type::_2D,
-            .usageFlags  = GhaImage::UsageMode::Sampled,
-            .dimensions  = textureData.dimensions,
-            .format      = GhaImage::Format::R8G8B8A8_SRGB,
-            .sharingMode = SharingMode::Exclusive,
-        };
-
-        size_t const size{ textureData.dimensions.x * textureData.dimensions.y * textureData.channels };
-
-        return createImageWithData(factory, textureDesc, textureData.buffer.get(), size);
-    }
 }

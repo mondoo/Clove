@@ -5,8 +5,8 @@
 #include <Clove/Log/Log.hpp>
 
 namespace garlic::clove {
-    AnimatedModel::AnimatedModel(std::vector<std::shared_ptr<Mesh>> meshes, std::shared_ptr<Material> material, std::unique_ptr<Skeleton> skeleton, std::vector<AnimationClip> animClips)
-        : StaticModel{ std::move(meshes), std::move(material), { createSkinnedForwardLightingTechnique() } }
+    AnimatedModel::AnimatedModel(std::vector<std::shared_ptr<Mesh>> meshes, std::unique_ptr<Skeleton> skeleton, std::vector<AnimationClip> animClips)
+        : StaticModel{ std::move(meshes), { createSkinnedForwardLightingTechnique() } }
         , skeleton{ std::move(skeleton) }
         , animClips{ std::move(animClips) } {
         if(std::size(this->animClips) == 0) {

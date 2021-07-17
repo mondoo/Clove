@@ -16,6 +16,7 @@
 #include <Clove/Graphics/GhaImage.hpp>
 #include <Clove/Log/Log.hpp>
 #include <Clove/Rendering/GraphicsImageRenderTarget.hpp>
+#include <msclr/marshal_cppstd.h>
 
 namespace garlic::membrane {
     Application::Application(int const width, int const height)
@@ -37,6 +38,13 @@ namespace garlic::membrane {
         app          = pair.first.release();
         renderTarget = pair.second;
 
+        //Mount editor paths
+        auto *vfs{ app->getFileSystem() };
+        vfs->mount(std::filesystem::current_path() / "data", ".");//TODO: Root path of editor is unlikely to be it's working directory
+
+        std::filesystem::create_directories(vfs->resolve("."));
+
+        //Push layers
         editorLayer  = new std::shared_ptr<EditorLayer>();
         *editorLayer = std::make_shared<EditorLayer>();
 
@@ -84,6 +92,12 @@ namespace garlic::membrane {
 
         this->width  = width;
         this->height = height;
+    }
+
+    System::String ^Application::resolveVfsPath(System::String ^ path) {
+        System::String ^managedPath{ path };
+        std::string unManagedPath{ msclr::interop::marshal_as<std::string>(managedPath) };
+        return gcnew System::String(app->getFileSystem()->resolve(unManagedPath).c_str());
     }
 
     void Application::setEditorMode(Editor_Stop ^message) {
