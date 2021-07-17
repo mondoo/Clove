@@ -27,6 +27,25 @@ namespace garlic::clove {
         return v;
     }
 
+    //Vec4
+    template<>
+    inline serialiser::Node serialise(vec4f const &object) {
+        serialiser::Node node{};
+        node.pushBack(object.x);
+        node.pushBack(object.y);
+        node.pushBack(object.z);
+        node.pushBack(object.w);
+        return node;
+    }
+    template<>
+    inline vec4f deserialise(serialiser::Node const &node) {
+        vec4f v{};
+        for(size_t i{ 0 }; i < node.numChildren(); ++i) {
+            v[i] = node[i].as<float>();
+        }
+        return v;
+    }
+
     //Quat
     template<>
     inline serialiser::Node serialise(quatf const &object) {
