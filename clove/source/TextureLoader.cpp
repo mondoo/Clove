@@ -16,6 +16,6 @@ namespace garlic::clove::TextureLoader {
 
         vec2ui dimensions{ static_cast<uint32_t>(width), static_cast<uint32_t>(height) };
         auto buffer{ std::unique_ptr<void, std::function<void(void *)>>(localBuffer, [](void *buffer) { stbi_image_free(buffer); }) };
-        return Texture{ std::move(buffer), std::move(dimensions), STBI_rgb_alpha };
+        return Texture{ std::move(buffer), dimensions, STBI_rgb_alpha };
     }
 }
