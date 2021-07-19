@@ -1,4 +1,4 @@
-﻿<Application x:Class="Garlic.Bulb.EditorApp"
+<Application x:Class="Garlic.Bulb.EditorApp"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:Garlic.Bulb"
@@ -17,8 +17,22 @@
 
 		<SolidColorBrush x:Key="Error"
 						 Color="#C70039"/>
-
-		<!-- Default Control Styles -->
+		
+		<!-- Control Template Styles -->
+		<Style x:Key="FocusStyle">
+			<Setter Property="Control.Template">
+				<Setter.Value>
+					<ControlTemplate>
+						<Border>
+							<Rectangle StrokeThickness="2"
+									   Stroke="{StaticResource Secondary}"/>
+						</Border>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+		
+		<!-- TextBlock -->
 		<Style TargetType="{x:Type TextBlock}">
 			<Setter Property="Foreground"
 					Value="{StaticResource Foreground}"/>
@@ -26,45 +40,57 @@
 					Value="{StaticResource Background}"/>
 		</Style>
 
+		<!-- TextBox -->
 		<Style TargetType="{x:Type TextBox}">
 			<Setter Property="Foreground"
 					Value="{StaticResource Foreground}"/>
 			<Setter Property="Background"
 					Value="{StaticResource Background}"/>
+			<Setter Property="FocusVisualStyle"
+					Value="{StaticResource FocusStyle}"/>
 		</Style>
 
+		<!-- StackPanel -->
 		<Style TargetType="{x:Type StackPanel}">
 			<Setter Property="Background"
 					Value="{StaticResource Background}"/>
 		</Style>
 
+		<!-- DockPanel -->
 		<Style TargetType="{x:Type DockPanel}">
 			<Setter Property="Background"
 					Value="{StaticResource Background}"/>
 		</Style>
 
+		<!-- Grid -->
 		<Style TargetType="{x:Type Grid}">
 			<Setter Property="Background"
 					Value="{StaticResource Background}"/>
 		</Style>
-
+	
+		<!-- ListBox -->
 		<Style TargetType="{x:Type ListBox}">
 			<Setter Property="Background"
 					Value="{StaticResource Background}"/>
 		</Style>
 
+		<!-- ScrollViewer -->
 		<Style TargetType="{x:Type ScrollViewer}">
 			<Setter Property="Background"
 					Value="{StaticResource Background}"/>
 		</Style>
 
+		<!-- Button -->
 		<Style TargetType="{x:Type Button}">
 			<Setter Property="Foreground"
 					Value="{StaticResource Foreground}"/>
 			<Setter Property="Background"
 					Value="{StaticResource Background}"/>
+			<Setter Property="FocusVisualStyle"
+					Value="{StaticResource FocusStyle}"/>
 		</Style>
 
+		<!-- TabItem-->
 		<Style TargetType="{x:Type TabItem}">
 			<Setter Property="Foreground"
 					Value="{StaticResource Foreground}"/>
@@ -72,6 +98,7 @@
 					Value="{StaticResource Background}"/>
 		</Style>
 
+		<!-- MenuItem -->
 		<Style TargetType="{x:Type MenuItem}">
 			<Setter Property="Foreground"
 					Value="{StaticResource Foreground}"/>
@@ -79,6 +106,7 @@
 					Value="{StaticResource Background}"/>
 		</Style>
 
+		<!-- ScrollBar-->
 		<Style TargetType="{x:Type ScrollBar}">
 			<Setter Property="Background"
 					Value="{StaticResource Background}"/>
