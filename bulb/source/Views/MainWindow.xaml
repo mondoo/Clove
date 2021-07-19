@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Garlic.Bulb"
 		xmlns:membrane="clr-namespace:garlic.membrane;assembly=BulbMembrane"
         mc:Ignorable="d"
-        Title="MainWindow" Width="1280" Height="720"
+        Title="Garlic - 0.4.0" Width="1280" Height="720"
 		MouseMove="Window_MouseMove">
 	<DockPanel>
 		<StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
