@@ -1,9 +1,22 @@
-﻿<Application x:Class="Garlic.Bulb.EditorApp"
+<Application x:Class="Garlic.Bulb.EditorApp"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:Garlic.Bulb"
              Startup="EditorStartup">
     <Application.Resources>
+		<!-- Brushes -->
+		<SolidColorBrush x:Key="Background"
+						 Color="#121212"/>
+		<SolidColorBrush x:Key="Foreground"
+						 Color="#EEEEEE"/>
+
+		<SolidColorBrush x:Key="Primary"
+						 Color="#00A8CC"/>
+		<SolidColorBrush x:Key="Secondary"
+						 Color="#29C7AC"/>
+
+		<SolidColorBrush x:Key="Error"
+						 Color="#C70039"/>
          
     </Application.Resources>
 </Application>
