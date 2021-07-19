@@ -7,17 +7,9 @@
 		xmlns:membrane="clr-namespace:garlic.membrane;assembly=BulbMembrane"
         mc:Ignorable="d"
         Title="Garlic - 0.4.0" Width="1280" Height="720"
+		Style="{StaticResource PrimaryWindowStyle}"
 		MouseMove="Window_MouseMove">
 	<DockPanel>
-		<StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
-			<Menu>
-				<MenuItem Header="File">
-					<MenuItem Header="Load" Command="{Binding LoadSceneCommand}"/>
-					<MenuItem Header="Save" Command="{Binding SaveSceneCommand}"/>
-				</MenuItem>
-			</Menu>
-		</StackPanel>
-
 		<Separator DockPanel.Dock="Top"/>
 
 		<StackPanel DockPanel.Dock="Top" Orientation="Horizontal" HorizontalAlignment="Center">

@@ -32,6 +32,73 @@
 			</Setter>
 		</Style>
 		
+		<!-- Window -->
+		<Style x:Key="PrimaryWindowStyle" TargetType="{x:Type Window}">
+			<Setter Property="WindowStyle"
+					Value="None"/>
+			<Setter Property="ResizeMode"
+					Value="CanResize"/>
+			<Setter Property="AllowsTransparency"
+					Value="True"/>
+			<Setter Property="Background"
+					Value="{StaticResource Background}"/>
+			<Setter Property="BorderBrush"
+					Value="Transparent"/>
+			<Setter Property="BorderThickness"
+					Value="0"/>
+			<Setter Property="Template">
+				<Setter.Value>
+					<ControlTemplate TargetType="{x:Type Window}">
+						<Grid Background="{TemplateBinding Background}">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto"/>
+								<ColumnDefinition Width="*"/>
+								<ColumnDefinition Width="Auto"/>
+							</Grid.ColumnDefinitions>
+							<Grid.RowDefinitions>
+								<RowDefinition Height="Auto"/>
+								<RowDefinition Height="*"/>
+							</Grid.RowDefinitions>
+
+							<StackPanel Orientation="Horizontal"
+										Grid.Column="0"
+										Grid.Row="0">
+								<Menu>
+									<MenuItem Header="File">
+										<MenuItem Header="Load" Command="{Binding LoadSceneCommand}"/>
+										<MenuItem Header="Save" Command="{Binding SaveSceneCommand}"/>
+									</MenuItem>
+								</Menu>
+							</StackPanel>
+
+							<TextBlock Text="{TemplateBinding Title}"
+									   HorizontalAlignment="Center"
+									   Grid.Column="1"
+									   Grid.Row="0"/>
+							
+							<StackPanel Orientation="Horizontal"
+										HorizontalAlignment="Stretch"
+										VerticalAlignment="Center"
+										Grid.Column="2"
+										Grid.Row="0">
+								<Button Content="_"
+										Width="30"/>
+								<Button Content="O"
+										Width="30"/>
+								<Button Content="X"
+										Width="50"
+										Background="{StaticResource Error}"/>
+							</StackPanel>
+							
+							<ContentPresenter Grid.Row="2"
+											  Grid.Column="0"
+											  Grid.ColumnSpan="3"/>
+						</Grid>
+					</ControlTemplate>
+				</Setter.Value>
+			</Setter>
+		</Style>
+		
 		<!-- TextBlock -->
 		<Style TargetType="{x:Type TextBlock}">
 			<Setter Property="Foreground"
