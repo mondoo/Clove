@@ -1,4 +1,4 @@
-<Application x:Class="Garlic.Bulb.EditorApp"
+﻿<Application x:Class="Garlic.Bulb.EditorApp"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:Garlic.Bulb"
@@ -37,7 +37,7 @@
 			<Setter Property="Foreground"
 					Value="{StaticResource Foreground}"/>
 			<Setter Property="Background"
-					Value="{StaticResource Background}"/>
+					Value="Transparent"/>
 		</Style>
 
 		<!-- TextBox -->
