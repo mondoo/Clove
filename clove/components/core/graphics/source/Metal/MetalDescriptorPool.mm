@@ -43,8 +43,8 @@ namespace garlic::clove {
 				id<MTLArgumentEncoder> vertexEncoder{ nullptr };
 				id<MTLBuffer> vertexEncoderBuffer{ nullptr };
 				if(metalDescriptorSets[i]->getVertexDescriptors().count > 0){
-					vertexEncoder       = [device newArgumentEncoderWithArguments:metalDescriptorSets[i]->getVertexDescriptors()];
-					vertexEncoderBuffer = [device newBufferWithLength:vertexEncoder.encodedLength options:0];
+					vertexEncoder       = [[device newArgumentEncoderWithArguments:metalDescriptorSets[i]->getVertexDescriptors()] autorelease];
+					vertexEncoderBuffer = [[device newBufferWithLength:vertexEncoder.encodedLength options:0] autorelease];
 					
 					[vertexEncoder setArgumentBuffer:vertexEncoderBuffer offset:0];
 				}
@@ -52,8 +52,8 @@ namespace garlic::clove {
 				id<MTLArgumentEncoder> pixelEncoder{ nullptr };
 				id<MTLBuffer> pixelEncoderBuffer{ nullptr };
 				if(metalDescriptorSets[i]->getPixelDescriptors().count > 0){
-					pixelEncoder       = [device newArgumentEncoderWithArguments:metalDescriptorSets[i]->getPixelDescriptors()];
-					pixelEncoderBuffer = [device newBufferWithLength:pixelEncoder.encodedLength options:0];
+					pixelEncoder       = [[device newArgumentEncoderWithArguments:metalDescriptorSets[i]->getPixelDescriptors()] autorelease];
+					pixelEncoderBuffer = [[device newBufferWithLength:pixelEncoder.encodedLength options:0] autorelease];
 					
 					[pixelEncoder setArgumentBuffer:pixelEncoderBuffer offset:0];
 				}
@@ -61,8 +61,8 @@ namespace garlic::clove {
 				id<MTLArgumentEncoder> computeEncoder{ nullptr };
 				id<MTLBuffer> computeEncoderBuffer{ nullptr };
 				if(metalDescriptorSets[i]->getComputeDescriptors().count > 0){
-					computeEncoder       = [device newArgumentEncoderWithArguments:metalDescriptorSets[i]->getComputeDescriptors()];
-					computeEncoderBuffer = [device newBufferWithLength:computeEncoder.encodedLength options:0];
+					computeEncoder       = [[device newArgumentEncoderWithArguments:metalDescriptorSets[i]->getComputeDescriptors()] autorelease];
+					computeEncoderBuffer = [[device newBufferWithLength:computeEncoder.encodedLength options:0] autorelease];
 					
 					[computeEncoder setArgumentBuffer:computeEncoderBuffer offset:0];
 				}

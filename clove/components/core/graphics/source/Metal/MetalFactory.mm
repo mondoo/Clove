@@ -252,12 +252,12 @@ namespace garlic::clove {
 	
 	Expected<std::unique_ptr<GhaDescriptorSetLayout>, std::runtime_error> MetalFactory::createDescriptorSetLayout(GhaDescriptorSetLayout::Descriptor descriptor) {
 		@autoreleasepool {
-			NSMutableArray<MTLArgumentDescriptor *> *vertexDescriptors{ [[NSMutableArray<MTLArgumentDescriptor *> alloc] init] };
-			NSMutableArray<MTLArgumentDescriptor *> *pixelDescriptors{ [[NSMutableArray<MTLArgumentDescriptor *> alloc] init] };
-			NSMutableArray<MTLArgumentDescriptor *> *computeDescriptors{ [[NSMutableArray<MTLArgumentDescriptor *> alloc] init] };
+			NSMutableArray<MTLArgumentDescriptor *> *vertexDescriptors{ [[[NSMutableArray<MTLArgumentDescriptor *> alloc] init] autorelease] };
+			NSMutableArray<MTLArgumentDescriptor *> *pixelDescriptors{ [[[NSMutableArray<MTLArgumentDescriptor *> alloc] init] autorelease] };
+			NSMutableArray<MTLArgumentDescriptor *> *computeDescriptors{ [[[NSMutableArray<MTLArgumentDescriptor *> alloc] init] autorelease] };
 			
 			for(auto const &binding : descriptor.bindings) {
-				MTLArgumentDescriptor *bindingDescriptor{ [[MTLArgumentDescriptor alloc] init]};
+				MTLArgumentDescriptor *bindingDescriptor{ [[[MTLArgumentDescriptor alloc] init] autorelease] };
 				[bindingDescriptor setIndex:binding.binding];
 				switch(binding.type) {
 					case DescriptorType::SampledImage:
@@ -363,8 +363,8 @@ namespace garlic::clove {
 			id<MTLFunction> function{ polyCast<MetalShader>(descriptor.shader.get())->getFunction() };
 		
 			NSError *error{ nullptr };
-			id<MTLComputePipelineState> pipelineState{ [device newComputePipelineStateWithFunction:function
-																							 error:&error] };
+			id<MTLComputePipelineState> pipelineState{ [[device newComputePipelineStateWithFunction:function
+																							  error:&error] autorelease] };
 			if(error != nullptr && error.code != 0) {
 				return Unexpected{ std::runtime_error{ [[error description]
 														cStringUsingEncoding:[NSString defaultCStringEncoding]] } };
