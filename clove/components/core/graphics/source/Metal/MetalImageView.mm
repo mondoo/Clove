@@ -2,7 +2,7 @@
 
 namespace garlic::clove {
 	MetalImageView::MetalImageView(id<MTLTexture> texture)
-		: texture{ texture }{
+		: texture{ [texture retain] }{
 	}
 	
 	MetalImageView::MetalImageView(MetalImageView &&other) noexcept = default;
