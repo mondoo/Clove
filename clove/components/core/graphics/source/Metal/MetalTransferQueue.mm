@@ -31,8 +31,13 @@ namespace garlic::clove {
 
 	void MetalTransferQueue::submit(std::vector<TransferSubmitInfo> const &submissions, GhaFence *signalFence) {
 		@autoreleasepool {
-			for(auto const &submission : submissions) {
+			for(size_t i{ 0 }; i < submissions.size(); ++i) {
+				auto const &submission{ submissions[i] };
+				bool const isLastSubmission{ i == submissions.size() - 1 };
+				
 				for(auto const &commandBuffer : submission.commandBuffers) {
+					bool const isLastCommandBuffer{ commandBuffer == submission.commandBuffers.back() };
+					
 					auto *metalCommandBuffer{ polyCast<MetalTransferCommandBuffer>(commandBuffer.get()) };
 					if(metalCommandBuffer->getCommandBufferUsage() == CommandBufferUsage::OneTimeSubmit && metalCommandBuffer->bufferHasBeenUsed()){
 						CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "TransferCommandBuffer recorded with CommandBufferUsage::OneTimeSubmit has already been used. Only buffers recorded with CommandBufferUsage::Default can submitted multiples times after being recorded once.");
@@ -54,36 +59,26 @@ namespace garlic::clove {
 						command(encoder);
 					}
 					
+					//For the last buffer add all semaphore signalling
+					if(isLastCommandBuffer && !submission.signalSemaphores.empty()) {
+						for(auto const &semaphore : submission.signalSemaphores) {
+							[encoder updateFence:polyCast<MetalSemaphore const>(semaphore.get())->getFence()];
+						}
+					}
+					
+					//For the last submission signal the fence
+					if(isLastSubmission && signalFence != nullptr) {
+						__block auto *fence{ polyCast<MetalFence>(signalFence) };
+						[executionBuffer addCompletedHandler:^(id<MTLCommandBuffer> buffer) {
+							fence->signal();
+						}];
+					}
+					
 					[encoder endEncoding];
 					[executionBuffer commit];
 					
 					metalCommandBuffer->markAsUsed();
 				}
-				
-				//Signal all semaphores at the end of each submission. Similar to how vulkan does it.
-				if(!submission.signalSemaphores.empty()) {
-					id<MTLCommandBuffer> signalBuffer{ [commandQueue commandBuffer] };
-					id<MTLBlitCommandEncoder> encoder{ [signalBuffer blitCommandEncoder] };
-					
-					for(auto const &semaphore : submission.signalSemaphores) {
-						[encoder updateFence:polyCast<MetalSemaphore const>(semaphore.get())->getFence()];
-					}
-					
-					[encoder endEncoding];
-					[signalBuffer commit];
-				}
-			}
-			
-			//Signal fence when all submissions are completed
-			if(signalFence != nullptr) {
-				id<MTLCommandBuffer> signalBuffer{ [commandQueue commandBuffer] };
-				
-				__block auto *fence{ polyCast<MetalFence>(signalFence) };
-				[signalBuffer addCompletedHandler:^(id<MTLCommandBuffer> buffer) {
-					fence->signal();
-				}];
-				
-				[signalBuffer commit];
 			}
 		}
 	}
