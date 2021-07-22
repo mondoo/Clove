@@ -2,22 +2,27 @@
 
 #include "Clove/Rendering/RenderGraph/RgPass.hpp"
 #include "Clove/Rendering/RenderGraph/Bindings.hpp"
+#include "Clove/Rendering/RenderGraph/RgShader.hpp"
 
 #include <vector>
+#include <Clove/Maths/Vector.hpp>
 
 namespace garlic::clove {
     class RgComputePass : public RgPass {
         //TYPES
     public:
         struct Descriptor {
-
+            RgShader shader{};
         };
 
         /**
          * @brief Represents a single unit of work. A single dispatch
          */
         struct Submission {
+            std::vector<RgBufferBinding> readBuffers{};
+            std::vector<RgBufferBinding> writeBuffers{};
 
+            vec3ui disptachSize{};
         };
 
         //VARIABLES
@@ -28,7 +33,7 @@ namespace garlic::clove {
         //FUNCTIONS
     public:
         RgComputePass() = delete;
-        RgComputePass(RgPassIdType id);
+        RgComputePass(RgPassIdType id, Descriptor descriptor);
 
         RgComputePass(RgComputePass const &other) = delete;
         RgComputePass(RgComputePass &&other) noexcept;

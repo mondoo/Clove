@@ -1,8 +1,9 @@
 #include "Clove/Rendering/RenderGraph/RgComputePass.hpp"
 
 namespace garlic::clove {
-    RgComputePass::RgComputePass(RgPassIdType id)
-        : RgPass{ id } {
+    RgComputePass::RgComputePass(RgPassIdType id, Descriptor descriptor)
+        : RgPass{ id }
+        , descriptor{ std::move(descriptor) } {
     }
 
     RgComputePass::RgComputePass(RgComputePass &&other) noexcept = default;
@@ -12,10 +13,22 @@ namespace garlic::clove {
     RgComputePass::~RgComputePass() = default;
 
     std::unordered_set<RgResourceIdType> RgComputePass::getInputResources() const {
-        return {};
+        std::unordered_set<RgResourceIdType> inputs{};
+        for(auto const &submission : submissions) {
+            for(auto const &binding : submission.readBuffers){
+                inputs.emplace(binding.buffer);
+            }
+        }
+        return inputs;
     }
 
     std::unordered_set<RgResourceIdType> RgComputePass::getOutputResources() const {
-        return {};
+        std::unordered_set<RgResourceIdType> outputs{};
+        for(auto const &submission : submissions) {
+            for(auto const &binding : submission.writeBuffers) {
+                outputs.emplace(binding.buffer);
+            }
+        }
+        return outputs;
     }
 }
