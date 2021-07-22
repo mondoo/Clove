@@ -85,7 +85,7 @@ namespace garlic::clove {
         return shader;
     }
 
-    RgPassIdType RenderGraph::addRenderPass(RgRenderPass::Descriptor passDescriptor) {
+    RgPassIdType RenderGraph::createRenderPass(RgRenderPass::Descriptor passDescriptor) {
         RgPassIdType const renderPassId{ nextPassId++ };
 
         for(auto &renderTarget : passDescriptor.renderTargets) {
@@ -154,6 +154,40 @@ namespace garlic::clove {
                 image->addImageUsage(GhaImage::UsageMode::Sampled);
             }
             image->addReadPass(renderPass);
+        }
+
+        pass->addSubmission(std::move(submission));
+    }
+
+    RgPassIdType RenderGraph::createComputePass(RgComputePass::Descriptor passDescriptor) {
+        RgPassIdType const computePassId{ nextPassId++ };
+
+        computePasses[computePassId] = std::make_unique<RgComputePass>(computePassId, std::move(passDescriptor));
+
+        return computePassId;
+    }
+
+    void RenderGraph::addComputeSubmission(RgPassIdType const computePass, RgComputePass::Submission submission) {
+        auto &pass{ computePasses.at(computePass) };
+
+        for(auto const &buffer : submission.readBuffers) {
+            RgResourceIdType const bufferId{ buffer.buffer };
+
+            auto &buffer{ buffers.at(bufferId) };
+            if(!buffer->isExternalBuffer()) {
+                buffer->addBufferUsage(GhaBuffer::UsageMode::StorageBuffer);
+            }
+            buffer->addReadPass(computePass);
+        }
+
+        for(auto const &buffer : submission.writeBuffers) {
+            RgResourceIdType const bufferId{ buffer.buffer };
+
+            auto &buffer{ buffers.at(bufferId) };
+            if(!buffer->isExternalBuffer()) {
+                buffer->addBufferUsage(GhaBuffer::UsageMode::StorageBuffer);
+            }
+            buffer->addWritePass(computePass);
         }
 
         pass->addSubmission(std::move(submission));

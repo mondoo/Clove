@@ -4,6 +4,7 @@
 #include "Clove/Rendering/RenderGraph/RgImage.hpp"
 #include "Clove/Rendering/RenderGraph/RgRenderPass.hpp"
 #include "Clove/Rendering/RenderGraph/RgTransferPass.hpp"
+#include "Clove/Rendering/RenderGraph/RgComputePass.hpp"
 #include "Clove/Rendering/RenderGraph/RgShader.hpp"
 
 #include <Clove/Graphics/GhaGraphicsQueue.hpp>
@@ -46,6 +47,7 @@ namespace garlic::clove {
         std::unordered_map<RgResourceIdType, std::unique_ptr<RgImage>> images{};
 
         std::unordered_map<RgPassIdType, std::unique_ptr<RgRenderPass>> renderPasses{};
+        std::unordered_map<RgPassIdType, std::unique_ptr<RgComputePass>> computePasses{};
         std::unordered_map<RgPassIdType, std::unique_ptr<RgTransferPass>> transferPasses{};
 
         std::unordered_map<RgResourceIdType, std::shared_ptr<GhaShader>> allocatedShaders{};
@@ -131,16 +133,29 @@ namespace garlic::clove {
         RgShader createShader(std::string_view source, std::unordered_map<std::string, std::string> includeSources, std::string_view shaderName, GhaShader::Stage shaderStage);
 
         /**
-         * @brief Add a render pass into the graph.
+         * @brief Creates a render pass.
          * @param passDescriptor Descriptor of the pass itself. Contains any output resources and what shaders to run.
          */
-        RgPassIdType addRenderPass(RgRenderPass::Descriptor passDescriptor);
+        RgPassIdType createRenderPass(RgRenderPass::Descriptor passDescriptor);
         /**
          * @brief Adds a submission to a render pass. Defining a piece of geometry it needs to render.
          * @param renderPass Pass to add the submission to.
          * @param submission Submission for the pass. Encapsulates any input resources required for a single unit of work.
          */
         void addRenderSubmission(RgPassIdType const renderPass, RgRenderPass::Submission submission);
+
+        /**
+         * @brief Create a compute pass.
+         * @param passDescriptor Descriptor of the pass itself. Contains what shader to run.
+         * @return 
+         */
+        RgPassIdType createComputePass(RgComputePass::Descriptor passDescriptor);
+        /**
+         * @brief Adds a submission to the compute pass. Defining a dispatch call.
+         * @param computePass Pass to add the submission to.
+         * @param submission Submission for the pass. Encapsulates any input/output resources required for a single unit of work.
+         */
+        void addComputeSubmission(RgPassIdType const computePass, RgComputePass::Submission submission);
 
         /**
          * @brief Executes the RenderGraph. Creating any objects required and submitting commands to the relevant queues.
