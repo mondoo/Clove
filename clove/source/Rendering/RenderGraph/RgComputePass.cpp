@@ -15,7 +15,10 @@ namespace garlic::clove {
     std::unordered_set<RgResourceIdType> RgComputePass::getInputResources() const {
         std::unordered_set<RgResourceIdType> inputs{};
         for(auto const &submission : submissions) {
-            for(auto const &binding : submission.readBuffers){
+            for(auto const &binding : submission.readUniformBuffers) {
+                inputs.emplace(binding.buffer);
+            }
+            for(auto const &binding : submission.readStorageBuffers) {
                 inputs.emplace(binding.buffer);
             }
         }

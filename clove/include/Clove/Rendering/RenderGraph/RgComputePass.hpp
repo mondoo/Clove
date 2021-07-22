@@ -19,7 +19,9 @@ namespace garlic::clove {
          * @brief Represents a single unit of work. A single dispatch
          */
         struct Submission {
-            std::vector<RgBufferBinding> readBuffers{};
+            std::vector<RgBufferBinding> readUniformBuffers{};
+            std::vector<RgBufferBinding> readStorageBuffers{};
+
             std::vector<RgBufferBinding> writeBuffers{};
 
             vec3ui disptachSize{};

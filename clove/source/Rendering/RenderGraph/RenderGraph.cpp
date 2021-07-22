@@ -170,7 +170,17 @@ namespace garlic::clove {
     void RenderGraph::addComputeSubmission(RgPassIdType const computePass, RgComputePass::Submission submission) {
         auto &pass{ computePasses.at(computePass) };
 
-        for(auto const &buffer : submission.readBuffers) {
+        for(auto const &buffer : submission.readUniformBuffers) {
+            RgResourceIdType const bufferId{ buffer.buffer };
+
+            auto &buffer{ buffers.at(bufferId) };
+            if(!buffer->isExternalBuffer()) {
+                buffer->addBufferUsage(GhaBuffer::UsageMode::UniformBuffer);
+            }
+            buffer->addReadPass(computePass);
+        }
+
+        for(auto const &buffer : submission.readStorageBuffers) {
             RgResourceIdType const bufferId{ buffer.buffer };
 
             auto &buffer{ buffers.at(bufferId) };
