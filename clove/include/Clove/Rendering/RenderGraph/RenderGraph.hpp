@@ -1,12 +1,13 @@
 #pragma once
 
 #include "Clove/Rendering/RenderGraph/RgBuffer.hpp"
+#include "Clove/Rendering/RenderGraph/RgComputePass.hpp"
 #include "Clove/Rendering/RenderGraph/RgImage.hpp"
 #include "Clove/Rendering/RenderGraph/RgRenderPass.hpp"
-#include "Clove/Rendering/RenderGraph/RgTransferPass.hpp"
-#include "Clove/Rendering/RenderGraph/RgComputePass.hpp"
 #include "Clove/Rendering/RenderGraph/RgShader.hpp"
+#include "Clove/Rendering/RenderGraph/RgTransferPass.hpp"
 
+#include <Clove/Graphics/Descriptor.hpp>
 #include <Clove/Graphics/GhaGraphicsQueue.hpp>
 #include <Clove/Graphics/GhaShader.hpp>
 #include <Clove/Maths/Vector.hpp>
@@ -173,5 +174,7 @@ namespace garlic::clove {
 
         RgResource *getResourceFromId(RgResourceIdType resourceId);
         RgPass *getPassFromId(RgPassIdType passId);
+
+        void generateRenderPassObjects(std::vector<RgPassIdType> const &passes, std::unordered_map<RgPassIdType, std::shared_ptr<GhaRenderPass>> &outRenderPasses, std::unordered_map<RgPassIdType, std::shared_ptr<GhaFramebuffer>> &outFramebuffers, std::unordered_map<RgPassIdType, std::shared_ptr<GhaGraphicsPipelineObject>> &outGraphicsPipelines, std::unordered_map<RgResourceIdType, std::shared_ptr<GhaSampler>> &outSamplers, std::unordered_map<RgPassIdType, std::shared_ptr<GhaDescriptorSetLayout>> &outDescriptorSetLayouts, std::unordered_map<DescriptorType, uint32_t> &totalDescriptorBindingCount, uint32_t &totalDescriptorSets);
     };
 }

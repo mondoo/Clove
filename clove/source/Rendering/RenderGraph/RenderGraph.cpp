@@ -224,145 +224,27 @@ namespace garlic::clove {
         }
         std::reverse(passes.begin(), passes.end());
 
-        //Allocate all of the GHA objects required for each pass
+        //Graphics GHA objects.
         std::unordered_map<RgPassIdType, std::shared_ptr<GhaRenderPass>> allocatedRenderPasses{};
         std::unordered_map<RgPassIdType, std::shared_ptr<GhaFramebuffer>> allocatedFramebuffers{};
-        std::unordered_map<RgPassIdType, std::shared_ptr<GhaGraphicsPipelineObject>> allocatedPipelines{};
+        std::unordered_map<RgPassIdType, std::shared_ptr<GhaGraphicsPipelineObject>> allocatedGraphicsPipelines{};
+        std::unordered_map<RgResourceIdType, std::shared_ptr<GhaSampler>> allocatedSamplers{};
+
+        //Compute GHA objects.
+
+        //Shared GHA objects.
         std::unordered_map<RgPassIdType, std::shared_ptr<GhaDescriptorSetLayout>> descriptorSetLayouts{};
         std::unordered_map<RgPassIdType, std::vector<std::shared_ptr<GhaDescriptorSet>>> allocatedDescriptorSets{};
-        std::unordered_map<RgResourceIdType, std::shared_ptr<GhaSampler>> allocatedSamplers{};
 
         std::unordered_map<DescriptorType, uint32_t> totalDescriptorBindingCount{};
         uint32_t totalDescriptorSets{ 0 };
 
-        for(int32_t i{ 0 }; i < passes.size(); ++i) {
-            RgPassIdType const passId{ passes[i] };
-            if(!renderPasses.contains(passId)) {
-                continue;
-            }
-
-            RgRenderPass::Descriptor const &passDescriptor{ renderPasses.at(passId)->getDescriptor() };
-            std::vector<RgRenderPass::Submission> const &passSubmissions{ renderPasses.at(passId)->getSubmissions() };
-
-            //Allocate image samplers
-            for(auto const &submission : passSubmissions) {
-                for(auto const &imageSampler : submission.shaderCombinedImageSamplers) {
-                    allocatedSamplers[passId] = globalCache.createSampler(imageSampler.samplerState);
-                }
-            }
-
-            //Build and allocate the render pass
-            std::vector<AttachmentDescriptor> colourAttachments{};
-            for(auto &renderTarget : passDescriptor.renderTargets) {
-                colourAttachments.emplace_back(AttachmentDescriptor{
-                    .format         = images[renderTarget.target]->getGhaImageView(frameCache)->getImageFormat(),
-                    .loadOperation  = renderTarget.loadOp,
-                    .storeOperation = renderTarget.storeOp,
-                    .initialLayout  = getPreviousLayout(passes, i, renderTarget.target),
-                    .usedLayout     = GhaImage::Layout::ColourAttachmentOptimal,
-                    .finalLayout    = renderTarget.target == outputResource ? GhaImage::Layout::Present : GhaImage::Layout::ColourAttachmentOptimal,
-                });
-            }
-
-            RgDepthStencilBinding const &depthStencil{ passDescriptor.depthStencil };
-            AttachmentDescriptor depthStencilAttachment{
-                .format         = images[depthStencil.target]->getGhaImageView(frameCache)->getImageFormat(),
-                .loadOperation  = depthStencil.loadOp,
-                .storeOperation = depthStencil.storeOp,
-                .initialLayout  = getPreviousLayout(passes, i, depthStencil.target),
-                .usedLayout     = GhaImage::Layout::DepthStencilAttachmentOptimal,
-                .finalLayout    = GhaImage::Layout::DepthStencilAttachmentOptimal,
-            };
-
-            allocatedRenderPasses[passId] = globalCache.createRenderPass(GhaRenderPass::Descriptor{ .colourAttachments = std::move(colourAttachments), .depthAttachment = std::move(depthStencilAttachment) });
-
-            //Build descriptor layouts using the first pass.
-            //TODO: Get this infomation from shader reflection
-            std::vector<DescriptorSetBindingInfo> descriptorBindings{};
-            for(auto &ubo : passSubmissions[0].shaderUbos) {
-                descriptorBindings.emplace_back(DescriptorSetBindingInfo{
-                    .binding   = ubo.slot,
-                    .type      = DescriptorType::UniformBuffer,
-                    .arraySize = 1,
-                    .stage     = GhaShader::Stage::Vertex,//TODO: provided by pass or by shader reflection
-                });
-            }
-            for(auto &sampler : passSubmissions[0].shaderCombinedImageSamplers) {
-                descriptorBindings.emplace_back(DescriptorSetBindingInfo{
-                    .binding   = sampler.slot,
-                    .type      = DescriptorType::CombinedImageSampler,
-                    .arraySize = 1,
-                    .stage     = GhaShader::Stage::Pixel,//TODO: provided by pass or by shader reflection
-                });
-            }
-
-            descriptorSetLayouts[passId] = globalCache.createDescriptorSetLayout(GhaDescriptorSetLayout::Descriptor{ .bindings = std::move(descriptorBindings) });
-
-            //Build graphics pipeline
-            std::vector<VertexAttributeDescriptor> const vertexAttributes{
-                VertexAttributeDescriptor{
-                    .format = VertexAttributeFormat::R32G32B32_SFLOAT,
-                    .offset = offsetof(Vertex, position),
-                },
-            };
-
-            //TEMP: Using dynamic for now
-            AreaDescriptor const viewScissorArea{
-                .state = ElementState::Dynamic,
-            };
-
-            allocatedPipelines[passId] = globalCache.createGraphicsPipelineObject(GhaGraphicsPipelineObject::Descriptor{
-                .vertexShader       = allocatedShaders.at(passDescriptor.vertexShader),
-                .pixelShader        = allocatedShaders.at(passDescriptor.pixelShader),
-                .vertexInput        = Vertex::getInputBindingDescriptor(),
-                .vertexAttributes   = vertexAttributes,
-                .viewportDescriptor = viewScissorArea,
-                .scissorDescriptor  = viewScissorArea,
-                .depthState         = {
-                    .depthTest  = passDescriptor.depthTest,
-                    .depthWrite = passDescriptor.depthWrite,
-                },
-                .enableBlending       = passDescriptor.enableBlending,
-                .renderPass           = allocatedRenderPasses.at(passId),
-                .descriptorSetLayouts = { descriptorSetLayouts.at(passId) },
-                .pushConstants        = {},
-            });
-
-            //Allocate the frame buffer
-            std::vector<std::shared_ptr<GhaImageView>> attachments{};
-            for(auto &renderTarget : passDescriptor.renderTargets) {
-                attachments.push_back(images.at(renderTarget.target)->getGhaImageView(frameCache));
-            }
-            attachments.push_back(images.at(passDescriptor.depthStencil.target)->getGhaImageView(frameCache));
-
-            allocatedFramebuffers[passId] = frameCache.allocateFramebuffer(GhaFramebuffer::Descriptor{
-                .renderPass  = allocatedRenderPasses[passId],
-                .attachments = std::move(attachments),
-                .width       = images[passDescriptor.renderTargets[0].target]->getGhaImageView(frameCache)->getImageDimensions().x,//TEMP: Just using the first target as the size. This will need to be validated
-                .height      = images[passDescriptor.renderTargets[0].target]->getGhaImageView(frameCache)->getImageDimensions().y,
-            });
-
-            //Count descriptor sets required for the entire pass
-            for(auto const &submission : passSubmissions) {
-                bool const hasUbo{ !submission.shaderUbos.empty() };
-                bool const hasImageSampler{ !submission.shaderCombinedImageSamplers.empty() };
-
-                if(hasUbo) {
-                    totalDescriptorBindingCount[DescriptorType::UniformBuffer] += submission.shaderUbos.size();
-                }
-                if(hasImageSampler) {
-                    totalDescriptorBindingCount[DescriptorType::CombinedImageSampler] += submission.shaderCombinedImageSamplers.size();
-                }
-
-                if(hasUbo || hasImageSampler) {
-                    ++totalDescriptorSets;//Allocating a single set per submission
-                }
-            }
-        }
+        //Allocate all of the GHA objects required for each pass
+        generateRenderPassObjects(passes, allocatedRenderPasses, allocatedFramebuffers, allocatedGraphicsPipelines, allocatedSamplers, descriptorSetLayouts, totalDescriptorBindingCount, totalDescriptorSets);
 
         //Allocate descriptor sets
         //Create a single pool to allocate from
-        std::vector<DescriptorInfo> descriptorTypes{};
+        std::vector<DescriptorInfo>  descriptorTypes{};
         descriptorTypes.reserve(totalDescriptorBindingCount.size());
 
         for(auto &&[type, count] : totalDescriptorBindingCount) {
@@ -380,7 +262,7 @@ namespace garlic::clove {
         descriptorPool->reset();//Make sure we have a fresh pool. TODO: do this inside frame cache? Or have a function to reset states
 
         //Create a descriptor set for each pipeline
-        for(auto &&[id, pipeline] : allocatedPipelines) {
+        for(auto &&[id, pipeline] : allocatedGraphicsPipelines) {
             std::vector<std::shared_ptr<GhaDescriptorSetLayout>> layouts(renderPasses.at(id)->getSubmissions().size(), pipeline->getDescriptor().descriptorSetLayouts[0]);//TEMP: Using first index as we know pipelines always have a single descriptor for now
             allocatedDescriptorSets[id] = descriptorPool->allocateDescriptorSets(layouts);
         }
@@ -420,7 +302,7 @@ namespace garlic::clove {
             graphicsCommandBufffer->setViewport(passDescriptor.viewportPosition, passDescriptor.viewportSize);
             graphicsCommandBufffer->setScissor({ 0, 0 }, passDescriptor.viewportSize);
 
-            graphicsCommandBufffer->bindPipelineObject(*allocatedPipelines.at(passId));
+            graphicsCommandBufffer->bindPipelineObject(*allocatedGraphicsPipelines.at(passId));
 
             for(size_t index{ 0 }; auto const &submission : passSubmissions) {
                 std::shared_ptr<GhaDescriptorSet> const &descriptorSet{ allocatedDescriptorSets.at(passId)[index] };
@@ -526,6 +408,133 @@ namespace garlic::clove {
         } else {
             CLOVE_ASSERT(false, "Could not find pass ID");
             return nullptr;
+        }
+    }
+
+    void RenderGraph::generateRenderPassObjects(std::vector<RgPassIdType> const &passes, std::unordered_map<RgPassIdType, std::shared_ptr<GhaRenderPass>> &outRenderPasses, std::unordered_map<RgPassIdType, std::shared_ptr<GhaFramebuffer>> &outFramebuffers, std::unordered_map<RgPassIdType, std::shared_ptr<GhaGraphicsPipelineObject>> &outGraphicsPipelines, std::unordered_map<RgResourceIdType, std::shared_ptr<GhaSampler>> &outSamplers, std::unordered_map<RgPassIdType, std::shared_ptr<GhaDescriptorSetLayout>> &outDescriptorSetLayouts, std::unordered_map<DescriptorType, uint32_t> &totalDescriptorBindingCount, uint32_t &totalDescriptorSets) {
+        for(int32_t i{ 0 }; i < passes.size(); ++i) {
+            RgPassIdType const passId{ passes[i] };
+            if(!renderPasses.contains(passId)) {
+                continue;
+            }
+
+            RgRenderPass::Descriptor const &passDescriptor{ renderPasses.at(passId)->getDescriptor() };
+            std::vector<RgRenderPass::Submission> const &passSubmissions{ renderPasses.at(passId)->getSubmissions() };
+
+            //Allocate image samplers
+            for(auto const &submission : passSubmissions) {
+                for(auto const &imageSampler : submission.shaderCombinedImageSamplers) {
+                    outSamplers[passId] = globalCache.createSampler(imageSampler.samplerState);
+                }
+            }
+
+            //Build and allocate the render pass
+            std::vector<AttachmentDescriptor> colourAttachments{};
+            for(auto &renderTarget : passDescriptor.renderTargets) {
+                colourAttachments.emplace_back(AttachmentDescriptor{
+                    .format         = images[renderTarget.target]->getGhaImageView(frameCache)->getImageFormat(),
+                    .loadOperation  = renderTarget.loadOp,
+                    .storeOperation = renderTarget.storeOp,
+                    .initialLayout  = getPreviousLayout(passes, i, renderTarget.target),
+                    .usedLayout     = GhaImage::Layout::ColourAttachmentOptimal,
+                    .finalLayout    = renderTarget.target == outputResource ? GhaImage::Layout::Present : GhaImage::Layout::ColourAttachmentOptimal,
+                });
+            }
+
+            RgDepthStencilBinding const &depthStencil{ passDescriptor.depthStencil };
+            AttachmentDescriptor depthStencilAttachment{
+                .format         = images[depthStencil.target]->getGhaImageView(frameCache)->getImageFormat(),
+                .loadOperation  = depthStencil.loadOp,
+                .storeOperation = depthStencil.storeOp,
+                .initialLayout  = getPreviousLayout(passes, i, depthStencil.target),
+                .usedLayout     = GhaImage::Layout::DepthStencilAttachmentOptimal,
+                .finalLayout    = GhaImage::Layout::DepthStencilAttachmentOptimal,
+            };
+
+            outRenderPasses[passId] = globalCache.createRenderPass(GhaRenderPass::Descriptor{ .colourAttachments = std::move(colourAttachments), .depthAttachment = std::move(depthStencilAttachment) });
+
+            //Build descriptor layouts using the first pass.
+            //TODO: Get this infomation from shader reflection
+            std::vector<DescriptorSetBindingInfo> descriptorBindings{};
+            for(auto &ubo : passSubmissions[0].shaderUbos) {
+                descriptorBindings.emplace_back(DescriptorSetBindingInfo{
+                    .binding   = ubo.slot,
+                    .type      = DescriptorType::UniformBuffer,
+                    .arraySize = 1,
+                    .stage     = GhaShader::Stage::Vertex,//TODO: provided by pass or by shader reflection
+                });
+            }
+            for(auto &sampler : passSubmissions[0].shaderCombinedImageSamplers) {
+                descriptorBindings.emplace_back(DescriptorSetBindingInfo{
+                    .binding   = sampler.slot,
+                    .type      = DescriptorType::CombinedImageSampler,
+                    .arraySize = 1,
+                    .stage     = GhaShader::Stage::Pixel,//TODO: provided by pass or by shader reflection
+                });
+            }
+
+            outDescriptorSetLayouts[passId] = globalCache.createDescriptorSetLayout(GhaDescriptorSetLayout::Descriptor{ .bindings = std::move(descriptorBindings) });
+
+            //Build graphics pipeline
+            std::vector<VertexAttributeDescriptor> const vertexAttributes{
+                VertexAttributeDescriptor{
+                    .format = VertexAttributeFormat::R32G32B32_SFLOAT,
+                    .offset = offsetof(Vertex, position),
+                },
+            };
+
+            //TEMP: Using dynamic for now
+            AreaDescriptor const viewScissorArea{
+                .state = ElementState::Dynamic,
+            };
+
+            outGraphicsPipelines[passId] = globalCache.createGraphicsPipelineObject(GhaGraphicsPipelineObject::Descriptor{
+                .vertexShader       = allocatedShaders.at(passDescriptor.vertexShader),
+                .pixelShader        = allocatedShaders.at(passDescriptor.pixelShader),
+                .vertexInput        = Vertex::getInputBindingDescriptor(),
+                .vertexAttributes   = vertexAttributes,
+                .viewportDescriptor = viewScissorArea,
+                .scissorDescriptor  = viewScissorArea,
+                .depthState         = {
+                    .depthTest  = passDescriptor.depthTest,
+                    .depthWrite = passDescriptor.depthWrite,
+                },
+                .enableBlending       = passDescriptor.enableBlending,
+                .renderPass           = outRenderPasses.at(passId),
+                .descriptorSetLayouts = { outDescriptorSetLayouts.at(passId) },
+                .pushConstants        = {},
+            });
+
+            //Allocate the frame buffer
+            std::vector<std::shared_ptr<GhaImageView>> attachments{};
+            for(auto &renderTarget : passDescriptor.renderTargets) {
+                attachments.push_back(images.at(renderTarget.target)->getGhaImageView(frameCache));
+            }
+            attachments.push_back(images.at(passDescriptor.depthStencil.target)->getGhaImageView(frameCache));
+
+            outFramebuffers[passId] = frameCache.allocateFramebuffer(GhaFramebuffer::Descriptor{
+                .renderPass  = outRenderPasses.at(passId),
+                .attachments = std::move(attachments),
+                .width       = images[passDescriptor.renderTargets[0].target]->getGhaImageView(frameCache)->getImageDimensions().x,//TEMP: Just using the first target as the size. This will need to be validated
+                .height      = images[passDescriptor.renderTargets[0].target]->getGhaImageView(frameCache)->getImageDimensions().y,
+            });
+
+            //Count descriptor sets required for the entire pass
+            for(auto const &submission : passSubmissions) {
+                bool const hasUbo{ !submission.shaderUbos.empty() };
+                bool const hasImageSampler{ !submission.shaderCombinedImageSamplers.empty() };
+
+                if(hasUbo) {
+                    totalDescriptorBindingCount[DescriptorType::UniformBuffer] += submission.shaderUbos.size();
+                }
+                if(hasImageSampler) {
+                    totalDescriptorBindingCount[DescriptorType::CombinedImageSampler] += submission.shaderCombinedImageSamplers.size();
+                }
+
+                if(hasUbo || hasImageSampler) {
+                    ++totalDescriptorSets;//Allocating a single set per submission
+                }
+            }
         }
     }
 }
