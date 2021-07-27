@@ -4,6 +4,7 @@
 #include "Clove/Rendering/RenderGraph/RgGlobalCache.hpp"
 #include "Clove/Rendering/Vertex.hpp"
 
+#include <Clove/Graphics/GhaComputePipelineObject.hpp>
 #include <Clove/Graphics/GhaDescriptorSet.hpp>
 #include <Clove/Graphics/GhaDescriptorSetLayout.hpp>
 #include <Clove/Graphics/GhaGraphicsCommandBuffer.hpp>
@@ -231,6 +232,7 @@ namespace garlic::clove {
         std::unordered_map<RgResourceIdType, std::shared_ptr<GhaSampler>> allocatedSamplers{};
 
         //Compute GHA objects.
+        std::unordered_map<RgPassIdType, std::shared_ptr<GhaComputePipelineObject>> allocatedComputePipelines{};
 
         //Shared GHA objects.
         std::unordered_map<RgPassIdType, std::shared_ptr<GhaDescriptorSetLayout>> descriptorSetLayouts{};
@@ -241,6 +243,7 @@ namespace garlic::clove {
 
         //Allocate all of the GHA objects required for each pass
         generateRenderPassObjects(passes, allocatedRenderPasses, allocatedFramebuffers, allocatedGraphicsPipelines, allocatedSamplers, descriptorSetLayouts, totalDescriptorBindingCount, totalDescriptorSets);
+        generateComputePassObjects(passes, allocatedComputePipelines, descriptorSetLayouts, totalDescriptorBindingCount, totalDescriptorSets);
 
         //Allocate descriptor sets
         //Create a single pool to allocate from
@@ -403,6 +406,8 @@ namespace garlic::clove {
     RgPass *RenderGraph::getPassFromId(RgPassIdType passId) {
         if(renderPasses.contains(passId)) {
             return renderPasses.at(passId).get();
+        } else if(computePasses.contains(passId)) {
+            return computePasses.at(passId).get();
         } else if(transferPasses.contains(passId)) {
             return transferPasses.at(passId).get();
         } else {
@@ -532,6 +537,76 @@ namespace garlic::clove {
                 }
 
                 if(hasUbo || hasImageSampler) {
+                    ++totalDescriptorSets;//Allocating a single set per submission
+                }
+            }
+        }
+    }
+
+    void RenderGraph::generateComputePassObjects(std::vector<RgPassIdType> const &passes, std::shared_ptr<GhaComputePipelineObject> &outComputePipelines, std::unordered_map<RgPassIdType, std::shared_ptr<GhaDescriptorSetLayout>> &outDescriptorSetLayouts, std::unordered_map<DescriptorType, uint32_t> &totalDescriptorBindingCount, uint32_t &totalDescriptorSets) {
+        for(int32_t i{ 0 }; i < passes.size(); ++i) {
+            RgPassIdType const passId{ passes[i] };
+            if(!computePasses.contains(passId)) {
+                continue;
+            }
+
+            RgComputePass::Descriptor const &passDescriptor{ computePasses.at(passId)->getDescriptor() };
+            std::vector<RgComputePass::Submission> const &passSubmissions{ computePasses.at(passId)->getSubmissions() };
+
+            //Build descriptor layouts using the first pass.
+            //TODO: Get this infomation from shader reflection
+            std::vector<DescriptorSetBindingInfo> descriptorBindings{};
+            for(auto &ubo : passSubmissions[0].readUniformBuffers) {
+                descriptorBindings.emplace_back(DescriptorSetBindingInfo{
+                    .binding   = ubo.slot,
+                    .type      = DescriptorType::UniformBuffer,
+                    .arraySize = 1,
+                    .stage     = GhaShader::Stage::Compute,
+                });
+            }
+            for(auto &sbo : passSubmissions[0].readStorageBuffers) {
+                descriptorBindings.emplace_back(DescriptorSetBindingInfo{
+                    .binding   = sbo.slot,
+                    .type      = DescriptorType::StorageBuffer,
+                    .arraySize = 1,
+                    .stage     = GhaShader::Stage::Compute,
+                });
+            }
+            for(auto &sbo : passSubmissions[0].writeBuffers) {
+                descriptorBindings.emplace_back(DescriptorSetBindingInfo{
+                    .binding   = sbo.slot,
+                    .type      = DescriptorType::StorageBuffer,
+                    .arraySize = 1,
+                    .stage     = GhaShader::Stage::Compute,
+                });
+            }
+
+            outDescriptorSetLayouts[passId] = globalCache.createDescriptorSetLayout(GhaDescriptorSetLayout::Descriptor{ .bindings = std::move(descriptorBindings) });
+
+            //Build compute pipeline
+            outComputePipelines[passId] = globalCache.createComputePipelineObject(GhaComputePipelineObject::Descriptor{
+                .shader               = allocatedShaders.at(passDescriptor.shader),
+                .descriptorSetLayouts = { outDescriptorSetLayouts.at(passId) },
+                .pushConstants        = {},
+            });
+
+            //Count descriptor sets required for the entire pass
+            for(auto const &submission : passSubmissions) {
+                bool const hasUbo{ !submission.readUniformBuffers.empty() };
+                bool const hasSbo{ !submission.readStorageBuffers.empty() };
+                bool const hasWriteBuffer{ !submission.writeBuffers.empty() };
+
+                if(hasUbo) {
+                    totalDescriptorBindingCount[DescriptorType::UniformBuffer] += submission.readUniformBuffers.size();
+                }
+                if(hasSbo) {
+                    totalDescriptorBindingCount[DescriptorType::StorageBuffer] += submission.readStorageBuffers.size();
+                }
+                if(hasWriteBuffer) {
+                    totalDescriptorBindingCount[DescriptorType::StorageBuffer] += submission.writeBuffers.size();
+                }
+
+                if(hasUbo || hasSbo || hasWriteBuffer) {
                     ++totalDescriptorSets;//Allocating a single set per submission
                 }
             }
