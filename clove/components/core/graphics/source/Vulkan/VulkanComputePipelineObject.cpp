@@ -1,8 +1,9 @@
 #include "Clove/Graphics/Vulkan/VulkanComputePipelineObject.hpp"
 
 namespace garlic::clove {
-    VulkanComputePipelineObject::VulkanComputePipelineObject(DevicePointer device, VkPipeline pipeline, VkPipelineLayout pipelineLayout)
-        : device{ std::move(device) }
+    VulkanComputePipelineObject::VulkanComputePipelineObject(Descriptor descriptor, DevicePointer device, VkPipeline pipeline, VkPipelineLayout pipelineLayout)
+        : descriptor{ std::move(descriptor) }
+        , device{ std::move(device) }
         , pipeline{ pipeline }
         , pipelineLayout{ pipelineLayout } {
     }
@@ -14,6 +15,10 @@ namespace garlic::clove {
     VulkanComputePipelineObject::~VulkanComputePipelineObject() {
         vkDestroyPipeline(device.get(), pipeline, nullptr);
         vkDestroyPipelineLayout(device.get(), pipelineLayout, nullptr);
+    }
+
+    VulkanComputePipelineObject::Descriptor const &VulkanComputePipelineObject::getDescriptor() const {
+        return descriptor;
     }
 
     VkPipeline VulkanComputePipelineObject::getPipeline() const {
