@@ -171,4 +171,29 @@ namespace garlic::clove {
         }
         return graphicsPipelines.at(pipelineId);
     }
+
+    std::shared_ptr<GhaGraphicsPipelineObject> RgGlobalCache::createComputePipelineObject(GhaComputePipelineObject::Descriptor descriptor) {
+        PoolId pipelineId{};
+
+        for(auto &&[source, shaderObject] : shaders) {
+            if(shaderObject == descriptor.shader) {
+                CacheUtils::hashCombine(pipelineId, source);
+            }
+        }
+
+        for(auto const &descriptorSetLayout : descriptor.descriptorSetLayouts) {
+            CacheUtils::hashCombine(pipelineId, descriptorSetLayout.get());
+        }
+
+        for(auto const &pushConstantDescriptor : descriptor.pushConstants) {
+            CacheUtils::hashCombine(pipelineId, pushConstantDescriptor.stage);
+            CacheUtils::hashCombine(pipelineId, pushConstantDescriptor.offset);
+            CacheUtils::hashCombine(pipelineId, pushConstantDescriptor.size);
+        }
+
+        if(!computePipelines.contains(pipelineId)) {
+            computePipelines[pipelineId] = *factory->createComputePipelineObject(std::move(descriptor));
+        }
+        return computePipelines.at(pipelineId);
+    }
 }

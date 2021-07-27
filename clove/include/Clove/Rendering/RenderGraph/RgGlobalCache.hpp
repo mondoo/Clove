@@ -33,6 +33,7 @@ namespace garlic::clove {
         std::unordered_map<PoolId, std::shared_ptr<GhaRenderPass>> renderPasses{};
         std::unordered_map<PoolId, std::shared_ptr<GhaDescriptorSetLayout>> descriptorSetLayouts{};
         std::unordered_map<PoolId, std::shared_ptr<GhaGraphicsPipelineObject>> graphicsPipelines{};
+        std::unordered_map<PoolId, std::shared_ptr<GhaComputePipelineObject>> computePipelines{};
 
         //FUNCTIONS
     public:
@@ -55,5 +56,7 @@ namespace garlic::clove {
         std::shared_ptr<GhaRenderPass> createRenderPass(GhaRenderPass::Descriptor descriptor);
         std::shared_ptr<GhaDescriptorSetLayout> createDescriptorSetLayout(GhaDescriptorSetLayout::Descriptor descriptor);
         std::shared_ptr<GhaGraphicsPipelineObject> createGraphicsPipelineObject(GhaGraphicsPipelineObject::Descriptor descriptor);
+
+        std::shared_ptr<GhaGraphicsPipelineObject> createComputePipelineObject(GhaComputePipelineObject::Descriptor descriptor);
     };
 }
