@@ -45,6 +45,12 @@ namespace garlic::clove {
     }
 
     void RgBuffer::makeCpuAccessable() {
+        CLOVE_ASSERT(!externalBuffer, "Cannot change memory type. RgBuffer is registered as an external buffer.");
         ghaBufferDescriptor.memoryType = MemoryType::SystemMemory;
+    }
+
+    void RgBuffer::setSharingMode(SharingMode mode) {
+        CLOVE_ASSERT(!externalBuffer, "Cannot change sharing mode. RgBuffer is registered as an external buffer.");
+        ghaBufferDescriptor.sharingMode = mode;
     }
 }

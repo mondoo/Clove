@@ -57,6 +57,7 @@ namespace garlic::clove {
          * @details This will change the memory type from VideoMemory to SystemMemory.
          */
         void makeCpuAccessable();
+        void setSharingMode(SharingMode mode);
     };
 }
 

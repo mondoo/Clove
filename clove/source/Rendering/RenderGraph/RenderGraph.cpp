@@ -270,6 +270,34 @@ namespace garlic::clove {
             allocatedDescriptorSets[id] = descriptorPool->allocateDescriptorSets(layouts);
         }
 
+        //Change sharing modes if objects are used in multiple queue types. TODO: It might be better in the future to just insert the correct memory barriers.
+        for(auto &&[bufferId, buffer] : buffers) {
+            bool isInGraphics{ false };
+            bool isInCompute{ false };
+
+            for(RgPassIdType passId : buffer->getReadPasses()) {
+                if(renderPasses.contains(passId)) {
+                    isInGraphics = true;
+                }
+                if(computePasses.contains(passId)) {
+                    isInCompute = true;
+                }
+            }
+
+            for(RgPassIdType passId : buffer->getWritePasses()) {
+                if(renderPasses.contains(passId)) {
+                    isInGraphics = true;
+                }
+                if(computePasses.contains(passId)) {
+                    isInCompute = true;
+                }
+            }
+
+            if(isInGraphics && isInCompute) {
+                buffer->setSharingMode(SharingMode::Concurrent);
+            }
+        }
+
         //Record all of the commands of each individual pass
         std::shared_ptr<GhaGraphicsCommandBuffer> graphicsCommandBufffer{ frameCache.getGraphicsCommandBuffer() };
         //std::shared_ptr<GhaComputeCommandBuffer> computeCommandBufffer{ frameCache.getComputeCommandBuffer() };
