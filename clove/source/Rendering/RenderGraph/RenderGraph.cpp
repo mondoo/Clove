@@ -571,7 +571,7 @@ namespace garlic::clove {
         }
     }
 
-    void RenderGraph::generateComputePassObjects(std::vector<RgPassIdType> const &passes, std::shared_ptr<GhaComputePipelineObject> &outComputePipelines, std::unordered_map<RgPassIdType, std::shared_ptr<GhaDescriptorSetLayout>> &outDescriptorSetLayouts, std::unordered_map<DescriptorType, uint32_t> &totalDescriptorBindingCount, uint32_t &totalDescriptorSets) {
+    void RenderGraph::generateComputePassObjects(std::vector<RgPassIdType> const &passes, std::unordered_map<RgPassIdType, std::shared_ptr<GhaComputePipelineObject>> &outComputePipelines, std::unordered_map<RgPassIdType, std::shared_ptr<GhaDescriptorSetLayout>> &outDescriptorSetLayouts, std::unordered_map<DescriptorType, uint32_t> &totalDescriptorBindingCount, uint32_t &totalDescriptorSets) {
         for(int32_t i{ 0 }; i < passes.size(); ++i) {
             RgPassIdType const passId{ passes[i] };
             if(!computePasses.contains(passId)) {

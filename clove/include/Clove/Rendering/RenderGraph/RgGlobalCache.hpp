@@ -2,6 +2,7 @@
 
 #include <Clove/Graphics/GhaDescriptorSetLayout.hpp>
 #include <Clove/Graphics/GhaGraphicsPipelineObject.hpp>
+#include <Clove/Graphics/GhaComputePipelineObject.hpp>
 #include <Clove/Graphics/GhaRenderPass.hpp>
 #include <Clove/Graphics/GhaSampler.hpp>
 #include <Clove/Graphics/GhaShader.hpp>
@@ -57,6 +58,6 @@ namespace garlic::clove {
         std::shared_ptr<GhaDescriptorSetLayout> createDescriptorSetLayout(GhaDescriptorSetLayout::Descriptor descriptor);
         std::shared_ptr<GhaGraphicsPipelineObject> createGraphicsPipelineObject(GhaGraphicsPipelineObject::Descriptor descriptor);
 
-        std::shared_ptr<GhaGraphicsPipelineObject> createComputePipelineObject(GhaComputePipelineObject::Descriptor descriptor);
+        std::shared_ptr<GhaComputePipelineObject> createComputePipelineObject(GhaComputePipelineObject::Descriptor descriptor);
     };
 }

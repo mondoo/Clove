@@ -172,7 +172,7 @@ namespace garlic::clove {
         return graphicsPipelines.at(pipelineId);
     }
 
-    std::shared_ptr<GhaGraphicsPipelineObject> RgGlobalCache::createComputePipelineObject(GhaComputePipelineObject::Descriptor descriptor) {
+    std::shared_ptr<GhaComputePipelineObject> RgGlobalCache::createComputePipelineObject(GhaComputePipelineObject::Descriptor descriptor) {
         PoolId pipelineId{};
 
         for(auto &&[source, shaderObject] : shaders) {
