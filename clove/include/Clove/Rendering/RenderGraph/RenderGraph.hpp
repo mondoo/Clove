@@ -171,7 +171,7 @@ namespace garlic::clove {
         GraphicsSubmitInfo execute();
 
     private:
-        void buildExecutionPasses(std::vector<RgPassIdType> &passes, RgResourceIdType resourceId);
+        void buildExecutionPasses(std::vector<RgPassIdType> &outPasses, RgResourceIdType resourceId);
         GhaImage::Layout getPreviousLayout(std::vector<RgPassIdType> const &passes, int32_t const currentPassIndex, RgResourceIdType const imageId);
 
         RgResource *getResourceFromId(RgResourceIdType resourceId);
@@ -179,5 +179,7 @@ namespace garlic::clove {
 
         void generateRenderPassObjects(std::vector<RgPassIdType> const &passes, std::unordered_map<RgPassIdType, std::shared_ptr<GhaRenderPass>> &outRenderPasses, std::unordered_map<RgPassIdType, std::shared_ptr<GhaFramebuffer>> &outFramebuffers, std::unordered_map<RgPassIdType, std::shared_ptr<GhaGraphicsPipelineObject>> &outGraphicsPipelines, std::unordered_map<RgResourceIdType, std::shared_ptr<GhaSampler>> &outSamplers, std::unordered_map<RgPassIdType, std::shared_ptr<GhaDescriptorSetLayout>> &outDescriptorSetLayouts, std::unordered_map<DescriptorType, uint32_t> &totalDescriptorBindingCount, uint32_t &totalDescriptorSets);
         void generateComputePassObjects(std::vector<RgPassIdType> const &passes, std::unordered_map<RgPassIdType, std::shared_ptr<GhaComputePipelineObject>> &outComputePipelines, std::unordered_map<RgPassIdType, std::shared_ptr<GhaDescriptorSetLayout>> &outDescriptorSetLayouts, std::unordered_map<DescriptorType, uint32_t> &totalDescriptorBindingCount, uint32_t &totalDescriptorSets);
+
+        std::unordered_map<RgPassIdType, std::vector<std::shared_ptr<GhaDescriptorSet>>> createDescriptorSets(std::unordered_map<DescriptorType, uint32_t> const &totalDescriptorBindingCount, uint32_t const totalDescriptorSets, std::unordered_map<RgPassIdType, std::shared_ptr<GhaGraphicsPipelineObject>> const &graphicsPipelines, std::unordered_map<RgPassIdType, std::shared_ptr<GhaComputePipelineObject>> &computePipelines);
     };
 }

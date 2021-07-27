@@ -207,23 +207,23 @@ namespace garlic::clove {
     GraphicsSubmitInfo RenderGraph::execute() {
         CLOVE_ASSERT(outputResource != INVALID_RESOURCE_ID, "No output resource has been specified");
 
-        //Build an array of passes. This will be the execution order.
-        std::vector<RgPassIdType> passes{};
-        buildExecutionPasses(passes, outputResource);
+        //Build the array of passes to execute. Only adding passes which will ultimately effect the output resource.
+        std::vector<RgPassIdType> executionPasses{};
+        buildExecutionPasses(executionPasses, outputResource);
 
-        //Filter out any duplicates and then reverse order so the output pass is at the end
+        //Filter out any duplicates and then reverse order so the output pass is at the end.
         {
             std::unordered_set<RgPassIdType> seenPasses{};
-            for(auto iter{ passes.begin() }; iter != passes.end();) {
+            for(auto iter{ executionPasses.begin() }; iter != executionPasses.end();) {
                 if(!seenPasses.contains(*iter)) {
                     seenPasses.emplace(*iter);
                     ++iter;
                 } else {
-                    iter = passes.erase(iter);
+                    iter = executionPasses.erase(iter);
                 }
             }
         }
-        std::reverse(passes.begin(), passes.end());
+        std::reverse(executionPasses.begin(), executionPasses.end());
 
         //Graphics GHA objects.
         std::unordered_map<RgPassIdType, std::shared_ptr<GhaRenderPass>> allocatedRenderPasses{};
@@ -242,33 +242,11 @@ namespace garlic::clove {
         uint32_t totalDescriptorSets{ 0 };
 
         //Allocate all of the GHA objects required for each pass
-        generateRenderPassObjects(passes, allocatedRenderPasses, allocatedFramebuffers, allocatedGraphicsPipelines, allocatedSamplers, descriptorSetLayouts, totalDescriptorBindingCount, totalDescriptorSets);
-        generateComputePassObjects(passes, allocatedComputePipelines, descriptorSetLayouts, totalDescriptorBindingCount, totalDescriptorSets);
+        generateRenderPassObjects(executionPasses, allocatedRenderPasses, allocatedFramebuffers, allocatedGraphicsPipelines, allocatedSamplers, descriptorSetLayouts, totalDescriptorBindingCount, totalDescriptorSets);
+        generateComputePassObjects(executionPasses, allocatedComputePipelines, descriptorSetLayouts, totalDescriptorBindingCount, totalDescriptorSets);
 
         //Allocate descriptor sets
-        //Create a single pool to allocate from
-        std::vector<DescriptorInfo>  descriptorTypes{};
-        descriptorTypes.reserve(totalDescriptorBindingCount.size());
-
-        for(auto &&[type, count] : totalDescriptorBindingCount) {
-            descriptorTypes.emplace_back(DescriptorInfo{
-                .type  = type,
-                .count = count,
-            });
-        }
-
-        std::shared_ptr<GhaDescriptorPool> descriptorPool{ frameCache.allocateDescriptorPool(GhaDescriptorPool::Descriptor{
-            .poolTypes = std::move(descriptorTypes),
-            .flag      = GhaDescriptorPool::Flag::None,
-            .maxSets   = totalDescriptorSets,
-        }) };
-        descriptorPool->reset();//Make sure we have a fresh pool. TODO: do this inside frame cache? Or have a function to reset states
-
-        //Create a descriptor set for each pipeline
-        for(auto &&[id, pipeline] : allocatedGraphicsPipelines) {
-            std::vector<std::shared_ptr<GhaDescriptorSetLayout>> layouts(renderPasses.at(id)->getSubmissions().size(), pipeline->getDescriptor().descriptorSetLayouts[0]);//TEMP: Using first index as we know pipelines always have a single descriptor for now
-            allocatedDescriptorSets[id] = descriptorPool->allocateDescriptorSets(layouts);
-        }
+        allocatedDescriptorSets = createDescriptorSets(totalDescriptorBindingCount, totalDescriptorSets, allocatedGraphicsPipelines, allocatedComputePipelines);
 
         //Change sharing modes if objects are used in multiple queue types. TODO: It might be better in the future to just insert the correct memory barriers.
         for(auto &&[bufferId, buffer] : buffers) {
@@ -304,7 +282,7 @@ namespace garlic::clove {
         //std::shared_ptr<GhaTransferCommandBuffer> transferCommandBufffer{ frameCache.getTransferCommandBuffer() };
 
         graphicsCommandBufffer->beginRecording(CommandBufferUsage::OneTimeSubmit);
-        for(RgPassIdType passId : passes) {
+        for(RgPassIdType passId : executionPasses) {
             if(transferPasses.contains(passId)) {
                 RgTransferPass::BufferWrite const &writeOp{ transferPasses.at(passId)->getWriteOperation() };
                 std::unique_ptr<RgBuffer> const &buffer{ buffers.at(writeOp.bufferId) };
@@ -369,7 +347,7 @@ namespace garlic::clove {
         };
     }
 
-    void RenderGraph::buildExecutionPasses(std::vector<RgPassIdType> &passes, RgResourceIdType resourceId) {
+    void RenderGraph::buildExecutionPasses(std::vector<RgPassIdType> &outPasses, RgResourceIdType resourceId) {
         RgResource *resource{ getResourceFromId(resourceId) };
 
         std::vector<RgPassIdType> resourceWritePasses{};
@@ -377,12 +355,12 @@ namespace garlic::clove {
             resourceWritePasses.push_back(passId);
         }
 
-        passes.insert(passes.end(), resourceWritePasses.begin(), resourceWritePasses.end());
+        outPasses.insert(outPasses.end(), resourceWritePasses.begin(), resourceWritePasses.end());
 
         for(RgPassIdType passId : resourceWritePasses) {
             RgPass *pass{ getPassFromId(passId) };
             for(RgResourceIdType resource : pass->getInputResources()) {
-                buildExecutionPasses(passes, resource);
+                buildExecutionPasses(outPasses, resource);
             }
         }
     }
@@ -639,5 +617,39 @@ namespace garlic::clove {
                 }
             }
         }
+    }
+
+    std::unordered_map<RgPassIdType, std::vector<std::shared_ptr<GhaDescriptorSet>>> RenderGraph::createDescriptorSets(std::unordered_map<DescriptorType, uint32_t> const &totalDescriptorBindingCount, uint32_t const totalDescriptorSets, std::unordered_map<RgPassIdType, std::shared_ptr<GhaGraphicsPipelineObject>> const &graphicsPipelines, std::unordered_map<RgPassIdType, std::shared_ptr<GhaComputePipelineObject>> &computePipelines) {
+        std::unordered_map<RgPassIdType, std::vector<std::shared_ptr<GhaDescriptorSet>>> descriptorSets{};
+
+        //Create a single pool to allocate from
+        std::vector<DescriptorInfo> descriptorTypes{};
+        descriptorTypes.reserve(totalDescriptorBindingCount.size());
+
+        for(auto &&[type, count] : totalDescriptorBindingCount) {
+            descriptorTypes.emplace_back(DescriptorInfo{
+                .type  = type,
+                .count = count,
+            });
+        }
+
+        std::shared_ptr<GhaDescriptorPool> descriptorPool{ frameCache.allocateDescriptorPool(GhaDescriptorPool::Descriptor{
+            .poolTypes = std::move(descriptorTypes),
+            .flag      = GhaDescriptorPool::Flag::None,
+            .maxSets   = totalDescriptorSets,
+        }) };
+        descriptorPool->reset();//Make sure we have a fresh pool. TODO: do this inside frame cache? Or have a function to reset states
+
+        //Create a descriptor set for each pipeline
+        for(auto &&[id, pipeline] : graphicsPipelines) {
+            std::vector<std::shared_ptr<GhaDescriptorSetLayout>> layouts(renderPasses.at(id)->getSubmissions().size(), pipeline->getDescriptor().descriptorSetLayouts[0]);//TEMP: Using first index as we know pipelines always have a single descriptor for now
+            descriptorSets[id] = descriptorPool->allocateDescriptorSets(layouts);
+        }
+        for(auto &&[id, pipeline] : computePipelines) {
+            std::vector<std::shared_ptr<GhaDescriptorSetLayout>> layouts(computePasses.at(id)->getSubmissions().size(), pipeline->getDescriptor().descriptorSetLayouts[0]);//TEMP: Using first index as we know pipelines always have a single descriptor for now
+            descriptorSets[id] = descriptorPool->allocateDescriptorSets(layouts);
+        }
+
+        return descriptorSets;
     }
 }

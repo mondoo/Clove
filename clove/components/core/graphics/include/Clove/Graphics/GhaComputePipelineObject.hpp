@@ -24,5 +24,7 @@ namespace garlic::clove {
         //FUNCTIONS
     public:
         virtual ~GhaComputePipelineObject() = default;
+
+        virtual Descriptor const &getDescriptor() const = 0;
     };
 }
