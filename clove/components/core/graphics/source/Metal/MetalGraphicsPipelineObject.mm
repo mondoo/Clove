@@ -14,8 +14,4 @@ namespace garlic::clove {
 		[pipeline release];
 		[depthStencil release];
 	}
-	
-	id<MTLRenderPipelineState> MetalGraphicsPipelineObject::getPipeline() const {
-		return pipeline;
-	}
 }

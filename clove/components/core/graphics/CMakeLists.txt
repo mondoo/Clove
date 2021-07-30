@@ -120,6 +120,7 @@ set(
 		${INCLUDE}/Metal/MetalGraphicsCommandBuffer.inl
 		${SOURCE}/Metal/MetalGraphicsCommandBuffer.mm
 		${INCLUDE}/Metal/MetalGraphicsPipelineObject.hpp
+		${INCLUDE}/Metal/MetalGraphicsPipelineObject.inl
 		${SOURCE}/Metal/MetalGraphicsPipelineObject.mm
 		${INCLUDE}/Metal/MetalGraphicsQueue.hpp
 		${SOURCE}/Metal/MetalGraphicsQueue.mm

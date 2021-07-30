@@ -74,12 +74,6 @@ namespace garlic::clove {
 			
 			return [commandBuffer renderCommandEncoderWithDescriptor:frameBufferDescriptor];
 		};
-		
-		//Set the winding order as the first command. In vulkan this is done as part of the rasteriser
-		currentPass->commands.emplace_back([](id<MTLRenderCommandEncoder> encoder) {
-			MTLWinding constexpr winding{ MTLWindingClockwise };
-			[encoder setFrontFacingWinding:winding];
-		});
 	}
 	
 	void MetalGraphicsCommandBuffer::endRenderPass() {
@@ -116,7 +110,12 @@ namespace garlic::clove {
 
 	void MetalGraphicsCommandBuffer::bindPipelineObject(GhaGraphicsPipelineObject &pipelineObject) {
 		currentPass->commands.emplace_back([pipelineObject = &pipelineObject](id<MTLRenderCommandEncoder> encoder){
-			[encoder setRenderPipelineState:polyCast<MetalGraphicsPipelineObject const>(pipelineObject)->getPipeline()];
+			auto const metalPipeline{ polyCast<MetalGraphicsPipelineObject const>(pipelineObject) };
+			MTLWinding constexpr winding{ MTLWindingClockwise };
+			
+			[encoder setRenderPipelineState:metalPipeline->getPipeline()];
+			[encoder setDepthStencilState:metalPipeline->getDepthStencil()];
+			[encoder setFrontFacingWinding:winding];
 		});
 	}
 	
