@@ -6,6 +6,56 @@
 #include <Clove/Cast.hpp>
 
 namespace garlic::clove {
+	MetalDescriptorPool::BufferPool::BufferPool() = default;
+	
+	MetalDescriptorPool::BufferPool::~BufferPool() {
+		for(auto &&[size, bufferVector] : buffers) {
+			for(BufferEntry &entry : bufferVector) {
+				[entry.buffer release];
+			}
+		}
+	}
+	
+	id<MTLBuffer> MetalDescriptorPool::BufferPool::allocateBuffer(id<MTLDevice> device, size_t size) { 
+		BufferEntry *foundEntry{ nullptr };
+		
+		for(BufferEntry &entry : buffers[size]){
+			if(entry.isFree) {
+				foundEntry = &entry;
+				break;
+			}
+		}
+		
+		if(foundEntry == nullptr) {
+			buffers[size].push_back({});
+			foundEntry = &buffers[size].back();
+			
+			foundEntry->buffer = [device newBufferWithLength:size options:0];
+		}
+		
+		foundEntry->isFree = false;
+		return foundEntry->buffer;
+	}
+	
+	void MetalDescriptorPool::BufferPool::freeBuffer(id<MTLBuffer> buffer) {
+		for(auto &&[size, bufferVector] : buffers) {
+			for(BufferEntry &entry : bufferVector) {
+				if(entry.buffer == buffer){
+					entry.isFree = true;
+					break;
+				}
+			}
+		}
+	}
+	
+	void MetalDescriptorPool::BufferPool::reset() { 
+		for(auto &&[size, bufferVector] : buffers) {
+			for(BufferEntry &entry : bufferVector) {
+				entry.isFree = true;
+			}
+		}
+	}
+	
 	MetalDescriptorPool::MetalDescriptorPool(Descriptor descriptor, id<MTLDevice> device)
 		: descriptor{ std::move(descriptor) }
 		, device{ [device retain] } {
@@ -44,7 +94,7 @@ namespace garlic::clove {
 				id<MTLBuffer> vertexEncoderBuffer{ nullptr };
 				if(metalDescriptorSets[i]->getVertexDescriptors().count > 0){
 					vertexEncoder       = [[device newArgumentEncoderWithArguments:metalDescriptorSets[i]->getVertexDescriptors()] autorelease];
-					vertexEncoderBuffer = [[device newBufferWithLength:vertexEncoder.encodedLength options:0] autorelease];
+					vertexEncoderBuffer = bufferPool.allocateBuffer(device, vertexEncoder.encodedLength);
 					
 					[vertexEncoder setArgumentBuffer:vertexEncoderBuffer offset:0];
 				}
@@ -53,7 +103,7 @@ namespace garlic::clove {
 				id<MTLBuffer> pixelEncoderBuffer{ nullptr };
 				if(metalDescriptorSets[i]->getPixelDescriptors().count > 0){
 					pixelEncoder       = [[device newArgumentEncoderWithArguments:metalDescriptorSets[i]->getPixelDescriptors()] autorelease];
-					pixelEncoderBuffer = [[device newBufferWithLength:pixelEncoder.encodedLength options:0] autorelease];
+					pixelEncoderBuffer = bufferPool.allocateBuffer(device, pixelEncoder.encodedLength);
 					
 					[pixelEncoder setArgumentBuffer:pixelEncoderBuffer offset:0];
 				}
@@ -62,7 +112,7 @@ namespace garlic::clove {
 				id<MTLBuffer> computeEncoderBuffer{ nullptr };
 				if(metalDescriptorSets[i]->getComputeDescriptors().count > 0){
 					computeEncoder       = [[device newArgumentEncoderWithArguments:metalDescriptorSets[i]->getComputeDescriptors()] autorelease];
-					computeEncoderBuffer = [[device newBufferWithLength:computeEncoder.encodedLength options:0] autorelease];
+					computeEncoderBuffer = bufferPool.allocateBuffer(device, computeEncoder.encodedLength);
 					
 					[computeEncoder setArgumentBuffer:computeEncoderBuffer offset:0];
 				}
@@ -75,14 +125,26 @@ namespace garlic::clove {
 	}
 
 	void MetalDescriptorPool::freeDescriptorSets(std::shared_ptr<GhaDescriptorSet> const &descriptorSet) {
-		//no op
+		freeDescriptorSets(std::vector{ descriptorSet });
 	}
 	
 	void MetalDescriptorPool::freeDescriptorSets(std::vector<std::shared_ptr<GhaDescriptorSet>> const &descriptorSets) {
-		//no op
+		for(auto const &descriptorSet : descriptorSets) {
+			auto *mtlDescriptorSet{ polyCast<MetalDescriptorSet>(descriptorSet.get()) };
+			
+			if(id<MTLBuffer> vertexBuffer{ mtlDescriptorSet->getVertexBuffer() }) {
+				bufferPool.freeBuffer(vertexBuffer);
+			}
+			if(id<MTLBuffer> pixelBuffer{ mtlDescriptorSet->getPixelBuffer() }) {
+				bufferPool.freeBuffer(pixelBuffer);
+			}
+			if(id<MTLBuffer> computeBuffer{ mtlDescriptorSet->getComputeBuffer() }) {
+				bufferPool.freeBuffer(computeBuffer);
+			}
+		}
 	}
 
 	void MetalDescriptorPool::reset() {
-		//no op
+		bufferPool.reset();
 	}
 }
