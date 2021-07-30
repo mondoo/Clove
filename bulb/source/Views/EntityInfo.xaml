@@ -1,0 +1,143 @@
+<UserControl x:Class="Garlic.Bulb.EntityInfo"
+			 x:Name="this"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+			 xmlns:local="clr-namespace:Garlic.Bulb"
+             mc:Ignorable="d" d:DesignWidth="267.396" d:DesignHeight="155.156">
+	<StackPanel Visibility="{Binding EntityViewVisibility}">
+		<TextBox Text="{Binding SelectedEntity.Name, Mode=TwoWay}"/>
+		<ListBox ItemsSource="{Binding SelectedEntity.Components}">
+			<ListBox.Resources>
+				<DataTemplate DataType="{x:Type local:TransformComponentViewModel}">
+					<StackPanel>
+						<TextBlock Text="{Binding Name}" FontWeight="Bold"/>
+						<StackPanel Margin="10,0,0,0">
+							<local:Vector3Box Label="Position" LeftFieldText="X" LeftFieldValue="{Binding PositionXValue, Mode=TwoWay}" CenterFieldText="Y" CenterFieldValue="{Binding PositionYValue, Mode=TwoWay}" RightFieldText="Z" RightFieldValue="{Binding PositionZValue, Mode=TwoWay}"/>
+							<local:Vector3Box Label="Rotation" LeftFieldText="X" LeftFieldValue="{Binding RotationXValue, Mode=TwoWay}" CenterFieldText="Y" CenterFieldValue="{Binding RotationYValue, Mode=TwoWay}" RightFieldText="Z" RightFieldValue="{Binding RotationZValue, Mode=TwoWay}"/>
+							<local:Vector3Box Label="Scale" LeftFieldText="X" LeftFieldValue="{Binding ScaleXValue, Mode=TwoWay}" CenterFieldText="Y" CenterFieldValue="{Binding ScaleYValue, Mode=TwoWay}" RightFieldText="Z" RightFieldValue="{Binding ScaleZValue, Mode=TwoWay}"/>
+						</StackPanel>
+					</StackPanel>
+				</DataTemplate>
+
+				<DataTemplate DataType="{x:Type local:RigidBodyComponentViewModel}">
+					<StackPanel>
+						<TextBlock Text="{Binding Name}" FontWeight="Bold"/>
+						<Grid Grid.Column="0" Margin="3,0">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="*"/>
+								<ColumnDefinition Width="*"/>
+							</Grid.ColumnDefinitions>
+
+							<TextBlock Grid.Column="0" Text="Mass"/>
+							<TextBox Grid.Column="1" Text="{Binding Mass, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+						</Grid>
+					</StackPanel>
+				</DataTemplate>
+
+				<DataTemplate DataType="{x:Type local:CollisionShapeComponentViewModel}">
+					<StackPanel>
+						<TextBlock Text="{Binding Name}" FontWeight="Bold"/>
+						<Menu HorizontalAlignment="Left">
+							<MenuItem Header="{Binding CurrentShapeType}" ItemsSource="{Binding AvailableShapes}">
+								<!--Doing a regular DataTemplate here will cause a MenuItem within a MenuItem. So manually set up the container style ourselves-->
+								<MenuItem.ItemContainerStyle>
+									<Style TargetType="MenuItem">
+										<Setter Property="Header" Value="{Binding Name}"/>
+										<Setter Property="Command" Value="{Binding OnSelectedCommand}"/>
+									</Style>
+								</MenuItem.ItemContainerStyle>
+							</MenuItem>
+						</Menu>
+						<StackPanel Orientation="Horizontal" Visibility="{Binding RadiusVisibility}">
+							<TextBlock Text="Radius"/>
+							<TextBox Text="{Binding Radius, Mode=TwoWay}"/>
+						</StackPanel>
+						<local:Vector3Box Visibility="{Binding HalfExtentsVisibility}" Label="Half Extents" LeftFieldText="X" LeftFieldValue="{Binding HalfExtentsX, Mode=TwoWay}" CenterFieldText="Y" CenterFieldValue="{Binding HalfExtentsY, Mode=TwoWay}" RightFieldText="Z" RightFieldValue="{Binding HalfExtentsZ, Mode=TwoWay}"/>
+					</StackPanel>
+				</DataTemplate>
+
+				<DataTemplate DataType="{x:Type local:StaticModelComponentViewModel}">
+					<StackPanel>
+						<TextBlock Text="{Binding Name}" 
+							   FontWeight="Bold"/>
+						<Grid Margin="10, 0, 0, 0">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition/>
+								<ColumnDefinition/>
+							</Grid.ColumnDefinitions>
+							
+							<TextBlock Text="Mesh"
+									   Margin="0, 0, 5, 0"
+									   Grid.Column="0"/>
+							<Border BorderThickness="1"
+									BorderBrush="Black"
+									Grid.Column="1">
+								<TextBlock Text="{Binding MeshPath, Mode=TwoWay}"
+										   AllowDrop="True"
+										   Drop="TextBox_Drop"
+										   Background="Transparent"
+										   MinWidth="30"/>
+							</Border>
+						</Grid>
+						<Grid Margin="10, 0, 0, 0">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition/>
+								<ColumnDefinition/>
+							</Grid.ColumnDefinitions>
+							
+							<TextBlock Text="DiffuseTexture"
+									   Margin="0, 0, 5, 0"
+									   Grid.Column="0"/>
+							<Border BorderThickness="1"
+									BorderBrush="Black"
+									Grid.Column="1">
+								<TextBlock Text="{Binding DiffuseTexturePath, Mode=TwoWay}"
+										   AllowDrop="True"
+										   Drop="TextBox_Drop"
+										   Background="Transparent"
+										   MinWidth="30"/>
+							</Border>
+						</Grid>
+						<Grid Margin="10, 0, 0, 0">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition/>
+								<ColumnDefinition/>
+							</Grid.ColumnDefinitions>
+
+							<TextBlock Text="SpecularTexture"
+									   Margin="0, 0, 5, 0"
+									   Grid.Column="0"/>
+							<Border BorderThickness="1"
+									BorderBrush="Black"
+									Grid.Column="1">
+								<TextBlock Text="{Binding SpecularTexturePath, Mode=TwoWay}"
+										   AllowDrop="True"
+										   Drop="TextBox_Drop"
+										   Background="Transparent"
+										   MinWidth="30"/>
+							</Border>
+						</Grid>
+					</StackPanel>
+				</DataTemplate>
+
+				<DataTemplate DataType="{x:Type local:ComponentViewModel}">
+					<TextBlock Text="{Binding Name}" FontWeight="Bold"/>
+				</DataTemplate>
+			</ListBox.Resources>
+		</ListBox>
+
+		<Menu HorizontalAlignment="Center">
+			<MenuItem Header="Add Component" ItemsSource="{Binding ComponentMenuItems}">
+				<!--Doing a regular DataTemplate here will cause a MenuItem within a MenuItem. So manually set up the container style ourselves-->
+				<MenuItem.ItemContainerStyle>
+					<Style TargetType="MenuItem">
+						<Setter Property="Header" Value="{Binding ComponentType}"/>
+						<Setter Property="Command" Value="{Binding OnSelectedCommand}"/>
+					</Style>
+				</MenuItem.ItemContainerStyle>
+			</MenuItem>
+		</Menu>
+	</StackPanel>
+</UserControl>

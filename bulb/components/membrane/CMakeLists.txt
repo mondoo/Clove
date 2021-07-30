@@ -49,14 +49,6 @@ target_link_libraries(
         Clove
 )
 
-#Definitions
-target_compile_definitions(
-    BulbMembrane
-
-    PRIVATE
-        ASSET_DIR="${CMAKE_CURRENT_SOURCE_DIR}/assets"
-)
-
 #Properties
 set_target_properties(
     BulbMembrane

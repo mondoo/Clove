@@ -1,0 +1,60 @@
+<Button x:Class="Garlic.Bulb.DirectoryViewItem"
+		x:Name="this"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+		mc:Ignorable="d" d:DesignWidth="267.396" d:DesignHeight="155.156"
+		Background="Transparent">
+	<Button.InputBindings>
+		<!-- Allow for custom input bindings to use ICommand -->
+		<MouseBinding Gesture="LeftDoubleClick" 
+					  Command="{Binding OpenCommand}"/>
+		<KeyBinding Key="Delete"
+					Command="{Binding DeleteCommand}"/>
+	</Button.InputBindings>
+
+	<Button.Style>
+		<Style TargetType="{x:Type Button}">
+			<Style.Triggers>
+				<Trigger Property="IsFocused" 
+						 Value="True">
+					<Setter Property="BorderBrush" 
+							Value="Red" />
+					<Setter Property="BorderThickness" 
+							Value="2" />
+				</Trigger>
+				<Trigger Property="IsFocused"
+						 Value="False">
+					<Setter Property="BorderBrush" 
+							Value="Transparent" />
+				</Trigger>
+			</Style.Triggers>
+		</Style>
+	</Button.Style>
+
+	<StackPanel>
+		<Image HorizontalAlignment="Center"
+			   Width="50">
+			<Image.Style>
+				<Style TargetType="{x:Type Image}">
+					<Style.Triggers>
+						<DataTrigger Binding="{Binding Type}" 
+									 Value="0">
+							<Setter Property="Source"
+									Value="/resource/FileExplorer/png/001-folder-closed-black-shape.png"/>
+						</DataTrigger>
+						<DataTrigger Binding="{Binding Type}"
+									 Value="1">
+							<Setter Property="Source" 
+									Value="/resource/FileExplorer/png/002-file.png"/>
+						</DataTrigger>
+					</Style.Triggers>
+				</Style>
+			</Image.Style>
+		</Image>
+		
+		<TextBlock Text="{Binding Name}" 
+				   HorizontalAlignment="Center"/>
+	</StackPanel>
+</Button>

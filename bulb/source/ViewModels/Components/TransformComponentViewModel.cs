@@ -110,6 +110,9 @@ namespace Garlic.Bulb
         public delegate void TransformChangedHandler(Membrane.Vector3 position, Membrane.Vector3 rotation, Membrane.Vector3 scale);
         public TransformChangedHandler OnTransformChanged;
 
+        public TransformComponentViewModel() 
+            : base($"{Membrane.ComponentType.Transform}", Membrane.ComponentType.Transform) { }
+
         public void Update(Membrane.Vector3 position, Membrane.Vector3 rotation, Membrane.Vector3 scale){
             this.position = position;
             this.rotation = rotation;

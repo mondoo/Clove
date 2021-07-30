@@ -53,11 +53,11 @@ namespace garlic::clove {
             matrixPalet.fill(mat4f{ 1.0f });
 
             std::set<GeometryPass::Id> passIds;
-            for(auto const &technique : staticModel.model.getTechniques()) {
+            for(auto const &technique : staticModel.model->getTechniques()) {
                 passIds.insert(technique.passIds.begin(), technique.passIds.end());
             }
-            for(auto const &mesh : staticModel.model.getMeshes()) {
-                renderer->submitMesh(ForwardRenderer3D::MeshInfo{ mesh, staticModel.model.getMaterial(), modelTransform, matrixPalet }, passIds);
+            for(auto const &mesh : staticModel.model->getMeshes()) {
+                renderer->submitMesh(ForwardRenderer3D::MeshInfo{ mesh, staticModel.material, modelTransform, matrixPalet }, passIds);
             }
         });
         //Submit animated meshes
@@ -70,7 +70,7 @@ namespace garlic::clove {
                 passIds.insert(technique.passIds.begin(), technique.passIds.end());
             }
             for(auto const &mesh : animatedModel.model.getMeshes()) {
-                renderer->submitMesh(ForwardRenderer3D::MeshInfo{ mesh, animatedModel.model.getMaterial(), modelTransform, matrixPalet }, passIds);
+                renderer->submitMesh(ForwardRenderer3D::MeshInfo{ mesh, animatedModel.material, modelTransform, matrixPalet }, passIds);
             }
         });
 

@@ -24,7 +24,7 @@ namespace garlic::clove {
         //FUNCTIONS
     public:
         AnimatedModel() = delete;
-        AnimatedModel(std::vector<std::shared_ptr<Mesh>> meshes, std::shared_ptr<Material> material, std::unique_ptr<Skeleton> skeleton, std::vector<AnimationClip> animClips);
+        AnimatedModel(std::vector<std::shared_ptr<Mesh>> meshes, std::unique_ptr<Skeleton> skeleton, std::vector<AnimationClip> animClips);
 
         AnimatedModel(AnimatedModel const &other);
         AnimatedModel(AnimatedModel &&other) noexcept;

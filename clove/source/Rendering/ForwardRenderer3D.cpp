@@ -93,15 +93,9 @@ namespace garlic::clove {
         createRenderTargetResources();
 
         //Create semaphores for frame synchronisation
-        for(auto &shadowFinishedSemaphore : shadowFinishedSemaphores) {
-            shadowFinishedSemaphore = *ghaFactory->createSemaphore();
-        }
-        for(auto &cubeShadowFinishedSemaphore : cubeShadowFinishedSemaphores) {
-            cubeShadowFinishedSemaphore = *ghaFactory->createSemaphore();
-        }
-        for(auto &skinningFinishedSemaphore : skinningFinishedSemaphores) {
-            skinningFinishedSemaphore = *ghaFactory->createSemaphore();
-        }
+		for(auto &skinningFinishedSemaphore : skinningFinishedSemaphores) {
+			skinningFinishedSemaphore = *ghaFactory->createSemaphore();
+		}
 
         std::vector<Vertex> const uiVertices{
             Vertex{
@@ -284,7 +278,7 @@ namespace garlic::clove {
                     meshInfo.transform,
                     inverse(transpose(meshInfo.transform)),
                 },
-                .colour       = meshInfo.material->colour,
+                .colour       = meshInfo.material->getColour(),
                 .matrixPallet = meshInfo.matrixPalet,
             };
 
@@ -292,8 +286,8 @@ namespace garlic::clove {
 
             std::shared_ptr<GhaDescriptorSet> &meshDescriptorSet = meshSets[index];
             meshDescriptorSet->map(*currentImageData.objectBuffers[index], offsetof(MeshUBOLayout, model), sizeof(ModelData), DescriptorType::UniformBuffer, 0);
-            meshDescriptorSet->map(*meshInfo.material->diffuseView, GhaImage::Layout::ShaderReadOnlyOptimal, 1);
-            meshDescriptorSet->map(*meshInfo.material->specularView, GhaImage::Layout::ShaderReadOnlyOptimal, 2);
+            meshDescriptorSet->map(*meshInfo.material->getDiffuseView(), GhaImage::Layout::ShaderReadOnlyOptimal, 1);
+            meshDescriptorSet->map(*meshInfo.material->getSpecularView(), GhaImage::Layout::ShaderReadOnlyOptimal, 2);
             meshDescriptorSet->map(*textureSampler, 3);
             meshDescriptorSet->map(*currentImageData.objectBuffers[index], offsetof(MeshUBOLayout, colour), sizeof(vec4f), DescriptorType::UniformBuffer, 4);
 
@@ -348,12 +342,6 @@ namespace garlic::clove {
         };
         computeQueue->submit({ std::move(skinningSubmitInfo) }, nullptr);
 
-        //As all of the following graphics commands require this skinning pass. Make the queue wait on it before starting any more work
-        GraphicsSubmitInfo waitSubmit{
-            .waitSemaphores = { { skinningFinishedSemaphores[currentFrame], PipelineStage::Top } },
-        };
-        graphicsQueue->submit({ std::move(waitSubmit) }, nullptr);
-
         //DIRECTIONAL LIGHT SHADOWS
         currentImageData.shadowMapCommandBuffer->beginRecording(CommandBufferUsage::OneTimeSubmit);
         for(size_t i = 0; i < MAX_LIGHTS; ++i) {
@@ -377,13 +365,6 @@ namespace garlic::clove {
         }
         currentImageData.shadowMapCommandBuffer->endRecording();
         geometryPasses[GeometryPass::getId<DirectionalLightPass>()]->flushJobs();
-
-        //Submit the command buffer for the directional shadow map
-        GraphicsSubmitInfo shadowSubmitInfo{
-            .commandBuffers   = { currentImageData.shadowMapCommandBuffer },
-            .signalSemaphores = { shadowFinishedSemaphores[currentFrame] },
-        };
-        graphicsQueue->submit({ std::move(shadowSubmitInfo) }, nullptr);
 
         //POINT LIGHT SHADOWS
         currentImageData.cubeShadowMapCommandBuffer->beginRecording(CommandBufferUsage::OneTimeSubmit);
@@ -413,10 +394,10 @@ namespace garlic::clove {
         currentImageData.cubeShadowMapCommandBuffer->endRecording();
         geometryPasses[GeometryPass::getId<PointLightPass>()]->flushJobs();
 
-        //Submit the command buffer for the point shadow map
+        //Submit the command buffers for the shadow maps.
         GraphicsSubmitInfo cubeShadowSubmitInfo{
-            .commandBuffers   = { currentImageData.cubeShadowMapCommandBuffer },
-            .signalSemaphores = { cubeShadowFinishedSemaphores[currentFrame] },
+            .waitSemaphores   = { { skinningFinishedSemaphores[currentFrame], PipelineStage::VertexShader } },
+            .commandBuffers   = { currentImageData.shadowMapCommandBuffer, currentImageData.cubeShadowMapCommandBuffer }
         };
         graphicsQueue->submit({ std::move(cubeShadowSubmitInfo) }, nullptr);
 
@@ -499,10 +480,6 @@ namespace garlic::clove {
 
         //Submit the colour output to the render target
         GraphicsSubmitInfo submitInfo{
-            .waitSemaphores = {
-                { shadowFinishedSemaphores[currentFrame], PipelineStage::PixelShader },
-                { cubeShadowFinishedSemaphores[currentFrame], PipelineStage::PixelShader },
-            },
             .commandBuffers = { currentImageData.commandBuffer },
         };
         renderTarget->submit(imageIndex, currentFrame, std::move(submitInfo));
