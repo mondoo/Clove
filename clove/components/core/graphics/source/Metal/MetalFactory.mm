@@ -181,7 +181,7 @@ namespace garlic::clove {
 
 	Expected<std::unique_ptr<GhaSwapchain>, std::runtime_error> MetalFactory::createSwapChain(GhaSwapchain::Descriptor descriptor) {
 		std::vector<std::shared_ptr<GhaImage>> swapchainImages{};
-		GhaImage::Format const drawableFormat{ MetalImage::convertFormat([view.metalLayer pixelFormat]) };
+		GhaImage::Format const drawableFormat{ MetalImage::convertFormat([view.metalLayer pixelFormat]) }; //Needs to be the same as the target for when we blit in the present queue
 		
 		GhaImage::Descriptor const imageDescriptor{
 			.type 		 = GhaImage::Type::_2D,
