@@ -19,7 +19,7 @@ Currently, **Clove** supports the following platforms:
 |-|-|
 |Windows|Vulkan|
 |Linux|Vulkan|
-|MacOS(WIP)|Metal(WIP)|
+|MacOS|Metal|
 
 ## Building
 
