@@ -110,7 +110,7 @@ namespace garlic::clove {
     
     void MetalGraphicsCommandBuffer::bindPipelineObject(GhaGraphicsPipelineObject &pipelineObject) {
         currentPass->commands.emplace_back([pipelineObject = &pipelineObject](id<MTLRenderCommandEncoder> encoder){
-            auto const metalPipeline{ polyCast<MetalGraphicsPipelineObject const>(pipelineObject) };
+            auto const *const metalPipeline{ polyCast<MetalGraphicsPipelineObject const>(pipelineObject) };
             MTLWinding constexpr winding{ MTLWindingClockwise };
             
             [encoder setRenderPipelineState:metalPipeline->getPipeline()];

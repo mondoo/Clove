@@ -45,12 +45,12 @@ namespace garlic::clove {
                     
                     id<MTLCommandBuffer> executionBuffer{ [commandQueue commandBuffer] };
                     
-                    for(auto &pass : metalCommandBuffer->getEncodedRenderPasses()) {
+                    for(auto const &pass : metalCommandBuffer->getEncodedRenderPasses()) {
                         id<MTLRenderCommandEncoder> encoder{ pass.begin(executionBuffer) };
                         
                         //Inject the wait semaphore into each buffer
                         for (auto const &semaphore : submission.waitSemaphores) {
-                            auto *metalSemaphore{ polyCast<MetalSemaphore const>(semaphore.first.get()) };
+                            auto const *metalSemaphore{ polyCast<MetalSemaphore const>(semaphore.first.get()) };
                             MTLRenderStages const waitStage{ convertStage(semaphore.second) };
                             
                             [encoder waitForFence:metalSemaphore->getFence()
@@ -58,7 +58,7 @@ namespace garlic::clove {
                         }
                         
                         //Excute all recorded commands for the encoder
-                        for(auto &command : pass.commands) {
+                        for(auto const &command : pass.commands) {
                             command(encoder);
                         }
                         

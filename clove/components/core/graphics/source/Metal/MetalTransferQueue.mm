@@ -47,13 +47,13 @@ namespace garlic::clove {
                     
                     //Inject the wait semaphore into each buffer
                     for (auto const &semaphore : submission.waitSemaphores) {
-                        auto *metalSemaphore{ polyCast<MetalSemaphore const>(semaphore.first.get()) };
+                        auto const *metalSemaphore{ polyCast<MetalSemaphore const>(semaphore.first.get()) };
                         
                         [encoder waitForFence:metalSemaphore->getFence()];
                     }
                     
                     //Excute all recorded commands for the encoder
-                    for(auto &command : metalCommandBuffer->getCommands()) {
+                    for(auto const &command : metalCommandBuffer->getCommands()) {
                         command(encoder);
                     }
                     
