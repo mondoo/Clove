@@ -38,6 +38,11 @@ namespace garlic::clove {
                     bool const isLastCommandBuffer{ commandBuffer == submission.commandBuffers.back() };
                     
                     auto *metalCommandBuffer{ polyCast<MetalGraphicsCommandBuffer>(commandBuffer.get()) };
+                    if(metalCommandBuffer == nullptr) {
+                        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: Command buffer provided is nullptr", CLOVE_FUNCTION_NAME);
+                        continue;
+                    }
+                    
                     if(metalCommandBuffer->getCommandBufferUsage() == CommandBufferUsage::OneTimeSubmit && metalCommandBuffer->bufferHasBeenUsed()){
                         CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "GraphicsCommandBuffer recorded with CommandBufferUsage::OneTimeSubmit has already been used. Only buffers recorded with CommandBufferUsage::Default can submitted multiples times after being recorded once.");
                         break;
@@ -51,6 +56,11 @@ namespace garlic::clove {
                         //Inject the wait semaphore into each buffer
                         for (auto const &semaphore : submission.waitSemaphores) {
                             auto const *metalSemaphore{ polyCast<MetalSemaphore const>(semaphore.first.get()) };
+                            if(metalSemaphore == nullptr) {
+                                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: Semaphore provided is nullptr", CLOVE_FUNCTION_NAME);
+                                continue;
+                            }
+                            
                             MTLRenderStages const waitStage{ convertStage(semaphore.second) };
                             
                             [encoder waitForFence:metalSemaphore->getFence()

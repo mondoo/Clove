@@ -68,6 +68,11 @@ namespace garlic::clove {
 	void MetalTransferCommandBuffer::copyBufferToImage(GhaBuffer &source, size_t const sourceOffset, GhaImage &destination, vec3i const &destinationOffset, vec3ui const &destinationExtent) {
 		commands.emplace_back([source = &source, sourceOffset, destination = &destination, destinationOffset, destinationExtent](id<MTLBlitCommandEncoder> encoder){
 			auto const *const metalImage{ polyCast<MetalImage>(destination) };
+            if(metalImage == nullptr){
+                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: Source image is nullptr", CLOVE_FUNCTION_NAME);
+                return;
+            }
+            
 			auto const &imageDescriptor{ metalImage->getDescriptor() };
 			
 			[encoder copyFromBuffer:polyCast<MetalBuffer>(source)->getBuffer()
@@ -85,6 +90,11 @@ namespace garlic::clove {
 	void MetalTransferCommandBuffer::copyImageToBuffer(GhaImage &source, vec3i const &sourceOffset, vec3ui const &sourceExtent, GhaBuffer &destination, size_t const destinationOffset) {
 		commands.emplace_back([source = &source, sourceOffset, sourceExtent, destination = &destination, destinationOffset](id<MTLBlitCommandEncoder> encoder){
 			auto const *const metalImage{ polyCast<MetalImage>(source) };
+            if(metalImage == nullptr){
+                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: Source image is nullptr", CLOVE_FUNCTION_NAME);
+                return;
+            }
+            
 			auto const &imageDescriptor{ metalImage->getDescriptor() };
 			
 			[encoder copyFromTexture:metalImage->getTexture()

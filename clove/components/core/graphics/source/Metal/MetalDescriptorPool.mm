@@ -122,7 +122,11 @@ namespace garlic::clove {
     
     void MetalDescriptorPool::freeDescriptorSets(std::vector<std::shared_ptr<GhaDescriptorSet>> const &descriptorSets) {
         for(auto const &descriptorSet : descriptorSets) {
-            auto *mtlDescriptorSet{ polyCast<MetalDescriptorSet>(descriptorSet.get()) };
+            auto const *const mtlDescriptorSet{ polyCast<MetalDescriptorSet>(descriptorSet.get()) };
+            if(mtlDescriptorSet == nullptr) {
+                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Warning, "{0}: Descriptor set provided is nullptr. Buffers might never be freed", CLOVE_FUNCTION_NAME);
+                continue;
+            }
             
             if(id<MTLBuffer> vertexBuffer{ mtlDescriptorSet->getVertexBuffer() }) {
                 bufferPool.freeBuffer(vertexBuffer);

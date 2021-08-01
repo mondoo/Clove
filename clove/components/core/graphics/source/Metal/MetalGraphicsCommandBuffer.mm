@@ -111,6 +111,11 @@ namespace garlic::clove {
     void MetalGraphicsCommandBuffer::bindPipelineObject(GhaGraphicsPipelineObject &pipelineObject) {
         currentPass->commands.emplace_back([pipelineObject = &pipelineObject](id<MTLRenderCommandEncoder> encoder){
             auto const *const metalPipeline{ polyCast<MetalGraphicsPipelineObject const>(pipelineObject) };
+            if(metalPipeline == nullptr){
+                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: PipelineObject is nullptr", CLOVE_FUNCTION_NAME);
+                return;
+            }
+            
             MTLWinding constexpr winding{ MTLWindingClockwise };
             
             [encoder setRenderPipelineState:metalPipeline->getPipeline()];
@@ -135,7 +140,11 @@ namespace garlic::clove {
     
     void MetalGraphicsCommandBuffer::bindDescriptorSet(GhaDescriptorSet &descriptorSet, uint32_t const setNum) {
         currentPass->commands.emplace_back([descriptorSet = &descriptorSet, setNum](id<MTLRenderCommandEncoder> encoder){
-            auto *metalDescriptorSet{ polyCast<MetalDescriptorSet>(descriptorSet) };
+            auto const *const metalDescriptorSet{ polyCast<MetalDescriptorSet>(descriptorSet) };
+            if(metalDescriptorSet == nullptr){
+                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: DescriptorSet is nullptr", CLOVE_FUNCTION_NAME);
+                return;
+            }
             
             if(metalDescriptorSet->getVertexBuffer() != nullptr) {
                 [encoder setVertexBuffer:metalDescriptorSet->getVertexBuffer()
