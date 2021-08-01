@@ -158,7 +158,7 @@ namespace garlic::clove {
     MetalFactory::~MetalFactory() = default;
     
     Expected<std::unique_ptr<GhaGraphicsQueue>, std::runtime_error> MetalFactory::createGraphicsQueue(CommandQueueDescriptor descriptor) {
-        return std::unique_ptr<GhaGraphicsQueue>{ std::make_unique<MetalGraphicsQueue>(std::move(descriptor), graphicsPresentCommandQueue) };
+        return std::unique_ptr<GhaGraphicsQueue>{ std::make_unique<MetalGraphicsQueue>(descriptor, graphicsPresentCommandQueue) };
     }
     
     Expected<std::unique_ptr<GhaPresentQueue>, std::runtime_error> MetalFactory::createPresentQueue() {
@@ -166,11 +166,11 @@ namespace garlic::clove {
     }
     
     Expected<std::unique_ptr<GhaTransferQueue>, std::runtime_error> MetalFactory::createTransferQueue(CommandQueueDescriptor descriptor) {
-        return std::unique_ptr<GhaTransferQueue>{ std::make_unique<MetalTransferQueue>(std::move(descriptor), transferCommandQueue) };
+        return std::unique_ptr<GhaTransferQueue>{ std::make_unique<MetalTransferQueue>(descriptor, transferCommandQueue) };
     }
     
     Expected<std::unique_ptr<GhaComputeQueue>, std::runtime_error> MetalFactory::createComputeQueue(CommandQueueDescriptor descriptor) {
-        return std::unique_ptr<GhaComputeQueue>{ std::make_unique<MetalComputeQueue>(std::move(descriptor), computeCommandQueue) };
+        return std::unique_ptr<GhaComputeQueue>{ std::make_unique<MetalComputeQueue>(descriptor, computeCommandQueue) };
     }
     
     Expected<std::unique_ptr<GhaSwapchain>, std::runtime_error> MetalFactory::createSwapChain(GhaSwapchain::Descriptor descriptor) {
