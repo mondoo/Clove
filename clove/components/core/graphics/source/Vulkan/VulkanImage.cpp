@@ -19,12 +19,14 @@ namespace garlic::clove {
                     }
                 case GhaImageView::Type::_3D:
                     return VK_IMAGE_VIEW_TYPE_3D;
-                case GhaImageView::Type::Cube:
-                    if(layerCount > 6u) {
+                case GhaImageView::Type::Cube: {
+                    uint32_t constexpr cubeLayerCount{ 6 };
+                    if(layerCount > cubeLayerCount) {
                         return VK_IMAGE_VIEW_TYPE_CUBE_ARRAY;
                     } else {
                         return VK_IMAGE_VIEW_TYPE_CUBE;
                     }
+                }
                 default:
                     CLOVE_ASSERT(false, "{0}: Unhandled image type");
                     return VK_IMAGE_VIEW_TYPE_2D;
