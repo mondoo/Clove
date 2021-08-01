@@ -426,7 +426,7 @@ namespace garlic::clove {
         samplerDescriptor.tAddressMode  = convertAddressMode(descriptor.addressModeV);
         samplerDescriptor.rAddressMode  = convertAddressMode(descriptor.addressModeW);
         samplerDescriptor.maxAnisotropy = static_cast<NSUInteger>(descriptor.maxAnisotropy);
-        samplerDescriptor.supportArgumentBuffers = true;
+        samplerDescriptor.supportArgumentBuffers = TRUE;
         
         id<MTLSamplerState> samplerState{ [device newSamplerStateWithDescriptor:samplerDescriptor] };
         return std::unique_ptr<GhaSampler>{ std::make_unique<MetalSampler>(samplerState) };
