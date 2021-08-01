@@ -546,7 +546,7 @@ namespace garlic::clove {
             imageData.lightingDescriptorSet->map(*imageData.frameDataBuffer, offsetof(FrameData::BufferData, lights), sizeof(currentFrameData.bufferData.lights), DescriptorType::UniformBuffer, 0);
             imageData.lightingDescriptorSet->map(*imageData.frameDataBuffer, offsetof(FrameData::BufferData, numLights), sizeof(currentFrameData.bufferData.numLights), DescriptorType::UniformBuffer, 1);
             imageData.lightingDescriptorSet->map(*imageData.frameDataBuffer, offsetof(FrameData::BufferData, directionalShadowTransforms), sizeof(currentFrameData.bufferData.directionalShadowTransforms), DescriptorType::UniformBuffer, 2);
-            imageData.lightingDescriptorSet->map(*shadowSampler, 5);
+            imageData.lightingDescriptorSet->map(*shadowSampler, 5); //NOLINT
 
             //Create the shadow maps for each frame
             //Directional
