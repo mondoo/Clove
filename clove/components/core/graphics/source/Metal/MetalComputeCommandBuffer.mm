@@ -54,16 +54,45 @@ namespace garlic::clove {
 	}
 	
 	void MetalComputeCommandBuffer::pushConstant(size_t const offset, size_t const size, void const *data) {
-		uint8_t *cachedData{ reinterpret_cast<uint8_t*>(malloc(size)) };
-		memcpy(cachedData, data, size);
-		
-		commands.emplace_back([size, data = cachedData](id<MTLComputeCommandEncoder> encoder){
-			[encoder setBytes:data
-					   length:size
-					  atIndex:pushConstantSlot];
+		class Functor{
+			//VARIABLES
+		private:
+			size_t size{};
+			std::unique_ptr<std::byte> data{};
 			
-			delete data;
-		});
+			//FUNCTIONS
+		public:
+			Functor() = delete;
+			Functor(size_t size, void const *data)
+				: size{ size }
+				, data{ reinterpret_cast<std::byte*>(malloc(size)) } {
+				memcpy(this->data.get(), data, size);
+			}
+			
+			Functor(Functor const &other)
+				: size{ other.size } {
+				data = std::unique_ptr<std::byte>{ reinterpret_cast<std::byte*>(malloc(size)) };
+				memcpy(data.get(), other.data.get(), size);
+			}
+			Functor(Functor &&other) = default;
+			
+			Functor &operator=(Functor const &other) {
+				size = other.size;
+				data = std::unique_ptr<std::byte>{ reinterpret_cast<std::byte*>(malloc(size)) };
+				memcpy(data.get(), other.data.get(), size);
+			}
+			Functor &operator=(Functor &&other) = default;
+			
+			~Functor() = default;
+			
+			void operator()(id<MTLComputeCommandEncoder> encoder) {
+				[encoder setBytes:data.get()
+						   length:size
+						  atIndex:pushConstantSlot];
+			}
+		};
+		
+		commands.emplace_back(Functor{ size, data });
 	}
 
 	void MetalComputeCommandBuffer::disptach(vec3ui groupCount) {

@@ -132,9 +132,9 @@ namespace garlic::clove {
 			[cachedIndexBuffer.buffer release];
 		}
 		
-		cachedIndexBuffer.buffer = [polyCast<MetalBuffer>(&indexBuffer)->getBuffer() retain];
+		cachedIndexBuffer.buffer    = [polyCast<MetalBuffer>(&indexBuffer)->getBuffer() retain];
 		cachedIndexBuffer.indexType = getIndexType(indexType);
-		cachedIndexBuffer.offset = offset;
+		cachedIndexBuffer.offset    = offset;
 	}
 	
 	void MetalGraphicsCommandBuffer::bindDescriptorSet(GhaDescriptorSet &descriptorSet, uint32_t const setNum) {
@@ -155,28 +155,61 @@ namespace garlic::clove {
 	}
 	
 	void MetalGraphicsCommandBuffer::pushConstant(GhaShader::Stage const stage, size_t const offset, size_t const size, void const *data) {
-		uint8_t *cachedData{ reinterpret_cast<uint8_t*>(malloc(size)) };
-		memcpy(cachedData, data, size);
-		
-		currentPass->commands.emplace_back([stage, data = cachedData, size](id<MTLRenderCommandEncoder> encoder){
-			switch(stage) {
-				case GhaShader::Stage::Vertex:
-					[encoder setVertexBytes:data
-									 length:size
-									atIndex:pushConstantSlot];
-					break;
-				case GhaShader::Stage::Pixel:
-					[encoder setFragmentBytes:data
-									   length:size
-									  atIndex:pushConstantSlot];
-					break;
-				default:
-					CLOVE_ASSERT(false, "{0}: Unknown shader stage provided", CLOVE_FUNCTION_NAME_PRETTY);
-					break;
+		class Functor{
+			//VARIABLES
+		private:
+			GhaShader::Stage stage{};
+			size_t size{};
+			std::unique_ptr<std::byte> data{};
+			
+			//FUNCTIONS
+		public:
+			Functor() = delete;
+			Functor(GhaShader::Stage stage, size_t size, void const *data)
+				: stage{ stage }
+				, size{ size }
+				, data{ reinterpret_cast<std::byte*>(malloc(size)) } {
+				memcpy(this->data.get(), data, size);
 			}
 			
-			delete data;
-		});
+			Functor(Functor const &other)
+				: stage{ other.stage }
+				, size{ other.size } {
+				data = std::unique_ptr<std::byte>{ reinterpret_cast<std::byte*>(malloc(size)) };
+				memcpy(data.get(), other.data.get(), size);
+			}
+			Functor(Functor &&other) = default;
+			
+			Functor &operator=(Functor const &other) {
+				stage = other.stage;
+				size = other.size;
+				data = std::unique_ptr<std::byte>{ reinterpret_cast<std::byte*>(malloc(size)) };
+				memcpy(data.get(), other.data.get(), size);
+			}
+			Functor &operator=(Functor &&other) = default;
+			
+			~Functor() = default;
+			
+			void operator()(id<MTLRenderCommandEncoder> encoder) {
+				switch(stage) {
+					case GhaShader::Stage::Vertex:
+						[encoder setVertexBytes:data.get()
+										 length:size
+										atIndex:pushConstantSlot];
+						break;
+					case GhaShader::Stage::Pixel:
+						[encoder setFragmentBytes:data.get()
+										   length:size
+										  atIndex:pushConstantSlot];
+						break;
+					default:
+						CLOVE_ASSERT(false, "{0}: Unknown shader stage provided", CLOVE_FUNCTION_NAME_PRETTY);
+						break;
+				}
+			}
+		};
+		
+		currentPass->commands.emplace_back(Functor{ stage, size, data });
 	}
 
 	void MetalGraphicsCommandBuffer::drawIndexed(size_t const indexCount) {
