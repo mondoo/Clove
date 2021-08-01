@@ -35,6 +35,6 @@ namespace garlic::clove {
          * will need to wait on previous submissions.
          * @param signalFence An optional fence that will be signaled when all submissions are complete.
          */
-        virtual void submit(std::vector<TransferSubmitInfo> const &submissions, GhaFence const *signalFence) = 0;
+        virtual void submit(std::vector<TransferSubmitInfo> const &submissions, GhaFence *signalFence) = 0;
     };
 }
