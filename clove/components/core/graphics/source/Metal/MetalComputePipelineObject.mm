@@ -2,14 +2,12 @@
 
 namespace garlic::clove {
 	MetalComputePipelineObject::MetalComputePipelineObject(id<MTLComputePipelineState> pipelineState)
-		: pipelineState{ [pipelineState retain] } {
+		: pipelineState{ pipelineState } {
 	}
 	
 	MetalComputePipelineObject::MetalComputePipelineObject(MetalComputePipelineObject &&other) noexcept = default;
 	
 	MetalComputePipelineObject& MetalComputePipelineObject::operator=(MetalComputePipelineObject &&other) noexcept = default;
 	
-	MetalComputePipelineObject::~MetalComputePipelineObject() {
-		[pipelineState release];
-	}
+	MetalComputePipelineObject::~MetalComputePipelineObject() = default;
 }

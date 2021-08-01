@@ -4,7 +4,7 @@
 
 namespace garlic::clove {
 	MetalBuffer::MetalBuffer(id<MTLBuffer> buffer, Descriptor descriptor)
-		: buffer{ [buffer retain] }
+		: buffer{ buffer }
 		, descriptor{ descriptor }{
 	}
 
@@ -12,9 +12,7 @@ namespace garlic::clove {
 
 	MetalBuffer &MetalBuffer::operator=(MetalBuffer &&other) noexcept = default;
 
-	MetalBuffer::~MetalBuffer() {
-		[buffer release];
-	}
+	MetalBuffer::~MetalBuffer() = default;
 
 	void MetalBuffer::write(void const *data, size_t const offset, size_t const size) {
 		CLOVE_ASSERT(descriptor.memoryType == MemoryType::SystemMemory, "{0}: Can only write to SystemMemory buffers", CLOVE_FUNCTION_NAME_PRETTY);

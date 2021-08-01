@@ -25,7 +25,7 @@ namespace garlic::clove {
         ~MetalGraphicsPipelineObject();
 
         inline id<MTLRenderPipelineState> getPipeline() const;
-		inline id<MTLDepthStencilState> getDepthStencil() const;
+        inline id<MTLDepthStencilState> getDepthStencil() const;
     };
 }
 

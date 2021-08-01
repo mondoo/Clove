@@ -251,6 +251,15 @@ target_link_libraries(
 		$<$<PLATFORM_ID:Linux>:Vulkan::Vulkan>
 )
 
+#Compiler
+target_compile_options(
+	CloveGraphics
+
+	#MacOS
+	PRIVATE
+		$<$<PLATFORM_ID:Darwin>:-fobjc-arc>
+)
+
 #Don't compile files not supported on certain platforms
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 	set_source_files_properties(${MetalFiles} PROPERTIES HEADER_FILE_ONLY TRUE)
