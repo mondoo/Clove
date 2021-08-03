@@ -9,9 +9,14 @@
         Title="Garlic - 0.4.0" Width="1280" Height="720"
 		Style="{StaticResource PrimaryWindowStyle}"
 		MouseMove="Window_MouseMove">
+	<WindowChrome.WindowChrome>
+		<WindowChrome CaptionHeight="1"
+					  CornerRadius="0"
+					  ResizeBorderThickness="4"
+					  GlassFrameThickness="0"/>
+	</WindowChrome.WindowChrome>
+	
 	<DockPanel>
-		<Separator DockPanel.Dock="Top"/>
-
 		<StackPanel DockPanel.Dock="Top" Orientation="Horizontal" HorizontalAlignment="Center">
 			<Button FontSize="20" Content="Play" Command="{Binding PlayCommand}" IsEnabled="{Binding IsPlayButtonEnabled}"/>
 			<Button FontSize="20" Content="Stop" Command="{Binding StopCommand}" IsEnabled="{Binding IsStopButtonEnabled}"/>

@@ -60,6 +60,12 @@
 								<RowDefinition Height="*"/>
 							</Grid.RowDefinitions>
 
+							<Rectangle x:Name="MoveRectangle" 
+									   Fill="#10FFFFFF"
+									   Grid.Column="0"
+									   Grid.ColumnSpan="3"
+									   Grid.Row="0"/>
+
 							<StackPanel Orientation="Horizontal"
 										Grid.Column="0"
 										Grid.Row="0">
@@ -81,11 +87,14 @@
 										VerticalAlignment="Center"
 										Grid.Column="2"
 										Grid.Row="0">
-								<Button Content="_"
+								<Button x:Name="MinimiseButton"
+										Content="_"
 										Width="30"/>
-								<Button Content="O"
+								<Button x:Name="RestoreButton"
+										Content="O"
 										Width="30"/>
-								<Button Content="X"
+								<Button x:Name="CloseButton"
+										Content="X"
 										Width="50"
 										Background="{StaticResource Error}"/>
 							</StackPanel>

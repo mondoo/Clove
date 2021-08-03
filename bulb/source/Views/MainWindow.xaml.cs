@@ -1,52 +1,83 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
-
+using System.Windows.Shapes;
 using Membrane = garlic.membrane;
 
 namespace Garlic.Bulb {
-	/// <summary>
-	/// Interaction logic for MainWindow.xaml
-	/// </summary>
-	public partial class MainWindow : Window {
-		public MainWindow() {
-			InitializeComponent();
-		}
+    /// <summary>
+    /// Interaction logic for MainWindow.xaml
+    /// </summary>
+    public partial class MainWindow : Window {
+        public MainWindow() {
+            InitializeComponent();
+        }
 
-		private void EditorViewport_Key(object sender, KeyEventArgs e) {
-			var message = new Membrane.Editor_ViewportKeyEvent();
-			message.key = e.Key;
-			message.type = e.IsDown ? Membrane.Editor_ViewportKeyEvent.Type.Pressed : Membrane.Editor_ViewportKeyEvent.Type.Released;
+        public override void OnApplyTemplate() {
+            //Set up the functionality of the window control buttons
+            if (GetTemplateChild("MinimiseButton") is Button minimizeButton) {
+                minimizeButton.Click += (sender, e) => WindowState = WindowState.Minimized;
+            }
+            if (GetTemplateChild("RestoreButton") is Button restoreButton) {
+                restoreButton.Click += (sender, e) => WindowState = (WindowState == WindowState.Normal) ? WindowState.Maximized : WindowState.Normal;
+            }
+            if (GetTemplateChild("CloseButton") is Button closeButton) {
+                closeButton.Click += (sender, e) => Close();
+            }
 
-			Membrane.MessageHandler.sendMessage(message);
+            //Set up the top grid to allow it to be draggable
+            if (GetTemplateChild("MoveRectangle") is Rectangle moveRectangle) {
+                moveRectangle.MouseDown += MoveRectangle_MouseDown;
+            }
 
-			e.Handled = true;
-		}
+            base.OnApplyTemplate();
+        }
 
-		private void EditorViewport_MouseButton(object sender, MouseButtonEventArgs e) {
-			if(!EditorViewport.IsFocused) {
-				EditorViewport.Focus();
-			}
+        private void EditorViewport_Key(object sender, KeyEventArgs e) {
+            var message = new Membrane.Editor_ViewportKeyEvent {
+                key = e.Key,
+                type = e.IsDown ? Membrane.Editor_ViewportKeyEvent.Type.Pressed : Membrane.Editor_ViewportKeyEvent.Type.Released
+            };
 
-			var message = new Membrane.Editor_ViewportMouseButtonEvent();
-			message.button = e.ChangedButton;
-			message.state = e.ButtonState;
-			message.position = e.GetPosition(EditorViewport);
+            Membrane.MessageHandler.sendMessage(message);
 
-			Membrane.MessageHandler.sendMessage(message);
+            e.Handled = true;
+        }
 
-			e.Handled = true;
-		}
+        private void EditorViewport_MouseButton(object sender, MouseButtonEventArgs e) {
+            if (!EditorViewport.IsFocused) {
+                EditorViewport.Focus();
+            }
 
-		//Capture mouse move on the window if the user moves their mouse out of the viewport will moving the camera
-		private void Window_MouseMove(object sender, MouseEventArgs e) {
-			if(EditorViewport.IsFocused) {
-				var message = new Membrane.Editor_ViewportMouseMoveEvent();
-				message.position = e.GetPosition(EditorViewport);
+            var message = new Membrane.Editor_ViewportMouseButtonEvent {
+                button = e.ChangedButton,
+                state = e.ButtonState,
+                position = e.GetPosition(EditorViewport)
+            };
 
-				Membrane.MessageHandler.sendMessage(message);
+            Membrane.MessageHandler.sendMessage(message);
 
-				e.Handled = true;
-			}
-		}
-	}
+            e.Handled = true;
+        }
+
+        //Capture mouse move on the window if the user moves their mouse out of the viewport will moving the camera
+        private void Window_MouseMove(object sender, MouseEventArgs e) {
+            if (EditorViewport.IsFocused) {
+                var message = new Membrane.Editor_ViewportMouseMoveEvent {
+                    position = e.GetPosition(EditorViewport)
+                };
+
+                Membrane.MessageHandler.sendMessage(message);
+
+                e.Handled = true;
+            }
+        }
+
+        private void MoveRectangle_MouseDown(object sender, MouseButtonEventArgs e) {
+            if(e.LeftButton == MouseButtonState.Pressed) {
+                DragMove();
+            }
+        }
+    }
 }
