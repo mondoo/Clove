@@ -174,8 +174,9 @@
 								BorderBrush="{TemplateBinding BorderBrush}" 
 								BorderThickness="{TemplateBinding BorderThickness}">
 							<ContentPresenter Focusable="False"
-											  HorizontalAlignment="Center" 
-											  VerticalAlignment="Center"/>
+											  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
+											  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+											  Margin="{TemplateBinding Padding}"/>
 						</Border>
 					</ControlTemplate>
 				</Setter.Value>
