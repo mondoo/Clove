@@ -6,10 +6,10 @@
 	<Application.Resources>
 		<!-- Brushes Primary-->
 		<SolidColorBrush x:Key="Background1"
-						 Color="#121212"/>
-		<SolidColorBrush x:Key="Background2"
 						 Color="#3B3B3B"/>
-		
+		<SolidColorBrush x:Key="Background2"
+						 Color="#121212"/>
+
 		<SolidColorBrush x:Key="Foreground1"
 						 Color="#F7F7F7"/>
 
