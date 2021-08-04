@@ -218,10 +218,16 @@
 					Value="{StaticResource Background1}"/>
 		</Style>
 
-		<!-- ScrollBar-->
+		<!-- ScrollBar -->
 		<Style TargetType="{x:Type ScrollBar}">
 			<Setter Property="Background"
 					Value="{StaticResource Background1}"/>
+		</Style>
+		
+		<!-- Border -->
+		<Style TargetType="{x:Type Border}">
+			<Setter Property="BorderBrush"
+					Value="{StaticResource Foreground1}"/>
 		</Style>
 	</Application.Resources>
 </Application>
