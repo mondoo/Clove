@@ -4,7 +4,9 @@
 #include "Clove/Rendering/RenderGraph/RgGlobalCache.hpp"
 #include "Clove/Rendering/Vertex.hpp"
 
+#include <Clove/Graphics/GhaComputeCommandBuffer.hpp>
 #include <Clove/Graphics/GhaComputePipelineObject.hpp>
+#include <Clove/Graphics/GhaComputeQueue.hpp>
 #include <Clove/Graphics/GhaDescriptorSet.hpp>
 #include <Clove/Graphics/GhaDescriptorSetLayout.hpp>
 #include <Clove/Graphics/GhaGraphicsCommandBuffer.hpp>
@@ -225,6 +227,9 @@ namespace garlic::clove {
         }
         std::reverse(executionPasses.begin(), executionPasses.end());
 
+        //Build a list of dependecies between the passes. These dependecies signify anything that needs a sempahore.
+        std::vector<PassDependency> const passDependencies{ buildDependencies(executionPasses) };
+
         //Graphics GHA objects.
         std::unordered_map<RgPassIdType, std::shared_ptr<GhaRenderPass>> allocatedRenderPasses{};
         std::unordered_map<RgPassIdType, std::shared_ptr<GhaFramebuffer>> allocatedFramebuffers{};
@@ -248,7 +253,9 @@ namespace garlic::clove {
         //Allocate descriptor sets
         allocatedDescriptorSets = createDescriptorSets(totalDescriptorBindingCount, totalDescriptorSets, allocatedGraphicsPipelines, allocatedComputePipelines);
 
-        //Change sharing modes if objects are used in multiple queue types. TODO: It might be better in the future to just insert the correct memory barriers.
+        //Change sharing modes if objects are used in multiple queue types.
+        //NOTE: Only doing buffers for now as images are yet to be supported
+        //TODO: It might be better in the future to just insert the correct memory barriers.
         for(auto &&[bufferId, buffer] : buffers) {
             bool isInGraphics{ false };
             bool isInCompute{ false };
@@ -278,7 +285,7 @@ namespace garlic::clove {
 
         //Record all of the commands of each individual pass
         std::shared_ptr<GhaGraphicsCommandBuffer> graphicsCommandBufffer{ frameCache.getGraphicsCommandBuffer() };
-        //std::shared_ptr<GhaComputeCommandBuffer> computeCommandBufffer{ frameCache.getComputeCommandBuffer() };
+        std::shared_ptr<GhaComputeCommandBuffer> computeCommandBufffer{ frameCache.getComputeCommandBuffer() };
         //std::shared_ptr<GhaTransferCommandBuffer> transferCommandBufffer{ frameCache.getTransferCommandBuffer() };
 
         graphicsCommandBufffer->beginRecording(CommandBufferUsage::OneTimeSubmit);
@@ -288,6 +295,10 @@ namespace garlic::clove {
                 std::unique_ptr<RgBuffer> const &buffer{ buffers.at(writeOp.bufferId) };
                 buffer->getGhaBuffer(frameCache)->write(writeOp.data.data(), buffer->getBufferOffset() + writeOp.offset, writeOp.size);
                 continue;//Move to next pass as the rest of this loop assume it's a render pass
+            }
+
+            if(computePasses.contains(passId)) {
+                continue;
             }
 
             RgRenderPass::Descriptor const &passDescriptor{ renderPasses.at(passId)->getDescriptor() };
@@ -363,6 +374,73 @@ namespace garlic::clove {
                 buildExecutionPasses(outPasses, resource);
             }
         }
+    }
+
+    std::vector<RenderGraph::PassDependency> RenderGraph::buildDependencies(std::vector<RgPassIdType> const &passes) {
+        std::vector<RenderGraph::PassDependency> dependencies{};
+
+        auto const indexOf = [&passes](RgPassIdType passId) -> size_t {
+            for(size_t i{ 0 }; i < passes.size(); ++i) {
+                if(passes[i] == passId) {
+                    return i;
+                }
+            }
+            return -1;
+        };
+
+        //Dependecies are built for the closest pass that has an output of the current passes inputs. All queue operations complete in order so we only need to wait on the last one
+        //First pass - create render pass dependencies.
+        for(size_t passIndex{ 1 }; passIndex < passes.size(); ++passIndex) {
+            RgPassIdType const passId{ passes[passIndex] };
+            if(renderPasses.contains(passId)) {
+                for(RgResourceIdType const resourceId : renderPasses.at(passId)->getInputResources()) {
+                    RgResource const *const resource{ getResourceFromId(resourceId) };
+                    RgPassIdType dependencyId{ 0 };
+                    size_t currentDistance{ -1u };
+                    bool hasDependency{ false };
+
+                    for(RgPassIdType const dependencyPassId : resource->getWritePasses()) {
+                        if(computePasses.contains(dependencyPassId)) {
+                            size_t const dependencyIndex{ indexOf(dependencyPassId) };
+                            if(dependencyIndex > passIndex) {
+                                continue;
+                            }
+
+                            size_t const distance{ passId - dependencyIndex };
+                            if(!hasDependency || distance < currentDistance) {
+                                dependencyId    = dependencyPassId;
+                                currentDistance = distance;
+                                hasDependency   = true;
+                            }
+                        }
+                    }
+
+                    if(hasDependency) {
+                        bool createDependency{ true };
+                        //If a render pass before trhis one has a dependency then we don't need to wait because all queue submissions are done in order.
+                        for(PassDependency const &dependency : dependencies) {
+                            if(renderPasses.contains(dependency.waitPass) && indexOf(dependency.waitPass) < passIndex) {
+                                createDependency = false;
+                                break;
+                            }
+                        }
+
+                        if(createDependency) {
+                            dependencies.emplace_back(PassDependency{
+                                .signalPass = dependencyId,
+                                .waitPass   = passId,
+                                .semaphore  = frameCache.allocateSemaphore(),
+                            });
+                        }
+                    }
+                }
+            }
+        }
+
+        //Second pass - create compute pass dependencies.
+        //TODO
+
+        return dependencies;
     }
 
     GhaImage::Layout RenderGraph::getPreviousLayout(std::vector<RgPassIdType> const &passes, int32_t const currentPassIndex, RgResourceIdType const imageId) {

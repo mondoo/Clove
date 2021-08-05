@@ -29,6 +29,7 @@ namespace garlic::clove {
     class GhaTransferCommandBuffer;
     class GhaGraphicsPipelineObject;
     class GhaComputePipelineObject;
+    class GhaSemaphore;
 }
 
 namespace garlic::clove {
@@ -36,6 +37,14 @@ namespace garlic::clove {
      * @brief Tracks how resources are used to create a graph of how to render a frame.
      */
     class RenderGraph {
+        //TYPES
+    private:
+        struct PassDependency {
+            RgPassIdType signalPass{};
+            RgPassIdType waitPass{};
+            std::shared_ptr<GhaSemaphore> semaphore{};
+        };
+
         //VARIABLES
     private:
         RgFrameCache &frameCache;
@@ -173,6 +182,8 @@ namespace garlic::clove {
     private:
         void buildExecutionPasses(std::vector<RgPassIdType> &outPasses, RgResourceIdType resourceId);
         GhaImage::Layout getPreviousLayout(std::vector<RgPassIdType> const &passes, int32_t const currentPassIndex, RgResourceIdType const imageId);
+
+        std::vector<PassDependency> buildDependencies(std::vector<RgPassIdType> const &passes);
 
         RgResource *getResourceFromId(RgResourceIdType resourceId);
         RgPass *getPassFromId(RgPassIdType passId);
