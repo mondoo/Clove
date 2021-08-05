@@ -17,6 +17,10 @@
 #include <vector>
 
 namespace garlic::clove {
+    class GhaSemaphore;
+}
+
+namespace garlic::clove {
     /**
      * @brief Stores objects associated with a single frame (images, buffers, etc.) for a RenderGraph
      */
@@ -73,6 +77,7 @@ namespace garlic::clove {
         ResourcePool<GhaImageView> imageViewPool{};
         ResourcePool<GhaFramebuffer> framebufferPool{};
         ResourcePool<GhaDescriptorPool> descriptorPoolPool{};
+        ResourcePool<GhaSemaphore> semaphorePool{};
 
         std::shared_ptr<GhaGraphicsCommandBuffer> graphicsCommandBuffer{ nullptr };
         std::shared_ptr<GhaComputeCommandBuffer> computeCommandBuffer{ nullptr };
@@ -104,6 +109,8 @@ namespace garlic::clove {
         std::shared_ptr<GhaFramebuffer> allocateFramebuffer(GhaFramebuffer::Descriptor descriptor);
 
         std::shared_ptr<GhaDescriptorPool> allocateDescriptorPool(GhaDescriptorPool::Descriptor descriptor);
+
+        std::shared_ptr<GhaSemaphore> allocateSemaphore();
 
         std::shared_ptr<GhaGraphicsCommandBuffer> getGraphicsCommandBuffer();
         std::shared_ptr<GhaComputeCommandBuffer> getComputeCommandBuffer();

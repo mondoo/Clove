@@ -25,6 +25,7 @@ namespace garlic::clove {
         imageViewPool.reset();
         framebufferPool.reset();
         descriptorPoolPool.reset();
+        semaphorePool.reset();
     }
 
     std::shared_ptr<GhaBuffer> RgFrameCache::allocateBuffer(GhaBuffer::Descriptor descriptor) {
@@ -90,6 +91,16 @@ namespace garlic::clove {
 
         return descriptorPoolPool.retrieve(poolId, [&]() {
             return ghaFactory->createDescriptorPool(std::move(descriptor)).getValue();
+        });
+    }
+
+    std::shared_ptr<GhaSemaphore> RgFrameCache::allocateSemaphore() {
+        //Always assign a new one until reset.
+        static PoolId poolId{ 0 };
+        ++poolId;
+
+        return semaphorePool.retrieve(poolId, [&]() {
+            return ghaFactory->createSemaphore().getValue();
         });
     }
 
