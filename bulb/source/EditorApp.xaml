@@ -251,15 +251,105 @@
 			<Setter Property="Background"
 					Value="{StaticResource Background1}"/>
 		</Style>
+		
+		<!-- Menu -->
+		<Style TargetType="Menu">
+			<Setter Property="Background"
+					Value="Transparent"/>
+		</Style>
 
 		<!-- MenuItem -->
 		<Style TargetType="{x:Type MenuItem}">
-			<Setter Property="Foreground"
-					Value="{StaticResource Foreground1}"/>
-			<Setter Property="Background"
-					Value="{StaticResource Background1}"/>
+			<Style.Triggers>
+				<!-- TopLevel -->
+				<Trigger Property="Role" 
+						 Value="TopLevelHeader">
+					<Setter Property="Template">
+						<Setter.Value>
+							<ControlTemplate TargetType="{x:Type MenuItem}">
+								<Border x:Name="Border"
+										Background="{StaticResource Background3}"
+										BorderBrush="{TemplateBinding BorderBrush}" 
+										BorderThickness="{TemplateBinding BorderThickness}"
+										CornerRadius="5">
+									<Grid Background="Transparent">
+										<ContentPresenter Margin="6,3,6,3"
+														  ContentSource="Header"
+														  RecognizesAccessKey="True"/>
+										<Popup x:Name="Popup"
+											   Placement="Bottom"
+											   IsOpen="{TemplateBinding IsSubmenuOpen}"
+											   AllowsTransparency="True"
+											   Focusable="False"
+											   PopupAnimation="Fade">
+											<Border x:Name="SubmenuBorder"
+													SnapsToDevicePixels="True"
+													BorderThickness="1"
+													Background="{StaticResource Background1}">
+												<ScrollViewer CanContentScroll="True"
+															  VerticalScrollBarVisibility="Auto">
+													<StackPanel IsItemsHost="True"
+																KeyboardNavigation.DirectionalNavigation="Cycle"/>
+												</ScrollViewer>
+											</Border>
+										</Popup>
+									</Grid>
+								</Border>
+								<ControlTemplate.Triggers>
+									<Trigger Property="IsMouseOver"
+											 Value="True">
+										<Setter TargetName="Border"
+												Property="Background"
+												Value="{StaticResource Primary}"/>
+									</Trigger>
+									<Trigger Property="IsFocused"
+											 Value="True">
+										<Setter TargetName="Border"
+												Property="BorderBrush"
+												Value="{StaticResource Primary}"/>
+									</Trigger>
+								</ControlTemplate.Triggers>
+							</ControlTemplate>
+						</Setter.Value>
+					</Setter>
+				</Trigger>
+				<Trigger Property="Role"
+						 Value="TopLevelItem">
+					<Setter Property="Template">
+						<Setter.Value>
+							<ControlTemplate TargetType="{x:Type MenuItem}">
+								<Border x:Name="Border"
+										Background="{StaticResource Background3}"
+										BorderBrush="{TemplateBinding BorderBrush}" 
+										BorderThickness="{TemplateBinding BorderThickness}"
+										CornerRadius="5">
+									<Grid Background="Transparent">
+										<ContentPresenter Margin="6,3,6,3"
+														  ContentSource="Header"
+														  RecognizesAccessKey="True"/>
+									</Grid>
+								</Border>
+								<ControlTemplate.Triggers>
+									<Trigger Property="IsMouseOver"
+											 Value="True">
+										<Setter TargetName="Border"
+												Property="Background"
+												Value="{StaticResource Primary}"/>
+									</Trigger>
+									<Trigger Property="IsFocused"
+											 Value="True">
+										<Setter TargetName="Border"
+												Property="BorderBrush"
+												Value="{StaticResource Primary}"/>
+									</Trigger>
+								</ControlTemplate.Triggers>
+							</ControlTemplate>
+						</Setter.Value>
+					</Setter>
+				</Trigger>
+			</Style.Triggers>
 		</Style>
-
+		
 		<!-- ScrollBar -->
 		<Style TargetType="{x:Type ScrollBar}">
 			<Setter Property="Background"
