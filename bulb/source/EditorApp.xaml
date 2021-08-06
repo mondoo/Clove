@@ -138,7 +138,8 @@
 					<ControlTemplate TargetType="{x:Type TextBox}">
 						<Border BorderThickness="{TemplateBinding BorderThickness}"
 								BorderBrush="{TemplateBinding BorderBrush}"
-								Background="{TemplateBinding Background}">
+								Background="{TemplateBinding Background}"
+								CornerRadius="5">
 							<ScrollViewer x:Name="PART_ContentHost"
 										  Padding="{TemplateBinding Padding}"
 										  BorderThickness="0"
