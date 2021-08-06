@@ -129,12 +129,16 @@
 		</ListBox>
 
 		<Menu HorizontalAlignment="Center">
-			<MenuItem Header="Add Component" ItemsSource="{Binding ComponentMenuItems}">
+			<MenuItem Header="Add Component" 
+					  ItemsSource="{Binding ComponentMenuItems}">
 				<!--Doing a regular DataTemplate here will cause a MenuItem within a MenuItem. So manually set up the container style ourselves-->
 				<MenuItem.ItemContainerStyle>
-					<Style TargetType="MenuItem">
-						<Setter Property="Header" Value="{Binding ComponentType}"/>
-						<Setter Property="Command" Value="{Binding OnSelectedCommand}"/>
+					<Style TargetType="{x:Type MenuItem}"
+						   BasedOn="{StaticResource {x:Type MenuItem}}">
+						<Setter Property="Header" 
+								Value="{Binding ComponentType}"/>
+						<Setter Property="Command" 
+								Value="{Binding OnSelectedCommand}"/>
 					</Style>
 				</MenuItem.ItemContainerStyle>
 			</MenuItem>
