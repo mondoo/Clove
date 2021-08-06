@@ -9,9 +9,13 @@
 						 Color="#3B3B3B"/>
 		<SolidColorBrush x:Key="Background2"
 						 Color="#121212"/>
+		<SolidColorBrush x:Key="Background3"
+						 Color="#515151"/>
 
 		<SolidColorBrush x:Key="Foreground1"
 						 Color="#F7F7F7"/>
+		<SolidColorBrush x:Key="Foreground2"
+						 Color="#B1B1B1"/>
 
 		<SolidColorBrush x:Key="Primary"
 						 Color="#00A8CC"/>
@@ -185,7 +189,7 @@
 			<Setter Property="Foreground"
 					Value="{StaticResource Foreground1}"/>
 			<Setter Property="Background"
-					Value="{StaticResource Background1}"/>
+					Value="{StaticResource Background3}"/>
 			<Setter Property="FocusVisualStyle"
 					Value="{StaticResource FocusStyle}"/>
 			<Setter Property="Template">
@@ -199,27 +203,36 @@
 											  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
 											  Margin="{TemplateBinding Padding}"/>
 						</Border>
+						<ControlTemplate.Triggers>
+							<Trigger Property="IsMouseOver"
+									 Value="True">
+								<Setter Property="Background"
+										Value="{StaticResource Primary}"/>
+							</Trigger>
+							<Trigger Property="IsFocused"
+									 Value="True">
+								<Setter Property="BorderBrush"
+										Value="{StaticResource Primary}"/>
+							</Trigger>
+						</ControlTemplate.Triggers>
 					</ControlTemplate>
 				</Setter.Value>
 			</Setter>
-
-			<Style.Triggers>
-				<Trigger Property="IsMouseOver"
-						 Value="True">
-					<Setter Property="Background"
-							Value="{StaticResource Primary}"/>
-				</Trigger>
-			</Style.Triggers>
 		</Style>
 
 		<Style x:Key="DirectoryItemButton"
 			   TargetType="{x:Type Button}"
 			   BasedOn="{StaticResource {x:Type Button}}">
 			<Style.Triggers>
+				<Trigger Property="IsMouseOver"
+						 Value="False">
+					<Setter Property="Background" 
+							Value="Transparent"/>
+				</Trigger>
 				<Trigger Property="IsFocused"
 						 Value="False">
 					<Setter Property="BorderBrush" 
-							Value="Transparent" />
+							Value="Transparent"/>
 				</Trigger>
 			</Style.Triggers>
 		</Style>
