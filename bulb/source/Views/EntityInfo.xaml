@@ -7,7 +7,7 @@
 			 xmlns:local="clr-namespace:Garlic.Bulb"
              mc:Ignorable="d" d:DesignWidth="267.396" d:DesignHeight="155.156">
 	<StackPanel Visibility="{Binding EntityViewVisibility}">
-		<TextBox Text="{Binding SelectedEntity.Name, Mode=TwoWay}"/>
+		<TextBox Text="{Binding SelectedEntity.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 		<ListBox ItemsSource="{Binding SelectedEntity.Components}">
 			<ListBox.Resources>
 				<DataTemplate DataType="{x:Type local:TransformComponentViewModel}">
@@ -52,7 +52,7 @@
 						</Menu>
 						<StackPanel Orientation="Horizontal" Visibility="{Binding RadiusVisibility}">
 							<TextBlock Text="Radius"/>
-							<TextBox Text="{Binding Radius, Mode=TwoWay}"/>
+							<TextBox Text="{Binding Radius, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
 						</StackPanel>
 						<local:Vector3Box Visibility="{Binding HalfExtentsVisibility}" Label="Half Extents" LeftFieldText="X" LeftFieldValue="{Binding HalfExtentsX, Mode=TwoWay}" CenterFieldText="Y" CenterFieldValue="{Binding HalfExtentsY, Mode=TwoWay}" RightFieldText="Z" RightFieldValue="{Binding HalfExtentsZ, Mode=TwoWay}"/>
 					</StackPanel>
