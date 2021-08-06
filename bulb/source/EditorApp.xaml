@@ -198,7 +198,8 @@
 					<ControlTemplate TargetType="{x:Type Button}">
 						<Border Background="{TemplateBinding Background}" 
 								BorderBrush="{TemplateBinding BorderBrush}" 
-								BorderThickness="{TemplateBinding BorderThickness}">
+								BorderThickness="{TemplateBinding BorderThickness}"
+								CornerRadius="5">
 							<ContentPresenter Focusable="False"
 											  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
 											  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
@@ -214,6 +215,11 @@
 									 Value="True">
 								<Setter Property="BorderBrush"
 										Value="{StaticResource Primary}"/>
+							</Trigger>
+							<Trigger Property="IsEnabled"
+									 Value="False">
+								<Setter Property="Opacity"
+										Value="0.3"/>
 							</Trigger>
 						</ControlTemplate.Triggers>
 					</ControlTemplate>
