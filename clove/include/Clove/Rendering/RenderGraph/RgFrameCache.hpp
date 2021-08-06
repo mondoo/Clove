@@ -61,7 +61,7 @@ namespace garlic::clove {
              * @brief Resets the pool marking all allocated elements as free.
              */
             void reset() {
-                for(auto&&[key, vec] : allocated){
+                for(auto &&[key, vec] : allocated) {
                     free[key].insert(free[key].end(), vec.begin(), vec.end());
                 }
                 allocated.clear();
@@ -79,14 +79,18 @@ namespace garlic::clove {
         ResourcePool<GhaDescriptorPool> descriptorPoolPool{};
         ResourcePool<GhaSemaphore> semaphorePool{};
 
-        std::shared_ptr<GhaGraphicsCommandBuffer> graphicsCommandBuffer{ nullptr };
-        std::shared_ptr<GhaComputeCommandBuffer> computeCommandBuffer{ nullptr };
-        std::shared_ptr<GhaTransferCommandBuffer> transferCommandBuffer{ nullptr };
+        std::shared_ptr<GhaGraphicsQueue> graphicsQueue{ nullptr };
+        std::shared_ptr<GhaComputeQueue> computeQueue{ nullptr };
+        std::shared_ptr<GhaTransferQueue> transferQueue{ nullptr };
+
+        std::vector<std::shared_ptr<GhaGraphicsCommandBuffer>> allocatedGraphicsCommandBuffers{};
+        std::vector<std::shared_ptr<GhaComputeCommandBuffer>> allocatedComputeCommandBuffers{};
+        std::vector<std::shared_ptr<GhaTransferCommandBuffer>> allocatedTransferCommandBuffers{};
 
         //FUNCTIONS
     public:
         RgFrameCache() = delete;
-        RgFrameCache(std::shared_ptr<GhaFactory> ghaFactory, GhaGraphicsQueue &graphicsQueue, GhaComputeQueue &computeQueue, GhaTransferQueue &transferQueue);
+        RgFrameCache(std::shared_ptr<GhaFactory> ghaFactory, std::shared_ptr<GhaGraphicsQueue> graphicsQueue, std::shared_ptr<GhaComputeQueue> computeQueue, std::shared_ptr<GhaTransferQueue> transferQueue);
 
         RgFrameCache(RgFrameCache const &other) = delete;
         RgFrameCache(RgFrameCache &&other) noexcept;
@@ -112,8 +116,12 @@ namespace garlic::clove {
 
         std::shared_ptr<GhaSemaphore> allocateSemaphore();
 
-        std::shared_ptr<GhaGraphicsCommandBuffer> getGraphicsCommandBuffer();
-        std::shared_ptr<GhaComputeCommandBuffer> getComputeCommandBuffer();
-        std::shared_ptr<GhaTransferCommandBuffer> getTransferCommandBuffer();
+        std::shared_ptr<GhaGraphicsCommandBuffer> allocateGraphicsCommandBuffer();
+        std::shared_ptr<GhaComputeCommandBuffer> allocateComputeCommandBuffer();
+        std::shared_ptr<GhaTransferCommandBuffer> allocateTransferCommandBuffer();
+
+        void submit(GraphicsSubmitInfo submitInfo, GhaFence const *signalFence);
+        void submit(ComputeSubmitInfo submitInfo, GhaFence const *signalFence);
+        void submit(TransferSubmitInfo submitInfo, GhaFence const *signalFence);
     };
 }

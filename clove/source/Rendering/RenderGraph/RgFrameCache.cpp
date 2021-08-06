@@ -6,11 +6,11 @@
 #include <functional>
 
 namespace garlic::clove {
-    RgFrameCache::RgFrameCache(std::shared_ptr<GhaFactory> ghaFactory, GhaGraphicsQueue &graphicsQueue, GhaComputeQueue &computeQueue, GhaTransferQueue &transferQueue)
-        : ghaFactory{ std::move(ghaFactory) } {
-        graphicsCommandBuffer = graphicsQueue.allocateCommandBuffer();
-        computeCommandBuffer  = computeQueue.allocateCommandBuffer();
-        transferCommandBuffer = transferQueue.allocateCommandBuffer();
+    RgFrameCache::RgFrameCache(std::shared_ptr<GhaFactory> ghaFactory, std::shared_ptr<GhaGraphicsQueue> graphicsQueue, std::shared_ptr<GhaComputeQueue> computeQueue, std::shared_ptr<GhaTransferQueue> transferQueue)
+        : ghaFactory{ std::move(ghaFactory) }
+        , graphicsQueue{ std::move(graphicsQueue) }
+        , computeQueue{ std::move(computeQueue) }
+        , transferQueue{ std::move(transferQueue) } {
     }
 
     RgFrameCache::RgFrameCache(RgFrameCache &&other) noexcept = default;
@@ -26,6 +26,21 @@ namespace garlic::clove {
         framebufferPool.reset();
         descriptorPoolPool.reset();
         semaphorePool.reset();
+
+        for(auto const &commandBuffer : allocatedGraphicsCommandBuffers) {
+            graphicsQueue->freeCommandBuffer(*commandBuffer);
+        }
+        allocatedGraphicsCommandBuffers.clear();
+
+        for(auto const &commandBuffer : allocatedComputeCommandBuffers) {
+            computeQueue->freeCommandBuffer(*commandBuffer);
+        }
+        allocatedComputeCommandBuffers.clear();
+
+        for(auto const &commandBuffer : allocatedTransferCommandBuffers) {
+            transferQueue->freeCommandBuffer(*commandBuffer);
+        }
+        allocatedTransferCommandBuffers.clear();
     }
 
     std::shared_ptr<GhaBuffer> RgFrameCache::allocateBuffer(GhaBuffer::Descriptor descriptor) {
@@ -104,15 +119,33 @@ namespace garlic::clove {
         });
     }
 
-    std::shared_ptr<GhaGraphicsCommandBuffer> RgFrameCache::getGraphicsCommandBuffer() {
-        return graphicsCommandBuffer;
+    std::shared_ptr<GhaGraphicsCommandBuffer> RgFrameCache::allocateGraphicsCommandBuffer() {
+        std::shared_ptr<GhaGraphicsCommandBuffer> commandBuffer{ graphicsQueue->allocateCommandBuffer() };
+        allocatedGraphicsCommandBuffers.push_back(commandBuffer);
+        return commandBuffer;
     }
 
-    std::shared_ptr<GhaComputeCommandBuffer> RgFrameCache::getComputeCommandBuffer() {
-        return computeCommandBuffer;
+    std::shared_ptr<GhaComputeCommandBuffer> RgFrameCache::allocateComputeCommandBuffer() {
+        std::shared_ptr<GhaComputeCommandBuffer> commandBuffer{ computeQueue->allocateCommandBuffer() };
+        allocatedComputeCommandBuffers.push_back(commandBuffer);
+        return commandBuffer;
     }
 
-    std::shared_ptr<GhaTransferCommandBuffer> RgFrameCache::getTransferCommandBuffer() {
-        return transferCommandBuffer;
+    std::shared_ptr<GhaTransferCommandBuffer> RgFrameCache::allocateTransferCommandBuffer() {
+        std::shared_ptr<GhaTransferCommandBuffer> commandBuffer{ transferQueue->allocateCommandBuffer() };
+        allocatedTransferCommandBuffers.push_back(commandBuffer);
+        return commandBuffer;
+    }
+
+    void RgFrameCache::submit(GraphicsSubmitInfo submitInfo, GhaFence const *signalFence) {
+        graphicsQueue->submit({ std::move(submitInfo) }, signalFence);
+    }
+
+    void RgFrameCache::submit(ComputeSubmitInfo submitInfo, GhaFence const *signalFence) {
+        computeQueue->submit({ std::move(submitInfo) }, signalFence);
+    }
+
+    void RgFrameCache::submit(TransferSubmitInfo submitInfo, GhaFence const *signalFence) {
+        transferQueue->submit({ std::move(submitInfo) }, signalFence);
     }
 }
