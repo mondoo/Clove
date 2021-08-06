@@ -284,20 +284,78 @@ namespace garlic::clove {
         }
 
         //Record all of the commands of each individual pass
-        std::shared_ptr<GhaGraphicsCommandBuffer> graphicsCommandBufffer{ frameCache.getGraphicsCommandBuffer() };
-        std::shared_ptr<GhaComputeCommandBuffer> computeCommandBufffer{ frameCache.getComputeCommandBuffer() };
+        std::shared_ptr<GhaGraphicsCommandBuffer> graphicsCommandBufffer{ frameCache.allocateGraphicsCommandBuffer() };
+        std::shared_ptr<GhaComputeCommandBuffer> computeCommandBufffer{ frameCache.allocateComputeCommandBuffer() };
         //std::shared_ptr<GhaTransferCommandBuffer> transferCommandBufffer{ frameCache.getTransferCommandBuffer() };
 
-        graphicsCommandBufffer->beginRecording(CommandBufferUsage::OneTimeSubmit);
+        //TODO: Handle each pass as a queue submission and handle them in order of a single iteration of the execution passes.
+
+        //Handle all transfer work - This is fine for now as we don't use the transfer queue yet
         for(RgPassIdType passId : executionPasses) {
-            if(transferPasses.contains(passId)) {
-                RgTransferPass::BufferWrite const &writeOp{ transferPasses.at(passId)->getWriteOperation() };
-                std::unique_ptr<RgBuffer> const &buffer{ buffers.at(writeOp.bufferId) };
-                buffer->getGhaBuffer(frameCache)->write(writeOp.data.data(), buffer->getBufferOffset() + writeOp.offset, writeOp.size);
-                continue;//Move to next pass as the rest of this loop assume it's a render pass
+            if(!transferPasses.contains(passId)) {
+                continue;
             }
 
-            if(computePasses.contains(passId)) {
+            RgTransferPass::BufferWrite const &writeOp{ transferPasses.at(passId)->getWriteOperation() };
+            std::unique_ptr<RgBuffer> const &buffer{ buffers.at(writeOp.bufferId) };
+            buffer->getGhaBuffer(frameCache)->write(writeOp.data.data(), buffer->getBufferOffset() + writeOp.offset, writeOp.size);
+        }
+
+        //Handle all compute work first - This might cause issues with some work being blocked while other stuff waits on graphics work
+        computeCommandBufffer->beginRecording(CommandBufferUsage::OneTimeSubmit);
+        for(RgPassIdType passId : executionPasses) {
+            if(!computePasses.contains(passId)) {
+                continue;
+            }
+
+            RgComputePass::Descriptor const &passDescriptor{ computePasses.at(passId)->getDescriptor() };
+            std::vector<RgComputePass::Submission> const &passSubmissions{ computePasses.at(passId)->getSubmissions() };
+
+            computeCommandBufffer->bindPipelineObject(*allocatedComputePipelines.at(passId));
+
+            for(size_t index{ 0 }; auto const &submission : passSubmissions) {
+                std::shared_ptr<GhaDescriptorSet> const &descriptorSet{ allocatedDescriptorSets.at(passId)[index] };
+
+                for(auto const &readUB : submission.readUniformBuffers) {
+                    std::unique_ptr<RgBuffer> const &buffer{ buffers.at(readUB.buffer) };
+                    descriptorSet->map(*buffer->getGhaBuffer(frameCache), 0, buffer->getBufferSize(), DescriptorType::UniformBuffer, readUB.slot);
+                }
+                for(auto const &readSB : submission.readStorageBuffers) {
+                    std::unique_ptr<RgBuffer> const &buffer{ buffers.at(readSB.buffer) };
+                    descriptorSet->map(*buffer->getGhaBuffer(frameCache), 0, buffer->getBufferSize(), DescriptorType::StorageBuffer, readSB.slot);
+                }
+                for(auto const &writeSB : submission.writeBuffers) {
+                    std::unique_ptr<RgBuffer> const &buffer{ buffers.at(writeSB.buffer) };
+                    descriptorSet->map(*buffer->getGhaBuffer(frameCache), 0, buffer->getBufferSize(), DescriptorType::StorageBuffer, writeSB.slot);
+                }
+
+                computeCommandBufffer->bindDescriptorSet(*descriptorSet, 0);
+
+                computeCommandBufffer->disptach(submission.disptachSize);
+
+                ++index;
+            }
+        }
+        computeCommandBufffer->endRecording();
+
+        std::vector<std::shared_ptr<GhaSemaphore>> computeSignalSemaphores{};
+        for(auto const &dependency : passDependencies) {
+            if(computePasses.contains(dependency.signalPass)) {
+                computeSignalSemaphores.push_back(dependency.semaphore);
+            }
+        }
+
+        frameCache.submit(ComputeSubmitInfo{
+                              //TODO: Ignoring wait semaphores until submissions are handled internally properly
+                              .commandBuffers   = { computeCommandBufffer },
+                              .signalSemaphores = computeSignalSemaphores,
+                          },
+                          nullptr);
+
+        //Handle all graphics work
+        graphicsCommandBufffer->beginRecording(CommandBufferUsage::OneTimeSubmit);
+        for(RgPassIdType passId : executionPasses) {
+            if(!renderPasses.contains(passId)) {
                 continue;
             }
 
@@ -352,9 +410,18 @@ namespace garlic::clove {
         }
         graphicsCommandBufffer->endRecording();
 
+        std::vector<std::pair<std::shared_ptr<GhaSemaphore>, PipelineStage>> graphicsWaitSemaphores{};
+        for(auto const &dependency : passDependencies) {
+            if(renderPasses.contains(dependency.waitPass)) {
+                graphicsWaitSemaphores.push_back(std::make_pair(dependency.semaphore, PipelineStage::Top));//TODO: Properly apply pipeline stage
+            }
+        }
+
         //TODO: Execute this internally
         return GraphicsSubmitInfo{
+            .waitSemaphores = graphicsWaitSemaphores,
             .commandBuffers = { graphicsCommandBufffer },
+            //TODO: Ignoring signal semaphores until submissions are handled properly
         };
     }
 
