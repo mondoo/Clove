@@ -85,6 +85,15 @@ target_link_libraries(
 		$<$<PLATFORM_ID:Darwin>:${CLV_QUARTZ_LIB}>
 )
 
+#Compiler
+target_compile_options(
+	CloveGraphics
+
+	#MacOS
+	PRIVATE
+		$<$<PLATFORM_ID:Darwin>:-fobjc-arc>
+)
+
 #Don't compile platform specific files
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 	set_source_files_properties(${LinuxPlatformFiles} ${MacOSPlatformFiles} PROPERTIES HEADER_FILE_ONLY TRUE)

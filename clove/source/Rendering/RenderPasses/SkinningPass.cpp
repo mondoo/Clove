@@ -20,11 +20,19 @@ namespace garlic::clove {
         shaderIncludes["Constants.glsl"] = { constants, constantsLength };
 
         //Create pipeline
+		PushConstantDescriptor const pushConstant{
+			.stage = GhaShader::Stage::Compute,
+			.size  = sizeof(size_t),
+		};
+		
         GhaComputePipelineObject::Descriptor const skinningPipelineDescriptor{
             .shader               = *ghaFactory.createShaderFromSource({ skinning_c, skinning_cLength }, shaderIncludes, "Skinning (compute)", GhaShader::Stage::Compute),
-            .descriptorSetLayouts = {
+			.descriptorSetLayouts = {
                 createSkinningDescriptorSetLayout(ghaFactory),
-            }
+            },
+			.pushConstants = {
+				pushConstant,
+			},
         };
 
         pipeline = *ghaFactory.createComputePipelineObject(skinningPipelineDescriptor);
@@ -40,6 +48,10 @@ namespace garlic::clove {
         commandBuffer.bindPipelineObject(*pipeline);
 
         for(auto const &job : getJobs()) {
+			size_t const pushConstantData{ job.mesh->getVertexCount() };
+			size_t const pushConstantSize{ sizeof(size_t) };
+
+			commandBuffer.pushConstant(0, pushConstantSize, &pushConstantData);
             commandBuffer.bindDescriptorSet(*frameData.skinningMeshSets[job.meshDescriptorIndex], 0);
             commandBuffer.disptach({ (job.mesh->getVertexCount() / AVERAGE_WORK_GROUP_SIZE) + 1, 1, 1 });
         }

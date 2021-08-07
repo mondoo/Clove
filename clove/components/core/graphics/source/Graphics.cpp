@@ -3,6 +3,7 @@
 #if CLOVE_PLATFORM_WINDOWS
     #include "Clove/Graphics/Vulkan/VulkanDevice.hpp"
 #elif CLOVE_PLATFORM_MACOS
+    #include "Clove/Graphics/Metal/MetalDevice.hpp"
 #elif CLOVE_PLATFORM_LINUX
     #include "Clove/Graphics/Vulkan/VulkanDevice.hpp"
 #endif
@@ -11,12 +12,14 @@
 #include <Clove/Log/Log.hpp>
 
 namespace garlic::clove {
-    std::unique_ptr<GhaDevice> createGraphicsDevice(GraphicsApi api, std::any nativeWindow) { //NOLINT Temp no lint on macos until this is implemented
+    std::unique_ptr<GhaDevice> createGraphicsDevice(GraphicsApi api, std::any nativeWindow) {
         switch(api) {
 #if CLOVE_PLATFORM_WINDOWS
             case GraphicsApi::Vulkan:
                 return std::make_unique<VulkanDevice>(std::move(nativeWindow));
 #elif CLOVE_PLATFORM_MACOS
+            case GraphicsApi::Metal:
+                return std::make_unique<MetalDevice>(std::move(nativeWindow));
 #elif CLOVE_PLATFORM_LINUX
             case GraphicsApi::Vulkan:
                 return std::make_unique<VulkanDevice>(std::move(nativeWindow));
