@@ -5,13 +5,23 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" d:DesignWidth="272.344" d:DesignHeight="141.615">
-	<StackPanel >
+	<UserControl.Resources>
+		<Style TargetType="{x:Type Button}"
+			   x:Key="DirectoryItemButton"
+			   BasedOn="{StaticResource {x:Type Button}}">
+			<Setter Property="Background"
+					Value="Transparent"/>
+			<Setter Property="BorderBrush"
+					Value="Transparent"/>
+		</Style>
+	</UserControl.Resources>
+	<StackPanel>
 		<StackPanel Orientation="Horizontal">
 			<Button x:Name="ExpandIcon"/>
-			<Button Background="Transparent"
-					BorderBrush="Transparent"
+			<Button Style="{StaticResource DirectoryItemButton}"
 					Command="{Binding OpenCommand}">
-				<StackPanel Orientation="Horizontal">
+				<StackPanel Orientation="Horizontal"
+							Background="Transparent">
 					<Image Source="/resource/FileExplorer/png/001-folder-closed-black-shape.png"
 						   Width="20"
 						   Margin="3 0 0 0"/>

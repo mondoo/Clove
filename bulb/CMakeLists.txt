@@ -22,6 +22,8 @@ add_executable(
 	    ${SOURCE}/EditorApp.xaml
         ${SOURCE}/EditorApp.xaml.cs
 
+		${SOURCE}/SizePercentageConverter.cs
+
 	    ${SOURCE}/AssemblyInfo.cs
         
 		${SOURCE}/Views/FileExplorer/DirectoryTree.xaml

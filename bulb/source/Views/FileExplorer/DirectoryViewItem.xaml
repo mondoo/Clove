@@ -5,7 +5,7 @@
 		xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
 		mc:Ignorable="d" d:DesignWidth="267.396" d:DesignHeight="155.156"
-		Background="Transparent">
+		Style="{StaticResource DirectoryItemButton}">
 	<Button.InputBindings>
 		<!-- Allow for custom input bindings to use ICommand -->
 		<MouseBinding Gesture="LeftDoubleClick" 
@@ -14,26 +14,7 @@
 					Command="{Binding DeleteCommand}"/>
 	</Button.InputBindings>
 
-	<Button.Style>
-		<Style TargetType="{x:Type Button}">
-			<Style.Triggers>
-				<Trigger Property="IsFocused" 
-						 Value="True">
-					<Setter Property="BorderBrush" 
-							Value="Red" />
-					<Setter Property="BorderThickness" 
-							Value="2" />
-				</Trigger>
-				<Trigger Property="IsFocused"
-						 Value="False">
-					<Setter Property="BorderBrush" 
-							Value="Transparent" />
-				</Trigger>
-			</Style.Triggers>
-		</Style>
-	</Button.Style>
-
-	<StackPanel>
+	<StackPanel Background="Transparent">
 		<Image HorizontalAlignment="Center"
 			   Width="50">
 			<Image.Style>
