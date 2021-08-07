@@ -9,16 +9,21 @@ namespace Garlic.Bulb {
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window {
-        private Visibility sidePanelVisibility = Visibility.Visible;
-        private Visibility contentPanelVisibility = Visibility.Visible;
+        private Visibility sidePanelVisibility = Visibility.Collapsed;
+        private Visibility sidePanelHintVisibility = Visibility.Visible;
+
+        private Visibility contentPanelVisibility = Visibility.Collapsed;
+        private Visibility contentPanelHintVisibility = Visibility.Visible;
 
         public MainWindow() {
             InitializeComponent();
 
             ContentBrowser.Visibility = contentPanelVisibility;
+            ToggleContentHint.Visibility = contentPanelHintVisibility;
 
             SceneView.Visibility = sidePanelVisibility;
             EntityView.Visibility = sidePanelVisibility;
+            ToggleSceneHint.Visibility = sidePanelHintVisibility;
         }
 
         public override void OnApplyTemplate() {
@@ -97,15 +102,21 @@ namespace Garlic.Bulb {
             //Handle keys to show / hide editor elements
             if (IsToggleElementsPressed(e.Key)) {
                 sidePanelVisibility = sidePanelVisibility == Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed;
+                sidePanelHintVisibility = sidePanelVisibility == Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed;
+
                 SceneView.Visibility = sidePanelVisibility;
                 EntityView.Visibility = sidePanelVisibility;
+                ToggleSceneHint.Visibility = sidePanelHintVisibility;
 
                 e.Handled = true;
             }
 
             if (IsToggleContentPressed(e.Key)) {
                 contentPanelVisibility = contentPanelVisibility == Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed;
+                contentPanelHintVisibility = contentPanelVisibility == Visibility.Collapsed ? Visibility.Visible : Visibility.Collapsed;
+
                 ContentBrowser.Visibility = contentPanelVisibility;
+                ToggleContentHint.Visibility = contentPanelHintVisibility;
 
                 e.Handled = true;
             }

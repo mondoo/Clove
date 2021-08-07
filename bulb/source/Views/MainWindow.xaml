@@ -57,6 +57,7 @@
 		<DockPanel x:Name="Dock" Grid.Column="0"
 				   Grid.Row="1"
 				   Background="{x:Null}">
+
 			<TabControl x:Name="ContentBrowser"
 						DockPanel.Dock="Bottom"
 						VerticalAlignment="Bottom"
@@ -106,6 +107,27 @@
 						HorizontalAlignment="Center"
 						Padding="1"/>
 			</StackPanel>
+			
+			<TextBlock x:Name="ToggleContentHint"
+					   Text="ctrl+space"
+					   DockPanel.Dock="Bottom"
+					   Background="{StaticResource Background1}"
+					   HorizontalAlignment="Left"
+					   Padding="2">
+			</TextBlock>
+			<TextBlock x:Name="ToggleSceneHint"
+					   Text="ctrl+tab"
+					   DockPanel.Dock="Left"
+					   Background="{StaticResource Background1}"
+					   VerticalAlignment="top"
+					   Padding="2">
+				<TextBlock.LayoutTransform>
+					<TransformGroup>
+						<RotateTransform Angle="90"/>
+					</TransformGroup>
+				</TextBlock.LayoutTransform>
+			</TextBlock>
+			
 
 			<local:EntityInfo x:Name="EntityView"
 							  DockPanel.Dock="Right"
