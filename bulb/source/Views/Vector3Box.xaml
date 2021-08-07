@@ -8,8 +8,8 @@
 			 d:DesignHeight="150" d:DesignWidth="300">
 	<Grid>
 		<Grid.ColumnDefinitions>
-			<ColumnDefinition Width="*"/>
-			<ColumnDefinition Width="*"/>
+			<ColumnDefinition Width="1*"/>
+			<ColumnDefinition Width="2*"/>
 		</Grid.ColumnDefinitions>
 
 		<TextBlock Grid.Column="0" Text="{Binding ElementName=this, Path=Label}"/>
@@ -22,35 +22,32 @@
 
 			<!--TODO: Create a scalar box to reduce duplication below-->
 
-			<Grid Grid.Column="0" Margin="3,0">
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="*"/>
-					<ColumnDefinition Width="*"/>
-				</Grid.ColumnDefinitions>
+			<StackPanel Grid.Column="0"
+						Margin="3,0"
+						Orientation="Horizontal">
+				<TextBlock Grid.Column="0" 
+						   Text="{Binding ElementName=this, Path=LeftFieldText}"/>
+				<TextBox Grid.Column="1" 
+						 Text="{Binding ElementName=this, Path=LeftFieldValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+			</StackPanel>
 
-				<TextBlock Grid.Column="0" Text="{Binding ElementName=this, Path=LeftFieldText}"/>
-				<TextBox Grid.Column="1" Text="{Binding ElementName=this, Path=LeftFieldValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-			</Grid>
+			<StackPanel Grid.Column="1"
+						Margin="3,0"
+						Orientation="Horizontal">
+				<TextBlock Grid.Column="0" 
+						   Text="{Binding ElementName=this, Path=CenterFieldText}"/>
+				<TextBox Grid.Column="1" 
+						 Text="{Binding ElementName=this, Path=CenterFieldValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+			</StackPanel>
 
-			<Grid Grid.Column="1" Margin="3,0">
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="*"/>
-					<ColumnDefinition Width="*"/>
-				</Grid.ColumnDefinitions>
-
-				<TextBlock Grid.Column="0" Text="{Binding ElementName=this, Path=CenterFieldText}"/>
-				<TextBox Grid.Column="1" Text="{Binding ElementName=this, Path=CenterFieldValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-			</Grid>
-
-			<Grid Grid.Column="2" Margin="3,0">
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="*"/>
-					<ColumnDefinition Width="*"/>
-				</Grid.ColumnDefinitions>
-
-				<TextBlock Grid.Column="0" Text="{Binding ElementName=this, Path=RightFieldText}"/>
-				<TextBox Grid.Column="1" Text="{Binding ElementName=this, Path=RightFieldValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-			</Grid>
+			<StackPanel Grid.Column="2"
+						Margin="3 0"
+						Orientation="Horizontal">
+				<TextBlock Grid.Column="0" 
+						   Text="{Binding ElementName=this, Path=RightFieldText}"/>
+				<TextBox Grid.Column="1" 
+						 Text="{Binding ElementName=this, Path=RightFieldValue, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+			</StackPanel>
 		</Grid>
 	</Grid>
 </UserControl>

@@ -80,7 +80,8 @@
 				<TextBlock Grid.Column="0"
 						   Text="Scene"
 						   FontWeight="Bold"
-						   HorizontalAlignment="Center"/>
+						   HorizontalAlignment="Center"
+						   Margin="0 0 0 5"/>
 
 				<ItemsControl ItemsSource="{Binding Scene.Entities}">
 					<ItemsControl.ItemTemplate>
