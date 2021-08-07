@@ -1,6 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Shapes;
 using Membrane = garlic.membrane;
 
@@ -24,6 +25,8 @@ namespace Garlic.Bulb {
             SceneView.Visibility = sidePanelVisibility;
             EntityView.Visibility = sidePanelVisibility;
             ToggleSceneHint.Visibility = sidePanelHintVisibility;
+
+            EntityListBox.SelectionChanged += EntityListBox_SelectionChanged;
         }
 
         public override void OnApplyTemplate() {
@@ -77,6 +80,39 @@ namespace Garlic.Bulb {
             Membrane.MessageHandler.sendMessage(message);
 
             e.Handled = true;
+        }
+
+        private void EntityListBox_SelectionChanged(object sender, SelectionChangedEventArgs e) {
+            var listBox = sender as ListBox;
+            var entityVm = listBox.SelectedItem as EntityViewModel;
+
+            entityVm.SelectedCommand.Execute(null);
+        }
+
+        private void EntityListItem_MouseDown(object sender, MouseButtonEventArgs e) {
+            if(e.ClickCount != 2) {
+                return;
+            }
+
+            var grid = sender as Grid;
+
+            int childCount = VisualTreeHelper.GetChildrenCount(grid);
+            for(int i = 0; i < childCount; i++) {
+                var child = VisualTreeHelper.GetChild(grid, i) as FrameworkElement;
+                if(child.Name == "EditTextBox") {
+                    child.Visibility = Visibility.Visible;
+                    child.LostFocus += EditTextBoxLostFocus;
+                    child.Focus();
+                }
+            }
+
+            e.Handled = true;
+        }
+
+        private void EditTextBoxLostFocus(object sender, RoutedEventArgs e) {
+            var textBox = sender as FrameworkElement;
+            textBox.Visibility = Visibility.Collapsed;
+            textBox.LostFocus -= EditTextBoxLostFocus;
         }
 
         private void Window_MouseMove(object sender, MouseEventArgs e) {

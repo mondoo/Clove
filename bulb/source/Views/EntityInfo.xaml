@@ -6,193 +6,199 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
 			 xmlns:local="clr-namespace:Garlic.Bulb"
              mc:Ignorable="d" d:DesignWidth="267.396" d:DesignHeight="155.156">
-	<StackPanel Visibility="{Binding EntityViewVisibility}">
-		<TextBlock Text="Inspector"
+    <StackPanel Visibility="{Binding EntityViewVisibility}">
+        <TextBlock Text="Inspector"
 				   FontWeight="Bold"
 				   HorizontalAlignment="Center"
 				   Margin="0 0 0 5"/>
-		<TextBox Text="{Binding SelectedEntity.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-		<ListBox ItemsSource="{Binding SelectedEntity.Components}"
+        <Separator RenderTransformOrigin="0.5,0.5">
+			<Separator.RenderTransform>
+				<TransformGroup>
+					<ScaleTransform ScaleY="2"/>
+				</TransformGroup>
+			</Separator.RenderTransform>
+		</Separator>
+        <TextBox Text="{Binding SelectedEntity.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+        <ListBox ItemsSource="{Binding SelectedEntity.Components}"
 				 HorizontalContentAlignment="Stretch"
 				 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-				 BorderBrush="{x:Null}"
-				 BorderThickness="0">
-			<ListBox.Resources>
-				<Style TargetType="{x:Type TextBlock}"
+				 BorderThickness="0 0 0 2">
+            <ListBox.Resources>
+                <Style TargetType="{x:Type TextBlock}"
 					   x:Key="Header"
 					   BasedOn="{StaticResource {x:Type TextBlock}}">
-					<Setter Property="FontWeight"
+                    <Setter Property="FontWeight"
 							Value="Bold"/>
-					<Setter Property="Background"
+                    <Setter Property="Background"
 							Value="{StaticResource Background3}"/>
-				</Style>
+                </Style>
 
-				<DataTemplate DataType="{x:Type local:TransformComponentViewModel}">
-					<StackPanel>
-						<TextBlock Text="{Binding Name}"
+                <DataTemplate DataType="{x:Type local:TransformComponentViewModel}">
+                    <StackPanel>
+                        <TextBlock Text="{Binding Name}"
 								   Style="{StaticResource Header}"/>
-						<StackPanel Margin="10 0 0 0">
-							<local:Vector3Box Label="Position" 
+                        <StackPanel Margin="10 0 0 0">
+                            <local:Vector3Box Label="Position" 
 											  LeftFieldText="X" 
 											  LeftFieldValue="{Binding PositionXValue, Mode=TwoWay}" 
 											  CenterFieldText="Y" 
 											  CenterFieldValue="{Binding PositionYValue, Mode=TwoWay}"
 											  RightFieldText="Z" 
 											  RightFieldValue="{Binding PositionZValue, Mode=TwoWay}"/>
-							<local:Vector3Box Label="Rotation" 
+                            <local:Vector3Box Label="Rotation" 
 											  LeftFieldText="X" 
 											  LeftFieldValue="{Binding RotationXValue, Mode=TwoWay}" 
 											  CenterFieldText="Y" 
 											  CenterFieldValue="{Binding RotationYValue, Mode=TwoWay}" 
 											  RightFieldText="Z" 
 											  RightFieldValue="{Binding RotationZValue, Mode=TwoWay}"/>
-							<local:Vector3Box Label="Scale" 
+                            <local:Vector3Box Label="Scale" 
 											  LeftFieldText="X"
 											  LeftFieldValue="{Binding ScaleXValue, Mode=TwoWay}" 
 											  CenterFieldText="Y" 
 											  CenterFieldValue="{Binding ScaleYValue, Mode=TwoWay}" 
 											  RightFieldText="Z" 
 											  RightFieldValue="{Binding ScaleZValue, Mode=TwoWay}"/>
-						</StackPanel>
-					</StackPanel>
-				</DataTemplate>
+                        </StackPanel>
+                    </StackPanel>
+                </DataTemplate>
 
-				<DataTemplate DataType="{x:Type local:RigidBodyComponentViewModel}">
-					<StackPanel>
-						<TextBlock Text="{Binding Name}"
+                <DataTemplate DataType="{x:Type local:RigidBodyComponentViewModel}">
+                    <StackPanel>
+                        <TextBlock Text="{Binding Name}"
 								   Style="{StaticResource Header}"/>
-						<Grid Grid.Column="0" 
+                        <Grid Grid.Column="0" 
 							  Margin="10 0 0 0">
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition Width="1*"/>
-								<ColumnDefinition Width="2*"/>
-							</Grid.ColumnDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1*"/>
+                                <ColumnDefinition Width="2*"/>
+                            </Grid.ColumnDefinitions>
 
-							<TextBlock Grid.Column="0" 
+                            <TextBlock Grid.Column="0" 
 									   Text="Mass"/>
-							<TextBox Grid.Column="1" 
+                            <TextBox Grid.Column="1" 
 									 Text="{Binding Mass, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-						</Grid>
-					</StackPanel>
-				</DataTemplate>
+                        </Grid>
+                    </StackPanel>
+                </DataTemplate>
 
-				<DataTemplate DataType="{x:Type local:CollisionShapeComponentViewModel}">
-					<StackPanel>
-						<TextBlock Text="{Binding Name}"
+                <DataTemplate DataType="{x:Type local:CollisionShapeComponentViewModel}">
+                    <StackPanel>
+                        <TextBlock Text="{Binding Name}"
 								   Style="{StaticResource Header}"/>
-						<Menu HorizontalAlignment="Left">
-							<MenuItem Header="{Binding CurrentShapeType}" 
+                        <Menu HorizontalAlignment="Left">
+                            <MenuItem Header="{Binding CurrentShapeType}" 
 									  ItemsSource="{Binding AvailableShapes}">
-								<!--Doing a regular DataTemplate here will cause a MenuItem within a MenuItem. So manually set up the container style ourselves-->
-								<MenuItem.ItemContainerStyle>
-									<Style TargetType="MenuItem">
-										<Setter Property="Header" 
+                                <!--Doing a regular DataTemplate here will cause a MenuItem within a MenuItem. So manually set up the container style ourselves-->
+                                <MenuItem.ItemContainerStyle>
+                                    <Style TargetType="MenuItem">
+                                        <Setter Property="Header" 
 												Value="{Binding Name}"/>
-										<Setter Property="Command" 
+                                        <Setter Property="Command" 
 												Value="{Binding OnSelectedCommand}"/>
-									</Style>
-								</MenuItem.ItemContainerStyle>
-							</MenuItem>
-						</Menu>
-						<StackPanel Orientation="Horizontal" Visibility="{Binding RadiusVisibility}">
-							<TextBlock Text="Radius"/>
-							<TextBox Text="{Binding Radius, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-						</StackPanel>
-						<local:Vector3Box Visibility="{Binding HalfExtentsVisibility}" Label="Half Extents" LeftFieldText="X" LeftFieldValue="{Binding HalfExtentsX, Mode=TwoWay}" CenterFieldText="Y" CenterFieldValue="{Binding HalfExtentsY, Mode=TwoWay}" RightFieldText="Z" RightFieldValue="{Binding HalfExtentsZ, Mode=TwoWay}"/>
-					</StackPanel>
-				</DataTemplate>
+                                    </Style>
+                                </MenuItem.ItemContainerStyle>
+                            </MenuItem>
+                        </Menu>
+                        <StackPanel Orientation="Horizontal" Visibility="{Binding RadiusVisibility}">
+                            <TextBlock Text="Radius"/>
+                            <TextBox Text="{Binding Radius, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                        <local:Vector3Box Visibility="{Binding HalfExtentsVisibility}" Label="Half Extents" LeftFieldText="X" LeftFieldValue="{Binding HalfExtentsX, Mode=TwoWay}" CenterFieldText="Y" CenterFieldValue="{Binding HalfExtentsY, Mode=TwoWay}" RightFieldText="Z" RightFieldValue="{Binding HalfExtentsZ, Mode=TwoWay}"/>
+                    </StackPanel>
+                </DataTemplate>
 
-				<DataTemplate DataType="{x:Type local:StaticModelComponentViewModel}">
-					<StackPanel>
-						<TextBlock Text="{Binding Name}"
+                <DataTemplate DataType="{x:Type local:StaticModelComponentViewModel}">
+                    <StackPanel>
+                        <TextBlock Text="{Binding Name}"
 								   Style="{StaticResource Header}"/>
-						<Grid Margin="10, 0, 0, 0">
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition Width="Auto"/>
-								<ColumnDefinition/>
-							</Grid.ColumnDefinitions>
-							<Grid.RowDefinitions>
-								<RowDefinition/>
-								<RowDefinition/>
-								<RowDefinition/>
-							</Grid.RowDefinitions>
+                        <Grid Margin="10, 0, 0, 0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
 
-							<!-- Mesh -->
-							<TextBlock Text="Mesh"
+                            <!-- Mesh -->
+                            <TextBlock Text="Mesh"
 									   Grid.Column="0"
 									   Grid.Row="0"
 									   Margin="0 0 10 0"/>
-							<Border BorderThickness="1"
+                            <Border BorderThickness="1"
 									BorderBrush="Transparent"
 									Background="{StaticResource Background2}"
 									Grid.Column="1"
 									Grid.Row="0"
 									CornerRadius="5">
-								<TextBlock Text="{Binding MeshPath, Mode=TwoWay}"
+                                <TextBlock Text="{Binding MeshPath, Mode=TwoWay}"
 										   AllowDrop="True"
 										   Drop="TextBox_Drop"
 										   ToolTip="{Binding MeshPath}"/>
-							</Border>
+                            </Border>
 
-							<!-- Diffuse Texture -->
-							<TextBlock Text="Diffuse Texture"
+                            <!-- Diffuse Texture -->
+                            <TextBlock Text="Diffuse Texture"
 									   Grid.Column="0"
 									   Grid.Row="1"
 									   Margin="0 0 10 0"/>
-							<Border BorderThickness="1"
+                            <Border BorderThickness="1"
 									BorderBrush="Transparent"
 									Background="{StaticResource Background2}"
 									Grid.Column="1"
 									Grid.Row="1"
 									CornerRadius="5">
-								<TextBlock Text="{Binding DiffuseTexturePath, Mode=TwoWay}"
+                                <TextBlock Text="{Binding DiffuseTexturePath, Mode=TwoWay}"
 										   AllowDrop="True"
 										   Drop="TextBox_Drop"
 										   ToolTip="{Binding DiffuseTexturePath}"/>
-							</Border>
+                            </Border>
 
-							<!-- Specular Texture -->
-							<TextBlock Text="Specular Texture"
+                            <!-- Specular Texture -->
+                            <TextBlock Text="Specular Texture"
 									   Grid.Column="0"
 									   Grid.Row="2"
 									   Margin="0 0 10 0"/>
-							<Border BorderThickness="1"
+                            <Border BorderThickness="1"
 									BorderBrush="Transparent"
 									Background="{StaticResource Background2}"
 									Grid.Column="1"
 									Grid.Row="2"
 									CornerRadius="5">
-								<TextBlock Text="{Binding SpecularTexturePath, Mode=TwoWay}"
+                                <TextBlock Text="{Binding SpecularTexturePath, Mode=TwoWay}"
 										   AllowDrop="True"
 										   Drop="TextBox_Drop"
 										   ToolTip="{Binding SpecularTexturePath}"/>
-							</Border>
-						</Grid>
-					</StackPanel>
-				</DataTemplate>
+                            </Border>
+                        </Grid>
+                    </StackPanel>
+                </DataTemplate>
 
-				<DataTemplate DataType="{x:Type local:ComponentViewModel}">
-					<TextBlock Text="{Binding Name}"
+                <DataTemplate DataType="{x:Type local:ComponentViewModel}">
+                    <TextBlock Text="{Binding Name}"
 							   Style="{StaticResource Header}"
 							   HorizontalAlignment="Stretch"/>
-				</DataTemplate>
-			</ListBox.Resources>
-		</ListBox>
+                </DataTemplate>
+            </ListBox.Resources>
+        </ListBox>
 
-		<Menu HorizontalAlignment="Center">
-			<MenuItem Header="Add Component" 
+        <Menu HorizontalAlignment="Center">
+            <MenuItem Header="Add Component" 
 					  ItemsSource="{Binding ComponentMenuItems}">
-				<!--Doing a regular DataTemplate here will cause a MenuItem within a MenuItem. So manually set up the container style ourselves-->
-				<MenuItem.ItemContainerStyle>
-					<Style TargetType="{x:Type MenuItem}"
+                <!--Doing a regular DataTemplate here will cause a MenuItem within a MenuItem. So manually set up the container style ourselves-->
+                <MenuItem.ItemContainerStyle>
+                    <Style TargetType="{x:Type MenuItem}"
 						   BasedOn="{StaticResource {x:Type MenuItem}}">
-						<Setter Property="Header" 
+                        <Setter Property="Header" 
 								Value="{Binding ComponentType}"/>
-						<Setter Property="Command" 
+                        <Setter Property="Command" 
 								Value="{Binding OnSelectedCommand}"/>
-					</Style>
-				</MenuItem.ItemContainerStyle>
-			</MenuItem>
-		</Menu>
-	</StackPanel>
+                    </Style>
+                </MenuItem.ItemContainerStyle>
+            </MenuItem>
+        </Menu>
+    </StackPanel>
 </UserControl>

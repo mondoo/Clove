@@ -85,21 +85,21 @@
 						   HorizontalAlignment="Center"
 						   Margin="0 0 0 5"/>
 
-				<ItemsControl ItemsSource="{Binding Scene.Entities}">
-					<ItemsControl.ItemTemplate>
+				<ListBox x:Name="EntityListBox"
+						 ItemsSource="{Binding Scene.Entities}"
+						 BorderThickness="0 2">
+					<ListBox.ItemTemplate>
 						<DataTemplate>
-							<!-- TODO: Change to a ListBox and ListBoxItem to handle selected / deselected -->
-							<Button Command="{Binding SelectedCommand}"
-									HorizontalContentAlignment="Left"
-									VerticalContentAlignment="Center"
-									Margin="0 0 0 5">
-								<TextBox Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-										 Background="Transparent"
-										 BorderBrush="Transparent"/>
-							</Button>
+							<Grid Background="Transparent"
+								  MouseDown="EntityListItem_MouseDown">
+								<TextBlock Text="{Binding Name}"/>
+								<TextBox x:Name="EditTextBox"
+										 Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+										 Visibility="Collapsed"/>
+							</Grid>
 						</DataTemplate>
-					</ItemsControl.ItemTemplate>
-				</ItemsControl>
+					</ListBox.ItemTemplate>
+				</ListBox>
 
 				<Button Grid.Column="1"
 						Content="Create Entity"
@@ -108,6 +108,12 @@
 						Padding="1"/>
 			</StackPanel>
 			
+			<local:EntityInfo x:Name="EntityView"
+							  DockPanel.Dock="Right"
+							  Width="{Binding Converter={StaticResource SizePercentageConverter}, ElementName=Dock, Path=ActualWidth, ConverterParameter=0.15}"
+							  HorizontalAlignment="Right"
+							  DataContext="{Binding Scene}"/>
+
 			<TextBlock x:Name="ToggleContentHint"
 					   Text="ctrl+space"
 					   DockPanel.Dock="Bottom"
@@ -120,6 +126,7 @@
 					   DockPanel.Dock="Left"
 					   Background="{StaticResource Background1}"
 					   VerticalAlignment="top"
+					   HorizontalAlignment="Left"
 					   Padding="2">
 				<TextBlock.LayoutTransform>
 					<TransformGroup>
@@ -127,13 +134,6 @@
 					</TransformGroup>
 				</TextBlock.LayoutTransform>
 			</TextBlock>
-			
-
-			<local:EntityInfo x:Name="EntityView"
-							  DockPanel.Dock="Right"
-							  Width="{Binding Converter={StaticResource SizePercentageConverter}, ElementName=Dock, Path=ActualWidth, ConverterParameter=0.15}"
-							  HorizontalAlignment="Right"
-							  DataContext="{Binding Scene}"/>
 		</DockPanel>
 	</Grid>
 </Window>
