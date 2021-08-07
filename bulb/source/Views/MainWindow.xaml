@@ -69,7 +69,8 @@
 				<TabItem Header="Log">
 					<ScrollViewer BorderThickness="0" 
 								  VerticalScrollBarVisibility="Auto">
-						<TextBlock x:Name="Log" Text="{Binding Log.LogText}"/>
+						<TextBlock x:Name="Log"
+								   Text="{Binding Log.LogText}"/>
 					</ScrollViewer>
 				</TabItem>
 			</TabControl>
