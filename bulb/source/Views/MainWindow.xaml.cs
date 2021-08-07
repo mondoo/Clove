@@ -113,6 +113,7 @@ namespace Garlic.Bulb {
             var textBox = sender as FrameworkElement;
             textBox.Visibility = Visibility.Collapsed;
             textBox.LostFocus -= EditTextBoxLostFocus;
+            e.Handled = true;
         }
 
         private void Window_MouseMove(object sender, MouseEventArgs e) {
