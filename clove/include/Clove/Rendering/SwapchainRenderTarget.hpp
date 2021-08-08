@@ -25,14 +25,9 @@ namespace garlic::clove {
         GhaDevice *graphicsDevice{ nullptr };
         std::shared_ptr<GhaFactory> graphicsFactory;
 
+        uint32_t imageCount{};
         std::shared_ptr<GhaSwapchain> swapchain;
         std::shared_ptr<GhaPresentQueue> presentQueue;
-        std::shared_ptr<GhaGraphicsQueue> graphicsQueue;
-
-        std::vector<std::shared_ptr<GhaSemaphore>> renderFinishedSemaphores;
-        std::vector<std::shared_ptr<GhaSemaphore>> imageAvailableSemaphores;
-        std::vector<std::shared_ptr<GhaFence>> framesInFlight;
-        std::vector<std::shared_ptr<GhaFence>> imagesInFlight;
 
         vec2ui surfaceSize{};
         DelegateHandle surfaceResizeHandle;
@@ -42,7 +37,7 @@ namespace garlic::clove {
         //FUNCTIONS
     public:
         SwapchainRenderTarget() = delete;
-        SwapchainRenderTarget(Surface &swapchainSurface, GhaDevice *graphicsDevice);
+        SwapchainRenderTarget(Surface &swapchainSurface, GhaDevice *graphicsDevice, uint32_t imageCount);
 
         SwapchainRenderTarget(SwapchainRenderTarget const &other);
         SwapchainRenderTarget(SwapchainRenderTarget &&other) noexcept;
@@ -52,9 +47,9 @@ namespace garlic::clove {
 
         ~SwapchainRenderTarget();
 
-        Expected<uint32_t, std::string> aquireNextImage(size_t const frameId) override;
+        Expected<uint32_t, std::string> aquireNextImage(std::shared_ptr<GhaSemaphore> signalSemaphore) override;
 
-        void submit(uint32_t imageIndex, size_t const frameId, GraphicsSubmitInfo submission) override;
+        void present(uint32_t imageIndex, std::vector<std::shared_ptr<GhaSemaphore>> waitSemaphores) override;
 
         GhaImage::Format getImageFormat() const override;
         vec2ui getSize() const override;

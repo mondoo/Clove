@@ -104,7 +104,7 @@ namespace garlic::clove {
 
         //VARIABLES
     private:
-        static size_t constexpr maxFramesInFlight{ 2 };
+        size_t maxFramesInFlight{};
         size_t currentFrame{ 0 };//The current frame we're operating on
 
         std::unordered_map<std::string, std::string> shaderIncludes;
@@ -150,9 +150,13 @@ namespace garlic::clove {
         std::shared_ptr<GhaRenderPass> shadowMapRenderPass;
 
         //Synchronisation obects
-        std::array<std::shared_ptr<GhaSemaphore>, maxFramesInFlight> shadowFinishedSemaphores;
-        std::array<std::shared_ptr<GhaSemaphore>, maxFramesInFlight> cubeShadowFinishedSemaphores;
-        std::array<std::shared_ptr<GhaSemaphore>, maxFramesInFlight> skinningFinishedSemaphores;
+        std::vector<std::shared_ptr<GhaSemaphore>> shadowFinishedSemaphores;
+        std::vector<std::shared_ptr<GhaSemaphore>> cubeShadowFinishedSemaphores;
+        std::vector<std::shared_ptr<GhaSemaphore>> skinningFinishedSemaphores;
+        std::vector<std::shared_ptr<GhaSemaphore>> renderFinishedSemaphores;
+        std::vector<std::shared_ptr<GhaSemaphore>> imageAvailableSemaphores;
+        std::vector<std::shared_ptr<GhaFence>> framesInFlight;
+        std::vector<std::shared_ptr<GhaFence>> imagesInFlight;
 
         //TEMP: Compute skinning objects -- Put inside a GeometryPass
         std::shared_ptr<GhaComputePipelineObject> skinningPipeline;

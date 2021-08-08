@@ -12,14 +12,10 @@ namespace garlic::clove {
     GraphicsImageRenderTarget::GraphicsImageRenderTarget(GhaImage::Descriptor imageDescriptor, std::shared_ptr<GhaFactory> factory)
         : imageDescriptor{ imageDescriptor }
         , factory{ std::move(factory) } {
-        //We won't be allocating any buffers from this queue, only using it to submit
-        graphicsQueue = *this->factory->createGraphicsQueue(CommandQueueDescriptor{ .flags = QueueFlags::None });
-        transferQueue = *this->factory->createTransferQueue(CommandQueueDescriptor{ .flags = QueueFlags::ReuseBuffers });
-
-        frameInFlight           = *this->factory->createFence({ true });
-        renderFinishedSemaphore = *this->factory->createSemaphore();
-
+        transferQueue         = *this->factory->createTransferQueue(CommandQueueDescriptor{ .flags = QueueFlags::ReuseBuffers });
         transferCommandBuffer = transferQueue->allocateCommandBuffer();
+
+        frameInFlight = *this->factory->createFence({ true });
 
         createImages();
     }
@@ -30,22 +26,32 @@ namespace garlic::clove {
 
     GraphicsImageRenderTarget::~GraphicsImageRenderTarget() = default;
 
-    Expected<uint32_t, std::string> GraphicsImageRenderTarget::aquireNextImage(size_t const frameId) {
-        //Because we only have one frame, just wait for the graphics/transfer queues to finish using it then return
+    Expected<uint32_t, std::string> GraphicsImageRenderTarget::aquireNextImage(std::shared_ptr<GhaSemaphore> signalSemaphore) {
+        //A bit hacky but inject an empty submission to signal the provided semaphore.
+        //This will execute after what ever is in the current queue so will technicaly signal once the transfer queue
+        //is ready to transfer another image
+        if(signalSemaphore != nullptr) {
+            TransferSubmitInfo transferSubmission{
+                .signalSemaphores = { std::move(signalSemaphore) },
+            };
+            transferQueue->submit({ std::move(transferSubmission) }, nullptr);
+        }
+
+        return 0; //Only a single backing image for now
+    }
+
+    void GraphicsImageRenderTarget::present(uint32_t imageIndex, std::vector<std::shared_ptr<GhaSemaphore>> waitSemaphores) {
+        //Fences can't be resubmitted in a signaled state. So we have to wait for and then reset the fence.
         frameInFlight->wait();
         frameInFlight->reset();
 
-        return 0;
-    }
-
-    void GraphicsImageRenderTarget::submit(uint32_t imageIndex, size_t const frameId, GraphicsSubmitInfo submission) {
-        using namespace garlic::clove;
-
-        submission.signalSemaphores.push_back(renderFinishedSemaphore);
-        graphicsQueue->submit({ std::move(submission) }, nullptr);
+        std::vector<std::pair<std::shared_ptr<GhaSemaphore>, PipelineStage>> transferWaitSemaphores;
+        for(auto const &semaphore : waitSemaphores) {
+            transferWaitSemaphores.push_back(std::make_pair(semaphore, PipelineStage::Transfer));
+        }
 
         TransferSubmitInfo transferSubmission{
-            .waitSemaphores = { { renderFinishedSemaphore, PipelineStage::Transfer } },
+            .waitSemaphores = transferWaitSemaphores,
             .commandBuffers = { transferCommandBuffer },
         };
         transferQueue->submit({ std::move(transferSubmission) }, frameInFlight.get());
@@ -76,11 +82,6 @@ namespace garlic::clove {
     }
 
     void GraphicsImageRenderTarget::createImages() {
-        using namespace garlic::clove;
-
-        //Make sure we're not using the image when we re-create it
-        frameInFlight->wait();
-
         onPropertiesChangedBegin.broadcast();
 
         renderTargetImage = *factory->createImage(imageDescriptor);

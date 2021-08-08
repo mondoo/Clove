@@ -40,27 +40,28 @@ namespace garlic::clove {
         RenderTarget &operator=(RenderTarget &&other) noexcept = default;
 
         virtual ~RenderTarget() = default;
-
+        
         /**
          * @brief Aquire the next available image that can be rendered to.
-         * @param frameId Which frame is currently being rendered. This 
-         * number will be from 0 - N-1 where N is the total number of frames in flight.
+         * @param signalSemaphore A semaphore this RenderTarget will signal when the image is ready to render to. Can be nullptr.
          * @return Returns the image index for the getImageViews array.
          */
-        virtual Expected<uint32_t, std::string> aquireNextImage(size_t const frameId) = 0;
+        virtual Expected<uint32_t, std::string> aquireNextImage(std::shared_ptr<GhaSemaphore> signalSemaphore) = 0;
 
         /**
-         * @brief Submit graphics command buffers to be presented on this RenderTarget.
+         * @brief Presents the render target with imageIndex.
          * @param imageIndex The image index of the getImageViews array this submission is for.
-         * @param frameId Which frame is currently being rendered. This 
-         * number will be from 0 - N-1 where N is the total number of frames in flight.
-         * @param submission The graphics queue submission that uses the imageIndex image.
+         * @param waitSemaphores Semaphores the RenderTarget will wait on before beginning presentation logic.
          */
-        virtual void submit(uint32_t imageIndex, size_t const frameId, GraphicsSubmitInfo submission) = 0;
+        virtual void present(uint32_t imageIndex, std::vector<std::shared_ptr<GhaSemaphore>> waitSemaphores) = 0;
 
         virtual GhaImage::Format getImageFormat() const = 0;
         virtual vec2ui getSize() const                  = 0;
 
+        /**
+         * @brief Returns an array of GhaImageViews for the internal back buffers the RenderTarget has.
+         * @return 
+         */
         virtual std::vector<std::shared_ptr<GhaImageView>> getImageViews() const = 0;
     };
 }

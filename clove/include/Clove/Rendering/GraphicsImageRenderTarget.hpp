@@ -28,11 +28,9 @@ namespace garlic::clove {
 
         std::shared_ptr<GhaFactory> factory;
 
-        std::shared_ptr<GhaGraphicsQueue> graphicsQueue;
         std::shared_ptr<GhaTransferQueue> transferQueue;
         std::shared_ptr<GhaTransferCommandBuffer> transferCommandBuffer;
 
-        std::shared_ptr<GhaSemaphore> renderFinishedSemaphore;
         std::shared_ptr<GhaFence> frameInFlight;
 
         std::shared_ptr<GhaImage> renderTargetImage;
@@ -52,9 +50,9 @@ namespace garlic::clove {
 
         ~GraphicsImageRenderTarget();
 
-        Expected<uint32_t, std::string> aquireNextImage(size_t const frameId) override;
+        Expected<uint32_t, std::string> aquireNextImage(std::shared_ptr<GhaSemaphore> signalSemaphore) override;
 
-        void submit(uint32_t imageIndex, size_t const frameId, GraphicsSubmitInfo submission) override;
+        void present(uint32_t imageIndex, std::vector<std::shared_ptr<GhaSemaphore>> waitSemaphores) override;
 
         GhaImage::Format getImageFormat() const override;
         vec2ui getSize() const override;

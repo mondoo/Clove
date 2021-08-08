@@ -37,10 +37,11 @@ namespace garlic::clove {
 		auto audioDevice{ createAudioDevice(audioApi) };
 		
 		auto surface{ std::make_unique<WindowSurface>(std::move(window)) };
-		
-		auto renderTarget{ std::make_unique<SwapchainRenderTarget>(*surface, graphicsDevice.get()) };
-		
-		std::unique_ptr<Application> app{ new Application{ std::move(graphicsDevice), std::move(audioDevice), std::move(surface), std::move(renderTarget) } };
+
+        uint32_t constexpr swapchainImageCount{ 3 };
+        auto renderTarget{ std::make_unique<SwapchainRenderTarget>(*surface, graphicsDevice.get(), swapchainImageCount) };
+
+        std::unique_ptr<Application> app{ new Application{ std::move(graphicsDevice), std::move(audioDevice), std::move(surface), std::move(renderTarget) } };
 		windowPtr->onWindowCloseDelegate.bind(&Application::shutdown, app.get());
 		
         return app;

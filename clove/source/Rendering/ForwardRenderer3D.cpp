@@ -17,6 +17,7 @@
 #include <Clove/Graphics/Graphics.hpp>
 #include <Clove/Log/Log.hpp>
 #include <Clove/Platform/Window.hpp>
+#include <algorithm>
 
 extern "C" const char constants[];
 extern "C" const size_t constantsLength;
@@ -32,6 +33,17 @@ namespace garlic::clove {
     ForwardRenderer3D::ForwardRenderer3D(GhaDevice *graphicsDevice, std::unique_ptr<RenderTarget> renderTarget)
         : ghaDevice{ graphicsDevice }
         , renderTarget{ std::move(renderTarget) } {
+        size_t const maxImages{ this->renderTarget->getImageViews().size() };
+        maxFramesInFlight = std::max(static_cast<size_t>(1), maxImages - 1);
+
+        shadowFinishedSemaphores.resize(maxFramesInFlight);
+        cubeShadowFinishedSemaphores.resize(maxFramesInFlight);
+        skinningFinishedSemaphores.resize(maxFramesInFlight);
+        renderFinishedSemaphores.resize(maxFramesInFlight);
+        imageAvailableSemaphores.resize(maxFramesInFlight);
+        framesInFlight.resize(maxFramesInFlight);
+        imagesInFlight.resize(maxImages);
+
         shaderIncludes["Constants.glsl"] = { constants, constantsLength };
 
         renderTargetPropertyChangedBeginHandle = this->renderTarget->onPropertiesChangedBegin.bind(&ForwardRenderer3D::cleanupRenderTargetResources, this);
@@ -72,6 +84,17 @@ namespace garlic::clove {
         }
         for(auto &skinningFinishedSemaphore : skinningFinishedSemaphores) {
             skinningFinishedSemaphore = *ghaFactory->createSemaphore();
+        }
+        for(auto &renderFinishedSemaphore : renderFinishedSemaphores) {
+            renderFinishedSemaphore = *ghaFactory->createSemaphore();
+        }
+        for(auto &imageAvailableSemaphore : imageAvailableSemaphores) {
+            imageAvailableSemaphore = *ghaFactory->createSemaphore();
+        }
+
+        //Create fences to wait for images in flight
+        for(auto &fence : framesInFlight) {
+            fence = *ghaFactory->createFence({ true });
         }
 
         float constexpr anisotropy{ 16.0f };
@@ -123,12 +146,8 @@ namespace garlic::clove {
         };
 
         std::vector<uint16_t> const uiIndices{
-            0,
-            2,
-            3,
-            0,
-            3,
-            1,
+            0, 2, 3,
+            0, 3, 1,
         };
 
         uiMesh = std::make_unique<Mesh>(uiVertices, uiIndices);
@@ -199,14 +218,24 @@ namespace garlic::clove {
     }
 
     void ForwardRenderer3D::end() {
+        framesInFlight[currentFrame]->wait();
+
         //Aquire the next available image from the render target
-        Expected<uint32_t, std::string> const result{ renderTarget->aquireNextImage(currentFrame) };
+        Expected<uint32_t, std::string> const result{ renderTarget->aquireNextImage(imageAvailableSemaphores[currentFrame]) };
         if(!result.hasValue()) {
             CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Debug, result.getError());
             return;
         }
 
         size_t const imageIndex{ result.getValue() };
+
+        //Check if we're already using the image. If so, wait
+        if(imagesInFlight[imageIndex] != nullptr) {
+            imagesInFlight[imageIndex]->wait();
+        }
+        imagesInFlight[imageIndex] = framesInFlight[currentFrame];
+
+        framesInFlight[currentFrame]->reset();
 
         ImageData &currentImageData{ inFlightImageData[imageIndex] };
 
@@ -491,16 +520,22 @@ namespace garlic::clove {
             currentImageData.commandBuffer->endRecording();
         }
 
-        //Submit the colour output to the render target
+        //Submit the command buffer to render the final image
         GraphicsSubmitInfo submitInfo{
             .waitSemaphores = {
                 { shadowFinishedSemaphores[currentFrame], PipelineStage::PixelShader },
                 { cubeShadowFinishedSemaphores[currentFrame], PipelineStage::PixelShader },
+                { imageAvailableSemaphores[currentFrame], PipelineStage::ColourAttachmentOutput },
             },
-            .commandBuffers = { currentImageData.commandBuffer },
+            .commandBuffers   = { currentImageData.commandBuffer },
+            .signalSemaphores = { renderFinishedSemaphores[currentFrame] },
         };
-        renderTarget->submit(imageIndex, currentFrame, std::move(submitInfo));
+        graphicsQueue->submit({ std::move(submitInfo) }, framesInFlight[currentFrame].get());
 
+        //Tell the render target to present the image we just submitted to
+        renderTarget->present(imageIndex, { renderFinishedSemaphores[currentFrame] });
+
+        //Advance to the next frame
         currentFrame = (currentFrame + 1) % maxFramesInFlight;
     }
 

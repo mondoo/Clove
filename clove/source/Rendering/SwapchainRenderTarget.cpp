@@ -12,17 +12,15 @@
 #include <Clove/Log/Log.hpp>
 
 namespace garlic::clove {
-    SwapchainRenderTarget::SwapchainRenderTarget(Surface &swapchainSurface, GhaDevice *graphicsDevice)
-        : graphicsDevice{ graphicsDevice } {
+    SwapchainRenderTarget::SwapchainRenderTarget(Surface &swapchainSurface, GhaDevice *graphicsDevice, uint32_t imageCount)
+        : graphicsDevice{ graphicsDevice }
+        , imageCount{ imageCount } {
         graphicsFactory = graphicsDevice->getGraphicsFactory();
 
         surfaceSize         = swapchainSurface.getSize();
         surfaceResizeHandle = swapchainSurface.onSurfaceResize().bind(&SwapchainRenderTarget::onSurfaceSizeChanged, this);
 
         presentQueue = *graphicsFactory->createPresentQueue();
-
-        //We won't be allocating any buffers from this queue, only using it to submit
-        graphicsQueue = *graphicsFactory->createGraphicsQueue(CommandQueueDescriptor{ .flags = QueueFlags::None });
 
         createSwapchain();
     }
@@ -33,7 +31,7 @@ namespace garlic::clove {
 
     SwapchainRenderTarget::~SwapchainRenderTarget() = default;
 
-    Expected<uint32_t, std::string> SwapchainRenderTarget::aquireNextImage(size_t const frameId) {
+    Expected<uint32_t, std::string> SwapchainRenderTarget::aquireNextImage(std::shared_ptr<GhaSemaphore> signalSemaphore) {
         if(surfaceSize.x == 0 || surfaceSize.y == 0) {
             return Unexpected<std::string>{ "Cannot acquire image while Window is minimised." };
         }
@@ -43,46 +41,18 @@ namespace garlic::clove {
             return Unexpected<std::string>{ "GhaSwapchain was recreated." };
         }
 
-        if(std::size(imageAvailableSemaphores) <= frameId) {
-            imageAvailableSemaphores.emplace_back(*graphicsFactory->createSemaphore());
-        }
-        if(std::size(framesInFlight) <= frameId) {
-            framesInFlight.emplace_back(*graphicsFactory->createFence({ true }));
-        }
-
-        //Wait for the graphics queue to be finished with the frame we want to render
-        framesInFlight[frameId]->wait();
-
-        auto const [imageIndex, result] = swapchain->aquireNextImage(imageAvailableSemaphores[frameId].get());
+        auto const [imageIndex, result] = swapchain->aquireNextImage(signalSemaphore.get());
         if(result == Result::Error_SwapchainOutOfDate) {
             createSwapchain();
             return Unexpected<std::string>{ "GhaSwapchain was recreated." };
         }
 
-        //Make sure we're not about to start using an image that hasn't been rendered to yet
-        if(imagesInFlight[imageIndex] != nullptr) {
-            imagesInFlight[imageIndex]->wait();
-        }
-        imagesInFlight[imageIndex] = framesInFlight[frameId];
-
-        framesInFlight[frameId]->reset();
-
         return imageIndex;
     }
 
-    void SwapchainRenderTarget::submit(uint32_t imageIndex, size_t const frameId, GraphicsSubmitInfo submission) {
-        if(std::size(renderFinishedSemaphores) <= frameId) {
-            renderFinishedSemaphores.emplace_back(*graphicsFactory->createSemaphore());
-        }
-
-        //Inject the sempahores we use to synchronise with the swapchain and present queue
-        submission.waitSemaphores.emplace_back(imageAvailableSemaphores[frameId], PipelineStage::ColourAttachmentOutput);
-        submission.signalSemaphores.push_back(renderFinishedSemaphores[frameId]);
-
-        graphicsQueue->submit({ std::move(submission) }, framesInFlight[frameId].get());
-
-        auto const result = presentQueue->present(PresentInfo{
-            .waitSemaphores = { renderFinishedSemaphores[frameId] },
+    void SwapchainRenderTarget::present(uint32_t imageIndex, std::vector<std::shared_ptr<GhaSemaphore>> waitSemaphores) {
+        Result const result = presentQueue->present(PresentInfo{
+            .waitSemaphores = waitSemaphores,
             .swapChain      = swapchain,
             .imageIndex     = imageIndex,
         });
@@ -121,9 +91,10 @@ namespace garlic::clove {
         graphicsDevice->waitForIdleDevice();
 
         swapchain.reset();
-        swapchain = *graphicsFactory->createSwapChain({ surfaceSize });
-
-        imagesInFlight.resize(std::size(swapchain->getImageViews()));
+        swapchain = *graphicsFactory->createSwapChain(GhaSwapchain::Descriptor{
+            .extent     = surfaceSize,
+            .imageCount = imageCount,
+        });
 
         onPropertiesChangedEnd.broadcast();
 
