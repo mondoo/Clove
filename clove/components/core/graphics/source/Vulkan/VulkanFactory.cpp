@@ -30,6 +30,7 @@
 #include <Clove/Cast.hpp>
 #include <Clove/Log/Log.hpp>
 #include <fstream>
+#include <format>
 
 namespace garlic::clove {
     namespace {
@@ -383,16 +384,16 @@ namespace garlic::clove {
         VkPresentModeKHR const presentMode{ chooseSwapPresentMode(surfaceSupport.presentModes) };
         VkExtent2D const swapchainExtent{ chooseSwapExtent(surfaceSupport.capabilities, windowExtent) };
 
-        //Request one more than the minimum images the swap chain can support because sometimes we might need to wait for the driver
-        uint32_t imageCount{ surfaceSupport.capabilities.minImageCount + 1 };
-        if(surfaceSupport.capabilities.maxImageCount > 0 && imageCount > surfaceSupport.capabilities.maxImageCount) {
-            imageCount = surfaceSupport.capabilities.maxImageCount;
+        uint32_t const desiredImageCount{ descriptor.imageCount };
+        uint32_t const maxImageCount{ surfaceSupport.capabilities.maxImageCount };
+        if(desiredImageCount > maxImageCount) {
+            return Unexpected{ std::runtime_error{ std::format("Could not create GhaSwapchain. {0} backing images requested but only {1} are available.", desiredImageCount, maxImageCount) } };
         }
 
         VkSwapchainCreateInfoKHR const createInfo{
             .sType                 = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
             .surface               = devicePtr.getSurface(),
-            .minImageCount         = imageCount,
+            .minImageCount         = desiredImageCount,
             .imageFormat           = surfaceFormat.format,
             .imageColorSpace       = surfaceFormat.colorSpace,
             .imageExtent           = swapchainExtent,

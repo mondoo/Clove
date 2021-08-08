@@ -19,7 +19,8 @@ namespace garlic::clove {
         //TYPES
     public:
         struct Descriptor {
-            vec2ui extent;
+            vec2ui extent;            /**< Size of the swapchain's backing images. */
+            uint32_t imageCount{ 3 }; /**< How many images the swapchain will hold. */
         };
 
         //FUNCTIONS

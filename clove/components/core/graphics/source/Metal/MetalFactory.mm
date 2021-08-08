@@ -183,7 +183,7 @@ namespace garlic::clove {
 		};
 		
 		//Creating 3 back buffers for now. Will need to synchronise this number across APIs.
-		size_t constexpr swapchainImageCount{ 3 };
+		size_t constexpr swapchainImageCount{ descriptor.imageCount };
 		
 		swapchainImages.reserve(swapchainImageCount);
 		for(size_t i{ 0 }; i < swapchainImageCount; ++i) {
