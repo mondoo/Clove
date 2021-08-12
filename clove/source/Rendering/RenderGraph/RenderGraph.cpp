@@ -283,148 +283,75 @@ namespace garlic::clove {
             }
         }
 
-        //Record all of the commands of each individual pass
-        std::shared_ptr<GhaGraphicsCommandBuffer> graphicsCommandBufffer{ frameCache.allocateGraphicsCommandBuffer() };
-        std::shared_ptr<GhaComputeCommandBuffer> computeCommandBufffer{ frameCache.allocateComputeCommandBuffer() };
-        //std::shared_ptr<GhaTransferCommandBuffer> transferCommandBufffer{ frameCache.getTransferCommandBuffer() };
-
-        //TODO: Handle each pass as a queue submission and handle them in order of a single iteration of the execution passes.
-
-        //Handle all transfer work - This is fine for now as we don't use the transfer queue yet
         for(RgPassIdType passId : executionPasses) {
-            if(!transferPasses.contains(passId)) {
+            //Construct any synchronisation objects the pass will need
+            std::vector<std::pair<std::shared_ptr<GhaSemaphore>, PipelineStage>> waitSemaphores{};
+            std::vector<std::shared_ptr<GhaSemaphore>> signalSemaphores{};
+            GhaFence *signalFence{ nullptr };
+
+            for(auto const &dependency : passDependencies) {
+                if(passId == dependency.waitPass) {
+                    waitSemaphores.push_back(std::make_pair(dependency.semaphore, PipelineStage::Top));//TODO: Properly apply pipeline stage
+                } else if(passId == dependency.signalPass) {
+                    signalSemaphores.push_back(dependency.semaphore);
+                }
+            }
+
+            if(passId == executionPasses.back()) {
+                waitSemaphores.insert(waitSemaphores.end(), info.waitSemaphores.begin(), info.waitSemaphores.end());
+                signalSemaphores.insert(signalSemaphores.end(), info.signalSemaphores.begin(), info.signalSemaphores.end());
+                signalFence = info.signalFence.get();
+            }
+
+            //Execute the pass
+            if(renderPasses.contains(passId)) {
+                std::shared_ptr<GhaGraphicsCommandBuffer> graphicsCommandBufffer{ frameCache.allocateGraphicsCommandBuffer() };
+
+                graphicsCommandBufffer->beginRecording(CommandBufferUsage::OneTimeSubmit);
+                executeGraphicsPass(passId, *graphicsCommandBufffer, allocatedRenderPasses, allocatedFramebuffers, allocatedGraphicsPipelines, allocatedSamplers, allocatedDescriptorSets);
+                graphicsCommandBufffer->endRecording();
+
+                for(RgPassIdType passId : executionPasses) {
+                    if(renderPasses.contains(passId)) {
+                        continue;
+                    }
+                }
+
+                frameCache.submit(GraphicsSubmitInfo{
+                                      .waitSemaphores   = waitSemaphores,
+                                      .commandBuffers   = { graphicsCommandBufffer },
+                                      .signalSemaphores = signalSemaphores,
+                                  },
+                                  signalFence);
+
                 continue;
             }
 
-            RgTransferPass::BufferWrite const &writeOp{ transferPasses.at(passId)->getWriteOperation() };
-            std::unique_ptr<RgBuffer> const &buffer{ buffers.at(writeOp.bufferId) };
-            buffer->getGhaBuffer(frameCache)->write(writeOp.data.data(), buffer->getBufferOffset() + writeOp.offset, writeOp.size);
-        }
+            if(computePasses.contains(passId)) {
+                std::shared_ptr<GhaComputeCommandBuffer> computeCommandBufffer{ frameCache.allocateComputeCommandBuffer() };
 
-        //Handle all compute work first - This might cause issues with some work being blocked while other stuff waits on graphics work
-        computeCommandBufffer->beginRecording(CommandBufferUsage::OneTimeSubmit);
-        for(RgPassIdType passId : executionPasses) {
-            if(!computePasses.contains(passId)) {
+                computeCommandBufffer->beginRecording(CommandBufferUsage::OneTimeSubmit);
+                executeComputePass(passId, *computeCommandBufffer, allocatedComputePipelines, allocatedDescriptorSets);
+                computeCommandBufffer->endRecording();
+
+                frameCache.submit(ComputeSubmitInfo{
+                                      .waitSemaphores   = waitSemaphores,
+                                      .commandBuffers   = { computeCommandBufffer },
+                                      .signalSemaphores = signalSemaphores,
+                                  },
+                                  signalFence);
+
                 continue;
             }
 
-            RgComputePass::Descriptor const &passDescriptor{ computePasses.at(passId)->getDescriptor() };
-            std::vector<RgComputePass::Submission> const &passSubmissions{ computePasses.at(passId)->getSubmissions() };
+            if(transferPasses.contains(passId)) {
+                RgTransferPass::BufferWrite const &writeOp{ transferPasses.at(passId)->getWriteOperation() };
+                std::unique_ptr<RgBuffer> const &buffer{ buffers.at(writeOp.bufferId) };
+                buffer->getGhaBuffer(frameCache)->write(writeOp.data.data(), buffer->getBufferOffset() + writeOp.offset, writeOp.size);
 
-            computeCommandBufffer->bindPipelineObject(*allocatedComputePipelines.at(passId));
-
-            for(size_t index{ 0 }; auto const &submission : passSubmissions) {
-                std::shared_ptr<GhaDescriptorSet> const &descriptorSet{ allocatedDescriptorSets.at(passId)[index] };
-
-                for(auto const &readUB : submission.readUniformBuffers) {
-                    std::unique_ptr<RgBuffer> const &buffer{ buffers.at(readUB.buffer) };
-                    descriptorSet->map(*buffer->getGhaBuffer(frameCache), 0, buffer->getBufferSize(), DescriptorType::UniformBuffer, readUB.slot);
-                }
-                for(auto const &readSB : submission.readStorageBuffers) {
-                    std::unique_ptr<RgBuffer> const &buffer{ buffers.at(readSB.buffer) };
-                    descriptorSet->map(*buffer->getGhaBuffer(frameCache), 0, buffer->getBufferSize(), DescriptorType::StorageBuffer, readSB.slot);
-                }
-                for(auto const &writeSB : submission.writeBuffers) {
-                    std::unique_ptr<RgBuffer> const &buffer{ buffers.at(writeSB.buffer) };
-                    descriptorSet->map(*buffer->getGhaBuffer(frameCache), 0, buffer->getBufferSize(), DescriptorType::StorageBuffer, writeSB.slot);
-                }
-
-                computeCommandBufffer->bindDescriptorSet(*descriptorSet, 0);
-
-                computeCommandBufffer->disptach(submission.disptachSize);
-
-                ++index;
-            }
-        }
-        computeCommandBufffer->endRecording();
-
-        std::vector<std::shared_ptr<GhaSemaphore>> computeSignalSemaphores{};
-        for(auto const &dependency : passDependencies) {
-            if(computePasses.contains(dependency.signalPass)) {
-                computeSignalSemaphores.push_back(dependency.semaphore);
-            }
-        }
-
-        frameCache.submit(ComputeSubmitInfo{
-                              //TODO: Ignoring wait semaphores until submissions are handled internally properly
-                              .commandBuffers   = { computeCommandBufffer },
-                              .signalSemaphores = computeSignalSemaphores,
-                          },
-                          nullptr);
-
-        //Handle all graphics work
-        graphicsCommandBufffer->beginRecording(CommandBufferUsage::OneTimeSubmit);
-        for(RgPassIdType passId : executionPasses) {
-            if(!renderPasses.contains(passId)) {
                 continue;
             }
-
-            RgRenderPass::Descriptor const &passDescriptor{ renderPasses.at(passId)->getDescriptor() };
-            std::vector<RgRenderPass::Submission> const &passSubmissions{ renderPasses.at(passId)->getSubmissions() };
-
-            //TODO: Batch operations by render pass and start the pass outside of the operation
-            RenderArea renderArea{
-                .origin = passDescriptor.viewportPosition,
-                .size   = passDescriptor.viewportSize,
-            };
-
-            std::vector<ClearValue> clearValues{};
-            for(auto &target : passDescriptor.renderTargets) {
-                clearValues.push_back(target.clearColour);
-            }
-            clearValues.push_back(passDescriptor.depthStencil.clearValue);
-
-            graphicsCommandBufffer->beginRenderPass(*allocatedRenderPasses.at(passId), *allocatedFramebuffers.at(passId), renderArea, clearValues);
-
-            //TODO: Only do this if viewport is dynamic
-            graphicsCommandBufffer->setViewport(passDescriptor.viewportPosition, passDescriptor.viewportSize);
-            graphicsCommandBufffer->setScissor({ 0, 0 }, passDescriptor.viewportSize);
-
-            graphicsCommandBufffer->bindPipelineObject(*allocatedGraphicsPipelines.at(passId));
-
-            for(size_t index{ 0 }; auto const &submission : passSubmissions) {
-                std::shared_ptr<GhaDescriptorSet> const &descriptorSet{ allocatedDescriptorSets.at(passId)[index] };
-
-                for(auto const &ubo : submission.shaderUbos) {
-                    //TODO: Handle different allocations within the same buffer
-                    std::unique_ptr<RgBuffer> const &buffer{ buffers.at(ubo.buffer) };
-                    descriptorSet->map(*buffer->getGhaBuffer(frameCache), 0, buffer->getBufferSize(), DescriptorType::UniformBuffer, ubo.slot);
-                }
-                for(auto const &imageSampler : submission.shaderCombinedImageSamplers) {
-                    descriptorSet->map(*images.at(imageSampler.image)->getGhaImageView(frameCache), *allocatedSamplers.at(imageSampler.image), GhaImage::Layout::ShaderReadOnlyOptimal, imageSampler.slot);
-                }
-
-                graphicsCommandBufffer->bindDescriptorSet(*descriptorSet, 0);//TODO: Multiple sets / only set sets for a whole pass (i.e. view)
-
-                std::unique_ptr<RgBuffer> const &vertexBuffer{ buffers.at(submission.vertexBuffer) };
-                std::unique_ptr<RgBuffer> const &indexBuffer{ buffers.at(submission.indexBuffer) };
-                graphicsCommandBufffer->bindVertexBuffer(*vertexBuffer->getGhaBuffer(frameCache), vertexBuffer->getBufferOffset());
-                graphicsCommandBufffer->bindIndexBuffer(*indexBuffer->getGhaBuffer(frameCache), indexBuffer->getBufferOffset(), IndexType::Uint16);
-
-                graphicsCommandBufffer->drawIndexed(submission.indexCount);
-
-                ++index;
-            }
-
-            graphicsCommandBufffer->endRenderPass();
         }
-        graphicsCommandBufffer->endRecording();
-
-        std::vector<std::pair<std::shared_ptr<GhaSemaphore>, PipelineStage>> graphicsWaitSemaphores{};
-        for(auto const &dependency : passDependencies) {
-            if(renderPasses.contains(dependency.waitPass)) {
-                graphicsWaitSemaphores.push_back(std::make_pair(dependency.semaphore, PipelineStage::Top));//TODO: Properly apply pipeline stage
-            }
-        }
-
-        graphicsWaitSemaphores.insert(graphicsWaitSemaphores.end(), info.waitSemaphores.begin(), info.waitSemaphores.end());
-        frameCache.submit(GraphicsSubmitInfo{
-                              .waitSemaphores = graphicsWaitSemaphores,
-                              .commandBuffers = { graphicsCommandBufffer },
-                              //TODO: Ignoring signal semaphores until submissions are handled properly
-                              .signalSemaphores = info.signalSemaphores,
-                          },
-                          info.signalFence.get());
     }
 
     void RenderGraph::buildExecutionPasses(std::vector<RgPassIdType> &outPasses, RgResourceIdType resourceId) {
@@ -458,7 +385,7 @@ namespace garlic::clove {
         };
 
         //Dependecies are built for the closest pass that has an output of the current passes inputs. All queue operations complete in order so we only need to wait on the last one
-        //First pass - create render pass dependencies.
+        //First pass - Create dependecies for render pass inputs
         for(size_t passIndex{ 1 }; passIndex < passes.size(); ++passIndex) {
             RgPassIdType const passId{ passes[passIndex] };
             if(renderPasses.contains(passId)) {
@@ -798,5 +725,86 @@ namespace garlic::clove {
         }
 
         return descriptorSets;
+    }
+
+    void RenderGraph::executeGraphicsPass(RgPassIdType passId, GhaGraphicsCommandBuffer &graphicsCommandBufffer, std::unordered_map<RgPassIdType, std::shared_ptr<GhaRenderPass>> const &allocatedRenderPasses, std::unordered_map<RgPassIdType, std::shared_ptr<GhaFramebuffer>> const &allocatedFramebuffers, std::unordered_map<RgPassIdType, std::shared_ptr<GhaGraphicsPipelineObject>> const &allocatedGraphicsPipelines, std::unordered_map<RgResourceIdType, std::shared_ptr<GhaSampler>> const &allocatedSamplers, std::unordered_map<RgPassIdType, std::vector<std::shared_ptr<GhaDescriptorSet>>> const &allocatedDescriptorSets) {
+        RgRenderPass::Descriptor const &passDescriptor{ renderPasses.at(passId)->getDescriptor() };
+        std::vector<RgRenderPass::Submission> const &passSubmissions{ renderPasses.at(passId)->getSubmissions() };
+
+        //TODO: Batch operations by render pass and start the pass outside of the operation
+        RenderArea renderArea{
+            .origin = passDescriptor.viewportPosition,
+            .size   = passDescriptor.viewportSize,
+        };
+
+        std::vector<ClearValue> clearValues{};
+        for(auto &target : passDescriptor.renderTargets) {
+            clearValues.push_back(target.clearColour);
+        }
+        clearValues.push_back(passDescriptor.depthStencil.clearValue);
+
+        graphicsCommandBufffer.beginRenderPass(*allocatedRenderPasses.at(passId), *allocatedFramebuffers.at(passId), renderArea, clearValues);
+
+        //TODO: Only do this if viewport is dynamic
+        graphicsCommandBufffer.setViewport(passDescriptor.viewportPosition, passDescriptor.viewportSize);
+        graphicsCommandBufffer.setScissor({ 0, 0 }, passDescriptor.viewportSize);
+
+        graphicsCommandBufffer.bindPipelineObject(*allocatedGraphicsPipelines.at(passId));
+
+        for(size_t index{ 0 }; auto const &submission : passSubmissions) {
+            std::shared_ptr<GhaDescriptorSet> const &descriptorSet{ allocatedDescriptorSets.at(passId)[index] };
+
+            for(auto const &ubo : submission.shaderUbos) {
+                //TODO: Handle different allocations within the same buffer
+                std::unique_ptr<RgBuffer> const &buffer{ buffers.at(ubo.buffer) };
+                descriptorSet->map(*buffer->getGhaBuffer(frameCache), 0, buffer->getBufferSize(), DescriptorType::UniformBuffer, ubo.slot);
+            }
+            for(auto const &imageSampler : submission.shaderCombinedImageSamplers) {
+                descriptorSet->map(*images.at(imageSampler.image)->getGhaImageView(frameCache), *allocatedSamplers.at(imageSampler.image), GhaImage::Layout::ShaderReadOnlyOptimal, imageSampler.slot);
+            }
+
+            graphicsCommandBufffer.bindDescriptorSet(*descriptorSet, 0);//TODO: Multiple sets / only set sets for a whole pass (i.e. view)
+
+            std::unique_ptr<RgBuffer> const &vertexBuffer{ buffers.at(submission.vertexBuffer) };
+            std::unique_ptr<RgBuffer> const &indexBuffer{ buffers.at(submission.indexBuffer) };
+            graphicsCommandBufffer.bindVertexBuffer(*vertexBuffer->getGhaBuffer(frameCache), vertexBuffer->getBufferOffset());
+            graphicsCommandBufffer.bindIndexBuffer(*indexBuffer->getGhaBuffer(frameCache), indexBuffer->getBufferOffset(), IndexType::Uint16);
+
+            graphicsCommandBufffer.drawIndexed(submission.indexCount);
+
+            ++index;
+        }
+
+        graphicsCommandBufffer.endRenderPass();
+    }
+
+    void RenderGraph::executeComputePass(RgPassIdType passId, GhaComputeCommandBuffer &computeCommandBufffer, std::unordered_map<RgPassIdType, std::shared_ptr<GhaComputePipelineObject>> const &allocatedComputePipelines, std::unordered_map<RgPassIdType, std::vector<std::shared_ptr<GhaDescriptorSet>>> const &allocatedDescriptorSets) {
+        RgComputePass::Descriptor const &passDescriptor{ computePasses.at(passId)->getDescriptor() };
+        std::vector<RgComputePass::Submission> const &passSubmissions{ computePasses.at(passId)->getSubmissions() };
+
+        computeCommandBufffer.bindPipelineObject(*allocatedComputePipelines.at(passId));
+
+        for(size_t index{ 0 }; auto const &submission : passSubmissions) {
+            std::shared_ptr<GhaDescriptorSet> const &descriptorSet{ allocatedDescriptorSets.at(passId)[index] };
+
+            for(auto const &readUB : submission.readUniformBuffers) {
+                std::unique_ptr<RgBuffer> const &buffer{ buffers.at(readUB.buffer) };
+                descriptorSet->map(*buffer->getGhaBuffer(frameCache), 0, buffer->getBufferSize(), DescriptorType::UniformBuffer, readUB.slot);
+            }
+            for(auto const &readSB : submission.readStorageBuffers) {
+                std::unique_ptr<RgBuffer> const &buffer{ buffers.at(readSB.buffer) };
+                descriptorSet->map(*buffer->getGhaBuffer(frameCache), 0, buffer->getBufferSize(), DescriptorType::StorageBuffer, readSB.slot);
+            }
+            for(auto const &writeSB : submission.writeBuffers) {
+                std::unique_ptr<RgBuffer> const &buffer{ buffers.at(writeSB.buffer) };
+                descriptorSet->map(*buffer->getGhaBuffer(frameCache), 0, buffer->getBufferSize(), DescriptorType::StorageBuffer, writeSB.slot);
+            }
+
+            computeCommandBufffer.bindDescriptorSet(*descriptorSet, 0);
+
+            computeCommandBufffer.disptach(submission.disptachSize);
+
+            ++index;
+        }
     }
 }
