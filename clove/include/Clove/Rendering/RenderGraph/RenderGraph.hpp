@@ -38,6 +38,13 @@ namespace garlic::clove {
      */
     class RenderGraph {
         //TYPES
+    public:
+        struct ExecutionInfo {
+            std::vector<std::pair<std::shared_ptr<GhaSemaphore>, PipelineStage>> waitSemaphores{}; /**< What semaphores the render graph should wait on for it's final pass. */
+            std::vector<std::shared_ptr<GhaSemaphore>> signalSemaphores{};                         /**< What smepahores the final pass of the render graph should signal when completed. */
+            std::shared_ptr<GhaFence> signalFence{};                                               /**< The fence the final pass of the render graph should signal. */
+        };
+
     private:
         struct PassDependency {
             RgPassIdType signalPass{};
@@ -171,13 +178,9 @@ namespace garlic::clove {
 
         /**
          * @brief Executes the RenderGraph. Creating any objects required and submitting commands to the relevant queues.
-         * @param factory Requires a factory to create any GHA objects when traversing the graph.
-         * @param graphicsQueue The queue the graph will submit graphics work to.
-         * @param computeQueue The queue the graph will submit compute work to.
-         * @param transferQueue The queue the graph will submit transfer work to.
-         * @return Returns the GraphicsSubmitInfo used to render the final result of the graph.
+         * @param info Semaphores/Fences that will be given to the graph's final pass.
          */
-        GraphicsSubmitInfo execute();
+        void execute(ExecutionInfo const &info);
 
     private:
         void buildExecutionPasses(std::vector<RgPassIdType> &outPasses, RgResourceIdType resourceId);

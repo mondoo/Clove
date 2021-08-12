@@ -206,7 +206,7 @@ namespace garlic::clove {
         pass->addSubmission(std::move(submission));
     }
 
-    GraphicsSubmitInfo RenderGraph::execute() {
+    void RenderGraph::execute(ExecutionInfo const &info) {
         CLOVE_ASSERT(outputResource != INVALID_RESOURCE_ID, "No output resource has been specified");
 
         //Build the array of passes to execute. Only adding passes which will ultimately effect the output resource.
@@ -417,12 +417,14 @@ namespace garlic::clove {
             }
         }
 
-        //TODO: Execute this internally
-        return GraphicsSubmitInfo{
-            .waitSemaphores = graphicsWaitSemaphores,
-            .commandBuffers = { graphicsCommandBufffer },
-            //TODO: Ignoring signal semaphores until submissions are handled properly
-        };
+        graphicsWaitSemaphores.insert(graphicsWaitSemaphores.end(), info.waitSemaphores.begin(), info.waitSemaphores.end());
+        frameCache.submit(GraphicsSubmitInfo{
+                              .waitSemaphores = graphicsWaitSemaphores,
+                              .commandBuffers = { graphicsCommandBufffer },
+                              //TODO: Ignoring signal semaphores until submissions are handled properly
+                              .signalSemaphores = info.signalSemaphores,
+                          },
+                          info.signalFence.get());
     }
 
     void RenderGraph::buildExecutionPasses(std::vector<RgPassIdType> &outPasses, RgResourceIdType resourceId) {
