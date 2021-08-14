@@ -175,6 +175,7 @@ namespace garlic::clove {
     
     Expected<std::unique_ptr<GhaSwapchain>, std::runtime_error> MetalFactory::createSwapChain(GhaSwapchain::Descriptor descriptor) {
         std::vector<std::shared_ptr<GhaImage>> swapchainImages{};
+        std::vector<std::shared_ptr<GhaImageView>> swapchainImageViews{};
         GhaImage::Format const drawableFormat{ MetalImage::convertFormat([view.metalLayer pixelFormat]) }; //Needs to be the same as the target for when we blit in the present queue
         
         GhaImage::Descriptor const imageDescriptor{
@@ -183,6 +184,10 @@ namespace garlic::clove {
             .dimensions  = descriptor.extent,
             .format 	 = drawableFormat,
             .sharingMode = SharingMode::Concurrent,
+        };
+        
+        GhaImageView::Descriptor const imageViewDescriptor{
+            .type = GhaImageView::Type::_2D,
         };
         
         //Creating 3 back buffers for now. Will need to synchronise this number across APIs.
@@ -198,7 +203,18 @@ namespace garlic::clove {
             }
         }
         
-        return std::unique_ptr<GhaSwapchain>{ std::make_unique<MetalSwapchain>(std::move(swapchainImages), drawableFormat, descriptor.extent) };
+        swapchainImageViews.reserve(swapchainImageCount);
+        for(size_t i{ 0 }; i < swapchainImageCount; ++i) {
+            Expected<std::unique_ptr<GhaImageView>, std::runtime_error> imageViewResult{ createImageView(*swapchainImages[i], imageViewDescriptor) };
+            if(imageViewResult.hasValue()) {
+                swapchainImageViews.emplace_back(std::move(imageViewResult.getValue()));
+            } else {
+                return Unexpected{ std::move(imageViewResult.getError()) };
+            }
+        }
+                
+        
+        return std::unique_ptr<GhaSwapchain>{ std::make_unique<MetalSwapchain>(std::move(swapchainImages), std::move(swapchainImageViews), drawableFormat, descriptor.extent) };
     }
     
     Expected<std::unique_ptr<GhaShader>, std::runtime_error> MetalFactory::createShaderFromFile(std::filesystem::path const &file, GhaShader::Stage shaderStage) {
@@ -237,7 +253,7 @@ namespace garlic::clove {
         
         MTLPixelFormat depthPixelFormat{ MetalImage::convertFormat(descriptor.depthAttachment.format) };
         
-        return std::unique_ptr<GhaRenderPass>{ std::make_unique<MetalRenderPass>(colourAttachments, depthPixelFormat, std::move(descriptor)) };
+        return std::unique_ptr<GhaRenderPass>{ std::make_unique<MetalRenderPass>(std::move(descriptor), colourAttachments, depthPixelFormat) };
     }
     
     Expected<std::unique_ptr<GhaDescriptorSetLayout>, std::runtime_error> MetalFactory::createDescriptorSetLayout(GhaDescriptorSetLayout::Descriptor descriptor) {
@@ -341,7 +357,7 @@ namespace garlic::clove {
             return Unexpected{ std::runtime_error{ [[error description] cStringUsingEncoding:[NSString defaultCStringEncoding]] } };
         }
         
-        return std::unique_ptr<GhaGraphicsPipelineObject>{ std::make_unique<MetalGraphicsPipelineObject>(pipelineState, depthStencilState) };
+        return std::unique_ptr<GhaGraphicsPipelineObject>{ std::make_unique<MetalGraphicsPipelineObject>(std::move(descriptor), pipelineState, depthStencilState) };
     }
     
     Expected<std::unique_ptr<GhaComputePipelineObject>, std::runtime_error> MetalFactory::createComputePipelineObject(GhaComputePipelineObject::Descriptor descriptor) {
@@ -355,7 +371,7 @@ namespace garlic::clove {
                                                     cStringUsingEncoding:[NSString defaultCStringEncoding]] } };
         }
         
-        return std::unique_ptr<GhaComputePipelineObject>{ std::make_unique<MetalComputePipelineObject>(pipelineState) };
+        return std::unique_ptr<GhaComputePipelineObject>{ std::make_unique<MetalComputePipelineObject>(std::move(descriptor), pipelineState) };
     }
     
     Expected<std::unique_ptr<GhaFramebuffer>, std::runtime_error> MetalFactory::createFramebuffer(GhaFramebuffer::Descriptor descriptor) {
@@ -431,7 +447,10 @@ namespace garlic::clove {
 		};
 
 		id<MTLTexture> mtlTexture{ polyCast<MetalImage const>(&image)->getTexture() };
-		id<MTLTexture> textureView{ [mtlTexture newTextureViewWithPixelFormat:MetalImage::convertFormat(imageDescriptor.format) textureType:MetalImageView::convertType(descriptor.type) levels:mipLevels slices:arraySlices] };
+		id<MTLTexture> textureView{ [mtlTexture newTextureViewWithPixelFormat:MetalImage::convertFormat(imageDescriptor.format)
+                                                                  textureType:MetalImageView::convertType(descriptor.type, descriptor.layerCount)
+                                                                       levels:mipLevels
+                                                                       slices:arraySlices] };
 		
 		return std::unique_ptr<GhaImageView>{ std::make_unique<MetalImageView>(imageDescriptor.format, imageDescriptor.dimensions, textureView) };
 	}

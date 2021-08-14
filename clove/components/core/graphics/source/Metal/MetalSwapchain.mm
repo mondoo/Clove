@@ -11,6 +11,9 @@ namespace garlic::clove {
 		, imageViews{ std::move(imageViews) }
 		, imageFormat{ imageFormat }
 		, imageSize{ imageSize } {
+        for(size_t i{ 0 }; i < this->images.size(); ++i) {
+            imageQueue.push(i);
+        }
 	}
 	
 	MetalSwapchain::MetalSwapchain(MetalSwapchain &&other) noexcept = default;

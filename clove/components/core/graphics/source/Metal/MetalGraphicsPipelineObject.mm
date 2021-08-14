@@ -1,8 +1,9 @@
 #include "Clove/Graphics/Metal/MetalGraphicsPipelineObject.hpp"
 
 namespace garlic::clove {
-    MetalGraphicsPipelineObject::MetalGraphicsPipelineObject(id<MTLRenderPipelineState> pipeline, id<MTLDepthStencilState> depthStencil)
-        : pipeline{ pipeline }
+    MetalGraphicsPipelineObject::MetalGraphicsPipelineObject(Descriptor descriptor, id<MTLRenderPipelineState> pipeline, id<MTLDepthStencilState> depthStencil)
+        : descriptor{ std::move(descriptor) }
+        , pipeline{ pipeline }
         , depthStencil{ depthStencil }{
     }
     

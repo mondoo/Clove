@@ -5,8 +5,10 @@
 #include <Clove/Log/Log.hpp>
 
 namespace garlic::clove {
-    MetalImageView::MetalImageView(id<MTLTexture> texture)
-        : texture{ texture }{
+    MetalImageView::MetalImageView(GhaImage::Format viewedFormat, vec2ui viewedDimensions, id<MTLTexture> texture)
+        : viewedFormat{ viewedFormat }
+        , viewedDimensions{ viewedDimensions }
+        , texture{ texture }{
     }
     
     MetalImageView::MetalImageView(MetalImageView &&other) noexcept = default;
