@@ -180,8 +180,8 @@ namespace garlic::clove {
     void RenderGraph::addComputeSubmission(RgPassIdType const computePass, RgComputePass::Submission submission) {
         auto &pass{ computePasses.at(computePass) };
 
-        for(auto const &buffer : submission.readUniformBuffers) {
-            RgResourceIdType const bufferId{ buffer.buffer };
+        for(auto const &ubo : submission.readUniformBuffers) {
+            RgResourceIdType const bufferId{ ubo.buffer };
 
             auto &buffer{ buffers.at(bufferId) };
             if(!buffer->isExternalBuffer()) {
@@ -190,8 +190,8 @@ namespace garlic::clove {
             buffer->addReadPass(computePass);
         }
 
-        for(auto const &buffer : submission.readStorageBuffers) {
-            RgResourceIdType const bufferId{ buffer.buffer };
+        for(auto const &sbo : submission.readStorageBuffers) {
+            RgResourceIdType const bufferId{ sbo.buffer };
 
             auto &buffer{ buffers.at(bufferId) };
             if(!buffer->isExternalBuffer()) {
@@ -200,8 +200,8 @@ namespace garlic::clove {
             buffer->addReadPass(computePass);
         }
 
-        for(auto const &buffer : submission.writeBuffers) {
-            RgResourceIdType const bufferId{ buffer.buffer };
+        for(auto const &wb : submission.writeBuffers) {
+            RgResourceIdType const bufferId{ wb.buffer };
 
             auto &buffer{ buffers.at(bufferId) };
             if(!buffer->isExternalBuffer()) {
