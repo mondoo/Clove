@@ -9,16 +9,17 @@
 namespace garlic::clove {
 	class MetalGraphicsCommandBuffer : public GhaGraphicsCommandBuffer {
 		//TYPES
+	public:
+		struct RenderPass {
+			std::function<id<MTLRenderCommandEncoder>(id<MTLCommandBuffer>)> begin{};
+			std::vector<std::function<void(id<MTLRenderCommandEncoder>)>> commands{};
+		};
+		
 	private:
 		struct CachedIndexBufferData {
 			id<MTLBuffer> buffer{};
 			MTLIndexType indexType{};
 			NSUInteger offset{};
-		};
-		
-		struct RenderPass {
-			std::function<id<MTLRenderCommandEncoder>(id<MTLCommandBuffer>)> begin{};
-			std::vector<std::function<void(id<MTLRenderCommandEncoder>)>> commands{};
 		};
 		
 		//VARIABLES
@@ -27,11 +28,18 @@ namespace garlic::clove {
 		RenderPass *currentPass{ nullptr };
 		
 		//Metal's drawIndexed call takes an index buffer directly so we need to cache the one provided from bindIndexBuffer
-		CachedIndexBufferData cachedIndexBuffer; 
+		CachedIndexBufferData cachedIndexBuffer;
+		
+		//Validation
+		CommandBufferUsage currentUsage{ CommandBufferUsage::Default };
+		bool hasBeenUsed{ false }; /**< Will be true if this buffer has been used before being rerecorded. */
+		bool allowReuse{ false }; /**< Will be true if this can be reused (recorded to multiple times without beeing freed) */
+		bool endRecordingCalled{ true };
 		
 		//FUNCTIONS
 	public:
-		MetalGraphicsCommandBuffer();
+		MetalGraphicsCommandBuffer() = delete;
+		MetalGraphicsCommandBuffer(bool allowReuse);
 		
 		MetalGraphicsCommandBuffer(MetalGraphicsCommandBuffer const &other) = delete;
 		MetalGraphicsCommandBuffer(MetalGraphicsCommandBuffer &&other) noexcept;
@@ -62,6 +70,12 @@ namespace garlic::clove {
 		void bufferMemoryBarrier(GhaBuffer &buffer, BufferMemoryBarrierInfo const &barrierInfo, PipelineStage sourceStage, PipelineStage destinationStage) override;
 		void imageMemoryBarrier(GhaImage &image, ImageMemoryBarrierInfo const &barrierInfo, PipelineStage sourceStage, PipelineStage destinationStage) override;
 		
-		void executeCommands(id<MTLCommandBuffer> commandBuffer);
+		inline std::vector<RenderPass> const &getEncodedRenderPasses() const;
+		
+		inline CommandBufferUsage getCommandBufferUsage() const;
+		inline void markAsUsed();
+		inline bool bufferHasBeenUsed() const;
 	};
 }
+
+#include "Clove/Graphics/Metal/MetalGraphicsCommandBuffer.inl"

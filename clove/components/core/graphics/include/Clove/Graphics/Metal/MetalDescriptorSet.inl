@@ -1,9 +1,13 @@
 namespace garlic::clove {
-	id<MTLArgumentEncoder> MetalDescriptorSet::getVertexEncoder() const {
-		return vertexEncoder;
+	id<MTLBuffer> MetalDescriptorSet::getVertexBuffer() const {
+		return vertexEncoderBuffer;
 	}
 	
-	id<MTLArgumentEncoder> MetalDescriptorSet::getPixelEncoder() const {
-		return pixelEncoder;
+	id<MTLBuffer> MetalDescriptorSet::getPixelBuffer() const {
+		return pixelEncoderBuffer;
+	}
+	
+	id<MTLBuffer> MetalDescriptorSet::getComputeBuffer() const {
+		return computeEncoderBuffer;
 	}
 }

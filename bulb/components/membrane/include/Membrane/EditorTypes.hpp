@@ -4,8 +4,15 @@ namespace garlic::membrane {
     // clang-format off
     public enum class ComponentType {
         Transform,
-        Mesh,
+        StaticModel,
         PointLight,
+        RigidBody,
+        CollisionShape
+    };
+
+    public enum class ShapeType {
+        Sphere,
+        Cube
     };
 
     public value struct Vector3 {
@@ -18,6 +25,26 @@ namespace garlic::membrane {
             , y{ y }
             , z{ z } {
         }
+    };
+
+    public ref class StaticModelComponentInitData{
+    public:
+        System::String ^meshPath;
+        System::String ^diffusePath;
+        System::String ^specularPath;
+    };
+
+    public ref class RigidBodyComponentInitData{
+    public:
+        float mass;
+    };
+
+    public ref class CollisionShapeComponentInitData{
+    public:
+        ShapeType shapeType;
+
+        float radius;
+        Vector3 halfExtents;
     };
     // clang-format on
 }

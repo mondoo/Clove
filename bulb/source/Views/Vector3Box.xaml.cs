@@ -65,22 +65,5 @@ namespace Garlic.Bulb
         {
             InitializeComponent();
         }
-
-        /// <summary>
-        /// Allows the Enter key to update a TextBox's text binding.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void OnKeyUp(object sender, KeyEventArgs e) {
-            if(e.Key == Key.Enter) {
-                TextBox box = (TextBox)sender;
-                DependencyProperty textProperty = TextBox.TextProperty;
-
-                BindingExpression binding = BindingOperations.GetBindingExpression(box, textProperty);
-                if(binding != null) {
-                    binding.UpdateSource();
-				}
-			}
-		}
 	}
 }

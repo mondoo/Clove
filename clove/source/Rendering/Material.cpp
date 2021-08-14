@@ -9,14 +9,13 @@
 #include <Clove/Graphics/GhaImageView.hpp>
 
 namespace garlic::clove {
-    std::weak_ptr<garlic::clove::GhaImage> Material::defaultImage{};
+    std::weak_ptr<GhaImage> Material::defaultImage{};
+    std::weak_ptr<GhaImageView> Material::defaultView{};
 
     Material::Material() {
-        using namespace garlic::clove;
-
-        GhaFactory &factory{ *Application::get().getGraphicsDevice()->getGraphicsFactory() };
-
         if(defaultImage.use_count() == 0) {
+            GhaFactory &factory{ *Application::get().getGraphicsDevice()->getGraphicsFactory() };
+
             vec2f constexpr imageDimensions{ 1.0f, 1.0f };
             uint32_t constexpr bytesPerTexel{ 4 };
             uint32_t constexpr white{ 0xffffffff };
@@ -29,25 +28,21 @@ namespace garlic::clove {
                 .sharingMode = SharingMode::Exclusive,
             };
 
-            std::shared_ptr<GhaImage> image = createImageWithData(factory, imageDescriptor, &white, bytesPerTexel);
+            std::shared_ptr<GhaImage> image{ createImageWithData(factory, imageDescriptor, &white, bytesPerTexel) };
 
-            defaultImage = image;
+            localImage = image;
+            localView  = *factory.createImageView(*image, GhaImageView::Descriptor{
+                .type       = GhaImageView::Type::_2D,
+                .layer      = 0,
+                .layerCount = 1,
+            });
 
-            diffuseImage  = image;
-            specularImage = image;
+            defaultImage = localImage;
+            defaultView  = localView;
         } else {
-            diffuseImage  = defaultImage.lock();
-            specularImage = defaultImage.lock();
+            localImage = defaultImage.lock();
+            localView  = defaultView.lock();
         }
-
-        GhaImageView::Descriptor const viewDescriptor{
-            .type       = GhaImageView::Type::_2D,
-            .layer      = 0,
-            .layerCount = 1,
-        };
-
-        diffuseView  = *factory.createImageView(*diffuseImage, viewDescriptor);
-        specularView = *factory.createImageView(*specularImage, viewDescriptor);
     }
 
     Material::Material(Material const &other) = default;
@@ -60,25 +55,19 @@ namespace garlic::clove {
 
     Material::~Material() = default;
 
-    void Material::setDiffuseTexture(std::shared_ptr<GhaImage> image) {
-        GhaFactory &factory{ *Application::get().getGraphicsDevice()->getGraphicsFactory() };
-
-        diffuseImage = std::move(image);
-        diffuseView  = *factory.createImageView(*diffuseImage, GhaImageView::Descriptor{
-                                                                  .type       = GhaImageView::Type::_2D,
-                                                                  .layer      = 0,
-                                                                  .layerCount = 1,
-                                                              });
+    std::shared_ptr<GhaImageView> Material::getDiffuseView() const {
+        if(diffuseTexture.isValid()) {
+            return diffuseTexture->getImageView();
+        } else {
+            return localView;
+        }
     }
 
-    void Material::setSpecularTexture(std::shared_ptr<GhaImage> image) {
-        GhaFactory &factory{ *Application::get().getGraphicsDevice()->getGraphicsFactory() };
-
-        specularImage = std::move(image);
-        specularView  = *factory.createImageView(*specularImage, GhaImageView::Descriptor{
-                                                                    .type       = GhaImageView::Type::_2D,
-                                                                    .layer      = 0,
-                                                                    .layerCount = 1,
-                                                                });
+    std::shared_ptr<GhaImageView> Material::getSpecularView() const {
+        if(specularTexture.isValid()) {
+            return specularTexture->getImageView();
+        } else {
+            return localView;
+        }
     }
 }

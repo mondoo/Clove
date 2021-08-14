@@ -74,8 +74,5 @@ namespace garlic::clove::serialiser {
 
     Node::Node(std::string_view key)
         : scalar{ key } {
-        Node child{};
-        child.type = Type::Scalar;
-        nodes.emplace_back(std::move(child));
     }
 }

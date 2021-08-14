@@ -18,6 +18,7 @@
 	_metalLayer = [CAMetalLayer layer];
 	[_metalLayer setFramebufferOnly:NO]; //We blit to the layer's drawable so it's technically not a framebuffer only
 	_metalLayer.allowsNextDrawableTimeout = NO; //Always blocks until a drawable is ready
+	[_metalLayer setPixelFormat:MTLPixelFormatBGRA8Unorm_sRGB]; //Clove prefers SRGB colour space
 	
 	return _metalLayer;
 }

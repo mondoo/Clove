@@ -27,6 +27,11 @@ namespace garlic::clove {
     GraphicsImageRenderTarget::~GraphicsImageRenderTarget() = default;
 
     Expected<uint32_t, std::string> GraphicsImageRenderTarget::aquireNextImage(std::shared_ptr<GhaSemaphore> signalSemaphore) {
+        if(requiresResize) {
+            createImages();
+            return Unexpected<std::string>{ "Backbuffer was recreated." };
+        }
+
         //A bit hacky but inject an empty submission to signal the provided semaphore.
         //This will execute after what ever is in the current queue so will technicaly signal once the transfer queue
         //is ready to transfer another image
@@ -71,10 +76,12 @@ namespace garlic::clove {
 
     void GraphicsImageRenderTarget::resize(vec2ui size) {
         imageDescriptor.dimensions = size;
-        createImages();
+        requiresResize             = true;
     }
 
     std::shared_ptr<GhaBuffer> GraphicsImageRenderTarget::getNextReadyBuffer() {
+        CLOVE_ASSERT(!requiresResize, "Cannot get next ready buffer while a resize is pending");
+
         //Stall until we are ready to return the image.
         frameInFlight->wait();
 
@@ -82,6 +89,9 @@ namespace garlic::clove {
     }
 
     void GraphicsImageRenderTarget::createImages() {
+        //Make sure we're not using the image when we re-create it
+        frameInFlight->wait();
+
         onPropertiesChangedBegin.broadcast();
 
         renderTargetImage = *factory->createImage(imageDescriptor);
@@ -102,19 +112,21 @@ namespace garlic::clove {
 
         //Pre-record the transfer command
         ImageMemoryBarrierInfo constexpr layoutTransferInfo{
-            .currentAccess      = AccessFlags::None,
+            .currentAccess      = AccessFlags::ColourAttachmentWrite,
             .newAccess          = AccessFlags::TransferRead,
-            .currentImageLayout = GhaImage::Layout::Undefined,
+            .currentImageLayout = GhaImage::Layout::ColourAttachmentOptimal,
             .newImageLayout     = GhaImage::Layout::TransferSourceOptimal,
             .sourceQueue        = QueueType::None,
             .destinationQueue   = QueueType::None,
         };
 
         transferCommandBuffer->beginRecording(CommandBufferUsage::Default);
-        transferCommandBuffer->imageMemoryBarrier(*renderTargetImage, layoutTransferInfo, PipelineStage::Top, PipelineStage::Transfer);
+        transferCommandBuffer->imageMemoryBarrier(*renderTargetImage, layoutTransferInfo, PipelineStage::ColourAttachmentOutput, PipelineStage::Transfer);
         transferCommandBuffer->copyImageToBuffer(*renderTargetImage, { 0, 0, 0 }, { imageDescriptor.dimensions, 1 }, *renderTargetBuffer, 0);
         transferCommandBuffer->endRecording();
 
         onPropertiesChangedEnd.broadcast();
+
+        requiresResize = false;
     }
 }

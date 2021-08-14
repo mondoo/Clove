@@ -1049,6 +1049,7 @@ namespace garlic::clove {
         std::array const sharedQueueIndices{ *queueFamilyIndices.graphicsFamily, *queueFamilyIndices.transferFamily, *queueFamilyIndices.computeFamily };
         bool const isExclusive{ descriptor.sharingMode == SharingMode::Exclusive };
         bool const isCube{ descriptor.type == GhaImage::Type::Cube };
+        uint32_t const arrayLayers{ isCube ? descriptor.arrayCount * 6u : descriptor.arrayCount };
 
         VkImageCreateInfo const createInfo{
             .sType                 = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
@@ -1058,7 +1059,7 @@ namespace garlic::clove {
             .format                = VulkanImage::convertFormat(descriptor.format),
             .extent                = { descriptor.dimensions.x, descriptor.dimensions.y, 1 },
             .mipLevels             = 1,
-            .arrayLayers           = isCube ? 6u : 1u,
+            .arrayLayers           = arrayLayers,
             .samples               = VK_SAMPLE_COUNT_1_BIT,
             .tiling                = VK_IMAGE_TILING_OPTIMAL,
             .usage                 = getUsageFlags(descriptor.usageFlags),

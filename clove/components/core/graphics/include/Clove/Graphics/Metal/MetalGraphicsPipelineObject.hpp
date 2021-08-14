@@ -8,15 +8,13 @@ namespace garlic::clove {
     class MetalGraphicsPipelineObject : public GhaGraphicsPipelineObject {
         //VARIABLES
     private:
-        Descriptor descriptor{};
-
         id<MTLRenderPipelineState> pipeline;
         id<MTLDepthStencilState> depthStencil;
 
         //FUNCTIONS
     public:
         MetalGraphicsPipelineObject() = delete;
-        MetalGraphicsPipelineObject(Descriptor descriptor, id<MTLRenderPipelineState> pipeline, id<MTLDepthStencilState> depthStencil);
+        MetalGraphicsPipelineObject(id<MTLRenderPipelineState> pipeline, id<MTLDepthStencilState> depthStencil);
 
         MetalGraphicsPipelineObject(MetalGraphicsPipelineObject const &other) = delete;
         MetalGraphicsPipelineObject(MetalGraphicsPipelineObject &&other) noexcept;
@@ -28,6 +26,9 @@ namespace garlic::clove {
 
         Descriptor const &getDescriptor() const override;
 
-        id<MTLRenderPipelineState> getPipeline() const;
+        inline id<MTLRenderPipelineState> getPipeline() const;
+        inline id<MTLDepthStencilState> getDepthStencil() const;
     };
 }
+
+#include "MetalGraphicsPipelineObject.inl"

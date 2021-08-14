@@ -89,9 +89,17 @@ add_library(
 		${INCLUDE}/Components/ParentComponent.hpp
 		${INCLUDE}/Components/PointLightComponent.hpp
 		${INCLUDE}/Components/RigidBodyComponent.hpp
+		${SOURCE}/Components/RigidBodyComponent.cpp
 		${INCLUDE}/Components/StaticModelComponent.hpp
 		${INCLUDE}/Components/TransformComponent.hpp
 		${SOURCE}/Components/TransformComponent.cpp
+
+		${INCLUDE}/FileSystem/AssetPtr.hpp
+		${INCLUDE}/FileSystem/AssetPtr.inl
+		${INCLUDE}/FileSystem/AssetManager.hpp
+		${SOURCE}/FileSystem/AssetManager.cpp
+		${INCLUDE}/FileSystem/VirtualFileSystem.hpp
+		${SOURCE}/FileSystem/VirtualFileSystem.cpp
 
 		${INCLUDE}/Rendering/AnimationTypes.hpp
 		${INCLUDE}/Rendering/Animator.hpp
@@ -125,6 +133,9 @@ add_library(
 		${INCLUDE}/Rendering/Renderables/StaticModel.hpp
 		${INCLUDE}/Rendering/Renderables/StaticModel.inl
 		${SOURCE}/Rendering/Renderables/StaticModel.cpp
+		${INCLUDE}/Rendering/Renderables/Texture.hpp
+		${INCLUDE}/Rendering/Renderables/Texture.inl
+		${SOURCE}/Rendering/Renderables/Texture.cpp
 
 		${INCLUDE}/Rendering/RenderGraph/CacheUtils.hpp
 		${INCLUDE}/Rendering/RenderGraph/CacheUtils.inl
@@ -272,3 +283,7 @@ target_link_libraries(
 		CONAN_PKG::libsndfile
 		stb
 )
+
+if(GAR_BUILD_TESTS)
+	add_subdirectory(tests)
+endif()

@@ -23,6 +23,8 @@ namespace garlic::clove {
 		
 		~MetalShader();
 		
-		id<MTLFunction> getFunction() const;
+		inline id<MTLFunction> getFunction() const;
 	};
 }
+
+#include "MetalShader.inl"

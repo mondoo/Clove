@@ -32,9 +32,4 @@ namespace garlic::clove {
      * @brief Creates an image and then transfers the data into it.
      */
     std::unique_ptr<GhaImage> createImageWithData(GhaFactory &factory, GhaImage::Descriptor imageDescriptor, void const *data, size_t const dataSize);
-
-    /**
-     * @brief Creates an image from the specified path
-     */
-    std::unique_ptr<GhaImage> createImageFromPath(GhaFactory &factory, std::filesystem::path const &path);
 }

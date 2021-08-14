@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Clove/Graphics/GhaGraphicsQueue.hpp"
+#include "Clove/Graphics/Queue.hpp"
 
 #include <MetalKit/MetalKit.h>
 
@@ -11,11 +12,13 @@ namespace garlic::clove {
 		//VARIABLES
 	private:
 		id<MTLCommandQueue> commandQueue;
+		
+		bool allowBufferReuse{ false };
 
 		//FUNCTIONS
 	public:
 		MetalGraphicsQueue() = delete;
-		MetalGraphicsQueue(id<MTLCommandQueue> commandQueue);
+		MetalGraphicsQueue(CommandQueueDescriptor descriptor, id<MTLCommandQueue> commandQueue);
 		
 		MetalGraphicsQueue(MetalGraphicsQueue const &other) = delete;
 		MetalGraphicsQueue(MetalGraphicsQueue &&other) noexcept;
@@ -28,7 +31,7 @@ namespace garlic::clove {
 		std::unique_ptr<GhaGraphicsCommandBuffer> allocateCommandBuffer() override;
 		void freeCommandBuffer(GhaGraphicsCommandBuffer &buffer) override;
 
-		void submit(std::vector<GraphicsSubmitInfo> const &submissions, GhaFence const *signalFence) override;
+		void submit(std::vector<GraphicsSubmitInfo> const &submissions, GhaFence *signalFence) override;
 	};
 }
 

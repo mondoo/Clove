@@ -8,68 +8,61 @@
 #include <Clove/Cast.hpp>
 
 namespace garlic::clove {
-	MetalDescriptorSet::MetalDescriptorSet(id<MTLArgumentEncoder> vertexEncoder, id<MTLArgumentEncoder> pixelEncoder, std::shared_ptr<GhaDescriptorSetLayout> layout)
-		: vertexEncoder{ [vertexEncoder retain] }
-		, pixelEncoder{ [pixelEncoder retain] }
-		, layout{ std::move(layout) } {
-	}
-	
-	MetalDescriptorSet::MetalDescriptorSet(MetalDescriptorSet &&other) noexcept = default;
-	
-	MetalDescriptorSet &MetalDescriptorSet::operator=(MetalDescriptorSet &&other) noexcept = default;
-	
-	MetalDescriptorSet::~MetalDescriptorSet() {
-		[vertexEncoder release];
-		[pixelEncoder release];
-	}
-	
-	void MetalDescriptorSet::map(GhaBuffer const &buffer, size_t const offset, size_t const range, DescriptorType const descriptorType, uint32_t const bindingSlot) {
-		GhaShader::Stage shaderStage{ getStageFromBindingSlot(bindingSlot) };
-		id<MTLBuffer> mtlBuffer{ polyCast<MetalBuffer const>(&buffer)->getBuffer() };
-		
-		switch (shaderStage) {
-			case GhaShader::Stage::Vertex:
-				[vertexEncoder setBuffer:mtlBuffer
-								  offset:offset
-								 atIndex:bindingSlot];
-				break;
-			case GhaShader::Stage::Pixel:
-				[pixelEncoder setBuffer:mtlBuffer
-								 offset:offset
-								atIndex:bindingSlot];
-				break;
-			default:
-				CLOVE_ASSERT(false, "{0}: Stage not handled", CLOVE_FUNCTION_NAME_PRETTY)
-				break;
-		}
-	}
-	
-	void MetalDescriptorSet::map(GhaImageView const &imageView, GhaSampler const &sampler, GhaImage::Layout const layout, uint32_t const bindingSlot) {
-		[pixelEncoder setTexture:polyCast<MetalImageView const>(&imageView)->getTexture()
-						 atIndex:bindingSlot];
-	}
-	
-	void MetalDescriptorSet::map(std::span<std::shared_ptr<GhaImageView>> imageViews, GhaSampler const &sampler, GhaImage::Layout const layout, uint32_t const bindingSlot) {
-		std::vector<id<MTLTexture>> mtlTextures{};
-		for(auto const &imageView : imageViews) {
-			mtlTextures.emplace_back(polyCast<MetalImageView const>(imageView.get())->getTexture());
-		}
-		
-		[pixelEncoder setTextures:mtlTextures.data()
-						withRange:NSMakeRange(0, mtlTextures.size())];
-		
-		[pixelEncoder setSamplerState:polyCast<MetalSampler const>(&sampler)->getSamplerState()
-							  atIndex:bindingSlot];
-	}
-	
-	GhaShader::Stage MetalDescriptorSet::getStageFromBindingSlot(uint32_t const bindingSlot) {
-		for(auto const &binding : layout->getDescriptor().bindings) {
-			if(binding.binding == bindingSlot) {
-				return binding.stage;
-			}
-		}
-		
-		CLOVE_ASSERT(false, "{0}: Could not find binding", CLOVE_FUNCTION_NAME_PRETTY);
-		return GhaShader::Stage::Vertex;
-	}
+    MetalDescriptorSet::MetalDescriptorSet(id<MTLArgumentEncoder> vertexEncoder, id<MTLBuffer> vertexEncoderBuffer, id<MTLArgumentEncoder> pixelEncoder, id<MTLBuffer> pixelEncoderBuffer, id<MTLArgumentEncoder> computeEncoder, id<MTLBuffer> computeEncoderBuffer, std::shared_ptr<GhaDescriptorSetLayout> layout)
+        : vertexEncoder{ vertexEncoder }
+        , vertexEncoderBuffer{ vertexEncoderBuffer }
+        , pixelEncoder{ pixelEncoder }
+        , pixelEncoderBuffer{ pixelEncoderBuffer }
+        , computeEncoder{ computeEncoder }
+        , computeEncoderBuffer{ computeEncoderBuffer }
+        , layout{ std::move(layout) } {
+    }
+    
+    MetalDescriptorSet::MetalDescriptorSet(MetalDescriptorSet &&other) noexcept = default;
+    
+    MetalDescriptorSet &MetalDescriptorSet::operator=(MetalDescriptorSet &&other) noexcept = default;
+    
+    MetalDescriptorSet::~MetalDescriptorSet() = default;
+    
+    void MetalDescriptorSet::map(GhaBuffer const &buffer, size_t const offset, size_t const range, DescriptorType const descriptorType, uint32_t const bindingSlot) {
+        GhaShader::Stage const shaderStage{ getStageFromBindingSlot(bindingSlot) };
+        id<MTLBuffer> mtlBuffer{ polyCast<MetalBuffer const>(&buffer)->getBuffer() };
+        
+        if((shaderStage & GhaShader::Stage::Vertex) != 0){
+            [vertexEncoder setBuffer:mtlBuffer
+                              offset:offset
+                             atIndex:bindingSlot];
+        }
+        if((shaderStage & GhaShader::Stage::Pixel) != 0){
+            [pixelEncoder setBuffer:mtlBuffer
+                             offset:offset
+                            atIndex:bindingSlot];
+        }
+        if((shaderStage & GhaShader::Stage::Compute) != 0){
+            [computeEncoder setBuffer:mtlBuffer
+                               offset:offset
+                              atIndex:bindingSlot];
+        }
+    }
+    
+    void MetalDescriptorSet::map(GhaImageView const &imageView, GhaImage::Layout const layout, uint32_t const bindingSlot) {
+        [pixelEncoder setTexture:polyCast<MetalImageView const>(&imageView)->getTexture()
+                         atIndex:bindingSlot];
+    }
+    
+    void MetalDescriptorSet::map(GhaSampler const &sampler, uint32_t const bindingSlot) {
+        [pixelEncoder setSamplerState:polyCast<MetalSampler const>(&sampler)->getSamplerState()
+                              atIndex:bindingSlot];
+    }
+    
+    GhaShader::Stage MetalDescriptorSet::getStageFromBindingSlot(uint32_t const bindingSlot) {
+        for(auto const &binding : layout->getDescriptor().bindings) {
+            if(binding.binding == bindingSlot) {
+                return binding.stage;
+            }
+        }
+        
+        CLOVE_ASSERT(false, "{0}: Could not find binding", CLOVE_FUNCTION_NAME_PRETTY);
+        return GhaShader::Stage::Vertex;
+    }
 }

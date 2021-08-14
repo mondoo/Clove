@@ -14,7 +14,9 @@ namespace garlic::clove {
 		id<MTLDevice> device{ nullptr };
 		MetalView *view{ nullptr };
 		
-		id<MTLCommandQueue> commandQueue{ nullptr };
+		id<MTLCommandQueue> graphicsPresentCommandQueue{ nullptr };
+		id<MTLCommandQueue> transferCommandQueue{ nullptr };
+		id<MTLCommandQueue> computeCommandQueue{ nullptr };
 		
 		//FUNCTIONS
 	public:

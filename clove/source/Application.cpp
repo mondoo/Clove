@@ -131,7 +131,8 @@ namespace garlic::clove {
     Application::Application(std::unique_ptr<GhaDevice> graphicsDevice, std::unique_ptr<AhaDevice> audioDevice, std::unique_ptr<Surface> surface, std::unique_ptr<RenderTarget> renderTarget)
         : graphicsDevice{ std::move(graphicsDevice) }
         , audioDevice{ std::move(audioDevice) }
-        , surface{ std::move(surface) } {
+        , surface{ std::move(surface) }
+        , assetManager{ &fileSystem } {
         CLOVE_ASSERT(instance == nullptr, "Only one Application can be active");
         instance = this;
 

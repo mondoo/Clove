@@ -32,6 +32,6 @@ namespace garlic::clove {
 
         id<MTLTexture> getTexture() const;
 
-        static MTLTextureType convertType(GhaImageView::Type type);
+        static MTLTextureType convertType(GhaImageView::Type type, uint32_t const arrayCount);
     };
 }

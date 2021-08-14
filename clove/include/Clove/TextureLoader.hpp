@@ -1,19 +1,9 @@
 #pragma once
 
-#include <Clove/Expected.hpp>
-#include <Clove/Maths/Vector.hpp>
-#include <filesystem>
-#include <functional>
-#include <memory>
-#include <vector>
+#include "Clove/Rendering/Renderables/Texture.hpp"
 
-namespace garlic::clove::TextureLoader {
-    struct LoadedTextureData {
-        std::unique_ptr<void, std::function<void(void *)>> buffer; /**< Point to the raw pixel data of the texture. */
-        vec2ui dimensions{ 0, 0 }; /**< Size of the loaded texture. */
-        int32_t channels{ 0 }; /**< How many chanels the texture has (i.e. RGBA is 4). */
-    };
-}
+#include <Clove/Expected.hpp>
+#include <filesystem>
 
 namespace garlic::clove::TextureLoader {
     /**
@@ -21,5 +11,5 @@ namespace garlic::clove::TextureLoader {
      * @param path Path to texture.
      * @return 
      */
-    Expected<LoadedTextureData, std::runtime_error> loadTexture(std::filesystem::path const &path);
+    Expected<Texture, std::runtime_error> loadTexture(std::filesystem::path const &path);
 }

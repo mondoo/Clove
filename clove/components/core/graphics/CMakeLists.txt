@@ -91,23 +91,36 @@ set(
 	MetalFiles
 		${INCLUDE}/Metal/MetalBuffer.hpp
 		${SOURCE}/Metal/MetalBuffer.mm
+		${INCLUDE}/Metal/MetalComputeCommandBuffer.hpp
+		${INCLUDE}/Metal/MetalComputeCommandBuffer.inl
+		${SOURCE}/Metal/MetalComputeCommandBuffer.mm
+		${INCLUDE}/Metal/MetalComputePipelineObject.hpp
+		${INCLUDE}/Metal/MetalComputePipelineObject.inl
+		${SOURCE}/Metal/MetalComputePipelineObject.mm
+		${INCLUDE}/Metal/MetalComputeQueue.hpp
+		${SOURCE}/Metal/MetalComputeQueue.mm
 		${INCLUDE}/Metal/MetalDescriptorPool.hpp
 		${SOURCE}/Metal/MetalDescriptorPool.mm
 		${INCLUDE}/Metal/MetalDescriptorSet.hpp
 		${INCLUDE}/Metal/MetalDescriptorSet.inl
 		${SOURCE}/Metal/MetalDescriptorSet.mm
 		${INCLUDE}/Metal/MetalDescriptorSetLayout.hpp
+		${INCLUDE}/Metal/MetalDescriptorSetLayout.inl
 		${SOURCE}/Metal/MetalDescriptorSetLayout.mm
 		${INCLUDE}/Metal/MetalDevice.hpp
 		${SOURCE}/Metal/MetalDevice.mm
 		${INCLUDE}/Metal/MetalFactory.hpp
 		${SOURCE}/Metal/MetalFactory.mm
+		${INCLUDE}/Metal/MetalFence.hpp
+		${SOURCE}/Metal/MetalFence.mm
 		${INCLUDE}/Metal/MetalFramebuffer.hpp
 		${SOURCE}/Metal/MetalFramebuffer.mm
 		${INCLUDE}/Metal/MetalGlobals.hpp
 		${INCLUDE}/Metal/MetalGraphicsCommandBuffer.hpp
+		${INCLUDE}/Metal/MetalGraphicsCommandBuffer.inl
 		${SOURCE}/Metal/MetalGraphicsCommandBuffer.mm
 		${INCLUDE}/Metal/MetalGraphicsPipelineObject.hpp
+		${INCLUDE}/Metal/MetalGraphicsPipelineObject.inl
 		${SOURCE}/Metal/MetalGraphicsPipelineObject.mm
 		${INCLUDE}/Metal/MetalGraphicsQueue.hpp
 		${SOURCE}/Metal/MetalGraphicsQueue.mm
@@ -115,6 +128,8 @@ set(
 		${SOURCE}/Metal/MetalImage.mm
 		${INCLUDE}/Metal/MetalImageView.hpp
 		${SOURCE}/Metal/MetalImageView.mm
+		${INCLUDE}/Metal/MetalPipelineObject.hpp
+		${SOURCE}/Metal/MetalPipelineObject.mm
 		${INCLUDE}/Metal/MetalPresentQueue.hpp
 		${SOURCE}/Metal/MetalPresentQueue.mm
 		${INCLUDE}/Metal/MetalRenderPass.hpp
@@ -123,10 +138,19 @@ set(
 		${INCLUDE}/Metal/MetalSampler.hpp
 		${INCLUDE}/Metal/MetalSampler.inl
 		${SOURCE}/Metal/MetalSampler.mm
+		${INCLUDE}/Metal/MetalSemaphore.hpp
+		${INCLUDE}/Metal/MetalSemaphore.inl
+		${SOURCE}/Metal/MetalSemaphore.mm
 		${INCLUDE}/Metal/MetalShader.hpp
+		${INCLUDE}/Metal/MetalShader.inl
 		${SOURCE}/Metal/MetalShader.mm
 		${INCLUDE}/Metal/MetalSwapchain.hpp
 		${SOURCE}/Metal/MetalSwapchain.mm
+		${INCLUDE}/Metal/MetalTransferCommandBuffer.hpp
+		${INCLUDE}/Metal/MetalTransferCommandBuffer.inl
+		${SOURCE}/Metal/MetalTransferCommandBuffer.mm
+		${INCLUDE}/Metal/MetalTransferQueue.hpp
+		${SOURCE}/Metal/MetalTransferQueue.mm
 		${INCLUDE}/Metal/MetalView.hpp
 		${SOURCE}/Metal/MetalView.mm
 )
@@ -225,6 +249,15 @@ target_link_libraries(
 	#Linux
 	PRIVATE
 		$<$<PLATFORM_ID:Linux>:Vulkan::Vulkan>
+)
+
+#Compiler
+target_compile_options(
+	CloveGraphics
+
+	#MacOS
+	PRIVATE
+		$<$<PLATFORM_ID:Darwin>:-fobjc-arc>
 )
 
 #Don't compile files not supported on certain platforms
