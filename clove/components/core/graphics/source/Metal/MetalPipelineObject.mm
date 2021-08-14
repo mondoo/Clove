@@ -6,6 +6,7 @@ namespace garlic::clove {
 	MTLRenderStages convertStage(PipelineStage stage) {
 		//Metal only has 2 stages: Vertex and Fragment
 		switch (stage) {
+            case PipelineStage::Top:
 			case PipelineStage::VertexInput:
 			case PipelineStage::VertexShader:
 				return MTLRenderStageVertex;
