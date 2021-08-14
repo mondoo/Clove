@@ -231,7 +231,7 @@ namespace garlic::clove {
                 .pNext      = nullptr,
                 .flags      = 0,
                 .image      = image,
-                .viewType   = VulkanImageView::convertType(viewdescriptor.type),
+                .viewType   = VulkanImageView::convertType(viewdescriptor.type, viewdescriptor.layerCount),
                 .format     = VulkanImage::convertFormat(imageFormat),
                 .components = {
                     .r = VK_COMPONENT_SWIZZLE_IDENTITY,

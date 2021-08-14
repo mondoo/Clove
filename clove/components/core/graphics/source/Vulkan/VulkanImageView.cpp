@@ -28,14 +28,24 @@ namespace garlic::clove {
         return viewedDimensions;
     }
 
-    VkImageViewType VulkanImageView::convertType(GhaImageView::Type garlicImageType) {
+    VkImageViewType VulkanImageView::convertType(GhaImageView::Type garlicImageType, uint32_t const layerCount) {
         switch(garlicImageType) {
             case GhaImageView::Type::_2D:
-                return VK_IMAGE_VIEW_TYPE_2D;
+                if(layerCount > 1u) {
+                    return VK_IMAGE_VIEW_TYPE_2D_ARRAY;
+                } else {
+                    return VK_IMAGE_VIEW_TYPE_2D;
+                }
             case GhaImageView::Type::_3D:
                 return VK_IMAGE_VIEW_TYPE_3D;
-            case GhaImageView::Type::Cube:
-                return VK_IMAGE_VIEW_TYPE_CUBE;
+            case GhaImageView::Type::Cube: {
+                uint32_t constexpr cubeLayerCount{ 6 };
+                if(layerCount > cubeLayerCount) {
+                    return VK_IMAGE_VIEW_TYPE_CUBE_ARRAY;
+                } else {
+                    return VK_IMAGE_VIEW_TYPE_CUBE;
+                }
+            }
             default:
                 CLOVE_ASSERT(false, "{0}: Unhandled image type");
                 return VK_IMAGE_VIEW_TYPE_2D;
