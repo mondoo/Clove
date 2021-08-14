@@ -137,15 +137,15 @@ namespace garlic::clove {
         return commandBuffer;
     }
 
-    void RgFrameCache::submit(GraphicsSubmitInfo submitInfo, GhaFence const *signalFence) {
+    void RgFrameCache::submit(GraphicsSubmitInfo submitInfo, GhaFence *signalFence) {
         graphicsQueue->submit({ std::move(submitInfo) }, signalFence);
     }
 
-    void RgFrameCache::submit(ComputeSubmitInfo submitInfo, GhaFence const *signalFence) {
+    void RgFrameCache::submit(ComputeSubmitInfo submitInfo, GhaFence *signalFence) {
         computeQueue->submit({ std::move(submitInfo) }, signalFence);
     }
 
-    void RgFrameCache::submit(TransferSubmitInfo submitInfo, GhaFence const *signalFence) {
+    void RgFrameCache::submit(TransferSubmitInfo submitInfo, GhaFence *signalFence) {
         transferQueue->submit({ std::move(submitInfo) }, signalFence);
     }
 }

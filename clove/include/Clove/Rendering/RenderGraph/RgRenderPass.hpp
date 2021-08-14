@@ -40,7 +40,8 @@ namespace garlic::clove {
             RgResourceIdType indexBuffer{};
 
             std::vector<RgBufferBinding> shaderUbos{};
-            std::vector<RgImageBindng> shaderCombinedImageSamplers{};
+            std::vector<RgImageBindng> shaderImages{};
+            std::vector<RgSamplerBinding> shaderSamplers{};
 
             size_t indexCount{ 0 };
         };

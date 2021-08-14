@@ -22,7 +22,7 @@ namespace garlic::clove {
             for(auto const &ubo : submission.shaderUbos){
                 inputResources.emplace(ubo.buffer);
             }
-            for(auto const &image : submission.shaderCombinedImageSamplers){
+            for(auto const &image : submission.shaderImages){
                 inputResources.emplace(image.image);
             }
         }

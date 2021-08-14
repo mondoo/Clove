@@ -120,8 +120,8 @@ namespace garlic::clove {
         std::shared_ptr<GhaComputeCommandBuffer> allocateComputeCommandBuffer();
         std::shared_ptr<GhaTransferCommandBuffer> allocateTransferCommandBuffer();
 
-        void submit(GraphicsSubmitInfo submitInfo, GhaFence const *signalFence);
-        void submit(ComputeSubmitInfo submitInfo, GhaFence const *signalFence);
-        void submit(TransferSubmitInfo submitInfo, GhaFence const *signalFence);
+        void submit(GraphicsSubmitInfo submitInfo, GhaFence *signalFence);
+        void submit(ComputeSubmitInfo submitInfo, GhaFence *signalFence);
+        void submit(TransferSubmitInfo submitInfo, GhaFence *signalFence);
     };
 }

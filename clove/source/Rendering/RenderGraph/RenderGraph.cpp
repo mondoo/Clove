@@ -38,24 +38,6 @@ namespace garlic::clove {
         return bufferId;
     }
 
-    void RenderGraph::writeToBuffer(RgResourceIdType buffer, void const *data, size_t const offset, size_t const size) {
-        RgPassIdType const transferPassId{ nextPassId++ };
-
-        auto &rgBuffer{ buffers.at(buffer) };
-        rgBuffer->makeCpuAccessable();
-        rgBuffer->addWritePass(transferPassId);
-
-        RgTransferPass::BufferWrite write{
-            .bufferId = buffer,
-            .data     = std::vector<std::byte>(size),
-            .offset   = offset,
-            .size     = size,
-        };
-        memcpy(write.data.data(), data, size);
-
-        transferPasses[transferPassId] = std::make_unique<RgTransferPass>(transferPassId, std::move(write));
-    }
-
     RgResourceIdType RenderGraph::createImage(GhaImage::Type imageType, GhaImage::Format format, vec2ui dimensions) {
         RgResourceIdType const imageId{ nextResourceId++ };
         images[imageId] = std::make_unique<RgImage>(imageId, imageType, format, dimensions);
@@ -70,22 +52,25 @@ namespace garlic::clove {
         return imageId;
     }
 
-    void RenderGraph::registerGraphOutput(RgResourceIdType resource) {
-        outputResource = resource;
+    RgSampler RenderGraph::createSampler(GhaSampler::Descriptor descriptor) {
+        RgResourceIdType const samplerId{ nextResourceId++ };
+        samplers[samplerId] = globalCache.createSampler(std::move(descriptor));
+
+        return samplerId;
     }
 
     RgShader RenderGraph::createShader(std::filesystem::path const &file, GhaShader::Stage shaderStage) {
-        RgShader const shader{ nextResourceId++ };
-        allocatedShaders[shader] = globalCache.createShader(file, shaderStage);//Allocate straight away as it's usage does not define it's properties
+        RgShader const shaderId{ nextResourceId++ };
+        shaders[shaderId] = globalCache.createShader(file, shaderStage);//Allocate straight away as it's usage does not define it's properties
 
-        return shader;
+        return shaderId;
     }
 
     RgShader RenderGraph::createShader(std::string_view source, std::unordered_map<std::string, std::string> includeSources, std::string_view shaderName, GhaShader::Stage shaderStage) {
-        RgShader const shader{ nextResourceId++ };
-        allocatedShaders[shader] = globalCache.createShader(source, std::move(includeSources), shaderName, shaderStage);//Allocate straight away as it's usage does not define it's properties
+        RgShader const shaderId{ nextResourceId++ };
+        shaders[shaderId] = globalCache.createShader(source, std::move(includeSources), shaderName, shaderStage);//Allocate straight away as it's usage does not define it's properties
 
-        return shader;
+        return shaderId;
     }
 
     RgPassIdType RenderGraph::createRenderPass(RgRenderPass::Descriptor passDescriptor) {
@@ -114,6 +99,36 @@ namespace garlic::clove {
         renderPasses[renderPassId] = std::make_unique<RgRenderPass>(renderPassId, std::move(passDescriptor));
 
         return renderPassId;
+    }
+
+    RgPassIdType RenderGraph::createComputePass(RgComputePass::Descriptor passDescriptor) {
+        RgPassIdType const computePassId{ nextPassId++ };
+
+        computePasses[computePassId] = std::make_unique<RgComputePass>(computePassId, std::move(passDescriptor));
+
+        return computePassId;
+    }
+
+    void RenderGraph::registerGraphOutput(RgResourceIdType resource) {
+        outputResource = resource;
+    }
+
+    void RenderGraph::writeToBuffer(RgResourceIdType buffer, void const *data, size_t const offset, size_t const size) {
+        RgPassIdType const transferPassId{ nextPassId++ };
+
+        auto &rgBuffer{ buffers.at(buffer) };
+        rgBuffer->makeCpuAccessable();
+        rgBuffer->addWritePass(transferPassId);
+
+        RgTransferPass::BufferWrite write{
+            .bufferId = buffer,
+            .data     = std::vector<std::byte>(size),
+            .offset   = offset,
+            .size     = size,
+        };
+        memcpy(write.data.data(), data, size);
+
+        transferPasses[transferPassId] = std::make_unique<RgTransferPass>(transferPassId, std::move(write));
     }
 
     void RenderGraph::addRenderSubmission(RgPassIdType const renderPass, RgRenderPass::Submission submission) {
@@ -149,8 +164,8 @@ namespace garlic::clove {
             buffer->addReadPass(renderPass);
         }
 
-        for(auto const &imageSampler : submission.shaderCombinedImageSamplers) {
-            RgResourceIdType const imageId{ imageSampler.image };
+        for(auto const &shaderImage : submission.shaderImages) {
+            RgResourceIdType const imageId{ shaderImage.image };
 
             auto &image{ images.at(imageId) };
             if(!image->isExternalImage()) {
@@ -160,14 +175,6 @@ namespace garlic::clove {
         }
 
         pass->addSubmission(std::move(submission));
-    }
-
-    RgPassIdType RenderGraph::createComputePass(RgComputePass::Descriptor passDescriptor) {
-        RgPassIdType const computePassId{ nextPassId++ };
-
-        computePasses[computePassId] = std::make_unique<RgComputePass>(computePassId, std::move(passDescriptor));
-
-        return computePassId;
     }
 
     void RenderGraph::addComputeSubmission(RgPassIdType const computePass, RgComputePass::Submission submission) {
@@ -448,8 +455,8 @@ namespace garlic::clove {
 
             if(renderPass->getInputResources().contains(imageId)) {
                 for(auto const &submission : renderPass->getSubmissions()) {
-                    for(auto const &imageSamplers : submission.shaderCombinedImageSamplers) {
-                        if(imageSamplers.image == imageId) {
+                    for(auto const &image : submission.shaderImages) {
+                        if(image.image == imageId) {
                             return GhaImage::Layout::ShaderReadOnlyOptimal;
                         }
                     }
@@ -506,13 +513,6 @@ namespace garlic::clove {
             RgRenderPass::Descriptor const &passDescriptor{ renderPasses.at(passId)->getDescriptor() };
             std::vector<RgRenderPass::Submission> const &passSubmissions{ renderPasses.at(passId)->getSubmissions() };
 
-            //Allocate image samplers
-            for(auto const &submission : passSubmissions) {
-                for(auto const &imageSampler : submission.shaderCombinedImageSamplers) {
-                    outSamplers[passId] = globalCache.createSampler(imageSampler.samplerState);
-                }
-            }
-
             //Build and allocate the render pass
             std::vector<AttachmentDescriptor> colourAttachments{};
             for(auto &renderTarget : passDescriptor.renderTargets) {
@@ -549,10 +549,18 @@ namespace garlic::clove {
                     .stage     = GhaShader::Stage::Vertex,//TODO: provided by pass or by shader reflection
                 });
             }
-            for(auto &sampler : passSubmissions[0].shaderCombinedImageSamplers) {
+            for(auto &image : passSubmissions[0].shaderImages) {
+                descriptorBindings.emplace_back(DescriptorSetBindingInfo{
+                    .binding   = image.slot,
+                    .type      = DescriptorType::SampledImage,
+                    .arraySize = 1,
+                    .stage     = GhaShader::Stage::Pixel,//TODO: provided by pass or by shader reflection
+                });
+            }
+            for(auto &sampler : passSubmissions[0].shaderSamplers) {
                 descriptorBindings.emplace_back(DescriptorSetBindingInfo{
                     .binding   = sampler.slot,
-                    .type      = DescriptorType::CombinedImageSampler,
+                    .type      = DescriptorType::Sampler,
                     .arraySize = 1,
                     .stage     = GhaShader::Stage::Pixel,//TODO: provided by pass or by shader reflection
                 });
@@ -574,8 +582,8 @@ namespace garlic::clove {
             };
 
             outGraphicsPipelines[passId] = globalCache.createGraphicsPipelineObject(GhaGraphicsPipelineObject::Descriptor{
-                .vertexShader       = allocatedShaders.at(passDescriptor.vertexShader),
-                .pixelShader        = allocatedShaders.at(passDescriptor.pixelShader),
+                .vertexShader       = shaders.at(passDescriptor.vertexShader),
+                .pixelShader        = shaders.at(passDescriptor.pixelShader),
                 .vertexInput        = Vertex::getInputBindingDescriptor(),
                 .vertexAttributes   = vertexAttributes,
                 .viewportDescriptor = viewScissorArea,
@@ -607,13 +615,17 @@ namespace garlic::clove {
             //Count descriptor sets required for the entire pass
             for(auto const &submission : passSubmissions) {
                 bool const hasUbo{ !submission.shaderUbos.empty() };
-                bool const hasImageSampler{ !submission.shaderCombinedImageSamplers.empty() };
+                bool const hasImage{ !submission.shaderImages.empty() };
+                bool const hasImageSampler{ !submission.shaderSamplers.empty() };
 
                 if(hasUbo) {
                     totalDescriptorBindingCount[DescriptorType::UniformBuffer] += submission.shaderUbos.size();
                 }
+                if(hasImage) {
+                    totalDescriptorBindingCount[DescriptorType::SampledImage] += submission.shaderImages.size();
+                }
                 if(hasImageSampler) {
-                    totalDescriptorBindingCount[DescriptorType::CombinedImageSampler] += submission.shaderCombinedImageSamplers.size();
+                    totalDescriptorBindingCount[DescriptorType::Sampler] += submission.shaderSamplers.size();
                 }
 
                 if(hasUbo || hasImageSampler) {
@@ -665,7 +677,7 @@ namespace garlic::clove {
 
             //Build compute pipeline
             outComputePipelines[passId] = globalCache.createComputePipelineObject(GhaComputePipelineObject::Descriptor{
-                .shader               = allocatedShaders.at(passDescriptor.shader),
+                .shader               = shaders.at(passDescriptor.shader),
                 .descriptorSetLayouts = { outDescriptorSetLayouts.at(passId) },
                 .pushConstants        = {},
             });
@@ -759,8 +771,11 @@ namespace garlic::clove {
                 std::unique_ptr<RgBuffer> const &buffer{ buffers.at(ubo.buffer) };
                 descriptorSet->map(*buffer->getGhaBuffer(frameCache), 0, buffer->getBufferSize(), DescriptorType::UniformBuffer, ubo.slot);
             }
-            for(auto const &imageSampler : submission.shaderCombinedImageSamplers) {
-                descriptorSet->map(*images.at(imageSampler.image)->getGhaImageView(frameCache), *allocatedSamplers.at(imageSampler.image), GhaImage::Layout::ShaderReadOnlyOptimal, imageSampler.slot);
+            for(auto const &image : submission.shaderImages) {
+                descriptorSet->map(*images.at(image.image)->getGhaImageView(frameCache), GhaImage::Layout::ShaderReadOnlyOptimal, image.slot);
+            }
+            for(auto const &sampler : submission.shaderSamplers) {
+                descriptorSet->map(*samplers.at(sampler.sampler), sampler.slot);
             }
 
             graphicsCommandBufffer.bindDescriptorSet(*descriptorSet, 0);//TODO: Multiple sets / only set sets for a whole pass (i.e. view)

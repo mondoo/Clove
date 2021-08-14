@@ -165,6 +165,7 @@ add_library(
 		${INCLUDE}/Rendering/RenderGraph/RgResource.hpp
 		${INCLUDE}/Rendering/RenderGraph/RgResource.inl
 		${SOURCE}/Rendering/RenderGraph/RgResource.cpp
+		${INCLUDE}/Rendering/RenderGraph/RgSampler.hpp
 		${INCLUDE}/Rendering/RenderGraph/RgShader.hpp
 		${INCLUDE}/Rendering/RenderGraph/RgTransferPass.hpp
 		${INCLUDE}/Rendering/RenderGraph/RgTransferPass.inl

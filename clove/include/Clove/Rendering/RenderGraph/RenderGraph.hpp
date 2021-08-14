@@ -4,11 +4,13 @@
 #include "Clove/Rendering/RenderGraph/RgComputePass.hpp"
 #include "Clove/Rendering/RenderGraph/RgImage.hpp"
 #include "Clove/Rendering/RenderGraph/RgRenderPass.hpp"
+#include "Clove/Rendering/RenderGraph/RgSampler.hpp"
 #include "Clove/Rendering/RenderGraph/RgShader.hpp"
 #include "Clove/Rendering/RenderGraph/RgTransferPass.hpp"
 
 #include <Clove/Graphics/Descriptor.hpp>
 #include <Clove/Graphics/GhaGraphicsQueue.hpp>
+#include <Clove/Graphics/GhaSampler.hpp>
 #include <Clove/Graphics/GhaShader.hpp>
 #include <Clove/Maths/Vector.hpp>
 #include <filesystem>
@@ -62,14 +64,16 @@ namespace garlic::clove {
 
         RgResourceIdType outputResource{ INVALID_RESOURCE_ID }; /**< The final output of the graph. */
 
+        //Resources
         std::unordered_map<RgResourceIdType, std::unique_ptr<RgBuffer>> buffers{};
         std::unordered_map<RgResourceIdType, std::unique_ptr<RgImage>> images{};
+        std::unordered_map<RgResourceIdType, std::shared_ptr<GhaSampler>> samplers{};
+        std::unordered_map<RgResourceIdType, std::shared_ptr<GhaShader>> shaders{};
 
+        //Passes
         std::unordered_map<RgPassIdType, std::unique_ptr<RgRenderPass>> renderPasses{};
         std::unordered_map<RgPassIdType, std::unique_ptr<RgComputePass>> computePasses{};
         std::unordered_map<RgPassIdType, std::unique_ptr<RgTransferPass>> transferPasses{};
-
-        std::unordered_map<RgResourceIdType, std::shared_ptr<GhaShader>> allocatedShaders{};
 
         //FUNCTIONS
     public:
@@ -102,15 +106,6 @@ namespace garlic::clove {
         RgResourceIdType createBuffer(std::shared_ptr<GhaBuffer> buffer, size_t const offset, size_t const size);
 
         /**
-         * @brief Write data into this buffer.
-         * @details Will transition this buffer from video memory to system memory if requierd.
-         * @param data Pointer to data to write.
-         * @param offset Offset into the buffer to write to. If the RgBuffer views an offset into a GhaBuffer then it'll be view offset + offset
-         * @param size Size of the region in the buffer to write to.
-         */
-        void writeToBuffer(RgResourceIdType buffer, void const *data, size_t const offset, size_t const size);
-
-        /**
          * @brief Constructs a new RgImage with the specified type and dimensions.
          * @param imageType 
          * @param format
@@ -127,12 +122,11 @@ namespace garlic::clove {
         RgResourceIdType createImage(std::shared_ptr<GhaImageView> ghaImageView);
 
         /**
-         * @brief Registers a resource as the final output of the graph.
-         * @details The graph will be traversed starting from this resource and build
-         * the list of passes it will execute bassed on this output's dependencies.
-         * @param resource 
+         * @brief Creates a new RgSampler
+         * @param descriptor 
+         * @return 
          */
-        void registerGraphOutput(RgResourceIdType resource);
+        RgSampler createSampler(GhaSampler::Descriptor descriptor);
 
         /**
          * @brief Creates a new RgShader from a source file.
@@ -156,12 +150,6 @@ namespace garlic::clove {
          * @param passDescriptor Descriptor of the pass itself. Contains any output resources and what shaders to run.
          */
         RgPassIdType createRenderPass(RgRenderPass::Descriptor passDescriptor);
-        /**
-         * @brief Adds a submission to a render pass. Defining a piece of geometry it needs to render.
-         * @param renderPass Pass to add the submission to.
-         * @param submission Submission for the pass. Encapsulates any input resources required for a single unit of work.
-         */
-        void addRenderSubmission(RgPassIdType const renderPass, RgRenderPass::Submission submission);
 
         /**
          * @brief Create a compute pass.
@@ -169,6 +157,31 @@ namespace garlic::clove {
          * @return 
          */
         RgPassIdType createComputePass(RgComputePass::Descriptor passDescriptor);
+
+        /**
+         * @brief Registers a resource as the final output of the graph.
+         * @details The graph will be traversed starting from this resource and build
+         * the list of passes it will execute bassed on this output's dependencies.
+         * @param resource 
+         */
+        void registerGraphOutput(RgResourceIdType resource);
+
+        /**
+         * @brief Write data into this buffer.
+         * @details Will transition this buffer from video memory to system memory if requierd.
+         * @param data Pointer to data to write.
+         * @param offset Offset into the buffer to write to. If the RgBuffer views an offset into a GhaBuffer then it'll be view offset + offset
+         * @param size Size of the region in the buffer to write to.
+         */
+        void writeToBuffer(RgResourceIdType buffer, void const *data, size_t const offset, size_t const size);
+
+        /**
+         * @brief Adds a submission to a render pass. Defining a piece of geometry it needs to render.
+         * @param renderPass Pass to add the submission to.
+         * @param submission Submission for the pass. Encapsulates any input resources required for a single unit of work.
+         */
+        void addRenderSubmission(RgPassIdType const renderPass, RgRenderPass::Submission submission);
+
         /**
          * @brief Adds a submission to the compute pass. Defining a dispatch call.
          * @param computePass Pass to add the submission to.

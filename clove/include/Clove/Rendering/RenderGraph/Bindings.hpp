@@ -14,8 +14,12 @@ namespace garlic::clove {
 
     struct RgImageBindng {
         uint32_t slot{};
-        GhaSampler::Descriptor samplerState{};//TODO: RG version?
         RgResourceIdType image{};
+    };
+
+    struct RgSamplerBinding {
+        uint32_t slot{};
+        RgResourceIdType sampler{};
     };
 
     struct RgRenderTargetBinding {
