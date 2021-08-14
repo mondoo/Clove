@@ -60,35 +60,6 @@ namespace garlic::clove {
 
         skinningSetLayout = createSkinningDescriptorSetLayout(*ghaFactory);
 
-        createRenderpass();
-        createShadowMapRenderpass();
-
-        //Create the geometry passes this renderer supports
-        geometryPasses[GeometryPass::getId<ForwardColourPass>()]    = std::make_unique<ForwardColourPass>(*ghaFactory, renderPass);
-        geometryPasses[GeometryPass::getId<DirectionalLightPass>()] = std::make_unique<DirectionalLightPass>(*ghaFactory, shadowMapRenderPass);
-        geometryPasses[GeometryPass::getId<PointLightPass>()]       = std::make_unique<PointLightPass>(*ghaFactory, shadowMapRenderPass);
-        geometryPasses[GeometryPass::getId<SkinningPass>()]         = std::make_unique<SkinningPass>(*ghaFactory);
-
-        createUiPipeline();
-
-        createRenderTargetResources();
-
-        //Create semaphores for frame synchronisation
-        for(auto &skinningFinishedSemaphore : skinningFinishedSemaphores) {
-            skinningFinishedSemaphore = *ghaFactory->createSemaphore();
-        }
-        for(auto &renderFinishedSemaphore : renderFinishedSemaphores) {
-            renderFinishedSemaphore = *ghaFactory->createSemaphore();
-        }
-        for(auto &imageAvailableSemaphore : imageAvailableSemaphores) {
-            imageAvailableSemaphore = *ghaFactory->createSemaphore();
-        }
-
-        //Create fences to wait for images in flight
-        for(auto &fence : framesInFlight) {
-            fence = *ghaFactory->createFence({ true });
-        }
-
         float constexpr anisotropy{ 16.0f };
         textureSampler = *ghaFactory->createSampler(GhaSampler::Descriptor{
             .minFilter        = GhaSampler::Filter::Linear,
@@ -118,6 +89,35 @@ namespace garlic::clove {
             .enableAnisotropy = false,
         });
 
+        createRenderpass();
+        createShadowMapRenderpass();
+
+        //Create the geometry passes this renderer supports
+        geometryPasses[GeometryPass::getId<ForwardColourPass>()]    = std::make_unique<ForwardColourPass>(*ghaFactory, renderPass);
+        geometryPasses[GeometryPass::getId<DirectionalLightPass>()] = std::make_unique<DirectionalLightPass>(*ghaFactory, shadowMapRenderPass);
+        geometryPasses[GeometryPass::getId<PointLightPass>()]       = std::make_unique<PointLightPass>(*ghaFactory, shadowMapRenderPass);
+        geometryPasses[GeometryPass::getId<SkinningPass>()]         = std::make_unique<SkinningPass>(*ghaFactory);
+
+        createUiPipeline();
+
+        createRenderTargetResources();
+
+        //Create semaphores for frame synchronisation
+        for(auto &skinningFinishedSemaphore : skinningFinishedSemaphores) {
+            skinningFinishedSemaphore = *ghaFactory->createSemaphore();
+        }
+        for(auto &renderFinishedSemaphore : renderFinishedSemaphores) {
+            renderFinishedSemaphore = *ghaFactory->createSemaphore();
+        }
+        for(auto &imageAvailableSemaphore : imageAvailableSemaphores) {
+            imageAvailableSemaphore = *ghaFactory->createSemaphore();
+        }
+
+        //Create fences to wait for images in flight
+        for(auto &fence : framesInFlight) {
+            fence = *ghaFactory->createFence({ true });
+        }
+
         std::vector<Vertex> const uiVertices{
             Vertex{
                 .position = { 0.0f, 1.0f, 0.0f },
@@ -138,12 +138,8 @@ namespace garlic::clove {
         };
 
         std::vector<uint16_t> const uiIndices{
-            0,
-            2,
-            3,
-            0,
-            3,
-            1,
+            0, 2, 3,
+            0, 3, 1,
         };
 
         uiMesh = std::make_unique<Mesh>(uiVertices, uiIndices);
