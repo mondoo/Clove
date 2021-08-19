@@ -27,10 +27,10 @@ namespace clove {
         const size_t waitSemaphoreCount = std::size(presentInfo.waitSemaphores);
         std::vector<VkSemaphore> waitSemaphores(waitSemaphoreCount);
         for(size_t i = 0; i < waitSemaphoreCount; ++i) {
-            waitSemaphores[i] = polyCast<VulkanSemaphore>(presentInfo.waitSemaphores[i].get())->getSemaphore();
+            waitSemaphores[i] = polyCast<VulkanSemaphore const>(presentInfo.waitSemaphores[i])->getSemaphore();
         }
 
-        VkSwapchainKHR const swapchain{ polyCast<VulkanSwapchain>(presentInfo.swapChain.get())->getSwapchain() };
+        VkSwapchainKHR const swapchain{ polyCast<VulkanSwapchain const>(presentInfo.swapChain)->getSwapchain() };
         uint32_t const imageIndex{ presentInfo.imageIndex };
 
         VkPresentInfoKHR vkpresentInfo{

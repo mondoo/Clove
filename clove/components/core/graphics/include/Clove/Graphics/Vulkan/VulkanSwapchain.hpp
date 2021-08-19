@@ -21,7 +21,7 @@ namespace clove {
         VkExtent2D swapChainExtent{};
 
         std::vector<VkImage> images;
-        std::vector<std::shared_ptr<VulkanImageView>> imageViews;
+        std::vector<std::unique_ptr<VulkanImageView>> imageViews;
 
         //FUNCTIONS
     public:
@@ -41,7 +41,7 @@ namespace clove {
         GhaImage::Format getImageFormat() const override;
         vec2ui getSize() const override;
 
-        std::vector<std::shared_ptr<GhaImageView>> getImageViews() const override;
+        std::vector<GhaImageView *> getImageViews() const override;
 
         VkSwapchainKHR getSwapchain() const;
     };

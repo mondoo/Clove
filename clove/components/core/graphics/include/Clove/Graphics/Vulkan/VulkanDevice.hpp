@@ -17,7 +17,7 @@ namespace clove {
     private:
         DevicePointer devicePtr;
 
-        std::shared_ptr<VulkanFactory> factory;
+        std::unique_ptr<VulkanFactory> factory;
 
         //FUNCTIONS
     public:
@@ -32,7 +32,7 @@ namespace clove {
 
         ~VulkanDevice();
 
-        std::shared_ptr<GhaFactory> getGraphicsFactory() const override;
+        GhaFactory *getGraphicsFactory() const override;
 
         void waitForIdleDevice() override;
 
