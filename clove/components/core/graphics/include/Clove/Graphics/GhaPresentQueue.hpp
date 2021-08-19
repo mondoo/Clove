@@ -2,7 +2,6 @@
 
 #include "Clove/Graphics/Result.hpp"
 
-#include <memory>
 #include <vector>
 
 namespace clove {
@@ -10,9 +9,9 @@ namespace clove {
     class GhaSwapchain;
 
     struct PresentInfo {
-        std::vector<std::shared_ptr<GhaSemaphore>> waitSemaphores;
+        std::vector<GhaSemaphore const *> waitSemaphores;
 
-        std::shared_ptr<GhaSwapchain> swapChain;
+        GhaSwapchain const *swapChain{ nullptr };
         uint32_t imageIndex;
     };
 }

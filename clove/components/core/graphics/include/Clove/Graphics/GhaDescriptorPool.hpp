@@ -46,17 +46,17 @@ namespace clove {
         /** 
          * @brief Allocates a descriptor set for each layout provided.
          */
-        virtual std::shared_ptr<GhaDescriptorSet> allocateDescriptorSets(std::shared_ptr<GhaDescriptorSetLayout> const &layout)                            = 0;
-        virtual std::vector<std::shared_ptr<GhaDescriptorSet>> allocateDescriptorSets(std::vector<std::shared_ptr<GhaDescriptorSetLayout>> const &layouts) = 0;
+        virtual std::unique_ptr<GhaDescriptorSet> allocateDescriptorSets(GhaDescriptorSetLayout const *const layout)                              = 0;
+        virtual std::vector<std::unique_ptr<GhaDescriptorSet>> allocateDescriptorSets(std::vector<GhaDescriptorSetLayout const *> const &layouts) = 0;
 
         /**
          * @brief Free an individual descriptor set. Requires Flag::FreeDescriptorSet to be set on creation.
          */
-        virtual void freeDescriptorSets(std::shared_ptr<GhaDescriptorSet> const &descriptorSet) = 0;
+        virtual void freeDescriptorSets(GhaDescriptorSet const *const descriptorSet) = 0;
         /**
          * @brief Frees individual descriptor sets. Requires Flag::FreeDescriptorSet to be set on creation.
          */
-        virtual void freeDescriptorSets(std::vector<std::shared_ptr<GhaDescriptorSet>> const &descriptorSets) = 0;
+        virtual void freeDescriptorSets(std::vector<GhaDescriptorSet const *> const &descriptorSets) = 0;
 
         /**
          * @brief Resets this pool freeing all DescriptorSets allocated from it.

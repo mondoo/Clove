@@ -10,9 +10,9 @@ namespace clove {
     class GhaSemaphore;
 
     struct TransferSubmitInfo {
-        std::vector<std::pair<std::shared_ptr<GhaSemaphore>, PipelineStage>> waitSemaphores; /**< What semaphores to wait on at what stage */
-        std::vector<std::shared_ptr<GhaTransferCommandBuffer>> commandBuffers;               /**< The command buffers to execute */
-        std::vector<std::shared_ptr<GhaSemaphore>> signalSemaphores;                         /**< The semaphores that will be signaled when completed */
+        std::vector<std::pair<GhaSemaphore const *, PipelineStage>> waitSemaphores;   /**< What semaphores to wait on at what stage */
+        std::vector<GhaTransferCommandBuffer const *> commandBuffers;                 /**< The command buffers to execute */
+        std::vector<GhaSemaphore const *> signalSemaphores;                           /**< The semaphores that will be signaled when completed */
     };
 }
 

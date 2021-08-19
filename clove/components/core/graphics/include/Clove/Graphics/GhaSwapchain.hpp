@@ -37,6 +37,11 @@ namespace clove {
         virtual GhaImage::Format getImageFormat() const = 0;
         virtual vec2ui getSize() const                  = 0;
 
-        virtual std::vector<std::shared_ptr<GhaImageView>> getImageViews() const = 0;
+        /**
+         * @brief Return the image views backing this swapchain. The lifetime
+         * of the views are tied to this object.
+         * @return 
+         */
+        virtual std::vector<GhaImageView *> getImageViews() const = 0;
     };
 }

@@ -2,7 +2,6 @@
 
 #include "Clove/Graphics/PipelineObject.hpp"
 
-#include <memory>
 #include <vector>
 
 namespace clove {
@@ -15,9 +14,9 @@ namespace clove {
         //TYPES
     public:
         struct Descriptor {
-            std::shared_ptr<GhaShader> shader;
+            GhaShader const *shader{ nullptr };
 
-            std::vector<std::shared_ptr<GhaDescriptorSetLayout>> descriptorSetLayouts;
+            std::vector<GhaDescriptorSetLayout const *> descriptorSetLayouts;
             std::vector<PushConstantDescriptor> pushConstants;
         };
 
