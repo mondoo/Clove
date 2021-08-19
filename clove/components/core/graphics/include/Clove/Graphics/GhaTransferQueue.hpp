@@ -11,7 +11,7 @@ namespace clove {
 
     struct TransferSubmitInfo {
         std::vector<std::pair<GhaSemaphore const *, PipelineStage>> waitSemaphores;   /**< What semaphores to wait on at what stage */
-        std::vector<GhaTransferCommandBuffer const *> commandBuffers;                 /**< The command buffers to execute */
+        std::vector<GhaTransferCommandBuffer *> commandBuffers;                       /**< The command buffers to execute */
         std::vector<GhaSemaphore const *> signalSemaphores;                           /**< The semaphores that will be signaled when completed */
     };
 }

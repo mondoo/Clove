@@ -12,7 +12,7 @@ namespace clove {
 
     struct GraphicsSubmitInfo {
         std::vector<std::pair<GhaSemaphore const *, PipelineStage>> waitSemaphores; /**< What semaphores to wait on at what stage */
-        std::vector<GhaGraphicsCommandBuffer const *> commandBuffers;             /**< The command buffers to execute */
+        std::vector<GhaGraphicsCommandBuffer *> commandBuffers;             /**< The command buffers to execute */
         std::vector<GhaSemaphore const *> signalSemaphores;                         /**< The semaphores that will be signaled when completed */
     };
 }

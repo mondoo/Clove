@@ -11,7 +11,7 @@ namespace clove {
     struct PresentInfo {
         std::vector<GhaSemaphore const *> waitSemaphores;
 
-        GhaSwapchain const *swapChain{ nullptr };
+        GhaSwapchain *swapChain{ nullptr };
         uint32_t imageIndex;
     };
 }
