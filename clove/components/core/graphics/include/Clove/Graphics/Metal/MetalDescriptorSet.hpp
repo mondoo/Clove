@@ -23,12 +23,12 @@ namespace clove {
 		id<MTLBuffer> pixelEncoderBuffer{ nullptr }; /**< The buffer backing the pixel encoder. */
 		id<MTLBuffer> computeEncoderBuffer{ nullptr }; /**< The buffer backing the compute encoder */
 		
-		std::shared_ptr<GhaDescriptorSetLayout> layout{ nullptr };
+		GhaDescriptorSetLayout const *layout{ nullptr };
 		
 		//FUNCTIONS
 	public:
 		MetalDescriptorSet() = delete;
-		MetalDescriptorSet(id<MTLArgumentEncoder> vertexEncoder, id<MTLBuffer> vertexEncoderBuffer, id<MTLArgumentEncoder> pixelEncoder, id<MTLBuffer> pixelEncoderBuffer, id<MTLArgumentEncoder> computeEncoder, id<MTLBuffer> computeEncoderBuffer, std::shared_ptr<GhaDescriptorSetLayout> layout);
+		MetalDescriptorSet(id<MTLArgumentEncoder> vertexEncoder, id<MTLBuffer> vertexEncoderBuffer, id<MTLArgumentEncoder> pixelEncoder, id<MTLBuffer> pixelEncoderBuffer, id<MTLArgumentEncoder> computeEncoder, id<MTLBuffer> computeEncoderBuffer, GhaDescriptorSetLayout const *layout);
 		
 		MetalDescriptorSet(MetalDescriptorSet const &other) = delete;
 		MetalDescriptorSet(MetalDescriptorSet &&other) noexcept;

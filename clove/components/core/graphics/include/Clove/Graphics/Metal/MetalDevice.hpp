@@ -18,7 +18,7 @@ namespace clove {
 		//VARIABLES
 	private:
 		std::unique_ptr<DeviceWrapper> wrapper{ nullptr };
-		std::shared_ptr<MetalFactory> factory;
+		std::unique_ptr<MetalFactory> factory;
 		
 		//FUNCTIONS
 	public:
@@ -33,7 +33,7 @@ namespace clove {
 
 		~MetalDevice();
 		
-		std::shared_ptr<GhaFactory> getGraphicsFactory() const override;
+		GhaFactory *getGraphicsFactory() const override;
 
 		void waitForIdleDevice() override;
 

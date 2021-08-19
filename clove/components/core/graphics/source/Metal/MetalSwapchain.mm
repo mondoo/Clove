@@ -6,7 +6,7 @@
 #include <Clove/Log/Log.hpp>
 
 namespace clove {
-	MetalSwapchain::MetalSwapchain(std::vector<std::shared_ptr<GhaImage>> images, GhaImage::Format imageFormat, vec2ui imageSize)
+	MetalSwapchain::MetalSwapchain(std::vector<std::unique_ptr<GhaImage>> images, GhaImage::Format imageFormat, vec2ui imageSize)
 		: images{ std::move(images) }
 		, imageFormat{ imageFormat }
 		, imageSize{ imageSize } {
@@ -51,8 +51,15 @@ namespace clove {
 		return imageSize;
 	}
 
-	std::vector<std::shared_ptr<GhaImageView>> MetalSwapchain::getImageViews() const {
-		return imageViews;
+	std::vector<GhaImageView *> MetalSwapchain::getImageViews() const {
+        std::vector<GhaImageView *> views{};
+        views.reserve(imageViews.size());
+        
+        for(auto const &view : imageViews) {
+            views.push_back(view.get());
+        }
+        
+		return views;
 	}
 	
 	void MetalSwapchain::markIndexAsFree(uint32_t index) {
