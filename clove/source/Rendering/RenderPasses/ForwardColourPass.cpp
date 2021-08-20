@@ -18,7 +18,7 @@ extern "C" const char mesh_p[];
 extern "C" const size_t mesh_pLength;
 
 namespace clove {
-    ForwardColourPass::ForwardColourPass(GhaFactory &ghaFactory, std::shared_ptr<GhaRenderPass> ghaRenderPass) {
+    ForwardColourPass::ForwardColourPass(GhaFactory &ghaFactory, GhaRenderPass *ghaRenderPass) {
         //Build include map
         std::unordered_map<std::string, std::string> shaderIncludes;
         shaderIncludes["Constants.glsl"] = { constants, constantsLength };
@@ -47,18 +47,25 @@ namespace clove {
             .state = ElementState::Dynamic,
         };
 
+        auto vertShader{ *ghaFactory.createShaderFromSource({ mesh_v, mesh_vLength }, shaderIncludes, "Animated Mesh (vertex)", GhaShader::Stage::Vertex) };
+        auto pixelShader{ *ghaFactory.createShaderFromSource({ mesh_p, mesh_pLength }, shaderIncludes, "Mesh (pixel)", GhaShader::Stage::Pixel) };
+
+        auto meshLayout{ createMeshDescriptorSetLayout(ghaFactory) };
+        auto viewLayout{ createViewDescriptorSetLayout(ghaFactory) };
+        auto lightLayout{ createLightingDescriptorSetLayout(ghaFactory) };
+
         pipeline = *ghaFactory.createGraphicsPipelineObject(GhaGraphicsPipelineObject::Descriptor{
-            .vertexShader         = *ghaFactory.createShaderFromSource({ mesh_v, mesh_vLength }, shaderIncludes, "Animated Mesh (vertex)", GhaShader::Stage::Vertex),
-            .pixelShader          = *ghaFactory.createShaderFromSource({ mesh_p, mesh_pLength }, shaderIncludes, "Mesh (pixel)", GhaShader::Stage::Pixel),
+            .vertexShader         = vertShader.get(),
+            .pixelShader          = pixelShader.get(),
             .vertexInput          = Vertex::getInputBindingDescriptor(),
             .vertexAttributes     = vertexAttributes,
             .viewportDescriptor   = viewScissorArea,
             .scissorDescriptor    = viewScissorArea,
-            .renderPass           = std::move(ghaRenderPass),
+            .renderPass           = ghaRenderPass,
             .descriptorSetLayouts = {
-                createMeshDescriptorSetLayout(ghaFactory),
-                createViewDescriptorSetLayout(ghaFactory),
-                createLightingDescriptorSetLayout(ghaFactory),
+                meshLayout.get(),
+                viewLayout.get(),
+                lightLayout.get(),
             },
             .pushConstants = {},
         });

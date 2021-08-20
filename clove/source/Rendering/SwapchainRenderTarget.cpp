@@ -63,7 +63,7 @@ namespace clove {
         if(imagesInFlight[imageIndex] != nullptr) {
             imagesInFlight[imageIndex]->wait();
         }
-        imagesInFlight[imageIndex] = framesInFlight[frameId];
+        imagesInFlight[imageIndex] = framesInFlight[frameId].get();
 
         framesInFlight[frameId]->reset();
 
@@ -76,14 +76,14 @@ namespace clove {
         }
 
         //Inject the sempahores we use to synchronise with the swapchain and present queue
-        submission.waitSemaphores.emplace_back(imageAvailableSemaphores[frameId], PipelineStage::ColourAttachmentOutput);
-        submission.signalSemaphores.push_back(renderFinishedSemaphores[frameId]);
+        submission.waitSemaphores.emplace_back(imageAvailableSemaphores[frameId].get(), PipelineStage::ColourAttachmentOutput);
+        submission.signalSemaphores.push_back(renderFinishedSemaphores[frameId].get());
 
         graphicsQueue->submit({ std::move(submission) }, framesInFlight[frameId].get());
 
         auto const result = presentQueue->present(PresentInfo{
-            .waitSemaphores = { renderFinishedSemaphores[frameId] },
-            .swapChain      = swapchain,
+            .waitSemaphores = { renderFinishedSemaphores[frameId].get() },
+            .swapChain      = swapchain.get(),
             .imageIndex     = imageIndex,
         });
 
@@ -100,7 +100,7 @@ namespace clove {
         return swapchain->getSize();
     }
 
-    std::vector<std::shared_ptr<GhaImageView>> SwapchainRenderTarget::getImageViews() const {
+    std::vector<GhaImageView *> SwapchainRenderTarget::getImageViews() const {
         return swapchain->getImageViews();
     }
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <cinttypes>
 
 namespace clove {
     class GhaRenderPass;

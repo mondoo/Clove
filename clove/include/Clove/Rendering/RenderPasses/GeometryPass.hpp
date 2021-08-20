@@ -28,11 +28,11 @@ namespace clove {
          * @brief Data a GeometryPass will need for a given frame.
          */
         struct FrameData {
-            std::vector<std::shared_ptr<GhaDescriptorSet>> meshDescriptorSets{}; /**< Descriptor set for each mesh submitted for the frame. */
-            std::vector<std::shared_ptr<GhaDescriptorSet>> skinningMeshSets{};
+            std::vector<GhaDescriptorSet *> meshDescriptorSets{}; /**< Descriptor set for each mesh submitted for the frame. */
+            std::vector<GhaDescriptorSet *> skinningMeshSets{};
 
-            std::shared_ptr<GhaDescriptorSet> viewDescriptorSet{ nullptr };     /**< Descriptor set for view specific data. */
-            std::shared_ptr<GhaDescriptorSet> lightingDescriptorSet{ nullptr }; /**< Descriptor set for lighting specific data. */
+            GhaDescriptorSet *viewDescriptorSet{ nullptr };     /**< Descriptor set for view specific data. */
+            GhaDescriptorSet *lightingDescriptorSet{ nullptr }; /**< Descriptor set for lighting specific data. */
 
             //TODO: This is specific to the light passes. Should it be in here?
             mat4f *currentDirLightTransform{ nullptr };

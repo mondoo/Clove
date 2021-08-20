@@ -18,7 +18,7 @@ extern "C" const char meshcubeshadowmap_p[];
 extern "C" const size_t meshcubeshadowmap_pLength;
 
 namespace clove {
-    PointLightPass::PointLightPass(GhaFactory &ghaFactory, std::shared_ptr<GhaRenderPass> ghaRenderPass) {
+    PointLightPass::PointLightPass(GhaFactory &ghaFactory, GhaRenderPass *ghaRenderPass) {
         //Build include map
         std::unordered_map<std::string, std::string> shaderIncludes;
         shaderIncludes["Constants.glsl"] = { constants, constantsLength };
@@ -48,9 +48,14 @@ namespace clove {
             .size     = { shadowMapSize, shadowMapSize }
         };
 
+        auto vertShader{ *ghaFactory.createShaderFromSource({ meshcubeshadowmap_v, meshcubeshadowmap_vLength }, shaderIncludes, "Cube Shadow Map - Animated Mesh (vertex)", GhaShader::Stage::Vertex) };
+        auto pixelShader{ *ghaFactory.createShaderFromSource({ meshcubeshadowmap_p, meshcubeshadowmap_pLength }, shaderIncludes, "Cube Shadow Map (pixel)", GhaShader::Stage::Pixel) };
+
+        auto meshLayout{ createMeshDescriptorSetLayout(ghaFactory) };
+
         pipeline = *ghaFactory.createGraphicsPipelineObject(GhaGraphicsPipelineObject::Descriptor{
-            .vertexShader         = *ghaFactory.createShaderFromSource({ meshcubeshadowmap_v, meshcubeshadowmap_vLength }, shaderIncludes, "Cube Shadow Map - Animated Mesh (vertex)", GhaShader::Stage::Vertex),
-            .pixelShader          = *ghaFactory.createShaderFromSource({ meshcubeshadowmap_p, meshcubeshadowmap_pLength }, shaderIncludes, "Cube Shadow Map (pixel)", GhaShader::Stage::Pixel),
+            .vertexShader         = vertShader.get(),
+            .pixelShader          = pixelShader.get(),
             .vertexInput          = Vertex::getInputBindingDescriptor(),
             .vertexAttributes     = vertexAttributes,
             .viewportDescriptor   = viewScissorArea,
@@ -58,7 +63,7 @@ namespace clove {
             .enableBlending       = false,
             .renderPass           = std::move(ghaRenderPass),
             .descriptorSetLayouts = {
-                createMeshDescriptorSetLayout(ghaFactory),
+                meshLayout.get(),
             },
             .pushConstants = {
                 vertexPushConstant,

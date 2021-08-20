@@ -23,16 +23,16 @@ namespace clove {
         //VARIABLES
     private:
         GhaDevice *graphicsDevice{ nullptr };
-        std::shared_ptr<GhaFactory> graphicsFactory;
+        GhaFactory *graphicsFactory{ nullptr };
 
-        std::shared_ptr<GhaSwapchain> swapchain;
-        std::shared_ptr<GhaPresentQueue> presentQueue;
-        std::shared_ptr<GhaGraphicsQueue> graphicsQueue;
+        std::unique_ptr<GhaSwapchain> swapchain;
+        std::unique_ptr<GhaPresentQueue> presentQueue;
+        std::unique_ptr<GhaGraphicsQueue> graphicsQueue;
 
-        std::vector<std::shared_ptr<GhaSemaphore>> renderFinishedSemaphores;
-        std::vector<std::shared_ptr<GhaSemaphore>> imageAvailableSemaphores;
-        std::vector<std::shared_ptr<GhaFence>> framesInFlight;
-        std::vector<std::shared_ptr<GhaFence>> imagesInFlight;
+        std::vector<std::unique_ptr<GhaSemaphore>> renderFinishedSemaphores;
+        std::vector<std::unique_ptr<GhaSemaphore>> imageAvailableSemaphores;
+        std::vector<std::unique_ptr<GhaFence>> framesInFlight;
+        std::vector<GhaFence *> imagesInFlight;
 
         vec2ui surfaceSize{};
         DelegateHandle surfaceResizeHandle;
@@ -59,7 +59,7 @@ namespace clove {
         GhaImage::Format getImageFormat() const override;
         vec2ui getSize() const override;
 
-        std::vector<std::shared_ptr<GhaImageView>> getImageViews() const override;
+        std::vector<GhaImageView *> getImageViews() const override;
 
     private:
         void onSurfaceSizeChanged(vec2ui const &size);

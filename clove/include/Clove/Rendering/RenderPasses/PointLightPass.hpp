@@ -19,7 +19,7 @@ namespace clove {
         //FUNCTIONS
     public:
         PointLightPass() = delete;
-        PointLightPass(GhaFactory &ghaFactory, std::shared_ptr<GhaRenderPass> ghaRenderPass);//TEMP: Using an external render pass for now but these pass will need to create their own
+        PointLightPass(GhaFactory &ghaFactory, GhaRenderPass *ghaRenderPass);//TEMP: Using an external render pass for now but these pass will need to create their own
 
         PointLightPass(PointLightPass const &other) = delete;
         PointLightPass(PointLightPass &&other) noexcept;
