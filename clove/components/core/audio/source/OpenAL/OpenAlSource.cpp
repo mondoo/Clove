@@ -80,11 +80,7 @@ namespace clove {
 
             ALuint const bufferId{ alBuffer->getBufferId() };
 
-            if(pendingBuffers.find(bufferId) != pendingBuffers.end()) {
-                return true;
-            }
-
-            return false;
+            return pendingBuffers.find(bufferId) != pendingBuffers.end();
         });
 
         std::vector<std::unique_ptr<AhaBuffer>> removedBuffers{};

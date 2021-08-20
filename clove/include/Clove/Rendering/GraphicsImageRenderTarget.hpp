@@ -26,7 +26,7 @@ namespace clove {
     private:
         GhaImage::Descriptor imageDescriptor{};
 
-        GhaFactory *factory;
+        GhaFactory *factory{ nullptr };
 
         std::unique_ptr<GhaGraphicsQueue> graphicsQueue;
         std::unique_ptr<GhaTransferQueue> transferQueue;

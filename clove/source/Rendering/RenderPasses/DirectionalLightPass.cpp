@@ -55,7 +55,7 @@ namespace clove {
             .viewportDescriptor   = viewScissorArea,
             .scissorDescriptor    = viewScissorArea,
             .enableBlending       = false,
-            .renderPass           = std::move(ghaRenderPass),
+            .renderPass           = ghaRenderPass,
             .descriptorSetLayouts = {
                 meshLayout.get(),
             },
