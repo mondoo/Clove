@@ -75,32 +75,32 @@ namespace clove {
          * @brief Objects that hold the state / data of each image (in flight)
          */
         struct ImageData {
-            std::shared_ptr<GhaGraphicsCommandBuffer> commandBuffer;
-            std::shared_ptr<GhaGraphicsCommandBuffer> shadowMapCommandBuffer;
-            std::shared_ptr<GhaGraphicsCommandBuffer> cubeShadowMapCommandBuffer;
-            std::shared_ptr<GhaComputeCommandBuffer> skinningCommandBuffer;
+            std::unique_ptr<GhaGraphicsCommandBuffer> commandBuffer;
+            std::unique_ptr<GhaGraphicsCommandBuffer> shadowMapCommandBuffer;
+            std::unique_ptr<GhaGraphicsCommandBuffer> cubeShadowMapCommandBuffer;
+            std::unique_ptr<GhaComputeCommandBuffer> skinningCommandBuffer;
 
-            std::shared_ptr<GhaBuffer> frameDataBuffer;            /**< Holds data used across all meshes (lighting, camera etc.). */
+            std::unique_ptr<GhaBuffer> frameDataBuffer;            /**< Holds data used across all meshes (lighting, camera etc.). */
             std::vector<std::unique_ptr<GhaBuffer>> objectBuffers; /**< Holds the data for each object. */
 
-            std::shared_ptr<GhaDescriptorPool> frameDescriptorPool; /**< Descriptor pool for sets that change per frame. */
-            std::shared_ptr<GhaDescriptorPool> meshDescriptorPool;  /**< Descriptor pool for sets that are for a single mesh's material. */
-            std::shared_ptr<GhaDescriptorPool> uiDescriptorPool;    /**< Descriptor pool for sets that are for a ui element. */
-            std::shared_ptr<GhaDescriptorPool> skinningDescriptorPool;
+            std::unique_ptr<GhaDescriptorPool> frameDescriptorPool; /**< Descriptor pool for sets that change per frame. */
+            std::unique_ptr<GhaDescriptorPool> meshDescriptorPool;  /**< Descriptor pool for sets that are for a single mesh's material. */
+            std::unique_ptr<GhaDescriptorPool> uiDescriptorPool;    /**< Descriptor pool for sets that are for a ui element. */
+            std::unique_ptr<GhaDescriptorPool> skinningDescriptorPool;
 
-            std::shared_ptr<GhaDescriptorSet> viewDescriptorSet;
-            std::shared_ptr<GhaDescriptorSet> lightingDescriptorSet;
-            std::shared_ptr<GhaDescriptorSet> uiDescriptorSet;
+            std::unique_ptr<GhaDescriptorSet> viewDescriptorSet;
+            std::unique_ptr<GhaDescriptorSet> lightingDescriptorSet;
+            std::unique_ptr<GhaDescriptorSet> uiDescriptorSet;
 
-            std::shared_ptr<GhaImage> shadowMaps;
-            std::shared_ptr<GhaImageView> shadowMapViews;//View over entire array. For sampling in lighting shader.
-            std::array<std::shared_ptr<GhaImageView>, MAX_LIGHTS> shadowMapArrayLayerViews;//Views for each element of the array. For the frame buffer
-            std::array<std::shared_ptr<GhaFramebuffer>, MAX_LIGHTS> shadowMapFrameBuffers;
+            std::unique_ptr<GhaImage> shadowMaps;
+            std::unique_ptr<GhaImageView> shadowMapViews;//View over entire array. For sampling in lighting shader.
+            std::array<std::unique_ptr<GhaImageView>, MAX_LIGHTS> shadowMapArrayLayerViews;//Views for each element of the array. For the frame buffer
+            std::array<std::unique_ptr<GhaFramebuffer>, MAX_LIGHTS> shadowMapFrameBuffers;
 
-            std::shared_ptr<GhaImage> cubeShadowMaps;
-            std::shared_ptr<GhaImageView> cubeShadowMapViews;                                                           //Views the whole cube. For sampling in lighting shader.
-            std::array<std::array<std::shared_ptr<GhaImageView>, cubeMapLayerCount>, MAX_LIGHTS> cubeShadowMapFaceViews;//Views each side of the cube. For the frame buffer
-            std::array<std::array<std::shared_ptr<GhaFramebuffer>, cubeMapLayerCount>, MAX_LIGHTS> cubeShadowMapFrameBuffers;
+            std::unique_ptr<GhaImage> cubeShadowMaps;
+            std::unique_ptr<GhaImageView> cubeShadowMapViews;                                                           //Views the whole cube. For sampling in lighting shader.
+            std::array<std::array<std::unique_ptr<GhaImageView>, cubeMapLayerCount>, MAX_LIGHTS> cubeShadowMapFaceViews;//Views each side of the cube. For the frame buffer
+            std::array<std::array<std::unique_ptr<GhaFramebuffer>, cubeMapLayerCount>, MAX_LIGHTS> cubeShadowMapFrameBuffers;
         };
 
         //VARIABLES
@@ -113,48 +113,48 @@ namespace clove {
         DelegateHandle renderTargetPropertyChangedBeginHandle;
         DelegateHandle renderTargetPropertyChangedEndHandle;
         std::unique_ptr<RenderTarget> renderTarget;
-        std::vector<std::shared_ptr<GhaFramebuffer>> frameBuffers;//TODO: Move inside the ImageData
+        std::vector<std::unique_ptr<GhaFramebuffer>> frameBuffers;//TODO: Move inside the ImageData
 
         //'Square' mesh used to render UI
-        std::unique_ptr<Mesh> uiMesh;
+        std::shared_ptr<Mesh> uiMesh;
 
         GhaDevice *ghaDevice;
-        std::shared_ptr<GhaFactory> ghaFactory;
+        GhaFactory *ghaFactory;
 
-        std::shared_ptr<GhaGraphicsQueue> graphicsQueue;
-        std::shared_ptr<GhaComputeQueue> computeQueue;
+        std::unique_ptr<GhaGraphicsQueue> graphicsQueue;
+        std::unique_ptr<GhaComputeQueue> computeQueue;
 
-        std::unordered_map<DescriptorSetSlots, std::shared_ptr<GhaDescriptorSetLayout>> descriptorSetLayouts;
-        std::shared_ptr<GhaDescriptorSetLayout> skinningSetLayout;
+        std::unordered_map<DescriptorSetSlots, std::unique_ptr<GhaDescriptorSetLayout>> descriptorSetLayouts;
+        std::unique_ptr<GhaDescriptorSetLayout> skinningSetLayout;
 
         //Frame / image data objects
         FrameData currentFrameData;
         std::vector<ImageData> inFlightImageData;
 
         //Samplers passed along with textures
-        std::shared_ptr<GhaSampler> textureSampler;
-        std::shared_ptr<GhaSampler> uiSampler;
-        std::shared_ptr<GhaSampler> shadowSampler;
+        std::unique_ptr<GhaSampler> textureSampler;
+        std::unique_ptr<GhaSampler> uiSampler;
+        std::unique_ptr<GhaSampler> shadowSampler;
 
         //Geometry passes. TODO: Use vector?
         std::unordered_map<GeometryPass::Id, std::unique_ptr<GeometryPass>> geometryPasses;
 
         //Objects for the final colour render pass
-        std::shared_ptr<GhaRenderPass> renderPass;
-        std::shared_ptr<GhaGraphicsPipelineObject> widgetPipelineObject;
-        std::shared_ptr<GhaGraphicsPipelineObject> textPipelineObject;
+        std::unique_ptr<GhaRenderPass> renderPass;
+        std::unique_ptr<GhaGraphicsPipelineObject> widgetPipelineObject;
+        std::unique_ptr<GhaGraphicsPipelineObject> textPipelineObject;
 
-        std::shared_ptr<GhaImage> depthImage;
-        std::shared_ptr<GhaImageView> depthImageView;
+        std::unique_ptr<GhaImage> depthImage;
+        std::unique_ptr<GhaImageView> depthImageView;
 
         //Objects for the shadow map pass
-        std::shared_ptr<GhaRenderPass> shadowMapRenderPass;
+        std::unique_ptr<GhaRenderPass> shadowMapRenderPass;
 
         //Synchronisation obects
-        std::array<std::shared_ptr<GhaSemaphore>, maxFramesInFlight> skinningFinishedSemaphores;
+        std::array<std::unique_ptr<GhaSemaphore>, maxFramesInFlight> skinningFinishedSemaphores;
 
         //TEMP: Compute skinning objects -- Put inside a GeometryPass
-        std::shared_ptr<GhaComputePipelineObject> skinningPipeline;
+        std::unique_ptr<GhaComputePipelineObject> skinningPipeline;
 
         //FUNCTIONS
     public:
@@ -165,7 +165,7 @@ namespace clove {
         //ForwardRenderer3D(ForwardRenderer3D&& other) noexcept;
 
         ForwardRenderer3D &operator=(ForwardRenderer3D const &other) = delete;
-        ForwardRenderer3D &operator                                  =(ForwardRenderer3D &&other) noexcept;
+        ForwardRenderer3D &operator=(ForwardRenderer3D &&other) noexcept;
 
         ~ForwardRenderer3D();
 
@@ -199,6 +199,6 @@ namespace clove {
 
         void createRenderTargetFrameBuffers();
 
-        std::shared_ptr<GhaDescriptorPool> createDescriptorPool(std::unordered_map<DescriptorType, uint32_t> const &bindingCount, uint32_t const setCount);
+        std::unique_ptr<GhaDescriptorPool> createDescriptorPool(std::unordered_map<DescriptorType, uint32_t> const &bindingCount, uint32_t const setCount);
     };
 }

@@ -419,7 +419,7 @@ namespace clove {
         }
 
         devicePtr = DevicePointer{ instance, surface, physicalDevice, logicalDevice, debugMessenger };
-        factory   = std::make_shared<VulkanFactory>(devicePtr, queueFamilyIndices);
+        factory   = std::make_unique<VulkanFactory>(devicePtr, queueFamilyIndices);
     }
 
     VulkanDevice::VulkanDevice(VulkanDevice &&other) noexcept = default;
@@ -428,8 +428,8 @@ namespace clove {
 
     VulkanDevice::~VulkanDevice() = default;
 
-    std::shared_ptr<GhaFactory> VulkanDevice::getGraphicsFactory() const {
-        return factory;
+    GhaFactory *VulkanDevice::getGraphicsFactory() const {
+        return factory.get();
     }
 
     void VulkanDevice::waitForIdleDevice() {

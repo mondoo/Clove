@@ -19,7 +19,7 @@ namespace clove {
         //FUNCTIONS
     public:
         ForwardColourPass() = delete;
-        ForwardColourPass(GhaFactory &ghaFactory, std::shared_ptr<GhaRenderPass> ghaRenderPass);//TEMP: Using an external render pass for now but these pass will need to create their own
+        ForwardColourPass(GhaFactory &ghaFactory, GhaRenderPass* ghaRenderPass);//TEMP: Using an external render pass for now but these pass will need to create their own
 
         ForwardColourPass(ForwardColourPass const &other) = delete;
         ForwardColourPass(ForwardColourPass &&other) noexcept;

@@ -541,7 +541,7 @@ namespace clove {
         size_t const descriptorLayoutCount{ std::size(descriptor.descriptorSetLayouts) };
         std::vector<VkDescriptorSetLayout> descriptorLayouts(descriptorLayoutCount);
         for(size_t i = 0; i < descriptorLayoutCount; ++i) {
-            descriptorLayouts[i] = polyCast<VulkanDescriptorSetLayout>(descriptor.descriptorSetLayouts[i].get())->getLayout();
+            descriptorLayouts[i] = polyCast<VulkanDescriptorSetLayout const>(descriptor.descriptorSetLayouts[i])->getLayout();
         }
 
         //Push constants
@@ -581,7 +581,7 @@ namespace clove {
         shaderStages[0] = VkPipelineShaderStageCreateInfo{
             .sType  = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
             .stage  = VK_SHADER_STAGE_VERTEX_BIT,
-            .module = polyCast<VulkanShader>(descriptor.vertexShader.get())->getModule(),
+            .module = polyCast<VulkanShader const>(descriptor.vertexShader)->getModule(),
             .pName  = "main",
         };
 
@@ -589,7 +589,7 @@ namespace clove {
         shaderStages[1] = VkPipelineShaderStageCreateInfo{
             .sType  = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
             .stage  = VK_SHADER_STAGE_FRAGMENT_BIT,
-            .module = polyCast<VulkanShader>(descriptor.pixelShader.get())->getModule(),
+            .module = polyCast<VulkanShader const>(descriptor.pixelShader)->getModule(),
             .pName  = "main",
         };
 
@@ -741,7 +741,7 @@ namespace clove {
             .pColorBlendState    = &colorBlending,
             .pDynamicState       = &dynamicViewportState,
             .layout              = pipelineLayout,
-            .renderPass          = polyCast<VulkanRenderPass>(descriptor.renderPass.get())->getRenderPass(),
+            .renderPass          = polyCast<VulkanRenderPass const>(descriptor.renderPass)->getRenderPass(),
             .subpass             = 0,//The subpass of the renderpass that'll use this pipeline
             .basePipelineHandle  = VK_NULL_HANDLE,
             .basePipelineIndex   = -1,
@@ -767,7 +767,7 @@ namespace clove {
         size_t const descriptorLayoutCount{ std::size(descriptor.descriptorSetLayouts) };
         std::vector<VkDescriptorSetLayout> descriptorLayouts(descriptorLayoutCount);
         for(size_t i = 0; i < descriptorLayoutCount; ++i) {
-            descriptorLayouts[i] = polyCast<VulkanDescriptorSetLayout>(descriptor.descriptorSetLayouts[i].get())->getLayout();
+            descriptorLayouts[i] = polyCast<VulkanDescriptorSetLayout const>(descriptor.descriptorSetLayouts[i])->getLayout();
         }
 
         //Push constants
@@ -805,7 +805,7 @@ namespace clove {
         VkPipelineShaderStageCreateInfo const shaderStage{
             .sType  = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
             .stage  = VK_SHADER_STAGE_COMPUTE_BIT,
-            .module = polyCast<VulkanShader>(descriptor.shader.get())->getModule(),
+            .module = polyCast<VulkanShader const>(descriptor.shader)->getModule(),
             .pName  = "main",
         };
 
@@ -837,14 +837,14 @@ namespace clove {
         std::vector<VkImageView> attachments;
         attachments.reserve(std::size(descriptor.attachments));
         for(auto &attachment : descriptor.attachments) {
-            attachments.push_back(polyCast<VulkanImageView>(attachment.get())->getImageView());
+            attachments.push_back(polyCast<VulkanImageView const>(attachment)->getImageView());
         }
 
         VkFramebufferCreateInfo const framebufferInfo{
             .sType           = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
             .pNext           = nullptr,
             .flags           = 0,
-            .renderPass      = polyCast<VulkanRenderPass>(descriptor.renderPass.get())->getRenderPass(),
+            .renderPass      = polyCast<VulkanRenderPass const>(descriptor.renderPass)->getRenderPass(),
             .attachmentCount = static_cast<uint32_t>(std::size(attachments)),
             .pAttachments    = std::data(attachments),
             .width           = descriptor.width,

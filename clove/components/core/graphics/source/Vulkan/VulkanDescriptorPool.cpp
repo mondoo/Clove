@@ -21,16 +21,16 @@ namespace clove {
         vkDestroyDescriptorPool(device.get(), pool, nullptr);
     }
 
-    std::shared_ptr<GhaDescriptorSet> VulkanDescriptorPool::allocateDescriptorSets(std::shared_ptr<GhaDescriptorSetLayout> const &layout) {
-        return allocateDescriptorSets(std::vector{ layout })[0];
+    std::unique_ptr<GhaDescriptorSet> VulkanDescriptorPool::allocateDescriptorSets(GhaDescriptorSetLayout const *const layout) {
+        return std::move(allocateDescriptorSets(std::vector{ layout })[0]);
     }
 
-    std::vector<std::shared_ptr<GhaDescriptorSet>> VulkanDescriptorPool::allocateDescriptorSets(std::vector<std::shared_ptr<GhaDescriptorSetLayout>> const &layouts) {
-        size_t const numSets = std::size(layouts);
+    std::vector<std::unique_ptr<GhaDescriptorSet>> VulkanDescriptorPool::allocateDescriptorSets(std::vector<GhaDescriptorSetLayout const *> const &layouts) {
+        size_t const numSets{ layouts.size() };
 
         std::vector<VkDescriptorSetLayout> vulkanLayouts(numSets);
         for(size_t i = 0; i < numSets; ++i) {
-            vulkanLayouts[i] = polyCast<VulkanDescriptorSetLayout>(layouts[i].get())->getLayout();
+            vulkanLayouts[i] = polyCast<VulkanDescriptorSetLayout const>(layouts[i])->getLayout();
         }
 
         std::vector<VkDescriptorSet> vulkanSets(numSets);
@@ -48,24 +48,24 @@ namespace clove {
             return {};
         }
 
-        std::vector<std::shared_ptr<GhaDescriptorSet>> descriptorSets(numSets);
+        std::vector<std::unique_ptr<GhaDescriptorSet>> descriptorSets(numSets);
         for(size_t i = 0; i < numSets; ++i) {
-            descriptorSets[i] = std::make_shared<VulkanDescriptorSet>(device.get(), vulkanSets[i]);
+            descriptorSets[i] = std::make_unique<VulkanDescriptorSet>(device.get(), vulkanSets[i]);
         }
 
         return descriptorSets;
     }
 
-    void VulkanDescriptorPool::freeDescriptorSets(std::shared_ptr<GhaDescriptorSet> const &descriptorSet) {
+    void VulkanDescriptorPool::freeDescriptorSets(GhaDescriptorSet const *const descriptorSet) {
         freeDescriptorSets(std::vector{ descriptorSet });
     }
 
-    void VulkanDescriptorPool::freeDescriptorSets(std::vector<std::shared_ptr<GhaDescriptorSet>> const &descriptorSets) {
-        size_t const numSets = std::size(descriptorSets);
+    void VulkanDescriptorPool::freeDescriptorSets(std::vector<GhaDescriptorSet const *> const &descriptorSets) {
+        size_t const numSets{ descriptorSets.size() };
 
         std::vector<VkDescriptorSet> vulkanSets(numSets);
         for(size_t i = 0; i < numSets; ++i) {
-            vulkanSets[i] = polyCast<VulkanDescriptorSet>(descriptorSets[i].get())->getDescriptorSet();
+            vulkanSets[i] = polyCast<VulkanDescriptorSet const>(descriptorSets[i])->getDescriptorSet();
         }
 
         if(vkFreeDescriptorSets(device.get(), pool, numSets, std::data(vulkanSets)) != VK_SUCCESS) {

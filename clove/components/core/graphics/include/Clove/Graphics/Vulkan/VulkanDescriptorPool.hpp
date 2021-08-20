@@ -4,6 +4,7 @@
 #include "Clove/Graphics/Vulkan/DevicePointer.hpp"
 
 #include <vulkan/vulkan.h>
+#include <vector>
 
 namespace clove {
     class VulkanDescriptorPool : public GhaDescriptorPool {
@@ -29,11 +30,11 @@ namespace clove {
 
         inline Descriptor const &getDescriptor() const override;
 
-        std::shared_ptr<GhaDescriptorSet> allocateDescriptorSets(std::shared_ptr<GhaDescriptorSetLayout> const &layout) override;
-        std::vector<std::shared_ptr<GhaDescriptorSet>> allocateDescriptorSets(std::vector<std::shared_ptr<GhaDescriptorSetLayout>> const &layouts) override;
+        std::unique_ptr<GhaDescriptorSet> allocateDescriptorSets(GhaDescriptorSetLayout const *const layout) override;
+        std::vector<std::unique_ptr<GhaDescriptorSet>> allocateDescriptorSets(std::vector<GhaDescriptorSetLayout const *> const &layouts) override;
 
-        void freeDescriptorSets(std::shared_ptr<GhaDescriptorSet> const &descriptorSet) override;
-        void freeDescriptorSets(std::vector<std::shared_ptr<GhaDescriptorSet>> const &descriptorSets) override;
+        void freeDescriptorSets(GhaDescriptorSet const *const descriptorSet) override;
+        void freeDescriptorSets(std::vector<GhaDescriptorSet const *> const &descriptorSets) override;
 
         void reset() override;
     };

@@ -2,6 +2,8 @@
 
 #include "Clove/Rendering/Vertex.hpp"
 
+#include <memory>
+
 namespace clove {
     class GhaBuffer;
     class VertexLayout;
@@ -17,11 +19,11 @@ namespace clove {
         /**
          * @brief Buffer containing the bind pose vertices of this mesh.
          */
-        std::shared_ptr<GhaBuffer> vertexBuffer;
+        std::unique_ptr<GhaBuffer> vertexBuffer;
         /**
          * @brief Buffer container both the indices and skinned vertices of this mesh.
          */
-        std::shared_ptr<GhaBuffer> combinedBuffer;
+        std::unique_ptr<GhaBuffer> combinedBuffer;
 
         std::vector<Vertex> vertices;
         std::vector<uint16_t> indices;
@@ -45,17 +47,19 @@ namespace clove {
 
         /**
          * @brief Returns the GhaBuffer containing just the vertices.
+         * The lifetime of the buffer is tied to this object.
          * @details This buffer contains the bind pose vertices for the
          * mesh. Before any skinning has taken place.
          */
-        inline std::shared_ptr<GhaBuffer> const &getVertexBuffer() const;
+        inline GhaBuffer *getVertexBuffer() const;
 
         /**
          * @brief Returns a GhaBuffer containing both vertices and indices.
+         * The lifetime of the buffer is tied to this object.
          * @details The vertices in this buffer are pre-skinned and are safe
          * to use straight away for animated meshes.
          */
-        inline std::shared_ptr<GhaBuffer> const &getCombinedBuffer() const;
+        inline GhaBuffer *getCombinedBuffer() const;
 
         /**
          * @brief Returns the offset into the combinedBuffer for the vertices.

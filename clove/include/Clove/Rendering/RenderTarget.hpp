@@ -56,11 +56,16 @@ namespace clove {
          * number will be from 0 - N-1 where N is the total number of frames in flight.
          * @param submission The graphics queue submission that uses the imageIndex image.
          */
-        virtual void submit(uint32_t imageIndex, size_t const frameId, clove::GraphicsSubmitInfo submission) = 0;
+        virtual void submit(uint32_t imageIndex, size_t const frameId, GraphicsSubmitInfo submission) = 0;
 
-        virtual clove::GhaImage::Format getImageFormat() const = 0;
-        virtual vec2ui getSize() const                                      = 0;
+        virtual GhaImage::Format getImageFormat() const = 0;
+        virtual vec2ui getSize() const                  = 0;
 
-        virtual std::vector<std::shared_ptr<clove::GhaImageView>> getImageViews() const = 0;
+        /**
+         * @brief Returns the image views backing this RenderTarget. The lifetime of the views
+         * are tied to this object.
+         * @return 
+         */
+        virtual std::vector<GhaImageView *> getImageViews() const = 0;
     };
 }

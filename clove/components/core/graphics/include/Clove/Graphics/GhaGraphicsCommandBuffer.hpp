@@ -96,7 +96,7 @@ namespace clove {
          * @param size The size of the push constant range to update.
          * @param data The data to upload.
          */
-        virtual void pushConstant(GhaShader::Stage const stage, size_t const offset, size_t const size, void const *data) = 0;
+        virtual void pushConstant(GhaShader::Stage const stage, size_t const offset, size_t const size, void const *const data) = 0;
 
         virtual void drawIndexed(size_t const indexCount) = 0;
 

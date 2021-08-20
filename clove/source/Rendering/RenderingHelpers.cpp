@@ -236,11 +236,11 @@ namespace clove {
         vec3i constexpr imageOffset{ 0, 0, 0 };
         vec3ui const imageExtent{ imageDescriptor.dimensions.x, imageDescriptor.dimensions.y, 1 };
 
-        auto transferQueue = *factory.createTransferQueue({ QueueFlags::Transient });
-        auto graphicsQueue = *factory.createGraphicsQueue({ QueueFlags::Transient });
+        auto transferQueue{ *factory.createTransferQueue({ QueueFlags::Transient }) };
+        auto graphicsQueue{ *factory.createGraphicsQueue({ QueueFlags::Transient }) };
 
-        std::shared_ptr<GhaTransferCommandBuffer> transferCommandBuffer{ transferQueue->allocateCommandBuffer() };
-        std::shared_ptr<GhaGraphicsCommandBuffer> graphicsCommandBuffer{ graphicsQueue->allocateCommandBuffer() };
+        auto transferCommandBuffer{ transferQueue->allocateCommandBuffer() };
+        auto graphicsCommandBuffer{ graphicsQueue->allocateCommandBuffer() };
 
         auto image{ *factory.createImage(imageDescriptor) };
 
@@ -267,8 +267,8 @@ namespace clove {
         auto transferQueueFinishedFence{ *factory.createFence({ false }) };
         auto graphicsQueueFinishedFence{ *factory.createFence({ false }) };
 
-        transferQueue->submit({ TransferSubmitInfo{ .commandBuffers = { transferCommandBuffer } } }, transferQueueFinishedFence.get());
-        graphicsQueue->submit({ GraphicsSubmitInfo{ .commandBuffers = { graphicsCommandBuffer } } }, graphicsQueueFinishedFence.get());
+        transferQueue->submit({ TransferSubmitInfo{ .commandBuffers = { transferCommandBuffer.get() } } }, transferQueueFinishedFence.get());
+        graphicsQueue->submit({ GraphicsSubmitInfo{ .commandBuffers = { graphicsCommandBuffer.get() } } }, graphicsQueueFinishedFence.get());
 
         transferQueueFinishedFence->wait();
         transferQueue->freeCommandBuffer(*transferCommandBuffer);

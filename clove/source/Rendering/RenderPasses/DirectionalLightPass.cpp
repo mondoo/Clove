@@ -18,7 +18,7 @@ extern "C" const char meshshadowmap_p[];
 extern "C" const size_t meshshadowmap_pLength;
 
 namespace clove {
-    DirectionalLightPass::DirectionalLightPass(GhaFactory &ghaFactory, std::shared_ptr<GhaRenderPass> ghaRenderPass) {
+    DirectionalLightPass::DirectionalLightPass(GhaFactory &ghaFactory, GhaRenderPass *ghaRenderPass) {
         //Build include map
         std::unordered_map<std::string, std::string> shaderIncludes;
         shaderIncludes["Constants.glsl"] = { constants, constantsLength };
@@ -42,17 +42,22 @@ namespace clove {
             .size     = { shadowMapSize, shadowMapSize }
         };
 
+        auto vertShader{ *ghaFactory.createShaderFromSource({ meshshadowmap_v, meshshadowmap_vLength }, shaderIncludes, "Shadow Map - Animated Mesh (vertex)", GhaShader::Stage::Vertex) };
+        auto pixelShader{ *ghaFactory.createShaderFromSource({ meshshadowmap_p, meshshadowmap_pLength }, shaderIncludes, "Shadow Map (pixel)", GhaShader::Stage::Pixel) };
+
+        auto meshLayout{ createMeshDescriptorSetLayout(ghaFactory) };
+
         pipeline = *ghaFactory.createGraphicsPipelineObject(GhaGraphicsPipelineObject::Descriptor{
-            .vertexShader         = *ghaFactory.createShaderFromSource({ meshshadowmap_v, meshshadowmap_vLength }, shaderIncludes, "Shadow Map - Animated Mesh (vertex)", GhaShader::Stage::Vertex),
-            .pixelShader          = *ghaFactory.createShaderFromSource({ meshshadowmap_p, meshshadowmap_pLength }, shaderIncludes, "Shadow Map (pixel)", GhaShader::Stage::Pixel),
+            .vertexShader         = vertShader.get(),
+            .pixelShader          = pixelShader.get(),
             .vertexInput          = Vertex::getInputBindingDescriptor(),
             .vertexAttributes     = vertexAttributes,
             .viewportDescriptor   = viewScissorArea,
             .scissorDescriptor    = viewScissorArea,
             .enableBlending       = false,
-            .renderPass           = std::move(ghaRenderPass),
+            .renderPass           = ghaRenderPass,
             .descriptorSetLayouts = {
-                createMeshDescriptorSetLayout(ghaFactory),
+                meshLayout.get(),
             },
             .pushConstants = {
                 pushConstant,

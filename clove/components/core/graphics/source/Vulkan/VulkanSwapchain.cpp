@@ -20,7 +20,7 @@ namespace clove {
 
         imageViews.resize(std::size(images));
         for(size_t i = 0; i < images.size(); ++i) {
-            imageViews[i] = std::make_shared<VulkanImageView>(this->device.get(), VulkanImageView::create(this->device.get(), images[i], VK_IMAGE_VIEW_TYPE_2D, swapChainImageFormat, VK_IMAGE_ASPECT_COLOR_BIT, 0, 1));
+            imageViews[i] = std::make_unique<VulkanImageView>(this->device.get(), VulkanImageView::create(this->device.get(), images[i], VK_IMAGE_VIEW_TYPE_2D, swapChainImageFormat, VK_IMAGE_ASPECT_COLOR_BIT, 0, 1));
         }
     }
 
@@ -34,7 +34,7 @@ namespace clove {
 
     std::pair<uint32_t, Result> VulkanSwapchain::aquireNextImage(GhaSemaphore const *availableSemaphore) {
         uint32_t outImageIndex{ 0 };
-        VkSemaphore vkSemaphore{ availableSemaphore != nullptr ? polyCast<const VulkanSemaphore>(availableSemaphore)->getSemaphore() : VK_NULL_HANDLE };
+        VkSemaphore vkSemaphore{ availableSemaphore != nullptr ? polyCast<VulkanSemaphore const>(availableSemaphore)->getSemaphore() : VK_NULL_HANDLE };
         VkResult const result{ vkAcquireNextImageKHR(device.get(), swapchain, UINT64_MAX, vkSemaphore, VK_NULL_HANDLE, &outImageIndex) };
 
         return { outImageIndex, convertResult(result) };
@@ -48,8 +48,15 @@ namespace clove {
         return { swapChainExtent.width, swapChainExtent.height };
     }
 
-    std::vector<std::shared_ptr<GhaImageView>> VulkanSwapchain::getImageViews() const {
-        return { imageViews.begin(), imageViews.end() };
+    std::vector<GhaImageView *> VulkanSwapchain::getImageViews() const {
+        std::vector<GhaImageView *> views{};
+        views.reserve(imageViews.size());
+        
+        for(auto const &view : imageViews){
+            views.push_back(view.get());
+        }
+
+        return views;
     }
 
     VkSwapchainKHR VulkanSwapchain::getSwapchain() const {

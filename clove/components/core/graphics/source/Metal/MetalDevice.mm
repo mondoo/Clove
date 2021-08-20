@@ -24,7 +24,7 @@ namespace clove {
         
         [nsWindow setContentView:wrapper->view];
         
-        factory = std::make_shared<MetalFactory>(wrapper->device, wrapper->view);
+        factory = std::make_unique<MetalFactory>(wrapper->device, wrapper->view);
     }
     
     MetalDevice::MetalDevice(MetalDevice &&other) noexcept = default;
@@ -33,8 +33,8 @@ namespace clove {
     
     MetalDevice::~MetalDevice() = default;
     
-    std::shared_ptr<GhaFactory> MetalDevice::getGraphicsFactory() const {
-        return factory;
+    GhaFactory *MetalDevice::getGraphicsFactory() const {
+        return factory.get();
     }
     
     void MetalDevice::waitForIdleDevice() {

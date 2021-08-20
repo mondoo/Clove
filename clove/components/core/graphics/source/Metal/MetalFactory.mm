@@ -174,7 +174,7 @@ namespace clove {
     }
     
     Expected<std::unique_ptr<GhaSwapchain>, std::runtime_error> MetalFactory::createSwapChain(GhaSwapchain::Descriptor descriptor) noexcept {
-        std::vector<std::shared_ptr<GhaImage>> swapchainImages{};
+        std::vector<std::unique_ptr<GhaImage>> swapchainImages{};
         GhaImage::Format const drawableFormat{ MetalImage::convertFormat([view.metalLayer pixelFormat]) }; //Needs to be the same as the target for when we blit in the present queue
         
         GhaImage::Descriptor const imageDescriptor{
@@ -277,10 +277,10 @@ namespace clove {
     
     Expected<std::unique_ptr<GhaGraphicsPipelineObject>, std::runtime_error> MetalFactory::createGraphicsPipelineObject(GhaGraphicsPipelineObject::Descriptor descriptor) noexcept {
         //Vertex shader
-        id<MTLFunction> vertexFunction{ polyCast<MetalShader>(descriptor.vertexShader.get())->getFunction() };
+        id<MTLFunction> vertexFunction{ polyCast<MetalShader const>(descriptor.vertexShader)->getFunction() };
         
         //Pixel shader
-        id<MTLFunction> fragmentFunction{ polyCast<MetalShader>(descriptor.pixelShader.get())->getFunction() };
+        id<MTLFunction> fragmentFunction{ polyCast<MetalShader const>(descriptor.pixelShader)->getFunction() };
         
         //Vertex input
         MTLVertexDescriptor *vertexDescriptor{ [[MTLVertexDescriptor alloc] init] };
@@ -307,7 +307,7 @@ namespace clove {
         id<MTLDepthStencilState> depthStencilState{ [device newDepthStencilStateWithDescriptor:depthStencil] };
         
         //Render pass
-        MetalRenderPass const *const renderPass{ polyCast<MetalRenderPass>(descriptor.renderPass.get()) };
+        MetalRenderPass const *const renderPass{ polyCast<MetalRenderPass const>(descriptor.renderPass) };
         if(renderPass == nullptr) {
             return Unexpected{ std::runtime_error{ "Failed to create GraphicsPipelineObject. RenderPass is nullptr" } };
         }
@@ -345,7 +345,7 @@ namespace clove {
     }
     
     Expected<std::unique_ptr<GhaComputePipelineObject>, std::runtime_error> MetalFactory::createComputePipelineObject(GhaComputePipelineObject::Descriptor descriptor) noexcept {
-        id<MTLFunction> function{ polyCast<MetalShader>(descriptor.shader.get())->getFunction() };
+        id<MTLFunction> function{ polyCast<MetalShader const>(descriptor.shader)->getFunction() };
         
         NSError *error{ nullptr };
         id<MTLComputePipelineState> pipelineState{ [device newComputePipelineStateWithFunction:function
@@ -359,15 +359,15 @@ namespace clove {
     }
     
     Expected<std::unique_ptr<GhaFramebuffer>, std::runtime_error> MetalFactory::createFramebuffer(GhaFramebuffer::Descriptor descriptor) noexcept {
-        GhaRenderPass::Descriptor const &renderPassDescriptor{ polyCast<MetalRenderPass>(descriptor.renderPass.get())->getDescriptor() };
+        GhaRenderPass::Descriptor const &renderPassDescriptor{ polyCast<MetalRenderPass const>(descriptor.renderPass)->getDescriptor() };
         
         MTLRenderPassDescriptor *frameBufferDescriptor{ [[MTLRenderPassDescriptor alloc] init] };
         for(size_t i{ 0 }; i < renderPassDescriptor.colourAttachments.size(); ++i) {
-            frameBufferDescriptor.colorAttachments[i].texture = polyCast<MetalImageView>(descriptor.attachments[i].get())->getTexture();
+            frameBufferDescriptor.colorAttachments[i].texture = polyCast<MetalImageView const>(descriptor.attachments[i])->getTexture();
             frameBufferDescriptor.colorAttachments[i].loadAction = convertLoadOp(renderPassDescriptor.colourAttachments[i].loadOperation);
             frameBufferDescriptor.colorAttachments[i].storeAction = convertStoreOp(renderPassDescriptor.colourAttachments[i].storeOperation);
         }
-        frameBufferDescriptor.depthAttachment.texture = polyCast<MetalImageView>(descriptor.attachments.back().get())->getTexture();
+        frameBufferDescriptor.depthAttachment.texture = polyCast<MetalImageView const>(descriptor.attachments.back())->getTexture();
         frameBufferDescriptor.depthAttachment.loadAction = convertLoadOp(renderPassDescriptor.depthAttachment.loadOperation);
         frameBufferDescriptor.depthAttachment.storeAction = convertStoreOp(renderPassDescriptor.depthAttachment.storeOperation);
         

@@ -26,25 +26,25 @@ namespace clove {
     private:
         GhaImage::Descriptor imageDescriptor{};
 
-        std::shared_ptr<GhaFactory> factory;
+        GhaFactory *factory{ nullptr };
 
-        std::shared_ptr<GhaGraphicsQueue> graphicsQueue;
-        std::shared_ptr<GhaTransferQueue> transferQueue;
-        std::shared_ptr<GhaTransferCommandBuffer> transferCommandBuffer;
+        std::unique_ptr<GhaGraphicsQueue> graphicsQueue;
+        std::unique_ptr<GhaTransferQueue> transferQueue;
+        std::unique_ptr<GhaTransferCommandBuffer> transferCommandBuffer;
 
-        std::shared_ptr<GhaSemaphore> renderFinishedSemaphore;
-        std::shared_ptr<GhaFence> frameInFlight;
+        std::unique_ptr<GhaSemaphore> renderFinishedSemaphore;
+        std::unique_ptr<GhaFence> frameInFlight;
 
-        std::shared_ptr<GhaImage> renderTargetImage;
-        std::shared_ptr<GhaImageView> renderTargetView;
-        std::shared_ptr<GhaBuffer> renderTargetBuffer;
+        std::unique_ptr<GhaImage> renderTargetImage;
+        std::unique_ptr<GhaImageView> renderTargetView;
+        std::unique_ptr<GhaBuffer> renderTargetBuffer;
 
         bool requiresResize{ false };
 
         //FUNCTIONS
     public:
         GraphicsImageRenderTarget() = delete;
-        GraphicsImageRenderTarget(GhaImage::Descriptor imageDescriptor, std::shared_ptr<GhaFactory> factory);
+        GraphicsImageRenderTarget(GhaImage::Descriptor imageDescriptor, GhaFactory *factory);
 
         GraphicsImageRenderTarget(GraphicsImageRenderTarget const &other) = delete;
         GraphicsImageRenderTarget(GraphicsImageRenderTarget &&other) noexcept;
@@ -61,14 +61,15 @@ namespace clove {
         GhaImage::Format getImageFormat() const override;
         vec2ui getSize() const override;
 
-        std::vector<std::shared_ptr<GhaImageView>> getImageViews() const override;
+        std::vector<GhaImageView *> getImageViews() const override;
 
         void resize(vec2ui size);
 
         /**
          * @brief Returns a buffer containing the data of a recently written to image.
+         * The lifetime of the buffer is tied to this object.
          */
-        std::shared_ptr<GhaBuffer> getNextReadyBuffer();
+        GhaBuffer *getNextReadyBuffer();
 
     private:
         void createImages();

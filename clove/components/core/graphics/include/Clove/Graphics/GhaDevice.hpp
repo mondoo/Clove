@@ -1,8 +1,8 @@
 #pragma once
 
-#include <memory>
+#include <cstddef>
 
-namespace clove{
+namespace clove {
     class GhaFactory;
 }
 
@@ -13,7 +13,7 @@ namespace clove {
     class GhaDevice {
         //TYPES
     public:
-        struct Limits{
+        struct Limits {
             size_t minUniformBufferOffsetAlignment{ 0 };
         };
 
@@ -21,7 +21,12 @@ namespace clove {
     public:
         virtual ~GhaDevice() = default;
 
-        virtual std::shared_ptr<GhaFactory> getGraphicsFactory() const = 0;
+        /**
+         * @brief Returns a pointer to the factory object. The lifetime of the 
+         * factory is tied to the lifetime of this device.
+         * @return 
+         */
+        virtual GhaFactory *getGraphicsFactory() const = 0;
 
         /**
          * @brief Stalls the current thread until the device is idle.

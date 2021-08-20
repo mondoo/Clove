@@ -8,14 +8,14 @@
 #include <Clove/Cast.hpp>
 
 namespace clove {
-    MetalDescriptorSet::MetalDescriptorSet(id<MTLArgumentEncoder> vertexEncoder, id<MTLBuffer> vertexEncoderBuffer, id<MTLArgumentEncoder> pixelEncoder, id<MTLBuffer> pixelEncoderBuffer, id<MTLArgumentEncoder> computeEncoder, id<MTLBuffer> computeEncoderBuffer, std::shared_ptr<GhaDescriptorSetLayout> layout)
+    MetalDescriptorSet::MetalDescriptorSet(id<MTLArgumentEncoder> vertexEncoder, id<MTLBuffer> vertexEncoderBuffer, id<MTLArgumentEncoder> pixelEncoder, id<MTLBuffer> pixelEncoderBuffer, id<MTLArgumentEncoder> computeEncoder, id<MTLBuffer> computeEncoderBuffer, GhaDescriptorSetLayout const *layout)
         : vertexEncoder{ vertexEncoder }
         , vertexEncoderBuffer{ vertexEncoderBuffer }
         , pixelEncoder{ pixelEncoder }
         , pixelEncoderBuffer{ pixelEncoderBuffer }
         , computeEncoder{ computeEncoder }
         , computeEncoderBuffer{ computeEncoderBuffer }
-        , layout{ std::move(layout) } {
+        , layout{ layout } {
     }
     
     MetalDescriptorSet::MetalDescriptorSet(MetalDescriptorSet &&other) noexcept = default;

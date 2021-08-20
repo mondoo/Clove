@@ -20,14 +20,14 @@ namespace clove {
         /**
 		 * @brief Sets buffer to play audio from
 		 */
-        virtual void setBuffer(std::shared_ptr<AhaBuffer> buffer) = 0;
+        virtual void setBuffer(std::unique_ptr<AhaBuffer> buffer) = 0;
 
         /**
 		 * @brief Queues buffers to be played sequentially.
 		 * @details Buffers are appended to the end of the current queue.
 		 * @param buffers Vector of buffers to add to the queue.
 		 */
-        virtual void queueBuffers(std::vector<std::shared_ptr<AhaBuffer>> buffers) = 0;
+        virtual void queueBuffers(std::vector<std::unique_ptr<AhaBuffer>> buffers) = 0;
         /**
 		 * @brief Removes processed buffers from the queue.
 		 * @details Processed buffers can be removed from the queue, allowing their data 
@@ -36,7 +36,7 @@ namespace clove {
 		 * @param numToQueue The number of buffers to remove from the queue. must be <= getNumBuffersProcessed.
 		 * @returns A vector of AudioBuffers removed from the queue.
 		 */
-        virtual std::vector<std::shared_ptr<AhaBuffer>> unQueueBuffers(uint32_t const numToUnqueue) = 0;
+        virtual std::vector<std::unique_ptr<AhaBuffer>> unQueueBuffers(uint32_t const numToUnqueue) = 0;
 
         virtual void setPitch(float pitch)      = 0;
         virtual void setLooping(bool isLooping) = 0;

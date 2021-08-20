@@ -9,9 +9,9 @@
 #include <Clove/Graphics/GhaGraphicsQueue.hpp>
 
 namespace clove {
-    GraphicsImageRenderTarget::GraphicsImageRenderTarget(GhaImage::Descriptor imageDescriptor, std::shared_ptr<GhaFactory> factory)
+    GraphicsImageRenderTarget::GraphicsImageRenderTarget(GhaImage::Descriptor imageDescriptor, GhaFactory *factory)
         : imageDescriptor{ imageDescriptor }
-        , factory{ std::move(factory) } {
+        , factory{ factory } {
 
         //We won't be allocating any buffers from this queue, only using it to submit
         graphicsQueue = *this->factory->createGraphicsQueue(CommandQueueDescriptor{ .flags = QueueFlags::None });
@@ -47,12 +47,12 @@ namespace clove {
     void GraphicsImageRenderTarget::submit(uint32_t imageIndex, size_t const frameId, GraphicsSubmitInfo submission) {
         using namespace clove;
 
-        submission.signalSemaphores.push_back(renderFinishedSemaphore);
+        submission.signalSemaphores.push_back(renderFinishedSemaphore.get());
         graphicsQueue->submit({ std::move(submission) }, nullptr);
 
         TransferSubmitInfo transferSubmission{
-            .waitSemaphores = { { renderFinishedSemaphore, PipelineStage::Transfer } },
-            .commandBuffers = { transferCommandBuffer },
+            .waitSemaphores = { { renderFinishedSemaphore.get(), PipelineStage::Transfer } },
+            .commandBuffers = { transferCommandBuffer.get() },
         };
         transferQueue->submit({ std::move(transferSubmission) }, frameInFlight.get());
     }
@@ -65,8 +65,8 @@ namespace clove {
         return imageDescriptor.dimensions;
     }
 
-    std::vector<std::shared_ptr<GhaImageView>> GraphicsImageRenderTarget::getImageViews() const {
-        return { renderTargetView };
+    std::vector<GhaImageView *> GraphicsImageRenderTarget::getImageViews() const {
+        return { renderTargetView.get() };
     }
 
     void GraphicsImageRenderTarget::resize(vec2ui size) {
@@ -74,13 +74,13 @@ namespace clove {
         requiresResize             = true;
     }
 
-    std::shared_ptr<GhaBuffer> GraphicsImageRenderTarget::getNextReadyBuffer() {
+    GhaBuffer *GraphicsImageRenderTarget::getNextReadyBuffer() {
         CLOVE_ASSERT(!requiresResize, "Cannot get next ready buffer while a resize is pending");
 
         //Stall until we are ready to return the image.
         frameInFlight->wait();
 
-        return renderTargetBuffer;
+        return renderTargetBuffer.get();
     }
 
     void GraphicsImageRenderTarget::createImages() {
