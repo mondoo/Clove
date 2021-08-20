@@ -31,7 +31,7 @@ namespace clove {
 
         alCall(alSourcei(source, AL_BUFFER, alBuffer->getBufferId()));
 
-        bufferQueue.empty();
+        bufferQueue.clear();
         bufferQueue.push_back( std::move(buffer) );
     }
 
