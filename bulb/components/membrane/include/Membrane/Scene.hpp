@@ -11,13 +11,12 @@ namespace membrane {
     private:
         clove::EntityManager *manager{ nullptr };
 
-        std::filesystem::path sceneFile;
         std::vector<clove::Entity> knownEntities{};
 
         //FUNCTIONS
     public:
         Scene() = delete;
-        Scene(clove::EntityManager *manager, std::filesystem::path saveData);
+        Scene(clove::EntityManager *manager);
 
         Scene(Scene const &other)     = delete;
         Scene(Scene &&other) noexcept = delete;
@@ -27,8 +26,8 @@ namespace membrane {
 
         ~Scene();
 
-        void save();
-        void load();
+        void save(std::filesystem::path const savePath);
+        void load(std::filesystem::path const loadPath);
 
         inline clove::Entity createEntity();
         inline void deleteEntity(clove::Entity);

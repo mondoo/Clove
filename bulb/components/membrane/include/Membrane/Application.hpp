@@ -20,6 +20,7 @@ namespace membrane {
      * @brief Translates a Clove session into C++/CLI
      */
 public ref class Application {
+        //VARIABLES
     private:
         clove::Application *app;
         clove::GraphicsImageRenderTarget *renderTarget;
@@ -31,10 +32,16 @@ public ref class Application {
         int width;
         int height;
 
+        //FUNCTIONS
     public:
         Application(int const width, int const height);
         ~Application();
         !Application();
+
+        bool hasDefaultProject();
+        
+        void openProject(System::String ^projectPath);
+        void openDefaultProject();
 
         bool isRunning();
         void tick();
@@ -46,6 +53,8 @@ public ref class Application {
         System::String ^resolveVfsPath(System::String ^path);
 
     private:
+        void openProjectInternal(std::filesystem::path const projectPath);
+
         void setEditorMode(Editor_Stop ^message);
         void setRuntimeMode(Editor_Play ^message);
     };
