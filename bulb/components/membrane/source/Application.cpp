@@ -62,7 +62,14 @@ namespace membrane {
     }
 
     bool Application::hasDefaultProject() {
-        return std::filesystem::exists(cachedProjectsPath);
+        if(std::filesystem::exists(cachedProjectsPath)) {
+            auto loadResult{ clove::loadYaml(cachedProjectsPath) };
+            clove::serialiser::Node rootNode{ loadResult.getValue() };
+
+            return std::filesystem::exists(rootNode["projects"]["default"].as<std::string>());
+        }
+
+        return false;
     }
 
     void Application::openProject(System::String ^projectPath) {
