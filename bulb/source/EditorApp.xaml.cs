@@ -10,6 +10,8 @@ namespace Bulb {
     /// </summary>
     public partial class EditorApp : Application {
         private MainWindow editorWindow;
+        private ProjectSelector projectSelector;
+
         private EditorSessionViewModel sessionViewModel;
 
         private Membrane.Application engineApp;
@@ -22,6 +24,36 @@ namespace Bulb {
         private void EditorStartup(object sender, StartupEventArgs e) {
             //Initialise the engine
             engineApp = new Membrane.Application((int)size.Width, (int)size.Height);
+
+            //Check if the engine can load a previously used project or if we need to create a new one
+            if (!engineApp.hasDefaultProject()) {
+                OpenProjectSelector();
+            } else {
+                engineApp.openDefaultProject();
+                StartEditorSession();
+            }
+        }
+
+        private void OpenProjectSelector() {
+            //Change to explicit shut down to stop when project selector closes
+            ShutdownMode = ShutdownMode.OnExplicitShutdown;
+
+            projectSelector = new ProjectSelector();
+            projectSelector.OnProjectSelected += OnProjectSelected;
+
+            projectSelector.Show();
+        }
+
+        private void OnProjectSelected(string filePath) {
+            engineApp.openProject(filePath);
+
+            projectSelector.Close();
+
+            StartEditorSession();
+        }
+
+        private void StartEditorSession() {
+            ShutdownMode = ShutdownMode.OnLastWindowClose;
 
             //Set up the engine session
             sessionViewModel = new EditorSessionViewModel(".");
