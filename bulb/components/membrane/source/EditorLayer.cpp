@@ -115,7 +115,7 @@ namespace membrane {
 namespace membrane {
     EditorLayer::EditorLayer()
         : clove::Layer{ "Editor Layer" }
-        , currentScene{ clove::Application::get().getEntityManager(), "scene.yaml" } {
+        , currentScene{ clove::Application::get().getEntityManager() } {
         proxy = gcnew EditorLayerMessageProxy(this);
     }
 
@@ -233,11 +233,11 @@ namespace membrane {
     }
 
     void EditorLayer::saveScene() {
-        currentScene.save();
+        currentScene.save(clove::Application::get().getFileSystem()->resolve("./scene.clvscene"));
     }
 
     void EditorLayer::loadScene() {
-        currentScene.load();
+        currentScene.load(clove::Application::get().getFileSystem()->resolve("./scene.clvscene"));
 
         Engine_OnSceneLoaded ^ loadMessage { gcnew Engine_OnSceneLoaded };
         loadMessage->entities = gcnew System::Collections::Generic::List<Entity ^>{};
