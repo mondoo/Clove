@@ -95,6 +95,7 @@ namespace membrane {
     }
 
     void Application::shutdown() {
+        (*editorLayer)->saveScene();
         app->shutdown();
     }
 
@@ -144,6 +145,8 @@ namespace membrane {
     }
 
     void Application::setRuntimeMode(Editor_Play ^message) {
+        (*editorLayer)->saveScene();
+
         app->popLayer(*editorLayer);
         app->pushLayer(*runtimeLayer);
     }

@@ -228,7 +228,7 @@ namespace membrane {
     }
 
     void EditorLayer::onDetach() {
-        saveScene();
+        //saveScene();
         currentScene.destroyAllEntities();
     }
 

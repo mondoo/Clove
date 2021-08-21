@@ -41,11 +41,12 @@ namespace membrane {
         void onUpdate(clove::DeltaTime const deltaTime) override;
         void onDetach() override;
 
-    private:
+    //private:
         //TODO: Save and load scene to custom file
         void saveScene();
         void loadScene();
 
+    private:
         clove::Entity createEntity(std::string_view name = "New Entity");
         void deleteEntity(clove::Entity entity);
 
