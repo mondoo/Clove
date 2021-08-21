@@ -41,6 +41,8 @@ add_executable(
 		${SOURCE}/Views/EntityInfo.xaml.cs
 		${SOURCE}/Views/MainWindow.xaml
 		${SOURCE}/Views/MainWindow.xaml.cs
+		${SOURCE}/Views/ProjectSelector.xaml
+		${SOURCE}/Views/ProjectSelector.xaml.cs
 		${SOURCE}/Views/Vector3Box.xaml
 		${SOURCE}/Views/Vector3Box.xaml.cs
 		${SOURCE}/Views/Viewport.xaml
@@ -105,6 +107,9 @@ csharp_set_xaml_cs_properties(
 
 	${SOURCE}/Views/MainWindow.xaml
     ${SOURCE}/Views/MainWindow.xaml.cs
+
+	${SOURCE}/Views/ProjectSelector.xaml
+	${SOURCE}/Views/ProjectSelector.xaml.cs
 	
 	${SOURCE}/Views/Vector3Box.xaml
 	${SOURCE}/Views/Vector3Box.xaml.cs
