@@ -162,6 +162,8 @@ set(
 #Validation
 set(
 	ValidationFiles
+		${INCLUDE}/Validation/ValidationBuffer.hpp
+		${SOURCE}/Validation/ValidationBuffer.cpp
 		${INCLUDE}/Validation/ValidationDevice.hpp
 		${SOURCE}/Validation/ValidationDevice.cpp
 		${INCLUDE}/Validation/ValidationFactory.hpp

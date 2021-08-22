@@ -42,8 +42,6 @@ namespace clove {
     }
 
     void VulkanBuffer::write(void const *data, size_t const offset, size_t const size) {
-        CLOVE_ASSERT(descriptor.memoryType == MemoryType::SystemMemory, "{0}: Can only write to SystemMemory buffers", CLOVE_FUNCTION_NAME_PRETTY);
-
         void *cpuAccessibleMemory{ nullptr };
 
         vkMapMemory(device.get(), allocatedBlock->memory, allocatedBlock->offset + offset, size, 0, &cpuAccessibleMemory);
@@ -52,8 +50,6 @@ namespace clove {
     }
 
     void VulkanBuffer::read(void *data, size_t const offset, size_t const size) {
-        CLOVE_ASSERT(descriptor.memoryType == MemoryType::SystemMemory, "{0}: Can only read from SystemMemory buffers", CLOVE_FUNCTION_NAME_PRETTY);
-
         void *cpuAccessibleMemory{ nullptr };
 
         vkMapMemory(device.get(), allocatedBlock->memory, allocatedBlock->offset + offset, size, 0, &cpuAccessibleMemory);

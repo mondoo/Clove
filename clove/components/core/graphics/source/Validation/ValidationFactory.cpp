@@ -1,5 +1,7 @@
 #include "Clove/Graphics/Validation/ValidationFactory.hpp"
 
+#include "Clove/Graphics/Validation/ValidationBuffer.hpp"
+
 namespace clove {
     ValidationFactory::ValidationFactory(GhaFactory *factory)
         : internalFactory{ factory } {
@@ -72,7 +74,12 @@ namespace clove {
     }
 
     Expected<std::unique_ptr<GhaBuffer>, std::runtime_error> ValidationFactory::createBuffer(GhaBuffer::Descriptor descriptor) noexcept {
-        return internalFactory->createBuffer(std::move(descriptor));
+        auto result{ internalFactory->createBuffer(descriptor) };
+        if(result.hasValue()) {
+            return std::unique_ptr<GhaBuffer>{ std::make_unique<ValidationBuffer>(std::move(descriptor), std::move(result.getValue())) };
+        } else {
+            return result;
+        }
     }
 
     Expected<std::unique_ptr<GhaImage>, std::runtime_error> ValidationFactory::createImage(GhaImage::Descriptor descriptor) noexcept {
