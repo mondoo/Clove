@@ -7,8 +7,8 @@
 
 #include <Clove/Cast.hpp>
 
-namespace garlic::clove {
-    VulkanSwapchain::VulkanSwapchain(DevicePointer device, VkSwapchainKHR swapchain, VkFormat swapChainImageFormat, VkExtent2D swapChainExtent, std::vector<std::shared_ptr<VulkanImageView>> imageViews)
+namespace clove {
+    VulkanSwapchain::VulkanSwapchain(DevicePointer device, VkSwapchainKHR swapchain, VkFormat swapChainImageFormat, VkExtent2D swapChainExtent, std::vector<std::unique_ptr<VulkanImageView>> imageViews)
         : device{ std::move(device) }
         , swapchain{ swapchain }
         , swapChainImageFormat{ swapChainImageFormat }
@@ -26,7 +26,7 @@ namespace garlic::clove {
 
     std::pair<uint32_t, Result> VulkanSwapchain::aquireNextImage(GhaSemaphore const *availableSemaphore) {
         uint32_t outImageIndex{ 0 };
-        VkSemaphore vkSemaphore{ availableSemaphore != nullptr ? polyCast<const VulkanSemaphore>(availableSemaphore)->getSemaphore() : VK_NULL_HANDLE };
+        VkSemaphore vkSemaphore{ availableSemaphore != nullptr ? polyCast<VulkanSemaphore const>(availableSemaphore)->getSemaphore() : VK_NULL_HANDLE };
         VkResult const result{ vkAcquireNextImageKHR(device.get(), swapchain, UINT64_MAX, vkSemaphore, VK_NULL_HANDLE, &outImageIndex) };
 
         return { outImageIndex, convertResult(result) };
@@ -40,8 +40,15 @@ namespace garlic::clove {
         return { swapChainExtent.width, swapChainExtent.height };
     }
 
-    std::vector<std::shared_ptr<GhaImageView>> VulkanSwapchain::getImageViews() const {
-        return { imageViews.begin(), imageViews.end() };
+    std::vector<GhaImageView *> VulkanSwapchain::getImageViews() const {
+        std::vector<GhaImageView *> views{};
+        views.reserve(imageViews.size());
+        
+        for(auto const &view : imageViews){
+            views.push_back(view.get());
+        }
+
+        return views;
     }
 
     VkSwapchainKHR VulkanSwapchain::getSwapchain() const {

@@ -6,12 +6,12 @@
 #include <Clove/Maths/Vector.hpp>
 #include <vector>
 
-namespace garlic::clove {
+namespace clove {
     class GhaSemaphore;
     class GhaImageView;
 }
 
-namespace garlic::clove {
+namespace clove {
     /**
      * @brief A GhaSwapchain allows presentation of rendering results to a Window
      */
@@ -38,6 +38,11 @@ namespace garlic::clove {
         virtual GhaImage::Format getImageFormat() const = 0;
         virtual vec2ui getSize() const                  = 0;
 
-        virtual std::vector<std::shared_ptr<GhaImageView>> getImageViews() const = 0;
+        /**
+         * @brief Return the image views backing this swapchain. The lifetime
+         * of the views are tied to this object.
+         * @return 
+         */
+        virtual std::vector<GhaImageView *> getImageViews() const = 0;
     };
 }

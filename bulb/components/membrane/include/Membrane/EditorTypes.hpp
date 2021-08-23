@@ -1,6 +1,6 @@
 #pragma once
 
-namespace garlic::membrane {
+namespace membrane {
     // clang-format off
     public enum class ComponentType {
         Transform,
@@ -25,6 +25,13 @@ namespace garlic::membrane {
             , y{ y }
             , z{ z } {
         }
+    };
+
+    public ref class TransformComponentInitData{
+    public:
+        Vector3 position;
+        Vector3 rotation;
+        Vector3 scale;
     };
 
     public ref class StaticModelComponentInitData{

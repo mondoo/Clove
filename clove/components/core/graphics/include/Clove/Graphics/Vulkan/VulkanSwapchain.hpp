@@ -6,11 +6,11 @@
 
 #include <vulkan/vulkan.h>
 
-namespace garlic::clove {
+namespace clove {
     class VulkanImageView;
 }
 
-namespace garlic::clove {
+namespace clove {
     class VulkanSwapchain : public GhaSwapchain {
         //VARIABLES
     private:
@@ -20,12 +20,13 @@ namespace garlic::clove {
         VkFormat swapChainImageFormat{};
         VkExtent2D swapChainExtent{};
 
-        std::vector<std::shared_ptr<VulkanImageView>> imageViews{};
+        std::vector<VkImage> images;
+        std::vector<std::unique_ptr<VulkanImageView>> imageViews;
 
         //FUNCTIONS
     public:
         VulkanSwapchain() = delete;
-        VulkanSwapchain(DevicePointer device, VkSwapchainKHR swapchain, VkFormat swapChainImageFormat, VkExtent2D swapChainExtent, std::vector<std::shared_ptr<VulkanImageView>> imageViews);
+        VulkanSwapchain(DevicePointer device, VkSwapchainKHR swapchain, VkFormat swapChainImageFormat, VkExtent2D swapChainExtent, std::vector<std::unique_ptr<VulkanImageView>> imageViews);
 
         VulkanSwapchain(VulkanSwapchain const &other) = delete;
         VulkanSwapchain(VulkanSwapchain &&other) noexcept;
@@ -40,7 +41,7 @@ namespace garlic::clove {
         GhaImage::Format getImageFormat() const override;
         vec2ui getSize() const override;
 
-        std::vector<std::shared_ptr<GhaImageView>> getImageViews() const override;
+        std::vector<GhaImageView *> getImageViews() const override;
 
         VkSwapchainKHR getSwapchain() const;
     };

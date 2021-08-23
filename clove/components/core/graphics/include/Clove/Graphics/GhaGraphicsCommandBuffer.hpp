@@ -9,7 +9,7 @@
 #include <span>
 #include <variant>
 
-namespace garlic::clove {
+namespace clove {
     class GhaRenderPass;
     class GhaFramebuffer;
     class GhaGraphicsPipelineObject;
@@ -19,7 +19,7 @@ namespace garlic::clove {
     class GhaBuffer;
 }
 
-namespace garlic::clove {
+namespace clove {
     struct RenderArea {
         vec2i origin;
         vec2ui size;
@@ -39,7 +39,7 @@ namespace garlic::clove {
     };
 }
 
-namespace garlic::clove {
+namespace clove {
     /**
      * @brief A buffer for recording graphics commands.
      * @details Allocated from a GhaGraphicsQueue.
@@ -96,7 +96,7 @@ namespace garlic::clove {
          * @param size The size of the push constant range to update.
          * @param data The data to upload.
          */
-        virtual void pushConstant(GhaShader::Stage const stage, size_t const offset, size_t const size, void const *data) = 0;
+        virtual void pushConstant(GhaShader::Stage const stage, size_t const offset, size_t const size, void const *const data) = 0;
 
         virtual void drawIndexed(size_t const indexCount) = 0;
 

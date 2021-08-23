@@ -32,17 +32,17 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
     VkDebugUtilsMessengerCallbackDataEXT const *pCallbackData,
     void *pUserData) {
     if((messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT) != 0) {
-        CLOVE_LOG(LOG_CATEGORY_VULKAN, garlic::clove::LogLevel::Trace, pCallbackData->pMessage);
+        CLOVE_LOG(LOG_CATEGORY_VULKAN, clove::LogLevel::Trace, pCallbackData->pMessage);
     } else if((messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT) != 0) {
-        CLOVE_LOG(LOG_CATEGORY_VULKAN, garlic::clove::LogLevel::Warning, pCallbackData->pMessage);
+        CLOVE_LOG(LOG_CATEGORY_VULKAN, clove::LogLevel::Warning, pCallbackData->pMessage);
     } else if((messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT) != 0) {
-        CLOVE_LOG(LOG_CATEGORY_VULKAN, garlic::clove::LogLevel::Error, pCallbackData->pMessage);
+        CLOVE_LOG(LOG_CATEGORY_VULKAN, clove::LogLevel::Error, pCallbackData->pMessage);
     }
 
     return VK_FALSE;
 }
 
-namespace garlic::clove {
+namespace clove {
     namespace {
         VkResult createDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerCreateInfoEXT const *pCreateInfo, VkAllocationCallbacks const *pAllocator, VkDebugUtilsMessengerEXT *pDebugMessenger) {
             auto func = reinterpret_cast<PFN_vkCreateDebugUtilsMessengerEXT>(vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT"));
@@ -221,12 +221,12 @@ namespace garlic::clove {
 #elif CLOVE_PLATFORM_LINUX
                 VK_KHR_XLIB_SURFACE_EXTENSION_NAME,
 #endif
-#if CLOVE_DEBUG
+#if CLOVE_GHA_VALIDATION
                 VK_EXT_DEBUG_UTILS_EXTENSION_NAME,
 #endif
         };
 
-#if CLOVE_DEBUG
+#if CLOVE_GHA_VALIDATION
         std::vector<char const *> const validationLayers{
             "VK_LAYER_KHRONOS_validation"
         };
@@ -249,7 +249,7 @@ namespace garlic::clove {
                 .apiVersion         = VK_API_VERSION_1_2,
             };
 
-#if CLOVE_DEBUG
+#if CLOVE_GHA_VALIDATION
             VkDebugUtilsMessengerCreateInfoEXT debugMessengerCreateInfo{
                 .sType           = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT,
                 .messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT,
@@ -261,7 +261,7 @@ namespace garlic::clove {
 
             VkInstanceCreateInfo createInfo {
                 .sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
-#if CLOVE_DEBUG
+#if CLOVE_GHA_VALIDATION
                 .pNext                = &debugMessengerCreateInfo,//Setting the pNext allows us to debug the creation and destruction of the instance (as normaly we need an instance pointer to enable debugging)
                     .pApplicationInfo = &appInfo,
                 .enabledLayerCount    = static_cast<uint32_t>(std::size(validationLayers)),
@@ -281,7 +281,7 @@ namespace garlic::clove {
                 return;
             }
 
-#if CLOVE_DEBUG
+#if CLOVE_GHA_VALIDATION
             if(createDebugUtilsMessengerEXT(instance, &debugMessengerCreateInfo, nullptr, &debugMessenger) != VK_SUCCESS) {
                 CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to create vk debug message callback");
                 return;
@@ -400,7 +400,7 @@ namespace garlic::clove {
                 .queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size()),
                 .pQueueCreateInfos    = queueCreateInfos.data(),
 
-#if CLOVE_DEBUG
+#if CLOVE_GHA_VALIDATION
                 //We don't need to do this as device specific validation layers are no more. But seeing as it's the same data we can reuse them to support older versions
                     .enabledLayerCount = static_cast<uint32_t>(validationLayers.size()),
                 .ppEnabledLayerNames   = validationLayers.data(),
@@ -419,7 +419,7 @@ namespace garlic::clove {
         }
 
         devicePtr = DevicePointer{ instance, surface, physicalDevice, logicalDevice, debugMessenger };
-        factory   = std::make_shared<VulkanFactory>(devicePtr, queueFamilyIndices);
+        factory   = std::make_unique<VulkanFactory>(devicePtr, queueFamilyIndices);
     }
 
     VulkanDevice::VulkanDevice(VulkanDevice &&other) noexcept = default;
@@ -428,8 +428,8 @@ namespace garlic::clove {
 
     VulkanDevice::~VulkanDevice() = default;
 
-    std::shared_ptr<GhaFactory> VulkanDevice::getGraphicsFactory() const {
-        return factory;
+    GhaFactory *VulkanDevice::getGraphicsFactory() const {
+        return factory.get();
     }
 
     void VulkanDevice::waitForIdleDevice() {

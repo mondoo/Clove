@@ -8,10 +8,10 @@
 #include <Clove/Graphics/GhaFence.hpp>
 #include <Clove/Graphics/GhaGraphicsQueue.hpp>
 
-namespace garlic::clove {
-    GraphicsImageRenderTarget::GraphicsImageRenderTarget(GhaImage::Descriptor imageDescriptor, std::shared_ptr<GhaFactory> factory)
+namespace clove {
+    GraphicsImageRenderTarget::GraphicsImageRenderTarget(GhaImage::Descriptor imageDescriptor, GhaFactory *factory)
         : imageDescriptor{ imageDescriptor }
-        , factory{ std::move(factory) } {
+        , factory{ factory } {
         transferQueue         = *this->factory->createTransferQueue(CommandQueueDescriptor{ .flags = QueueFlags::ReuseBuffers });
         transferCommandBuffer = transferQueue->allocateCommandBuffer();
 
@@ -26,7 +26,7 @@ namespace garlic::clove {
 
     GraphicsImageRenderTarget::~GraphicsImageRenderTarget() = default;
 
-    Expected<uint32_t, std::string> GraphicsImageRenderTarget::aquireNextImage(std::shared_ptr<GhaSemaphore> signalSemaphore) {
+    Expected<uint32_t, std::string> GraphicsImageRenderTarget::aquireNextImage(GhaSemaphore const *const signalSemaphore) {
         if(requiresResize) {
             createImages();
             return Unexpected<std::string>{ "Backbuffer was recreated." };
@@ -37,7 +37,7 @@ namespace garlic::clove {
         //is ready to transfer another image
         if(signalSemaphore != nullptr) {
             TransferSubmitInfo transferSubmission{
-                .signalSemaphores = { std::move(signalSemaphore) },
+                .signalSemaphores = { signalSemaphore },
             };
             transferQueue->submit({ std::move(transferSubmission) }, nullptr);
         }
@@ -45,19 +45,19 @@ namespace garlic::clove {
         return 0; //Only a single backing image for now
     }
 
-    void GraphicsImageRenderTarget::present(uint32_t imageIndex, std::vector<std::shared_ptr<GhaSemaphore>> waitSemaphores) {
+    void GraphicsImageRenderTarget::present(uint32_t imageIndex, std::vector<GhaSemaphore const *> waitSemaphores) {
         //Fences can't be resubmitted in a signaled state. So we have to wait for and then reset the fence.
         frameInFlight->wait();
         frameInFlight->reset();
 
-        std::vector<std::pair<std::shared_ptr<GhaSemaphore>, PipelineStage>> transferWaitSemaphores;
+        std::vector<std::pair<GhaSemaphore const *, PipelineStage>> transferWaitSemaphores;
         for(auto const &semaphore : waitSemaphores) {
             transferWaitSemaphores.push_back(std::make_pair(semaphore, PipelineStage::Transfer));
         }
 
         TransferSubmitInfo transferSubmission{
             .waitSemaphores = transferWaitSemaphores,
-            .commandBuffers = { transferCommandBuffer },
+            .commandBuffers = { transferCommandBuffer.get() },
         };
         transferQueue->submit({ std::move(transferSubmission) }, frameInFlight.get());
     }
@@ -70,8 +70,8 @@ namespace garlic::clove {
         return imageDescriptor.dimensions;
     }
 
-    std::vector<std::shared_ptr<GhaImageView>> GraphicsImageRenderTarget::getImageViews() const {
-        return { renderTargetView };
+    std::vector<GhaImageView *> GraphicsImageRenderTarget::getImageViews() const {
+        return { renderTargetView.get() };
     }
 
     void GraphicsImageRenderTarget::resize(vec2ui size) {
@@ -79,13 +79,13 @@ namespace garlic::clove {
         requiresResize             = true;
     }
 
-    std::shared_ptr<GhaBuffer> GraphicsImageRenderTarget::getNextReadyBuffer() {
+    GhaBuffer *GraphicsImageRenderTarget::getNextReadyBuffer() {
         CLOVE_ASSERT(!requiresResize, "Cannot get next ready buffer while a resize is pending");
 
         //Stall until we are ready to return the image.
         frameInFlight->wait();
 
-        return renderTargetBuffer;
+        return renderTargetBuffer.get();
     }
 
     void GraphicsImageRenderTarget::createImages() {
@@ -112,16 +112,16 @@ namespace garlic::clove {
 
         //Pre-record the transfer command
         ImageMemoryBarrierInfo constexpr layoutTransferInfo{
-            .currentAccess      = AccessFlags::ColourAttachmentWrite,
+            .currentAccess      = AccessFlags::None,
             .newAccess          = AccessFlags::TransferRead,
-            .currentImageLayout = GhaImage::Layout::ColourAttachmentOptimal,
+            .currentImageLayout = GhaImage::Layout::Present,
             .newImageLayout     = GhaImage::Layout::TransferSourceOptimal,
             .sourceQueue        = QueueType::None,
             .destinationQueue   = QueueType::None,
         };
 
         transferCommandBuffer->beginRecording(CommandBufferUsage::Default);
-        transferCommandBuffer->imageMemoryBarrier(*renderTargetImage, layoutTransferInfo, PipelineStage::ColourAttachmentOutput, PipelineStage::Transfer);
+        transferCommandBuffer->imageMemoryBarrier(*renderTargetImage, layoutTransferInfo, PipelineStage::Top, PipelineStage::Transfer);
         transferCommandBuffer->copyImageToBuffer(*renderTargetImage, { 0, 0, 0 }, { imageDescriptor.dimensions, 1 }, *renderTargetBuffer, 0);
         transferCommandBuffer->endRecording();
 

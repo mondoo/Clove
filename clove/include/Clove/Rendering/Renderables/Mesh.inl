@@ -1,10 +1,10 @@
-namespace garlic::clove {
-    std::shared_ptr<GhaBuffer> const &Mesh::getVertexBuffer() const {
-        return vertexBuffer;
+namespace clove {
+    GhaBuffer *Mesh::getVertexBuffer() const {
+        return vertexBuffer.get();
     }
 
-    std::shared_ptr<GhaBuffer> const &Mesh::getCombinedBuffer() const {
-        return combinedBuffer;
+    GhaBuffer *Mesh::getCombinedBuffer() const {
+        return combinedBuffer.get();
     }
 
     size_t Mesh::getVertexOffset() const {

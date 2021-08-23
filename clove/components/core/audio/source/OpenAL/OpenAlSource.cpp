@@ -8,7 +8,7 @@
 #include <Clove/Log/Log.hpp>
 #include <set>
 
-namespace garlic::clove {
+namespace clove {
     OpenAlSource::OpenAlSource(ALuint source)
         : source{ source } {
     }
@@ -21,20 +21,21 @@ namespace garlic::clove {
         alCall(alDeleteSources(1, &source));
     }
 
-    void OpenAlSource::setBuffer(std::shared_ptr<AhaBuffer> buffer) {
+    void OpenAlSource::setBuffer(std::unique_ptr<AhaBuffer> buffer) {
         OpenAlBuffer const *const alBuffer{ polyCast<OpenAlBuffer const>(buffer.get()) };
-        
-        if(alBuffer == nullptr){
+
+        if(alBuffer == nullptr) {
             CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0} called with nullptr", CLOVE_FUNCTION_NAME_PRETTY);
             return;
         }
 
         alCall(alSourcei(source, AL_BUFFER, alBuffer->getBufferId()));
 
-        bufferQueue = { buffer };
+        bufferQueue.clear();
+        bufferQueue.push_back(std::move(buffer));
     }
 
-    void OpenAlSource::queueBuffers(std::vector<std::shared_ptr<AhaBuffer>> buffers) {
+    void OpenAlSource::queueBuffers(std::vector<std::unique_ptr<AhaBuffer>> buffers) {
         //Get the buffer Id of all of the buffers to placed into the queue
         std::vector<ALuint> alBuffers(buffers.size());
         for(size_t i{ 0 }; i < std::size(alBuffers); ++i) {
@@ -46,16 +47,23 @@ namespace garlic::clove {
             }
         }
 
-        alCall(alSourceQueueBuffers(source, std::size(alBuffers), alBuffers.data()));
+        alCall(alSourceQueueBuffers(source, alBuffers.size(), alBuffers.data()));
 
-        bufferQueue.insert(bufferQueue.end(), buffers.begin(), buffers.end());
+        for(auto &buffer : buffers) {
+            bufferQueue.push_back(std::move(buffer));
+        }
     }
 
-    std::vector<std::shared_ptr<AhaBuffer>> OpenAlSource::unQueueBuffers(uint32_t const numToUnqueue) {
-#if CLOVE_DEBUG
-        const uint32_t maxAbleToUnQueue{ getNumBuffersProcessed() };
-        CLOVE_ASSERT(numToUnqueue <= maxAbleToUnQueue, "{0}, Can't unqueue {1} buffers. Only {2} buffers have been processed", CLOVE_FUNCTION_NAME_PRETTY, numToUnqueue, maxAbleToUnQueue);
+    std::vector<std::unique_ptr<AhaBuffer>> OpenAlSource::unQueueBuffers(uint32_t numToUnqueue) {
+        {
+            const uint32_t maxAbleToUnQueue{ getNumBuffersProcessed() };
+#if CLOVE_AHA_VALIDATION
+            CLOVE_ASSERT(numToUnqueue <= maxAbleToUnQueue, "{0}: Can't unqueue {1} buffers. Only {2} buffers have been processed", CLOVE_FUNCTION_NAME_PRETTY, numToUnqueue, maxAbleToUnQueue);
+#else
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Warning, "{0}: {1} buffers attempted to unqueue but only {2} are avaiable. Clamping to {2}", CLOVE_FUNCTION_NAME_PRETTY, numToUnqueue, maxAbleToUnQueue);
+            numToUnqueue = maxAbleToUnQueue;
 #endif
+        }
 
         auto *buffers{ new ALuint[numToUnqueue] };
         alCall(alSourceUnqueueBuffers(source, numToUnqueue, buffers));
@@ -67,10 +75,7 @@ namespace garlic::clove {
 
         delete[] buffers;
 
-        std::vector<std::shared_ptr<AhaBuffer>> removedBuffers;
-        removedBuffers.reserve(numToUnqueue);
-
-        auto removeIter = std::remove_if(bufferQueue.begin(), bufferQueue.end(), [&](std::shared_ptr<AhaBuffer> const &buffer) {
+        auto removeIter = std::remove_if(bufferQueue.begin(), bufferQueue.end(), [&](std::unique_ptr<AhaBuffer> const &buffer) {
             OpenAlBuffer const *const alBuffer{ polyCast<OpenAlBuffer const>(buffer.get()) };
 
             if(alBuffer == nullptr) {
@@ -80,13 +85,13 @@ namespace garlic::clove {
 
             ALuint const bufferId{ alBuffer->getBufferId() };
 
-            if(pendingBuffers.find(bufferId) != pendingBuffers.end()) {
-                removedBuffers.push_back(buffer);
-                return true;
-            }
-
-            return false;
+            return pendingBuffers.find(bufferId) != pendingBuffers.end();
         });
+
+        std::vector<std::unique_ptr<AhaBuffer>> removedBuffers{};
+        for(auto iter{ removeIter }; iter != bufferQueue.end(); ++iter) {
+            removedBuffers.push_back(std::move(*iter));
+        }
 
         bufferQueue.erase(removeIter, bufferQueue.end());
 

@@ -1,12 +1,12 @@
-<Window x:Class="Garlic.Bulb.MainWindow"
+<Window x:Class="Bulb.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Garlic.Bulb"
-		xmlns:membrane="clr-namespace:garlic.membrane;assembly=BulbMembrane"
+        xmlns:local="clr-namespace:Bulb"
+		xmlns:membrane="clr-namespace:membrane;assembly=BulbMembrane"
         mc:Ignorable="d"
-        Title="Garlic - 0.4.0" Width="1280" Height="720"
+        Title="Clove - 0.4.0" Width="1280" Height="720"
 		Style="{StaticResource PrimaryWindowStyle}"
 		MouseMove="Window_MouseMove"
 		KeyUp="Window_KeyUp">
@@ -113,7 +113,7 @@
 							  DockPanel.Dock="Right"
 							  Width="{Binding Converter={StaticResource SizePercentageConverter}, ElementName=Dock, Path=ActualWidth, ConverterParameter=0.15}"
 							  HorizontalAlignment="Right"
-							  DataContext="{Binding Scene}"/>
+							  DataContext="{Binding Scene.SelectedEntity}"/>
 
 			<TextBlock x:Name="ToggleContentHint"
 					   Text="ctrl+space"

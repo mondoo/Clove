@@ -5,7 +5,7 @@
 #include <Clove/Maths/Vector.hpp>
 #include <cinttypes>
 
-namespace garlic::clove {
+namespace clove {
     /**
      * @brief Represents a view on a subset of a GhaImage.
      * @details GhaImages are not directly accessed by shaders for reading / writing.

@@ -9,7 +9,7 @@
 #include <Clove/Definitions.hpp>
 #include <Clove/Log/Log.hpp>
 
-namespace garlic::clove {
+namespace clove {
     VulkanComputeQueue::VulkanComputeQueue(DevicePointer device, VkQueue queue, VkCommandPool commandPool, QueueFamilyIndices queueFamilyIndices)
         : device{ std::move(device) }
         , queue{ queue }
@@ -65,7 +65,7 @@ namespace garlic::clove {
             waitStages[i].resize(waitSemaphoreCount);
 
             for(size_t j = 0; j < waitSemaphoreCount; ++j) {
-                waitSemaphores[i][j] = polyCast<VulkanSemaphore>(submissions[i].waitSemaphores[j].first.get())->getSemaphore();
+                waitSemaphores[i][j] = polyCast<VulkanSemaphore const>(submissions[i].waitSemaphores[j].first)->getSemaphore();
                 waitStages[i][j]     = convertStage(submissions[i].waitSemaphores[j].second);
             }
 
@@ -73,14 +73,14 @@ namespace garlic::clove {
             size_t const commandBufferCount{ std::size(submissions[i].commandBuffers) };
             commandBuffers[i].resize(commandBufferCount);
             for(size_t j = 0; j < commandBufferCount; ++j) {
-                commandBuffers[i][j] = polyCast<VulkanComputeCommandBuffer>(submissions[i].commandBuffers[j].get())->getCommandBuffer();
+                commandBuffers[i][j] = polyCast<VulkanComputeCommandBuffer const>(submissions[i].commandBuffers[j])->getCommandBuffer();
             }
 
             //Signal semaphores
             size_t const signalSemaphoreCount{ std::size(submissions[i].signalSemaphores) };
             signalSemaphores[i].resize(signalSemaphoreCount);
             for(size_t j = 0; j < signalSemaphoreCount; ++j) {
-                signalSemaphores[i][j] = polyCast<VulkanSemaphore>(submissions[i].signalSemaphores[j].get())->getSemaphore();
+                signalSemaphores[i][j] = polyCast<VulkanSemaphore const>(submissions[i].signalSemaphores[j])->getSemaphore();
             }
 
             vkSubmissions.emplace_back(VkSubmitInfo{

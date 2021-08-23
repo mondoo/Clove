@@ -7,7 +7,7 @@
 #include <Clove/Log/Log.hpp>
 #include <array>
 
-namespace garlic::clove {
+namespace clove {
     VulkanImage::VulkanImage(DevicePointer device, VkImage image, Descriptor descriptor, std::shared_ptr<MemoryAllocator> memoryAllocator)
         : device{ std::move(device) }
         , image{ image }

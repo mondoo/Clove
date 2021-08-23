@@ -13,7 +13,7 @@ extern "C" const size_t constantsLength;
 extern "C" const char skinning_c[];
 extern "C" const size_t skinning_cLength;
 
-namespace garlic::clove {
+namespace clove {
     SkinningPass::SkinningPass(GhaFactory &ghaFactory) {
         //Build include map
         std::unordered_map<std::string, std::string> shaderIncludes;
@@ -24,15 +24,19 @@ namespace garlic::clove {
 			.stage = GhaShader::Stage::Compute,
 			.size  = sizeof(size_t),
 		};
-		
+
+        auto shader{ *ghaFactory.createShaderFromSource({ skinning_c, skinning_cLength }, shaderIncludes, "Skinning (compute)", GhaShader::Stage::Compute) };
+
+        auto skinningLayout{ createSkinningDescriptorSetLayout(ghaFactory) };
+
         GhaComputePipelineObject::Descriptor const skinningPipelineDescriptor{
-            .shader               = *ghaFactory.createShaderFromSource({ skinning_c, skinning_cLength }, shaderIncludes, "Skinning (compute)", GhaShader::Stage::Compute),
-			.descriptorSetLayouts = {
-                createSkinningDescriptorSetLayout(ghaFactory),
+            .shader               = shader.get(),
+            .descriptorSetLayouts = {
+                skinningLayout.get(),
             },
-			.pushConstants = {
-				pushConstant,
-			},
+            .pushConstants = {
+                pushConstant,
+            },
         };
 
         pipeline = *ghaFactory.createComputePipelineObject(skinningPipelineDescriptor);

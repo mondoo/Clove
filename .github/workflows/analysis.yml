@@ -3,16 +3,16 @@ on:
   pull_request:
     branches: [master]
 env:
-  CMAKE_FLAGS: -DCLOVE_ENABLE_ASSERTIONS=ON -DCLOVE_ENABLE_DEBUG_DEFINITION=ON -DCLOVE_ENABLE_PROFILING=OFF -DCLOVE_LOG_LEVEL=2 -DCLOVE_USE_SAFE_CAST=ON -DGAR_BUILD_TESTS=OFF -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+  CMAKE_FLAGS: -DCLOVE_ENABLE_ASSERTIONS=ON -DCLOVE_ENABLE_DEBUG_DEFINITION=ON -DCLOVE_ENABLE_PROFILING=OFF -DCLOVE_LOG_LEVEL=2 -DCLOVE_USE_SAFE_CAST=ON -DCLOVE_BUILD_TESTS=OFF -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
   BUILD_TYPE: Release
 jobs:
   cpp_check:
     runs-on: ubuntu-latest
     container:
-      image: docker.pkg.github.com/agarlicmonkey/garlic/linux_analysis:2.0
+      image: ghcr.io/agarlicmonkey/clove/linux_analysis:2.0
       credentials:
-        username: ${{ secrets.DOCKER_LOGIN_USERNAME }}
-        password: ${{ secrets.DOCKER_LOGIN_TOKEN }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v2
         with:
@@ -45,10 +45,10 @@ jobs:
   clang-tidy-linux:
     runs-on: ubuntu-latest
     container:
-      image: docker.pkg.github.com/agarlicmonkey/garlic/linux_analysis:2.0
+      image: ghcr.io/agarlicmonkey/clove/linux_analysis:2.0
       credentials:
-        username: ${{ secrets.DOCKER_LOGIN_USERNAME }}
-        password: ${{ secrets.DOCKER_LOGIN_TOKEN }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v2
         with:

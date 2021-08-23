@@ -5,7 +5,7 @@
 
 #include <Clove/Cast.hpp>
 
-namespace garlic::clove {
+namespace clove {
     MetalDescriptorPool::BufferPool::BufferPool() = default;
     
     MetalDescriptorPool::BufferPool::~BufferPool() = default;
@@ -65,21 +65,21 @@ namespace garlic::clove {
         return descriptor;
     }
     
-    std::shared_ptr<GhaDescriptorSet> MetalDescriptorPool::allocateDescriptorSets(std::shared_ptr<GhaDescriptorSetLayout> const &layout) {
-        return allocateDescriptorSets(std::vector{ layout })[0];
+    std::unique_ptr<GhaDescriptorSet> MetalDescriptorPool::allocateDescriptorSets(GhaDescriptorSetLayout const *const layout) {
+        return std::move(allocateDescriptorSets(std::vector{ layout })[0]);
     }
     
-    std::vector<std::shared_ptr<GhaDescriptorSet>> MetalDescriptorPool::allocateDescriptorSets(std::vector<std::shared_ptr<GhaDescriptorSetLayout>> const &layouts) {
+    std::vector<std::unique_ptr<GhaDescriptorSet>> MetalDescriptorPool::allocateDescriptorSets(std::vector<GhaDescriptorSetLayout const *> const &layouts) {
         @autoreleasepool{
             size_t const setNum{ layouts.size() };
             
-            std::vector<MetalDescriptorSetLayout *> metalDescriptorSets{};
+            std::vector<MetalDescriptorSetLayout const *> metalDescriptorSets{};
             metalDescriptorSets.reserve(setNum);
             for(size_t i{ 0 }; i < layouts.size(); ++i) {
-                metalDescriptorSets.emplace_back(polyCast<MetalDescriptorSetLayout>(layouts[i].get()));
+                metalDescriptorSets.emplace_back(polyCast<MetalDescriptorSetLayout const>(layouts[i]));
             }
             
-            std::vector<std::shared_ptr<GhaDescriptorSet>> descriptorSets{};
+            std::vector<std::unique_ptr<GhaDescriptorSet>> descriptorSets{};
             descriptorSets.reserve(setNum);
             for(size_t i{ 0 }; i < layouts.size(); ++i) {
                 id<MTLArgumentEncoder> vertexEncoder{ nullptr };
@@ -109,20 +109,20 @@ namespace garlic::clove {
                     [computeEncoder setArgumentBuffer:computeEncoderBuffer offset:0];
                 }
                 
-                descriptorSets.emplace_back(std::make_shared<MetalDescriptorSet>(vertexEncoder, vertexEncoderBuffer, pixelEncoder, pixelEncoderBuffer, computeEncoder, computeEncoderBuffer, layouts[i]));
+                descriptorSets.emplace_back(std::make_unique<MetalDescriptorSet>(vertexEncoder, vertexEncoderBuffer, pixelEncoder, pixelEncoderBuffer, computeEncoder, computeEncoderBuffer, layouts[i]));
             }
             
             return descriptorSets;
         }
     }
     
-    void MetalDescriptorPool::freeDescriptorSets(std::shared_ptr<GhaDescriptorSet> const &descriptorSet) {
+    void MetalDescriptorPool::freeDescriptorSets(GhaDescriptorSet const *const descriptorSet) {
         freeDescriptorSets(std::vector{ descriptorSet });
     }
     
-    void MetalDescriptorPool::freeDescriptorSets(std::vector<std::shared_ptr<GhaDescriptorSet>> const &descriptorSets) {
+    void MetalDescriptorPool::freeDescriptorSets(std::vector<GhaDescriptorSet const *> const &descriptorSets) {
         for(auto const &descriptorSet : descriptorSets) {
-            auto const *const mtlDescriptorSet{ polyCast<MetalDescriptorSet>(descriptorSet.get()) };
+            auto const *const mtlDescriptorSet{ polyCast<MetalDescriptorSet const>(descriptorSet) };
             if(mtlDescriptorSet == nullptr) {
                 CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Warning, "{0}: Descriptor set provided is nullptr. Buffers might never be freed", CLOVE_FUNCTION_NAME);
                 continue;

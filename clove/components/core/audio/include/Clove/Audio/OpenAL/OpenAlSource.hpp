@@ -4,13 +4,13 @@
 
 #include <AL/al.h>
 
-namespace garlic::clove {
+namespace clove {
     class OpenAlSource : public AhaSource {
         //VARIABLES
     private:
         ALuint source{};
 
-        std::vector<std::shared_ptr<AhaBuffer>> bufferQueue;
+        std::vector<std::unique_ptr<AhaBuffer>> bufferQueue;
 
         //FUNCTIONS
     public:
@@ -25,10 +25,10 @@ namespace garlic::clove {
 
         ~OpenAlSource();
 
-        void setBuffer(std::shared_ptr<AhaBuffer> buffer) override;
+        void setBuffer(std::unique_ptr<AhaBuffer> buffer) override;
 
-        void queueBuffers(std::vector<std::shared_ptr<AhaBuffer>> buffers) override;
-        std::vector<std::shared_ptr<AhaBuffer>> unQueueBuffers(uint32_t const numToUnqueue) override;
+        void queueBuffers(std::vector<std::unique_ptr<AhaBuffer>> buffers) override;
+        std::vector<std::unique_ptr<AhaBuffer>> unQueueBuffers(uint32_t numToUnqueue) override;
 
         void setPitch(float pitch) override;
         void setLooping(bool isLooping) override;

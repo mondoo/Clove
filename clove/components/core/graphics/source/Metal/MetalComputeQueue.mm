@@ -6,7 +6,7 @@
 
 #include <Clove/Cast.hpp>
 
-namespace garlic::clove {
+namespace clove {
     MetalComputeQueue::MetalComputeQueue(CommandQueueDescriptor descriptor, id<MTLCommandQueue> commandQueue)
         : commandQueue{ commandQueue } {
         allowBufferReuse = (descriptor.flags & QueueFlags::ReuseBuffers) != 0;
@@ -32,10 +32,10 @@ namespace garlic::clove {
                 auto const &submission{ submissions[i] };
                 bool const isLastSubmission{ i == submissions.size() - 1 };
                 
-                for(auto const &commandBuffer : submission.commandBuffers) {
+                for(auto *commandBuffer : submission.commandBuffers) {
                     bool const isLastCommandBuffer{ commandBuffer == submission.commandBuffers.back() };
                     
-                    auto *metalCommandBuffer{ polyCast<MetalComputeCommandBuffer>(commandBuffer.get()) };
+                    auto *metalCommandBuffer{ polyCast<MetalComputeCommandBuffer>(commandBuffer) };
                     if(metalCommandBuffer == nullptr) {
                         CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: Command buffer provided is nullptr", CLOVE_FUNCTION_NAME);
                         continue;
@@ -51,7 +51,7 @@ namespace garlic::clove {
                     
                     //Inject the wait semaphore into each buffer
                     for (auto const &semaphore : submission.waitSemaphores) {
-                        auto const *metalSemaphore{ polyCast<MetalSemaphore const>(semaphore.first.get()) };
+                        auto const *metalSemaphore{ polyCast<MetalSemaphore const>(semaphore.first) };
                         if(metalSemaphore == nullptr) {
                             CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: Semaphore provided is nullptr", CLOVE_FUNCTION_NAME);
                             continue;
@@ -68,7 +68,7 @@ namespace garlic::clove {
                     //For the last buffer add all semaphore signalling
                     if(isLastCommandBuffer && !submission.signalSemaphores.empty()) {
                         for(auto const &semaphore : submission.signalSemaphores) {
-                            [encoder updateFence:polyCast<MetalSemaphore const>(semaphore.get())->getFence()];
+                            [encoder updateFence:polyCast<MetalSemaphore const>(semaphore)->getFence()];
                         }
                     }
                     

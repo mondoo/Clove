@@ -4,16 +4,16 @@
 
 #include <queue>
 
-namespace garlic::clove {
+namespace clove {
 	class GhaImage;
 }
 
-namespace garlic::clove {
+namespace clove {
 	class MetalSwapchain : public GhaSwapchain {
 		//VARIABLES
 	private:
-		std::vector<std::shared_ptr<GhaImage>> images{};
-		std::vector<std::shared_ptr<GhaImageView>> imageViews{};
+		std::vector<std::unique_ptr<GhaImage>> images{};
+		std::vector<std::unique_ptr<GhaImageView>> imageViews{};
 		
 		GhaImage::Format imageFormat{};
 		vec2ui imageSize{};
@@ -23,7 +23,7 @@ namespace garlic::clove {
 		//FUNCTIONS
 	public:
 		MetalSwapchain() = delete;
-        MetalSwapchain(std::vector<std::shared_ptr<GhaImage>> images, std::vector<std::shared_ptr<GhaImageView>> imageViews, GhaImage::Format imageFormat, vec2ui imageSize);
+        MetalSwapchain(std::vector<std::unique_ptr<GhaImage>> images, std::vector<std::unique_ptr<GhaImageView>> imageViews, GhaImage::Format imageFormat, vec2ui imageSize);
 
         MetalSwapchain(MetalSwapchain const &other) = delete;
 		MetalSwapchain(MetalSwapchain &&other) noexcept;
@@ -38,7 +38,7 @@ namespace garlic::clove {
 		GhaImage::Format getImageFormat() const override;
 		vec2ui getSize() const override;
 
-		std::vector<std::shared_ptr<GhaImageView>> getImageViews() const override;
+		std::vector<GhaImageView *> getImageViews() const override;
 		
 		/**
 		 * @brief Tells the swapchain that the image index is free to use again.

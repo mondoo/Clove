@@ -4,7 +4,7 @@
 
 #include <Clove/Log/Log.hpp>
 
-namespace garlic::clove {
+namespace clove {
     MetalImage::MetalImage(id<MTLTexture> texture, Descriptor descriptor)
         : texture{ texture }
         , descriptor{ descriptor } {

@@ -7,17 +7,17 @@
 #include <any>
 #include <memory>
 
-namespace garlic::clove {
+namespace clove {
     class VulkanFactory;
 }
 
-namespace garlic::clove {
+namespace clove {
     class VulkanDevice : public GhaDevice {
         //VARIABLES
     private:
         DevicePointer devicePtr;
 
-        std::shared_ptr<VulkanFactory> factory;
+        std::unique_ptr<VulkanFactory> factory;
 
         //FUNCTIONS
     public:
@@ -32,7 +32,7 @@ namespace garlic::clove {
 
         ~VulkanDevice();
 
-        std::shared_ptr<GhaFactory> getGraphicsFactory() const override;
+        GhaFactory *getGraphicsFactory() const override;
 
         void waitForIdleDevice() override;
 

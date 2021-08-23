@@ -11,7 +11,7 @@
 #include <Clove/Graphics/GhaSwapchain.hpp>
 #include <Clove/Log/Log.hpp>
 
-namespace garlic::clove {
+namespace clove {
     SwapchainRenderTarget::SwapchainRenderTarget(Surface &swapchainSurface, GhaDevice *graphicsDevice, uint32_t imageCount)
         : graphicsDevice{ graphicsDevice }
         , imageCount{ imageCount } {
@@ -31,7 +31,7 @@ namespace garlic::clove {
 
     SwapchainRenderTarget::~SwapchainRenderTarget() = default;
 
-    Expected<uint32_t, std::string> SwapchainRenderTarget::aquireNextImage(std::shared_ptr<GhaSemaphore> signalSemaphore) {
+    Expected<uint32_t, std::string> SwapchainRenderTarget::aquireNextImage(GhaSemaphore const *const signalSemaphore) {
         if(surfaceSize.x == 0 || surfaceSize.y == 0) {
             return Unexpected<std::string>{ "Cannot acquire image while Window is minimised." };
         }
@@ -41,7 +41,7 @@ namespace garlic::clove {
             return Unexpected<std::string>{ "GhaSwapchain was recreated." };
         }
 
-        auto const [imageIndex, result] = swapchain->aquireNextImage(signalSemaphore.get());
+        auto const [imageIndex, result] = swapchain->aquireNextImage(signalSemaphore);
         if(result == Result::Error_SwapchainOutOfDate) {
             createSwapchain();
             return Unexpected<std::string>{ "GhaSwapchain was recreated." };
@@ -50,12 +50,12 @@ namespace garlic::clove {
         return imageIndex;
     }
 
-    void SwapchainRenderTarget::present(uint32_t imageIndex, std::vector<std::shared_ptr<GhaSemaphore>> waitSemaphores) {
-        Result const result = presentQueue->present(PresentInfo{
+    void SwapchainRenderTarget::present(uint32_t imageIndex, std::vector<GhaSemaphore const *> waitSemaphores) {
+        Result const result{ presentQueue->present(PresentInfo{
             .waitSemaphores = waitSemaphores,
-            .swapChain      = swapchain,
+            .swapChain      = swapchain.get(),
             .imageIndex     = imageIndex,
-        });
+        }) };
 
         if(result == Result::Error_SwapchainOutOfDate || result == Result::Success_SwapchainSuboptimal) {
             createSwapchain();
@@ -70,7 +70,7 @@ namespace garlic::clove {
         return swapchain->getSize();
     }
 
-    std::vector<std::shared_ptr<GhaImageView>> SwapchainRenderTarget::getImageViews() const {
+    std::vector<GhaImageView *> SwapchainRenderTarget::getImageViews() const {
         return swapchain->getImageViews();
     }
 

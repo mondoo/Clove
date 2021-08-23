@@ -1,6 +1,6 @@
-using Membrane = garlic.membrane;
+using Membrane = membrane;
 
-namespace Garlic.Bulb {
+namespace Bulb {
     class StaticModelComponentViewModel : ComponentViewModel {
         public string MeshPath {
             get => meshPath;
@@ -35,11 +35,13 @@ namespace Garlic.Bulb {
         public delegate void StaticModelChangedHandler(string meshPath, string diffusePath, string specularPath);
         public StaticModelChangedHandler OnStaticModelChanged;
 
-        public StaticModelComponentViewModel(Membrane.StaticModelComponentInitData initData) 
+        public StaticModelComponentViewModel(Membrane.StaticModelComponentInitData initData)
             : base($"{Membrane.ComponentType.StaticModel}", Membrane.ComponentType.StaticModel) {
-            meshPath = initData.meshPath;
-            diffuseTexturePath = initData.diffusePath;
-            specularTexturePath = initData.specularPath;
+            if (initData != null) {
+                meshPath = initData.meshPath;
+                diffuseTexturePath = initData.diffusePath;
+                specularTexturePath = initData.specularPath;
+            }
         }
     }
 }

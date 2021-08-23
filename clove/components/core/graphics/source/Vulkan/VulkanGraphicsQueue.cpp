@@ -10,7 +10,7 @@
 #include <Clove/Definitions.hpp>
 #include <Clove/Log/Log.hpp>
 
-namespace garlic::clove {
+namespace clove {
     VulkanGraphicsQueue::VulkanGraphicsQueue(DevicePointer device, VkQueue queue, VkCommandPool commandPool, QueueFamilyIndices queueFamilyIndices)
         : device{ std::move(device) }
         , queue{ queue }
@@ -50,7 +50,7 @@ namespace garlic::clove {
     }
 
     void VulkanGraphicsQueue::submit(std::vector<GraphicsSubmitInfo> const &submissions, GhaFence *signalFence) {
-        auto const submissioncount{ std::size(submissions) };
+        size_t const submissioncount{ submissions.size() };
         std::vector<VkSubmitInfo> vkSubmissions;
         vkSubmissions.reserve(submissioncount);
 
@@ -66,7 +66,7 @@ namespace garlic::clove {
             waitStages[i].resize(waitSemaphoreCount);
 
             for(size_t j = 0; j < waitSemaphoreCount; ++j) {
-                waitSemaphores[i][j] = polyCast<VulkanSemaphore>(submissions[i].waitSemaphores[j].first.get())->getSemaphore();
+                waitSemaphores[i][j] = polyCast<VulkanSemaphore const>(submissions[i].waitSemaphores[j].first)->getSemaphore();
                 waitStages[i][j]     = convertStage(submissions[i].waitSemaphores[j].second);
             }
 
@@ -74,14 +74,14 @@ namespace garlic::clove {
             size_t const commandBufferCount{ std::size(submissions[i].commandBuffers) };
             commandBuffers[i].resize(commandBufferCount);
             for(size_t j = 0; j < commandBufferCount; ++j) {
-                commandBuffers[i][j] = polyCast<VulkanGraphicsCommandBuffer>(submissions[i].commandBuffers[j].get())->getCommandBuffer();
+                commandBuffers[i][j] = polyCast<VulkanGraphicsCommandBuffer const>(submissions[i].commandBuffers[j])->getCommandBuffer();
             }
 
             //Signal semaphores
             size_t const signalSemaphoreCount{ std::size(submissions[i].signalSemaphores) };
             signalSemaphores[i].resize(signalSemaphoreCount);
             for(size_t j = 0; j < signalSemaphoreCount; ++j) {
-                signalSemaphores[i][j] = polyCast<VulkanSemaphore>(submissions[i].signalSemaphores[j].get())->getSemaphore();
+                signalSemaphores[i][j] = polyCast<VulkanSemaphore const>(submissions[i].signalSemaphores[j])->getSemaphore();
             }
 
             vkSubmissions.emplace_back(VkSubmitInfo{

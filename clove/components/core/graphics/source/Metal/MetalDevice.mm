@@ -3,14 +3,14 @@
 #include "Clove/Graphics/Metal/MetalFactory.hpp"
 #include "Clove/Graphics/Metal/MetalView.hpp"
 
-namespace garlic::clove {
+namespace clove {
     struct DeviceWrapper {
         id<MTLDevice> device{ nullptr };
         MetalView *view{ nullptr };
     };
 }
 
-namespace garlic::clove {
+namespace clove {
     MetalDevice::MetalDevice(std::any nativeWindow) {
         wrapper = std::make_unique<DeviceWrapper>();
         
@@ -24,7 +24,7 @@ namespace garlic::clove {
         
         [nsWindow setContentView:wrapper->view];
         
-        factory = std::make_shared<MetalFactory>(wrapper->device, wrapper->view);
+        factory = std::make_unique<MetalFactory>(wrapper->device, wrapper->view);
     }
     
     MetalDevice::MetalDevice(MetalDevice &&other) noexcept = default;
@@ -33,8 +33,8 @@ namespace garlic::clove {
     
     MetalDevice::~MetalDevice() = default;
     
-    std::shared_ptr<GhaFactory> MetalDevice::getGraphicsFactory() const {
-        return factory;
+    GhaFactory *MetalDevice::getGraphicsFactory() const {
+        return factory.get();
     }
     
     void MetalDevice::waitForIdleDevice() {

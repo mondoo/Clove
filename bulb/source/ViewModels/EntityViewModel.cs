@@ -1,32 +1,31 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Windows;
+using System.Linq;
 using System.Windows.Input;
 
-using Membrane = garlic.membrane;
+using Membrane = membrane;
 
-namespace Garlic.Bulb {
+namespace Bulb {
     public class EntityViewModel : ViewModel {
         public uint EntityId { get; set; }
 
         public string Name {
-            get { return name; }
+            get => name;
             set {
                 name = value;
                 OnPropertyChanged(nameof(Name));
 
-                var message = new Membrane.Editor_UpdateName();
-                message.entity = EntityId;
-                message.name = name;
-
-                Membrane.MessageHandler.sendMessage(message);
+                Membrane.MessageHandler.sendMessage(new Membrane.Editor_UpdateName {
+                    entity = EntityId,
+                    name = name
+                });
             }
         }
         private string name = "New Entity";
 
         public ObservableCollection<ComponentViewModel> Components { get; } = new ObservableCollection<ComponentViewModel>();
+        public ObservableCollection<ComponentMenuItemViewModel> ComponentMenuItems { get; } = new ObservableCollection<ComponentMenuItemViewModel>();
 
         public ICommand SelectedCommand { get; }
 
@@ -35,7 +34,9 @@ namespace Garlic.Bulb {
 
         public EntityViewModel() {
             //Bind to messages
-            Membrane.MessageHandler.bindToMessage<Membrane.Engine_OnComponentCreated>(OnComponentCreated);
+            Membrane.MessageHandler.bindToMessage<Membrane.Engine_OnComponentAdded>(OnComponentCreated);
+            Membrane.MessageHandler.bindToMessage<Membrane.Engine_OnComponentRemoved>(OnComponentRemoved);
+
             Membrane.MessageHandler.bindToMessage<Membrane.Engine_OnRigidBodyChanged>(OnRigidBodyChanged);
             Membrane.MessageHandler.bindToMessage<Membrane.Engine_OnTransformChanged>(OnTransformChanged);
             Membrane.MessageHandler.bindToMessage<Membrane.Engine_OnSphereShapeChanged>(OnSphereShapeChanged);
@@ -43,25 +44,48 @@ namespace Garlic.Bulb {
 
             //Set up commands
             SelectedCommand = new RelayCommand(() => OnSelected?.Invoke(this));
+
+            RefreshAvailableComponents();
         }
 
         public EntityViewModel(List<Membrane.Component> components) : this() {
             foreach (Membrane.Component component in components) {
                 Components.Add(CreateComponentViewModel(component.type, component.initData));
             }
+            RefreshAvailableComponents();
         }
 
         public void AddComponent(Membrane.ComponentType type) {
-            var message = new Membrane.Editor_CreateComponent();
-            message.entity = EntityId;
-            message.componentType = type;
-
-            Membrane.MessageHandler.sendMessage(message);
+            Membrane.MessageHandler.sendMessage(new Membrane.Editor_AddComponent {
+                entity = EntityId,
+                componentType = type
+            });
         }
 
-        private void OnComponentCreated(Membrane.Engine_OnComponentCreated message) {
+        public void RemoveComponent(Membrane.ComponentType type) {
+            Membrane.MessageHandler.sendMessage(new Membrane.Editor_RemoveComponent {
+                entity = EntityId,
+                componentType = type
+            });
+        }
+
+        private void OnComponentCreated(Membrane.Engine_OnComponentAdded message) {
             if (EntityId == message.entity) {
                 Components.Add(CreateComponentViewModel(message.componentType, message.data));
+                RefreshAvailableComponents();
+            }
+        }
+
+        private void OnComponentRemoved(Membrane.Engine_OnComponentRemoved message) {
+            if (EntityId == message.entity) {
+                foreach (ComponentViewModel component in Components) {
+                    if (component.Type == message.componentType) {
+                        Components.Remove(component);
+                        break;
+                    }
+                }
+
+                RefreshAvailableComponents();
             }
         }
 
@@ -70,30 +94,34 @@ namespace Garlic.Bulb {
 
             switch (type) {
                 case Membrane.ComponentType.Transform: {
-                    var transformComp = new TransformComponentViewModel();
-                    transformComp.OnTransformChanged = UpdateTransform;
+                    var transformComp = new TransformComponentViewModel(initData as Membrane.TransformComponentInitData) {
+                        OnTransformChanged = UpdateTransform
+                    };
 
                     componentVm = transformComp;
                 }
                 break;
                 case Membrane.ComponentType.StaticModel: {
-                    var modelComp = new StaticModelComponentViewModel((Membrane.StaticModelComponentInitData)initData);
-                    modelComp.OnStaticModelChanged = UpdateStaticModel;
+                    var modelComp = new StaticModelComponentViewModel(initData as Membrane.StaticModelComponentInitData) {
+                        OnStaticModelChanged = UpdateStaticModel
+                    };
 
                     componentVm = modelComp;
                 }
                 break;
                 case Membrane.ComponentType.RigidBody: {
-                    var rigidBodyComp = new RigidBodyComponentViewModel((Membrane.RigidBodyComponentInitData)initData);
-                    rigidBodyComp.OnRigidBodyChanged = UpdateRigidBody;
+                    var rigidBodyComp = new RigidBodyComponentViewModel(initData as Membrane.RigidBodyComponentInitData) {
+                        OnRigidBodyChanged = UpdateRigidBody
+                    };
 
                     componentVm = rigidBodyComp;
                 }
                 break;
                 case Membrane.ComponentType.CollisionShape: {
-                    var collisionShapeComp = new CollisionShapeComponentViewModel((Membrane.CollisionShapeComponentInitData)initData);
-                    collisionShapeComp.OnSphereShapeChanged = UpdateSphereShape;
-                    collisionShapeComp.OnCubeShapeChanged = UpdateCubeShape;
+                    var collisionShapeComp = new CollisionShapeComponentViewModel(initData as Membrane.CollisionShapeComponentInitData) {
+                        OnSphereShapeChanged = UpdateSphereShape,
+                        OnCubeShapeChanged = UpdateCubeShape
+                    };
 
                     componentVm = collisionShapeComp;
                 }
@@ -103,58 +131,69 @@ namespace Garlic.Bulb {
                     break;
             }
 
+            componentVm.OnRemoved = RemoveComponent;
+
             return componentVm;
         }
 
-        private void UpdateTransform(Membrane.Vector3 position, Membrane.Vector3 rotation, Membrane.Vector3 scale) {
-            var message = new Membrane.Editor_UpdateTransform();
-            message.entity = EntityId;
-            message.position = position;
-            message.rotation = rotation;
-            message.scale = scale;
+        private void RefreshAvailableComponents() {
+            List<Membrane.ComponentType> entitiesComponents = new List<Membrane.ComponentType>();
+            foreach (ComponentViewModel component in Components) {
+                entitiesComponents.Add(component.Type);
+            }
 
-            Membrane.MessageHandler.sendMessage(message);
+            IEnumerable<Membrane.ComponentType> missingComponents = Enum.GetValues(typeof(Membrane.ComponentType)).Cast<Membrane.ComponentType>().Except(entitiesComponents);
+
+            ComponentMenuItems.Clear();
+            foreach (Membrane.ComponentType componentType in missingComponents) {
+                ComponentMenuItems.Add(new ComponentMenuItemViewModel(componentType, new RelayCommand(() => AddComponent(componentType))));
+            }
+        }
+
+        private void UpdateTransform(Membrane.Vector3 position, Membrane.Vector3 rotation, Membrane.Vector3 scale) {
+            Membrane.MessageHandler.sendMessage(new Membrane.Editor_UpdateTransform {
+                entity = EntityId,
+                position = position,
+                rotation = rotation,
+                scale = scale
+            });
         }
 
         private void UpdateStaticModel(string meshPath, string diffusePath, string specularPath) {
-            var message = new Membrane.Editor_UpdateStaticModel();
-            message.entity = EntityId;
-            message.meshPath = meshPath;
-            message.diffusePath = diffusePath;
-            message.specularPath = specularPath;
-
-            Membrane.MessageHandler.sendMessage(message);
+            Membrane.MessageHandler.sendMessage(new Membrane.Editor_UpdateStaticModel {
+                entity = EntityId,
+                meshPath = meshPath,
+                diffusePath = diffusePath,
+                specularPath = specularPath
+            });
         }
 
         private void UpdateRigidBody(float mass) {
-            var message = new Membrane.Editor_UpdateRigidBody();
-            message.entity = EntityId;
-            message.mass = mass;
-
-            Membrane.MessageHandler.sendMessage(message);
+            Membrane.MessageHandler.sendMessage(new Membrane.Editor_UpdateRigidBody {
+                entity = EntityId,
+                mass = mass
+            });
         }
 
         private void UpdateSphereShape(float radius) {
-            var message = new Membrane.Editor_UpdateSphereShape();
-            message.entity = EntityId;
-            message.radius = radius;
-
-            Membrane.MessageHandler.sendMessage(message);
+            Membrane.MessageHandler.sendMessage(new Membrane.Editor_UpdateSphereShape {
+                entity = EntityId,
+                radius = radius
+            });
         }
 
         private void UpdateCubeShape(Membrane.Vector3 halfExtents) {
-            var message = new Membrane.Editor_UpdateCubeShape();
-            message.entity = EntityId;
-            message.halfExtents = halfExtents;
-
-            Membrane.MessageHandler.sendMessage(message);
+            Membrane.MessageHandler.sendMessage(new Membrane.Editor_UpdateCubeShape {
+                entity = EntityId,
+                halfExtents = halfExtents
+            });
         }
 
         private void OnRigidBodyChanged(Membrane.Engine_OnRigidBodyChanged message) {
             if (EntityId == message.entity) {
                 foreach (ComponentViewModel comp in Components) {
                     if (comp.GetType() == typeof(RigidBodyComponentViewModel)) {
-                        var rigidBody = (RigidBodyComponentViewModel)comp;
+                        var rigidBody = comp as RigidBodyComponentViewModel;
                         rigidBody.Update(message.mass);
                         break;
                     }
@@ -166,7 +205,7 @@ namespace Garlic.Bulb {
             if (EntityId == message.entity) {
                 foreach (ComponentViewModel comp in Components) {
                     if (comp.GetType() == typeof(TransformComponentViewModel)) {
-                        var transform = (TransformComponentViewModel)comp;
+                        var transform = comp as TransformComponentViewModel;
                         transform.Update(message.position, message.rotation, message.scale);
                         break;
                     }
@@ -178,7 +217,7 @@ namespace Garlic.Bulb {
             if (EntityId == message.entity) {
                 foreach (ComponentViewModel comp in Components) {
                     if (comp.GetType() == typeof(CollisionShapeComponentViewModel)) {
-                        var collisionShape = (CollisionShapeComponentViewModel)comp;
+                        var collisionShape = comp as CollisionShapeComponentViewModel;
                         collisionShape.UpdateSphereShape(message.radius);
                         break;
                     }
@@ -189,9 +228,9 @@ namespace Garlic.Bulb {
 
         private void OnCubeShapeChanged(Membrane.Engine_OnCubeShapeChanged message) {
             if (EntityId == message.entity) {
-                foreach(ComponentViewModel comp in Components) {
+                foreach (ComponentViewModel comp in Components) {
                     if (comp.GetType() == typeof(CollisionShapeComponentViewModel)) {
-                        var collisionShape = (CollisionShapeComponentViewModel)comp;
+                        var collisionShape = comp as CollisionShapeComponentViewModel;
                         collisionShape.UpdateCubeShape(message.halfExtents);
                         break;
                     }

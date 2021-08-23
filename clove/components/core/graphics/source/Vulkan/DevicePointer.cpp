@@ -2,7 +2,7 @@
 
 #include <utility>
 
-namespace garlic::clove {
+namespace clove {
     namespace {
         void destroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks *pAllocator) {
             auto func = reinterpret_cast<PFN_vkDestroyDebugUtilsMessengerEXT>(vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT"));
@@ -89,7 +89,7 @@ namespace garlic::clove {
 
     void DevicePointer::release() {
         if(counter != nullptr && --(*counter) == 0) {
-#if CLOVE_DEBUG
+#if CLOVE_GHA_VALIDATION
             destroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
 #endif
 

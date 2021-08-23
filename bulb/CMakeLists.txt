@@ -1,7 +1,7 @@
 include(CSharpUtilities)
 
 #Create another project to enable C#
-project(Garlic-Editor LANGUAGES CSharp)
+project(Clove-Editor LANGUAGES CSharp)
 
 set(SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/source)
 set(RESOURCE ${CMAKE_CURRENT_SOURCE_DIR}/resource)
@@ -22,6 +22,7 @@ add_executable(
 	    ${SOURCE}/EditorApp.xaml
         ${SOURCE}/EditorApp.xaml.cs
 
+		${SOURCE}/EditorPropertyHelper.cs
 		${SOURCE}/SizePercentageConverter.cs
 
 	    ${SOURCE}/AssemblyInfo.cs
@@ -41,6 +42,8 @@ add_executable(
 		${SOURCE}/Views/EntityInfo.xaml.cs
 		${SOURCE}/Views/MainWindow.xaml
 		${SOURCE}/Views/MainWindow.xaml.cs
+		${SOURCE}/Views/ProjectSelector.xaml
+		${SOURCE}/Views/ProjectSelector.xaml.cs
 		${SOURCE}/Views/Vector3Box.xaml
 		${SOURCE}/Views/Vector3Box.xaml.cs
 		${SOURCE}/Views/Viewport.xaml
@@ -105,6 +108,9 @@ csharp_set_xaml_cs_properties(
 
 	${SOURCE}/Views/MainWindow.xaml
     ${SOURCE}/Views/MainWindow.xaml.cs
+
+	${SOURCE}/Views/ProjectSelector.xaml
+	${SOURCE}/Views/ProjectSelector.xaml.cs
 	
 	${SOURCE}/Views/Vector3Box.xaml
 	${SOURCE}/Views/Vector3Box.xaml.cs

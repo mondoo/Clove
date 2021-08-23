@@ -1,10 +1,8 @@
 #include "Clove/Graphics/Metal/MetalImageView.hpp"
 
-#include "Clove/Graphics/GhaImageView.hpp"
-
 #include <Clove/Log/Log.hpp>
 
-namespace garlic::clove {
+namespace clove {
     MetalImageView::MetalImageView(GhaImage::Format viewedFormat, vec2ui viewedDimensions, id<MTLTexture> texture)
         : viewedFormat{ viewedFormat }
         , viewedDimensions{ viewedDimensions }

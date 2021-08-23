@@ -4,13 +4,13 @@
 
 #include <memory>
 
-namespace garlic::clove {
+namespace clove {
     class GhaFactory;
     class GhaGraphicsPipelineObject;
     class GhaRenderPass;
 }
 
-namespace garlic::clove {
+namespace clove {
     class DirectionalLightPass : public GeometryPass {
         //VARIABLES
     private:
@@ -19,7 +19,7 @@ namespace garlic::clove {
         //FUNCTIONS
     public:
         DirectionalLightPass() = delete;
-        DirectionalLightPass(GhaFactory &ghaFactory, std::shared_ptr<GhaRenderPass> ghaRenderPass);//TEMP: Using an external render pass for now but these pass will need to create their own
+        DirectionalLightPass(GhaFactory &ghaFactory, GhaRenderPass *ghaRenderPass);//TEMP: Using an external render pass for now but these pass will need to create their own
 
         DirectionalLightPass(DirectionalLightPass const &other) = delete;
         DirectionalLightPass(DirectionalLightPass &&other) noexcept;

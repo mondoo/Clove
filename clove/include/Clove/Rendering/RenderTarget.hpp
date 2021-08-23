@@ -5,13 +5,13 @@
 #include <Clove/Graphics/GhaImage.hpp>
 #include <Clove/Graphics/GhaImageView.hpp>
 
-namespace garlic::clove {
+namespace clove {
     class GhaSemaphore;
     class FrameBuffer;
     struct GraphicsSubmitInfo;
 }
 
-namespace garlic::clove {
+namespace clove {
     /**
      * @brief Contains an array of 1-N images that can be rendered to.
      */
@@ -40,28 +40,29 @@ namespace garlic::clove {
         RenderTarget &operator=(RenderTarget &&other) noexcept = default;
 
         virtual ~RenderTarget() = default;
-        
+
         /**
          * @brief Aquire the next available image that can be rendered to.
          * @param signalSemaphore A semaphore this RenderTarget will signal when the image is ready to render to. Can be nullptr.
          * @return Returns the image index for the getImageViews array.
          */
-        virtual Expected<uint32_t, std::string> aquireNextImage(std::shared_ptr<GhaSemaphore> signalSemaphore) = 0;
+        virtual Expected<uint32_t, std::string> aquireNextImage(GhaSemaphore const *const signalSemaphore) = 0;
 
         /**
          * @brief Presents the render target with imageIndex.
          * @param imageIndex The image index of the getImageViews array this submission is for.
          * @param waitSemaphores Semaphores the RenderTarget will wait on before beginning presentation logic.
          */
-        virtual void present(uint32_t imageIndex, std::vector<std::shared_ptr<GhaSemaphore>> waitSemaphores) = 0;
+        virtual void present(uint32_t imageIndex, std::vector<GhaSemaphore const *> waitSemaphores) = 0;
 
         virtual GhaImage::Format getImageFormat() const = 0;
         virtual vec2ui getSize() const                  = 0;
 
         /**
-         * @brief Returns an array of GhaImageViews for the internal back buffers the RenderTarget has.
+         * @brief Returns the image views backing this RenderTarget. The lifetime of the views
+         * are tied to this object.
          * @return 
          */
-        virtual std::vector<std::shared_ptr<GhaImageView>> getImageViews() const = 0;
+        virtual std::vector<GhaImageView *> getImageViews() const = 0;
     };
 }

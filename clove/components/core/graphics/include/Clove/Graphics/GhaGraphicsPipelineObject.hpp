@@ -4,10 +4,9 @@
 #include "Clove/Graphics/PipelineObject.hpp"
 
 #include <Clove/Maths/Vector.hpp>
-#include <memory>
 #include <vector>
 
-namespace garlic::clove {
+namespace clove {
     class GhaShader;
     class GhaRenderPass;
     class GhaDescriptorSetLayout;
@@ -50,7 +49,7 @@ namespace garlic::clove {
     };
 }
 
-namespace garlic::clove {
+namespace clove {
     /**
      * @brief Represents the state of the current graphics pipeline.
      */
@@ -58,8 +57,8 @@ namespace garlic::clove {
         //TYPES
     public:
         struct Descriptor {
-            std::shared_ptr<GhaShader> vertexShader;
-            std::shared_ptr<GhaShader> pixelShader;
+            GhaShader const *vertexShader{ nullptr };
+            GhaShader const *pixelShader{ nullptr };
 
             VertexInputBindingDescriptor vertexInput;
             std::vector<VertexAttributeDescriptor> vertexAttributes; /**< The index of each element maps to the layout(location = x) in the vertex shader. */
@@ -73,9 +72,9 @@ namespace garlic::clove {
 
             bool enableBlending{ true };
 
-            std::shared_ptr<GhaRenderPass> renderPass;
+            GhaRenderPass const *renderPass{ nullptr };
 
-            std::vector<std::shared_ptr<GhaDescriptorSetLayout>> descriptorSetLayouts;
+            std::vector<GhaDescriptorSetLayout const *> descriptorSetLayouts;
             std::vector<PushConstantDescriptor> pushConstants;
         };
 

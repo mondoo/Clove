@@ -2,22 +2,21 @@
 
 #include "Clove/Graphics/Result.hpp"
 
-#include <memory>
 #include <vector>
 
-namespace garlic::clove {
+namespace clove {
     class GhaSemaphore;
     class GhaSwapchain;
 
     struct PresentInfo {
-        std::vector<std::shared_ptr<GhaSemaphore>> waitSemaphores;
+        std::vector<GhaSemaphore const *> waitSemaphores;
 
-        std::shared_ptr<GhaSwapchain> swapChain;
+        GhaSwapchain *swapChain{ nullptr };
         uint32_t imageIndex;
     };
 }
 
-namespace garlic::clove {
+namespace clove {
     /**
 	 * @brief Presents a swapchain. Displaying it's contents on the Window / Surface it represents.
      * @details Note that unlike the other queues, a GhaPresentQueue does not need a command buffer.

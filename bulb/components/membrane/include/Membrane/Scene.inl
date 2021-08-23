@@ -1,4 +1,4 @@
-namespace garlic::membrane {
+namespace membrane {
     clove::Entity Scene::createEntity() {
         clove::Entity entity{ manager->create() };
         knownEntities.push_back(entity);
@@ -22,6 +22,11 @@ namespace garlic::membrane {
     template<typename ComponentType>
     ComponentType &Scene::getComponent(clove::Entity entity) {
         return manager->getComponent<ComponentType>(entity);
+    }
+
+    template<typename ComponentType>
+    void Scene::removeComponent(clove::Entity entity) {
+        manager->removeComponent<ComponentType>(entity);
     }
 
     template<typename ComponentType>

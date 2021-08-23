@@ -1,19 +1,19 @@
 #pragma once
 
-#include <memory>
+#include <cstddef>
 
-namespace garlic::clove{
+namespace clove {
     class GhaFactory;
 }
 
-namespace garlic::clove {
+namespace clove {
     /**
      * @brief Represents the actual hardware used for rendering. Can be quieried for info about the device.
      */
     class GhaDevice {
         //TYPES
     public:
-        struct Limits{
+        struct Limits {
             size_t minUniformBufferOffsetAlignment{ 0 };
         };
 
@@ -21,7 +21,12 @@ namespace garlic::clove {
     public:
         virtual ~GhaDevice() = default;
 
-        virtual std::shared_ptr<GhaFactory> getGraphicsFactory() const = 0;
+        /**
+         * @brief Returns a pointer to the factory object. The lifetime of the 
+         * factory is tied to the lifetime of this device.
+         * @return 
+         */
+        virtual GhaFactory *getGraphicsFactory() const = 0;
 
         /**
          * @brief Stalls the current thread until the device is idle.

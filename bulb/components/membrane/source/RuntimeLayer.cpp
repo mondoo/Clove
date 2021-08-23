@@ -10,10 +10,10 @@
 #include <Clove/Maths/MathsHelpers.hpp>
 #include <Clove/ModelLoader.hpp>
 
-namespace garlic::membrane {
+namespace membrane {
     RuntimeLayer::RuntimeLayer()
         : clove::Layer{ "Runtime Layer" }
-        , currentScene{ clove::Application::get().getEntityManager(), "scene.yaml" } {
+        , currentScene{ clove::Application::get().getEntityManager() } {
     }
 
     void RuntimeLayer::onAttach() {
@@ -22,7 +22,7 @@ namespace garlic::membrane {
         //push the physics layer from the application
         app.pushLayer(app.getPhysicsLayer());
 
-        currentScene.load();
+        currentScene.load(clove::Application::get().getFileSystem()->resolve("./scene.clvscene"));
     }
 
     void RuntimeLayer::onUpdate(clove::DeltaTime const deltaTime) {

@@ -13,9 +13,9 @@
 #include <fstream>
 #include <typeinfo>
 
-using namespace garlic::clove;
+using namespace clove;
 
-namespace garlic::membrane {
+namespace membrane {
     namespace {
         template<typename ComponentType>
         void serialiseComponent(serialiser::Node &entityNode, EntityManager &manager, Entity entity) {
@@ -29,14 +29,13 @@ namespace garlic::membrane {
         }
     }
 
-    Scene::Scene(EntityManager *manager, std::filesystem::path saveData)
-        : manager{ manager }
-        , sceneFile{ std::move(saveData) } {
+    Scene::Scene(EntityManager *manager)
+        : manager{ manager } {
     }
 
     Scene::~Scene() = default;
 
-    void Scene::save() {
+    void Scene::save(std::filesystem::path const savePath) {
         serialiser::Node rootNode{};
         for(Entity entity : knownEntities) {
             serialiser::Node entityNode{};
@@ -52,11 +51,11 @@ namespace garlic::membrane {
             rootNode["entities"].pushBack(entityNode);
         }
 
-        std::ofstream fileStream{ sceneFile, std::ios::out | std::ios::trunc };
+        std::ofstream fileStream{ savePath, std::ios::out | std::ios::trunc };
         fileStream << emittYaml(rootNode);
     }
 
-    void Scene::load() {
+    void Scene::load(std::filesystem::path const loadPath) {
         //Only destroy known entities to avoid deleting meta ones (such as the camera)
         for(Entity entity : knownEntities) {
             manager->destroy(entity);
@@ -64,11 +63,11 @@ namespace garlic::membrane {
         knownEntities.clear();
 
         //File won't exist if we haven't saved anything yet
-        if(!std::filesystem::exists(sceneFile)) {
+        if(!std::filesystem::exists(loadPath)) {
             return;
         }
 
-        auto loadResult{ loadYaml(sceneFile) };
+        auto loadResult{ loadYaml(loadPath) };
         serialiser::Node rootNode{ loadResult.getValue() };
 
         for(auto const &entityNode : rootNode["entities"]) {

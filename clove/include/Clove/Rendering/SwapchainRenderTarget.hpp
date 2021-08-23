@@ -5,7 +5,7 @@
 #include <Clove/Delegate/DelegateHandle.hpp>
 #include <vector>
 
-namespace garlic::clove {
+namespace clove {
     class GhaSwapchain;
     class GhaPresentQueue;
     class GhaGraphicsQueue;
@@ -15,7 +15,7 @@ namespace garlic::clove {
     class Surface;
 }
 
-namespace garlic::clove {
+namespace clove {
     /**
      * @brief GhaSwapchain backed RenderTarget.
      */
@@ -23,11 +23,11 @@ namespace garlic::clove {
         //VARIABLES
     private:
         GhaDevice *graphicsDevice{ nullptr };
-        std::shared_ptr<GhaFactory> graphicsFactory;
+        GhaFactory *graphicsFactory{ nullptr };
 
         uint32_t imageCount{};
-        std::shared_ptr<GhaSwapchain> swapchain;
-        std::shared_ptr<GhaPresentQueue> presentQueue;
+        std::unique_ptr<GhaSwapchain> swapchain;
+        std::unique_ptr<GhaPresentQueue> presentQueue;
 
         vec2ui surfaceSize{};
         DelegateHandle surfaceResizeHandle;
@@ -47,14 +47,14 @@ namespace garlic::clove {
 
         ~SwapchainRenderTarget();
 
-        Expected<uint32_t, std::string> aquireNextImage(std::shared_ptr<GhaSemaphore> signalSemaphore) override;
+        Expected<uint32_t, std::string> aquireNextImage(GhaSemaphore const *const signalSemaphore) override;
 
-        void present(uint32_t imageIndex, std::vector<std::shared_ptr<GhaSemaphore>> waitSemaphores) override;
+        void present(uint32_t imageIndex, std::vector<GhaSemaphore const *> waitSemaphores) override;
 
         GhaImage::Format getImageFormat() const override;
         vec2ui getSize() const override;
 
-        std::vector<std::shared_ptr<GhaImageView>> getImageViews() const override;
+        std::vector<GhaImageView *> getImageViews() const override;
 
     private:
         void onSurfaceSizeChanged(vec2ui const &size);

@@ -1,6 +1,6 @@
 #include "Clove/Graphics/Metal/MetalComputePipelineObject.hpp"
 
-namespace garlic::clove {
+namespace clove {
 	MetalComputePipelineObject::MetalComputePipelineObject(Descriptor descriptor, id<MTLComputePipelineState> pipelineState)
         : descriptor{ std::move(descriptor) }
         , pipelineState{ pipelineState } {

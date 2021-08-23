@@ -6,7 +6,7 @@
 #include <Clove/Definitions.hpp>
 #include <Clove/Log/Log.hpp>
 
-namespace garlic::clove {
+namespace clove {
     VulkanRenderPass::VulkanRenderPass(Descriptor descriptor, DevicePointer device, VkRenderPass renderPass)
         : descriptor{ std::move(descriptor) } 
         , device{ std::move(device) }
