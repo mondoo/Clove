@@ -4,7 +4,7 @@
 
 #include <Clove/Log/Log.hpp>
 
-namespace garlic::clove {
+namespace clove {
     RgBuffer::RgBuffer(RgResourceIdType id, size_t size)
         : RgResource{ id }
         , size{ size } {
@@ -16,9 +16,9 @@ namespace garlic::clove {
         };
     }
 
-    RgBuffer::RgBuffer(RgResourceIdType id, std::shared_ptr<GhaBuffer> ghaBuffer, size_t offset, size_t size)
+    RgBuffer::RgBuffer(RgResourceIdType id, GhaBuffer *ghaBuffer, size_t offset, size_t size)
         : RgResource{ id }
-        , ghaBuffer{ std::move(ghaBuffer) }
+        , ghaBuffer{ ghaBuffer }
         , offset{ offset }
         , size{ size } {
         externalBuffer = true;
@@ -30,7 +30,7 @@ namespace garlic::clove {
 
     RgBuffer::~RgBuffer() = default;
 
-    std::shared_ptr<GhaBuffer> RgBuffer::getGhaBuffer(RgFrameCache &cache) {
+    GhaBuffer *RgBuffer::getGhaBuffer(RgFrameCache &cache) {
         if(ghaBuffer == nullptr) {
             CLOVE_ASSERT(!externalBuffer, "RgBuffer is registered as an external buffer but does not have a valid GhaBuffer.");
             ghaBuffer = cache.allocateBuffer(ghaBufferDescriptor);

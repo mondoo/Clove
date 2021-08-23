@@ -1,4 +1,4 @@
-namespace garlic::clove {
+namespace clove {
     bool RgBuffer::isExternalBuffer() const {
         return externalBuffer;
     }

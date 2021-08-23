@@ -1,6 +1,6 @@
 #include "Clove/Rendering/RenderGraph/RgTransferPass.hpp"
 
-namespace garlic::clove {
+namespace clove {
     RgTransferPass::RgTransferPass(RgPassIdType id, BufferWrite writePass)
         : RgPass{ id }
         , writePass{ std::move(writePass) } {

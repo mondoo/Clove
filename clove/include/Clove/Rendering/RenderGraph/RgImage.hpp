@@ -6,11 +6,11 @@
 #include <Clove/Graphics/GhaImageView.hpp>
 #include <memory>
 
-namespace garlic::clove {
+namespace clove {
     class RgFrameCache;
 }
 
-namespace garlic::clove {
+namespace clove {
     /**
      * @brief Tracks the usage and dependencies of an image in the RenderGraph.
      * @details Can be used to later create a GhaImage when executing the graph.
@@ -18,8 +18,8 @@ namespace garlic::clove {
     class RgImage : public RgResource {
         //VARIABLES
     private:
-        std::shared_ptr<GhaImage> ghaImage{ nullptr }; /**< The GHA image this object views. */
-        std::shared_ptr<GhaImageView> ghaImageView{ nullptr }; /**< The GHA image view this object represents. */
+        GhaImage *ghaImage{ nullptr }; /**< The GHA image this object views. */
+        GhaImageView *ghaImageView{ nullptr }; /**< The GHA image view this object represents. */
         GhaImage::Descriptor ghaImageDescriptor{};
         bool externalImage{ false }; /**< Will be true if this was registered with an external image. Preventing the descriptor being built. */
 
@@ -27,7 +27,7 @@ namespace garlic::clove {
     public:
         RgImage() = delete;
         RgImage(RgResourceIdType id, GhaImage::Type imageType, GhaImage::Format format, vec2ui dimensions);
-        RgImage(RgResourceIdType id, std::shared_ptr<GhaImageView> ghaImageView);
+        RgImage(RgResourceIdType id, GhaImageView *ghaImageView);
 
         RgImage(RgImage const &other) = delete;
         RgImage(RgImage &&other) noexcept;
@@ -42,7 +42,7 @@ namespace garlic::clove {
          * @param ghaFactory 
          * @return 
          */
-        std::shared_ptr<GhaImageView> getGhaImageView(RgFrameCache &cache);
+        GhaImageView *getGhaImageView(RgFrameCache &cache);
 
         inline bool isExternalImage() const;
 

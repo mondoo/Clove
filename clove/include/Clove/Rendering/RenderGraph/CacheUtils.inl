@@ -1,4 +1,4 @@
-namespace garlic::clove::CacheUtils {
+namespace clove::CacheUtils {
     template<typename HashType, typename T>
     void hashCombine(HashType &currentHash, T const &value) {
         std::hash<T> hash{};

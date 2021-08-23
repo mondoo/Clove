@@ -16,11 +16,11 @@
 #include <unordered_map>
 #include <vector>
 
-namespace garlic::clove {
+namespace clove {
     class GhaSemaphore;
 }
 
-namespace garlic::clove {
+namespace clove {
     /**
      * @brief Stores objects associated with a single frame (images, buffers, etc.) for a RenderGraph
      */
@@ -31,8 +31,8 @@ namespace garlic::clove {
 
         template<typename T>
         struct ResourcePool {
-            std::unordered_map<PoolId, std::vector<std::shared_ptr<T>>> free{};
-            std::unordered_map<PoolId, std::vector<std::shared_ptr<T>>> allocated{};
+            std::unordered_map<PoolId, std::vector<std::unique_ptr<T>>> free{};
+            std::unordered_map<PoolId, std::vector<std::unique_ptr<T>>> allocated{};
 
             /**
              * @brief Retrieve an element from the pool. Allocating a new one if necessary.
@@ -40,9 +40,8 @@ namespace garlic::clove {
              * @param createItem Functor that will be called if a new item needs to be created.
              * @return 
              */
-            std::shared_ptr<T> retrieve(PoolId const id, std::function<std::shared_ptr<T>()> createItem) {
-                std::shared_ptr<T> item{};
-
+            T *retrieve(PoolId const id, std::function<std::unique_ptr<T>()> createItem) {
+                std::unique_ptr<T> item{};
                 bool const containsFreeElement{ free.contains(id) && !free.at(id).empty() };
                 if(containsFreeElement) {
                     auto &freeVec{ free.at(id) };
@@ -52,9 +51,9 @@ namespace garlic::clove {
                 } else {
                     item = createItem();
                 }
-                allocated[id].push_back(item);
+                allocated[id].push_back(std::move(item));
 
-                return item;
+                return allocated[id].back().get();
             }
 
             /**
@@ -62,7 +61,9 @@ namespace garlic::clove {
              */
             void reset() {
                 for(auto &&[key, vec] : allocated) {
-                    free[key].insert(free[key].end(), vec.begin(), vec.end());
+                    for(auto &item : vec) {
+                        free[key].push_back(std::move(item));
+                    }
                 }
                 allocated.clear();
             }
@@ -70,7 +71,7 @@ namespace garlic::clove {
 
         //VARIABLES
     private:
-        std::shared_ptr<GhaFactory> ghaFactory{ nullptr };
+        GhaFactory *ghaFactory{ nullptr };
 
         ResourcePool<GhaBuffer> bufferPool{};
         ResourcePool<GhaImage> imagePool{};
@@ -79,18 +80,18 @@ namespace garlic::clove {
         ResourcePool<GhaDescriptorPool> descriptorPoolPool{};
         ResourcePool<GhaSemaphore> semaphorePool{};
 
-        std::shared_ptr<GhaGraphicsQueue> graphicsQueue{ nullptr };
-        std::shared_ptr<GhaComputeQueue> computeQueue{ nullptr };
-        std::shared_ptr<GhaTransferQueue> transferQueue{ nullptr };
+        GhaGraphicsQueue *graphicsQueue{ nullptr };
+        GhaComputeQueue *computeQueue{ nullptr };
+        GhaTransferQueue *transferQueue{ nullptr };
 
-        std::vector<std::shared_ptr<GhaGraphicsCommandBuffer>> allocatedGraphicsCommandBuffers{};
-        std::vector<std::shared_ptr<GhaComputeCommandBuffer>> allocatedComputeCommandBuffers{};
-        std::vector<std::shared_ptr<GhaTransferCommandBuffer>> allocatedTransferCommandBuffers{};
+        std::vector<std::unique_ptr<GhaGraphicsCommandBuffer>> allocatedGraphicsCommandBuffers{};
+        std::vector<std::unique_ptr<GhaComputeCommandBuffer>> allocatedComputeCommandBuffers{};
+        std::vector<std::unique_ptr<GhaTransferCommandBuffer>> allocatedTransferCommandBuffers{};
 
         //FUNCTIONS
     public:
         RgFrameCache() = delete;
-        RgFrameCache(std::shared_ptr<GhaFactory> ghaFactory, std::shared_ptr<GhaGraphicsQueue> graphicsQueue, std::shared_ptr<GhaComputeQueue> computeQueue, std::shared_ptr<GhaTransferQueue> transferQueue);
+        RgFrameCache(GhaFactory *ghaFactory, GhaGraphicsQueue *graphicsQueue, GhaComputeQueue *computeQueue, GhaTransferQueue *transferQueue);
 
         RgFrameCache(RgFrameCache const &other) = delete;
         RgFrameCache(RgFrameCache &&other) noexcept;
@@ -105,20 +106,20 @@ namespace garlic::clove {
          */
         void reset();
 
-        std::shared_ptr<GhaBuffer> allocateBuffer(GhaBuffer::Descriptor descriptor);
+        GhaBuffer *allocateBuffer(GhaBuffer::Descriptor descriptor);
 
-        std::shared_ptr<GhaImage> allocateImage(GhaImage::Descriptor descriptor);
-        std::shared_ptr<GhaImageView> allocateImageView(GhaImage const *const image, GhaImageView::Descriptor descriptor);
+        GhaImage *allocateImage(GhaImage::Descriptor descriptor);
+        GhaImageView *allocateImageView(GhaImage const *const image, GhaImageView::Descriptor descriptor);
 
-        std::shared_ptr<GhaFramebuffer> allocateFramebuffer(GhaFramebuffer::Descriptor descriptor);
+        GhaFramebuffer *allocateFramebuffer(GhaFramebuffer::Descriptor descriptor);
 
-        std::shared_ptr<GhaDescriptorPool> allocateDescriptorPool(GhaDescriptorPool::Descriptor descriptor);
+        GhaDescriptorPool *allocateDescriptorPool(GhaDescriptorPool::Descriptor descriptor);
 
-        std::shared_ptr<GhaSemaphore> allocateSemaphore();
+        GhaSemaphore *allocateSemaphore();
 
-        std::shared_ptr<GhaGraphicsCommandBuffer> allocateGraphicsCommandBuffer();
-        std::shared_ptr<GhaComputeCommandBuffer> allocateComputeCommandBuffer();
-        std::shared_ptr<GhaTransferCommandBuffer> allocateTransferCommandBuffer();
+        GhaGraphicsCommandBuffer *allocateGraphicsCommandBuffer();
+        GhaComputeCommandBuffer *allocateComputeCommandBuffer();
+        GhaTransferCommandBuffer *allocateTransferCommandBuffer();
 
         void submit(GraphicsSubmitInfo submitInfo, GhaFence *signalFence);
         void submit(ComputeSubmitInfo submitInfo, GhaFence *signalFence);

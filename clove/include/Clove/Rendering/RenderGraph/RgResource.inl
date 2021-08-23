@@ -1,4 +1,4 @@
-namespace garlic::clove {
+namespace clove {
     void RgResource::addWritePass(RgPassIdType pass) {
         writePasses.emplace(pass);
     }

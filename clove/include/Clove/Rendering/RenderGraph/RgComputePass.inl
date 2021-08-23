@@ -1,4 +1,4 @@
-namespace garlic::clove {
+namespace clove {
     void RgComputePass::addSubmission(Submission submission){
         submissions.emplace_back(std::move(submission));
     }

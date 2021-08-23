@@ -7,7 +7,7 @@
 #include <vector>
 #include <Clove/Maths/Vector.hpp>
 
-namespace garlic::clove {
+namespace clove {
     class RgComputePass : public RgPass {
         //TYPES
     public:

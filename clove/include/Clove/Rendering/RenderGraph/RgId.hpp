@@ -3,7 +3,7 @@
 #include <cinttypes>
 #include <cstddef>
 
-namespace garlic::clove{
+namespace clove{
     using RgResourceIdType = uint32_t;
     using RgPassIdType     = uint32_t;
 

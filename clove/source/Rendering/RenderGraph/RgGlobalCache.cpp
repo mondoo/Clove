@@ -6,9 +6,9 @@
 #include <Clove/Log/Log.hpp>
 #include <fstream>
 
-namespace garlic::clove {
-    RgGlobalCache::RgGlobalCache(std::shared_ptr<GhaFactory> ghaFactory)
-        : factory{ std::move(ghaFactory) } {
+namespace clove {
+    RgGlobalCache::RgGlobalCache(GhaFactory *ghaFactory)
+        : factory{ ghaFactory } {
     }
 
     RgGlobalCache::RgGlobalCache(RgGlobalCache &&other) noexcept = default;
@@ -17,7 +17,7 @@ namespace garlic::clove {
 
     RgGlobalCache::~RgGlobalCache() = default;
 
-    std::shared_ptr<GhaShader> RgGlobalCache::createShader(std::filesystem::path const &file, GhaShader::Stage shaderStage) {
+    GhaShader *RgGlobalCache::createShader(std::filesystem::path const &file, GhaShader::Stage shaderStage) {
         //TODO: Copied from the shader compiler. Ideally we'd cache the shader source somewhere. Perhaps in a shader library
         std::ifstream fileStream(file.c_str(), std::ios::ate | std::ios::binary);
 
@@ -39,19 +39,19 @@ namespace garlic::clove {
         if(!shaders.contains(shaderSource)) {
             shaders[shaderSource] = *factory->createShaderFromFile(file, shaderStage);
         }
-        return shaders.at(shaderSource);
+        return shaders.at(shaderSource).get();
     }
 
-    std::shared_ptr<GhaShader> RgGlobalCache::createShader(std::string_view source, std::unordered_map<std::string, std::string> includeSources, std::string_view shaderName, GhaShader::Stage shaderStage) {
+    GhaShader *RgGlobalCache::createShader(std::string_view source, std::unordered_map<std::string, std::string> includeSources, std::string_view shaderName, GhaShader::Stage shaderStage) {
         std::string const shaderSource{ source };
 
         if(!shaders.contains(shaderSource)) {
             shaders[shaderSource] = *factory->createShaderFromSource(source, std::move(includeSources), shaderName, shaderStage);
         }
-        return shaders.at(shaderSource);
+        return shaders.at(shaderSource).get();
     }
 
-    std::shared_ptr<GhaSampler> RgGlobalCache::createSampler(GhaSampler::Descriptor descriptor) {
+    GhaSampler *RgGlobalCache::createSampler(GhaSampler::Descriptor descriptor) {
         PoolId samplerId{ 0 };
         CacheUtils::hashCombine(samplerId, descriptor.minFilter);
         CacheUtils::hashCombine(samplerId, descriptor.magFilter);
@@ -64,11 +64,10 @@ namespace garlic::clove {
         if(!samplers.contains(samplerId)) {
             samplers[samplerId] = factory->createSampler(std::move(descriptor)).getValue();
         }
-
-        return samplers.at(samplerId);
+        return samplers.at(samplerId).get();
     }
 
-    std::shared_ptr<GhaRenderPass> RgGlobalCache::createRenderPass(GhaRenderPass::Descriptor descriptor) {
+    GhaRenderPass *RgGlobalCache::createRenderPass(GhaRenderPass::Descriptor descriptor) {
         auto const hashAttachment = [](PoolId &passId, AttachmentDescriptor const &attachment) {
             CacheUtils::hashCombine(passId, attachment.format);
             CacheUtils::hashCombine(passId, attachment.loadOperation);
@@ -89,10 +88,10 @@ namespace garlic::clove {
         if(!renderPasses.contains(passId)) {
             renderPasses[passId] = *factory->createRenderPass(std::move(descriptor));
         }
-        return renderPasses.at(passId);
+        return renderPasses.at(passId).get();
     }
 
-    std::shared_ptr<GhaDescriptorSetLayout> RgGlobalCache::createDescriptorSetLayout(GhaDescriptorSetLayout::Descriptor descriptor) {
+    GhaDescriptorSetLayout *RgGlobalCache::createDescriptorSetLayout(GhaDescriptorSetLayout::Descriptor descriptor) {
         PoolId layoutId{};
         for(auto &binding : descriptor.bindings) {
             CacheUtils::hashCombine(layoutId, binding.binding);
@@ -104,22 +103,21 @@ namespace garlic::clove {
         if(!descriptorSetLayouts.contains(layoutId)) {
             descriptorSetLayouts[layoutId] = factory->createDescriptorSetLayout(std::move(descriptor)).getValue();
         }
-
-        return descriptorSetLayouts.at(layoutId);
+        return descriptorSetLayouts.at(layoutId).get();
     }
 
-    std::shared_ptr<GhaGraphicsPipelineObject> RgGlobalCache::createGraphicsPipelineObject(GhaGraphicsPipelineObject::Descriptor descriptor) {
+    GhaGraphicsPipelineObject *RgGlobalCache::createGraphicsPipelineObject(GhaGraphicsPipelineObject::Descriptor descriptor) {
         PoolId pipelineId{};
 
         bool vertFound{ false };
         bool pixelFound{ false };
         for(auto &&[source, shaderObject] : shaders) {
-            if(!vertFound && shaderObject == descriptor.vertexShader) {
+            if(!vertFound && shaderObject.get() == descriptor.vertexShader) {
                 CacheUtils::hashCombine(pipelineId, source);
                 vertFound = true;
             }
 
-            if(pixelFound && shaderObject == descriptor.pixelShader) {
+            if(pixelFound && shaderObject.get() == descriptor.pixelShader) {
                 CacheUtils::hashCombine(pipelineId, source);
                 pixelFound = true;
             }
@@ -154,10 +152,10 @@ namespace garlic::clove {
 
         CacheUtils::hashCombine(pipelineId, descriptor.enableBlending);
 
-        CacheUtils::hashCombine(pipelineId, descriptor.renderPass.get());
+        CacheUtils::hashCombine(pipelineId, descriptor.renderPass);
 
         for(auto const &descriptorSetLayout : descriptor.descriptorSetLayouts) {
-            CacheUtils::hashCombine(pipelineId, descriptorSetLayout.get());
+            CacheUtils::hashCombine(pipelineId, descriptorSetLayout);
         }
 
         for(auto const &pushConstantDescriptor : descriptor.pushConstants) {
@@ -169,20 +167,20 @@ namespace garlic::clove {
         if(!graphicsPipelines.contains(pipelineId)) {
             graphicsPipelines[pipelineId] = *factory->createGraphicsPipelineObject(std::move(descriptor));
         }
-        return graphicsPipelines.at(pipelineId);
+        return graphicsPipelines.at(pipelineId).get();
     }
 
-    std::shared_ptr<GhaComputePipelineObject> RgGlobalCache::createComputePipelineObject(GhaComputePipelineObject::Descriptor descriptor) {
+    GhaComputePipelineObject *RgGlobalCache::createComputePipelineObject(GhaComputePipelineObject::Descriptor descriptor) {
         PoolId pipelineId{};
 
         for(auto &&[source, shaderObject] : shaders) {
-            if(shaderObject == descriptor.shader) {
+            if(shaderObject.get() == descriptor.shader) {
                 CacheUtils::hashCombine(pipelineId, source);
             }
         }
 
         for(auto const &descriptorSetLayout : descriptor.descriptorSetLayouts) {
-            CacheUtils::hashCombine(pipelineId, descriptorSetLayout.get());
+            CacheUtils::hashCombine(pipelineId, descriptorSetLayout);
         }
 
         for(auto const &pushConstantDescriptor : descriptor.pushConstants) {
@@ -194,6 +192,6 @@ namespace garlic::clove {
         if(!computePipelines.contains(pipelineId)) {
             computePipelines[pipelineId] = *factory->createComputePipelineObject(std::move(descriptor));
         }
-        return computePipelines.at(pipelineId);
+        return computePipelines.at(pipelineId).get();
     }
 }

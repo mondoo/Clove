@@ -12,11 +12,11 @@
 #include <string_view>
 #include <unordered_map>
 
-namespace garlic::clove {
+namespace clove {
     class GhaFactory;
 }
 
-namespace garlic::clove {
+namespace clove {
     /**
      * @brief Stores objects that will be used regardless of what frame is being rendered (shaders, pipelines, etc.)
      */
@@ -27,19 +27,19 @@ namespace garlic::clove {
 
         //VARIABLES
     private:
-        std::shared_ptr<GhaFactory> factory{ nullptr };
+        GhaFactory *factory{ nullptr };
 
-        std::unordered_map<std::string, std::shared_ptr<GhaShader>> shaders{};
-        std::unordered_map<PoolId, std::shared_ptr<GhaSampler>> samplers{};
-        std::unordered_map<PoolId, std::shared_ptr<GhaRenderPass>> renderPasses{};
-        std::unordered_map<PoolId, std::shared_ptr<GhaDescriptorSetLayout>> descriptorSetLayouts{};
-        std::unordered_map<PoolId, std::shared_ptr<GhaGraphicsPipelineObject>> graphicsPipelines{};
-        std::unordered_map<PoolId, std::shared_ptr<GhaComputePipelineObject>> computePipelines{};
+        std::unordered_map<std::string, std::unique_ptr<GhaShader>> shaders{};
+        std::unordered_map<PoolId, std::unique_ptr<GhaSampler>> samplers{};
+        std::unordered_map<PoolId, std::unique_ptr<GhaRenderPass>> renderPasses{};
+        std::unordered_map<PoolId, std::unique_ptr<GhaDescriptorSetLayout>> descriptorSetLayouts{};
+        std::unordered_map<PoolId, std::unique_ptr<GhaGraphicsPipelineObject>> graphicsPipelines{};
+        std::unordered_map<PoolId, std::unique_ptr<GhaComputePipelineObject>> computePipelines{};
 
         //FUNCTIONS
     public:
         RgGlobalCache() = delete;
-        RgGlobalCache(std::shared_ptr<GhaFactory> ghaFactory);
+        RgGlobalCache(GhaFactory *ghaFactory);
 
         RgGlobalCache(RgGlobalCache const &other) = delete;
         RgGlobalCache(RgGlobalCache &&other) noexcept;
@@ -49,15 +49,15 @@ namespace garlic::clove {
 
         ~RgGlobalCache();
 
-        std::shared_ptr<GhaShader> createShader(std::filesystem::path const &file, GhaShader::Stage shaderStage);
-        std::shared_ptr<GhaShader> createShader(std::string_view source, std::unordered_map<std::string, std::string> includeSources, std::string_view shaderName, GhaShader::Stage shaderStage);
+        GhaShader *createShader(std::filesystem::path const &file, GhaShader::Stage shaderStage);
+        GhaShader *createShader(std::string_view source, std::unordered_map<std::string, std::string> includeSources, std::string_view shaderName, GhaShader::Stage shaderStage);
 
-        std::shared_ptr<GhaSampler> createSampler(GhaSampler::Descriptor descriptor);
+        GhaSampler *createSampler(GhaSampler::Descriptor descriptor);
 
-        std::shared_ptr<GhaRenderPass> createRenderPass(GhaRenderPass::Descriptor descriptor);
-        std::shared_ptr<GhaDescriptorSetLayout> createDescriptorSetLayout(GhaDescriptorSetLayout::Descriptor descriptor);
-        std::shared_ptr<GhaGraphicsPipelineObject> createGraphicsPipelineObject(GhaGraphicsPipelineObject::Descriptor descriptor);
+        GhaRenderPass *createRenderPass(GhaRenderPass::Descriptor descriptor);
+        GhaDescriptorSetLayout *createDescriptorSetLayout(GhaDescriptorSetLayout::Descriptor descriptor);
+        GhaGraphicsPipelineObject *createGraphicsPipelineObject(GhaGraphicsPipelineObject::Descriptor descriptor);
 
-        std::shared_ptr<GhaComputePipelineObject> createComputePipelineObject(GhaComputePipelineObject::Descriptor descriptor);
+        GhaComputePipelineObject *createComputePipelineObject(GhaComputePipelineObject::Descriptor descriptor);
     };
 }

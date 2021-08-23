@@ -4,7 +4,7 @@
 
 #include <unordered_set>
 
-namespace garlic::clove {
+namespace clove {
     /**
      * @brief Represents an operation a series of resources.
      */

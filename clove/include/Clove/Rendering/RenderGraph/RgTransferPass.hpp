@@ -4,7 +4,7 @@
 
 #include <vector>
 
-namespace garlic::clove {
+namespace clove {
     class RgTransferPass : public RgPass {
         //TYPES
     public:

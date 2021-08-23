@@ -4,7 +4,7 @@
 
 #include <Clove/Log/Log.hpp>
 
-namespace garlic::clove {
+namespace clove {
     namespace {
         GhaImageView::Type getViewType(GhaImage::Type imageType) {
             switch(imageType) {
@@ -29,9 +29,9 @@ namespace garlic::clove {
         };
     }
 
-    RgImage::RgImage(RgResourceIdType id, std::shared_ptr<GhaImageView> ghaImageView)
+    RgImage::RgImage(RgResourceIdType id, GhaImageView *ghaImageView)
         : RgResource{ id }
-        , ghaImageView{ std::move(ghaImageView) } {
+        , ghaImageView{ ghaImageView } {
         externalImage = true;
     }
 
@@ -41,11 +41,11 @@ namespace garlic::clove {
 
     RgImage::~RgImage() = default;
 
-    std::shared_ptr<GhaImageView> RgImage::getGhaImageView(RgFrameCache &cache) {
+    GhaImageView *RgImage::getGhaImageView(RgFrameCache &cache) {
         if(ghaImageView == nullptr) {
             CLOVE_ASSERT(!externalImage, "RgImage is registered as an external image but does not have a valid GhaImageView.");
             ghaImage     = cache.allocateImage(ghaImageDescriptor);
-            ghaImageView = cache.allocateImageView(ghaImage.get(), GhaImageView::Descriptor{ .type = getViewType(ghaImageDescriptor.type) });
+            ghaImageView = cache.allocateImageView(ghaImage, GhaImageView::Descriptor{ .type = getViewType(ghaImageDescriptor.type) });
         }
 
         return ghaImageView;

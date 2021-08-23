@@ -6,11 +6,11 @@
 
 #include <vector>
 
-namespace {
+namespace clove {
     class RgGlobalCache;
 }
 
-namespace garlic::clove {
+namespace clove {
     /**
      * @brief Represents an entire render pass in the graph.
      */

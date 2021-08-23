@@ -2,7 +2,7 @@
 
 #include "Clove/Rendering/RenderGraph/RgGlobalCache.hpp"
 
-namespace garlic::clove {
+namespace clove {
     RgRenderPass::RgRenderPass(RgPassIdType id, Descriptor descriptor)
         : RgPass{ id }
         , descriptor{ std::move(descriptor) } {

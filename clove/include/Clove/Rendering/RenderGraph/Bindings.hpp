@@ -6,7 +6,7 @@
 #include <Clove/Graphics/GhaRenderPass.hpp>
 #include <Clove/Graphics/GhaSampler.hpp>
 
-namespace garlic::clove {
+namespace clove {
     struct RgBufferBinding {
         uint32_t slot{};
         RgResourceIdType buffer{};

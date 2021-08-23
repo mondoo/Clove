@@ -1,6 +1,6 @@
 #include "Clove/Rendering/RenderGraph/RgComputePass.hpp"
 
-namespace garlic::clove {
+namespace clove {
     RgComputePass::RgComputePass(RgPassIdType id, Descriptor descriptor)
         : RgPass{ id }
         , descriptor{ std::move(descriptor) } {

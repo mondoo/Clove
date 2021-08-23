@@ -15,7 +15,7 @@
 #include <Clove/Graphics/GhaSampler.hpp>
 #include <Clove/Log/Log.hpp>
 
-namespace garlic::clove {
+namespace clove {
     RenderGraph::RenderGraph(RgFrameCache &frameCache, RgGlobalCache &globalCache)
         : frameCache{ frameCache }
         , globalCache{ globalCache } {
@@ -31,9 +31,9 @@ namespace garlic::clove {
         return bufferId;
     }
 
-    RgResourceIdType RenderGraph::createBuffer(std::shared_ptr<GhaBuffer> buffer, size_t const offset, size_t const size) {
+    RgResourceIdType RenderGraph::createBuffer(GhaBuffer *buffer, size_t const offset, size_t const size) {
         RgResourceIdType const bufferId{ nextResourceId++ };
-        buffers[bufferId] = std::make_unique<RgBuffer>(bufferId, std::move(buffer), size, offset);
+        buffers[bufferId] = std::make_unique<RgBuffer>(bufferId, buffer, size, offset);
 
         return bufferId;
     }
@@ -45,9 +45,9 @@ namespace garlic::clove {
         return imageId;
     }
 
-    RgResourceIdType RenderGraph::createImage(std::shared_ptr<GhaImageView> ghaImageView) {
+    RgResourceIdType RenderGraph::createImage(GhaImageView *ghaImageView) {
         RgResourceIdType const imageId{ nextResourceId++ };
-        images[imageId] = std::make_unique<RgImage>(imageId, std::move(ghaImageView));
+        images[imageId] = std::make_unique<RgImage>(imageId, ghaImageView);
 
         return imageId;
     }
@@ -238,17 +238,17 @@ namespace garlic::clove {
         std::vector<PassDependency> const passDependencies{ buildDependencies(executionPasses) };
 
         //Graphics GHA objects.
-        std::unordered_map<RgPassIdType, std::shared_ptr<GhaRenderPass>> allocatedRenderPasses{};
-        std::unordered_map<RgPassIdType, std::shared_ptr<GhaFramebuffer>> allocatedFramebuffers{};
-        std::unordered_map<RgPassIdType, std::shared_ptr<GhaGraphicsPipelineObject>> allocatedGraphicsPipelines{};
-        std::unordered_map<RgResourceIdType, std::shared_ptr<GhaSampler>> allocatedSamplers{};
+        std::unordered_map<RgPassIdType, GhaRenderPass *> allocatedRenderPasses{};
+        std::unordered_map<RgPassIdType, GhaFramebuffer *> allocatedFramebuffers{};
+        std::unordered_map<RgPassIdType, GhaGraphicsPipelineObject *> allocatedGraphicsPipelines{};
+        std::unordered_map<RgResourceIdType, GhaSampler *> allocatedSamplers{};
 
         //Compute GHA objects.
-        std::unordered_map<RgPassIdType, std::shared_ptr<GhaComputePipelineObject>> allocatedComputePipelines{};
+        std::unordered_map<RgPassIdType, GhaComputePipelineObject *> allocatedComputePipelines{};
 
         //Shared GHA objects.
-        std::unordered_map<RgPassIdType, std::shared_ptr<GhaDescriptorSetLayout>> descriptorSetLayouts{};
-        std::unordered_map<RgPassIdType, std::vector<std::shared_ptr<GhaDescriptorSet>>> allocatedDescriptorSets{};
+        std::unordered_map<RgPassIdType, GhaDescriptorSetLayout *> descriptorSetLayouts{};
+        std::unordered_map<RgPassIdType, std::vector<std::unique_ptr<GhaDescriptorSet>>> allocatedDescriptorSets{};
 
         std::unordered_map<DescriptorType, uint32_t> totalDescriptorBindingCount{};
         uint32_t totalDescriptorSets{ 0 };
@@ -292,8 +292,8 @@ namespace garlic::clove {
 
         for(RgPassIdType passId : executionPasses) {
             //Construct any synchronisation objects the pass will need
-            std::vector<std::pair<std::shared_ptr<GhaSemaphore>, PipelineStage>> waitSemaphores{};
-            std::vector<std::shared_ptr<GhaSemaphore>> signalSemaphores{};
+            std::vector<std::pair<GhaSemaphore const *, PipelineStage>> waitSemaphores{};
+            std::vector<GhaSemaphore const *> signalSemaphores{};
             GhaFence *signalFence{ nullptr };
 
             for(auto const &dependency : passDependencies) {
@@ -307,12 +307,12 @@ namespace garlic::clove {
             if(passId == executionPasses.back()) {
                 waitSemaphores.insert(waitSemaphores.end(), info.waitSemaphores.begin(), info.waitSemaphores.end());
                 signalSemaphores.insert(signalSemaphores.end(), info.signalSemaphores.begin(), info.signalSemaphores.end());
-                signalFence = info.signalFence.get();
+                signalFence = info.signalFence;
             }
 
             //Execute the pass
             if(renderPasses.contains(passId)) {
-                std::shared_ptr<GhaGraphicsCommandBuffer> graphicsCommandBufffer{ frameCache.allocateGraphicsCommandBuffer() };
+                GhaGraphicsCommandBuffer *graphicsCommandBufffer{ frameCache.allocateGraphicsCommandBuffer() };
 
                 graphicsCommandBufffer->beginRecording(CommandBufferUsage::OneTimeSubmit);
                 executeGraphicsPass(passId, *graphicsCommandBufffer, allocatedRenderPasses, allocatedFramebuffers, allocatedGraphicsPipelines, allocatedSamplers, allocatedDescriptorSets);
@@ -335,7 +335,7 @@ namespace garlic::clove {
             }
 
             if(computePasses.contains(passId)) {
-                std::shared_ptr<GhaComputeCommandBuffer> computeCommandBufffer{ frameCache.allocateComputeCommandBuffer() };
+                GhaComputeCommandBuffer *computeCommandBufffer{ frameCache.allocateComputeCommandBuffer() };
 
                 computeCommandBufffer->beginRecording(CommandBufferUsage::OneTimeSubmit);
                 executeComputePass(passId, *computeCommandBufffer, allocatedComputePipelines, allocatedDescriptorSets);
@@ -503,7 +503,7 @@ namespace garlic::clove {
         }
     }
 
-    void RenderGraph::generateRenderPassObjects(std::vector<RgPassIdType> const &passes, std::unordered_map<RgPassIdType, std::shared_ptr<GhaRenderPass>> &outRenderPasses, std::unordered_map<RgPassIdType, std::shared_ptr<GhaFramebuffer>> &outFramebuffers, std::unordered_map<RgPassIdType, std::shared_ptr<GhaGraphicsPipelineObject>> &outGraphicsPipelines, std::unordered_map<RgResourceIdType, std::shared_ptr<GhaSampler>> &outSamplers, std::unordered_map<RgPassIdType, std::shared_ptr<GhaDescriptorSetLayout>> &outDescriptorSetLayouts, std::unordered_map<DescriptorType, uint32_t> &totalDescriptorBindingCount, uint32_t &totalDescriptorSets) {
+    void RenderGraph::generateRenderPassObjects(std::vector<RgPassIdType> const &passes, std::unordered_map<RgPassIdType, GhaRenderPass *> &outRenderPasses, std::unordered_map<RgPassIdType, GhaFramebuffer *> &outFramebuffers, std::unordered_map<RgPassIdType, GhaGraphicsPipelineObject *> &outGraphicsPipelines, std::unordered_map<RgResourceIdType, GhaSampler *> &outSamplers, std::unordered_map<RgPassIdType, GhaDescriptorSetLayout *> &outDescriptorSetLayouts, std::unordered_map<DescriptorType, uint32_t> &totalDescriptorBindingCount, uint32_t &totalDescriptorSets) {
         for(int32_t i{ 0 }; i < passes.size(); ++i) {
             RgPassIdType const passId{ passes[i] };
             if(!renderPasses.contains(passId)) {
@@ -599,7 +599,7 @@ namespace garlic::clove {
             });
 
             //Allocate the frame buffer
-            std::vector<std::shared_ptr<GhaImageView>> attachments{};
+            std::vector<GhaImageView const *> attachments{};
             for(auto &renderTarget : passDescriptor.renderTargets) {
                 attachments.push_back(images.at(renderTarget.target)->getGhaImageView(frameCache));
             }
@@ -635,7 +635,7 @@ namespace garlic::clove {
         }
     }
 
-    void RenderGraph::generateComputePassObjects(std::vector<RgPassIdType> const &passes, std::unordered_map<RgPassIdType, std::shared_ptr<GhaComputePipelineObject>> &outComputePipelines, std::unordered_map<RgPassIdType, std::shared_ptr<GhaDescriptorSetLayout>> &outDescriptorSetLayouts, std::unordered_map<DescriptorType, uint32_t> &totalDescriptorBindingCount, uint32_t &totalDescriptorSets) {
+    void RenderGraph::generateComputePassObjects(std::vector<RgPassIdType> const &passes, std::unordered_map<RgPassIdType, GhaComputePipelineObject *> &outComputePipelines, std::unordered_map<RgPassIdType, GhaDescriptorSetLayout *> &outDescriptorSetLayouts, std::unordered_map<DescriptorType, uint32_t> &totalDescriptorBindingCount, uint32_t &totalDescriptorSets) {
         for(int32_t i{ 0 }; i < passes.size(); ++i) {
             RgPassIdType const passId{ passes[i] };
             if(!computePasses.contains(passId)) {
@@ -705,8 +705,8 @@ namespace garlic::clove {
         }
     }
 
-    std::unordered_map<RgPassIdType, std::vector<std::shared_ptr<GhaDescriptorSet>>> RenderGraph::createDescriptorSets(std::unordered_map<DescriptorType, uint32_t> const &totalDescriptorBindingCount, uint32_t const totalDescriptorSets, std::unordered_map<RgPassIdType, std::shared_ptr<GhaGraphicsPipelineObject>> const &graphicsPipelines, std::unordered_map<RgPassIdType, std::shared_ptr<GhaComputePipelineObject>> &computePipelines) {
-        std::unordered_map<RgPassIdType, std::vector<std::shared_ptr<GhaDescriptorSet>>> descriptorSets{};
+    std::unordered_map<RgPassIdType, std::vector<std::unique_ptr<GhaDescriptorSet>>> RenderGraph::createDescriptorSets(std::unordered_map<DescriptorType, uint32_t> const &totalDescriptorBindingCount, uint32_t const totalDescriptorSets, std::unordered_map<RgPassIdType, GhaGraphicsPipelineObject *> const &graphicsPipelines, std::unordered_map<RgPassIdType, GhaComputePipelineObject *> &computePipelines) {
+        std::unordered_map<RgPassIdType, std::vector<std::unique_ptr<GhaDescriptorSet>>> descriptorSets{};
 
         //Create a single pool to allocate from
         std::vector<DescriptorInfo> descriptorTypes{};
@@ -719,7 +719,7 @@ namespace garlic::clove {
             });
         }
 
-        std::shared_ptr<GhaDescriptorPool> descriptorPool{ frameCache.allocateDescriptorPool(GhaDescriptorPool::Descriptor{
+        GhaDescriptorPool *descriptorPool{ frameCache.allocateDescriptorPool(GhaDescriptorPool::Descriptor{
             .poolTypes = std::move(descriptorTypes),
             .flag      = GhaDescriptorPool::Flag::None,
             .maxSets   = totalDescriptorSets,
@@ -728,18 +728,18 @@ namespace garlic::clove {
 
         //Create a descriptor set for each pipeline
         for(auto &&[id, pipeline] : graphicsPipelines) {
-            std::vector<std::shared_ptr<GhaDescriptorSetLayout>> layouts(renderPasses.at(id)->getSubmissions().size(), pipeline->getDescriptor().descriptorSetLayouts[0]);//TEMP: Using first index as we know pipelines always have a single descriptor for now
+            std::vector<GhaDescriptorSetLayout const *> layouts(renderPasses.at(id)->getSubmissions().size(), pipeline->getDescriptor().descriptorSetLayouts[0]);//TEMP: Using first index as we know pipelines always have a single descriptor for now
             descriptorSets[id] = descriptorPool->allocateDescriptorSets(layouts);
         }
         for(auto &&[id, pipeline] : computePipelines) {
-            std::vector<std::shared_ptr<GhaDescriptorSetLayout>> layouts(computePasses.at(id)->getSubmissions().size(), pipeline->getDescriptor().descriptorSetLayouts[0]);//TEMP: Using first index as we know pipelines always have a single descriptor for now
+            std::vector<GhaDescriptorSetLayout const *> layouts(computePasses.at(id)->getSubmissions().size(), pipeline->getDescriptor().descriptorSetLayouts[0]);//TEMP: Using first index as we know pipelines always have a single descriptor for now
             descriptorSets[id] = descriptorPool->allocateDescriptorSets(layouts);
         }
 
         return descriptorSets;
     }
 
-    void RenderGraph::executeGraphicsPass(RgPassIdType passId, GhaGraphicsCommandBuffer &graphicsCommandBufffer, std::unordered_map<RgPassIdType, std::shared_ptr<GhaRenderPass>> const &allocatedRenderPasses, std::unordered_map<RgPassIdType, std::shared_ptr<GhaFramebuffer>> const &allocatedFramebuffers, std::unordered_map<RgPassIdType, std::shared_ptr<GhaGraphicsPipelineObject>> const &allocatedGraphicsPipelines, std::unordered_map<RgResourceIdType, std::shared_ptr<GhaSampler>> const &allocatedSamplers, std::unordered_map<RgPassIdType, std::vector<std::shared_ptr<GhaDescriptorSet>>> const &allocatedDescriptorSets) {
+    void RenderGraph::executeGraphicsPass(RgPassIdType passId, GhaGraphicsCommandBuffer &graphicsCommandBufffer, std::unordered_map<RgPassIdType, GhaRenderPass *> const &allocatedRenderPasses, std::unordered_map<RgPassIdType, GhaFramebuffer *> const &allocatedFramebuffers, std::unordered_map<RgPassIdType, GhaGraphicsPipelineObject *> const &allocatedGraphicsPipelines, std::unordered_map<RgResourceIdType, GhaSampler *> const &allocatedSamplers, std::unordered_map<RgPassIdType, std::vector<std::unique_ptr<GhaDescriptorSet>>> const &allocatedDescriptorSets) {
         RgRenderPass::Descriptor const &passDescriptor{ renderPasses.at(passId)->getDescriptor() };
         std::vector<RgRenderPass::Submission> const &passSubmissions{ renderPasses.at(passId)->getSubmissions() };
 
@@ -764,7 +764,7 @@ namespace garlic::clove {
         graphicsCommandBufffer.bindPipelineObject(*allocatedGraphicsPipelines.at(passId));
 
         for(size_t index{ 0 }; auto const &submission : passSubmissions) {
-            std::shared_ptr<GhaDescriptorSet> const &descriptorSet{ allocatedDescriptorSets.at(passId)[index] };
+            std::unique_ptr<GhaDescriptorSet> const &descriptorSet{ allocatedDescriptorSets.at(passId)[index] };
 
             for(auto const &ubo : submission.shaderUbos) {
                 //TODO: Handle different allocations within the same buffer
@@ -793,14 +793,14 @@ namespace garlic::clove {
         graphicsCommandBufffer.endRenderPass();
     }
 
-    void RenderGraph::executeComputePass(RgPassIdType passId, GhaComputeCommandBuffer &computeCommandBufffer, std::unordered_map<RgPassIdType, std::shared_ptr<GhaComputePipelineObject>> const &allocatedComputePipelines, std::unordered_map<RgPassIdType, std::vector<std::shared_ptr<GhaDescriptorSet>>> const &allocatedDescriptorSets) {
+    void RenderGraph::executeComputePass(RgPassIdType passId, GhaComputeCommandBuffer &computeCommandBufffer, std::unordered_map<RgPassIdType, GhaComputePipelineObject *> const &allocatedComputePipelines, std::unordered_map<RgPassIdType, std::vector<std::unique_ptr<GhaDescriptorSet>>> const &allocatedDescriptorSets) {
         RgComputePass::Descriptor const &passDescriptor{ computePasses.at(passId)->getDescriptor() };
         std::vector<RgComputePass::Submission> const &passSubmissions{ computePasses.at(passId)->getSubmissions() };
 
         computeCommandBufffer.bindPipelineObject(*allocatedComputePipelines.at(passId));
 
         for(size_t index{ 0 }; auto const &submission : passSubmissions) {
-            std::shared_ptr<GhaDescriptorSet> const &descriptorSet{ allocatedDescriptorSets.at(passId)[index] };
+            std::unique_ptr<GhaDescriptorSet> const &descriptorSet{ allocatedDescriptorSets.at(passId)[index] };
 
             for(auto const &readUB : submission.readUniformBuffers) {
                 std::unique_ptr<RgBuffer> const &buffer{ buffers.at(readUB.buffer) };

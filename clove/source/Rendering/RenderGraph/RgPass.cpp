@@ -1,6 +1,6 @@
 #include "Clove/Rendering/RenderGraph/RgPass.hpp"
 
-namespace garlic::clove {
+namespace clove {
     RgPass::RgPass(RgPassIdType id)
         : id{ id } {
     }

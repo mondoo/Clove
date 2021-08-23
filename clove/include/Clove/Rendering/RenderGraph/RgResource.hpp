@@ -4,7 +4,7 @@
 
 #include <unordered_set>
 
-namespace garlic::clove {
+namespace clove {
     /**
      * @brief Base class for all resources in the graph. Keeps track of used passes
      */
