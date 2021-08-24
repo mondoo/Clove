@@ -546,7 +546,7 @@ namespace clove {
                     .binding   = ubo.slot,
                     .type      = DescriptorType::UniformBuffer,
                     .arraySize = 1,
-                    .stage     = GhaShader::Stage::Vertex,//TODO: provided by pass or by shader reflection
+                    .stage     = ubo.shaderStage,//TODO: provided by shader reflection
                 });
             }
             for(auto &image : passSubmissions[0].shaderImages) {
@@ -554,7 +554,7 @@ namespace clove {
                     .binding   = image.slot,
                     .type      = DescriptorType::SampledImage,
                     .arraySize = 1,
-                    .stage     = GhaShader::Stage::Pixel,//TODO: provided by pass or by shader reflection
+                    .stage     = GhaShader::Stage::Pixel,//TODO: provided by shader reflection
                 });
             }
             for(auto &sampler : passSubmissions[0].shaderSamplers) {
@@ -562,7 +562,7 @@ namespace clove {
                     .binding   = sampler.slot,
                     .type      = DescriptorType::Sampler,
                     .arraySize = 1,
-                    .stage     = GhaShader::Stage::Pixel,//TODO: provided by pass or by shader reflection
+                    .stage     = GhaShader::Stage::Pixel,//TODO: provided shader reflection
                 });
             }
 

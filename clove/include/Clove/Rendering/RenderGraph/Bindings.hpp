@@ -5,11 +5,13 @@
 #include <Clove/Graphics/GhaGraphicsCommandBuffer.hpp>
 #include <Clove/Graphics/GhaRenderPass.hpp>
 #include <Clove/Graphics/GhaSampler.hpp>
+#include <Clove/Graphics/GhaShader.hpp>
 
 namespace clove {
     struct RgBufferBinding {
         uint32_t slot{};
         RgResourceIdType buffer{};
+        GhaShader::Stage shaderStage{};//TEMP: Manually set shader stage in place of shader reflection.
     };
 
     struct RgImageBindng {
