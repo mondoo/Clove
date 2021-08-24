@@ -50,7 +50,10 @@ namespace clove {
     private:
         struct PassDependency {
             RgPassIdType signalPass{};
+            
             RgPassIdType waitPass{};
+            PipelineStage waitStage{};
+
             GhaSemaphore const *semaphore{};
         };
 

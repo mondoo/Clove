@@ -15,6 +15,8 @@
 #include <Clove/Graphics/GhaSampler.hpp>
 #include <Clove/Log/Log.hpp>
 
+CLOVE_DECLARE_LOG_CATEGORY(CLOVE_RENDER_GRAPH)
+
 namespace clove {
     RenderGraph::RenderGraph(RgFrameCache &frameCache, RgGlobalCache &globalCache)
         : frameCache{ frameCache }
@@ -298,7 +300,7 @@ namespace clove {
 
             for(auto const &dependency : passDependencies) {
                 if(passId == dependency.waitPass) {
-                    waitSemaphores.push_back(std::make_pair(dependency.semaphore, PipelineStage::Top));//TODO: Properly apply pipeline stage
+                    waitSemaphores.push_back(std::make_pair(dependency.semaphore, dependency.waitStage));
                 } else if(passId == dependency.signalPass) {
                     signalSemaphores.push_back(dependency.semaphore);
                 }
@@ -393,18 +395,21 @@ namespace clove {
 
         //Dependecies are built for the closest pass that has an output of the current passes inputs. All queue operations complete in order so we only need to wait on the last one
         //First pass - Create dependecies for render pass inputs
-        for(size_t passIndex{ 1 }; passIndex < passes.size(); ++passIndex) {
+        for(size_t passIndex{ 0 }; passIndex < passes.size(); ++passIndex) {
             RgPassIdType const passId{ passes[passIndex] };
             if(renderPasses.contains(passId)) {
-                for(RgResourceIdType const resourceId : renderPasses.at(passId)->getInputResources()) {
+                RgRenderPass const *const dependantPass{ renderPasses.at(passId).get() };
+                for(RgResourceIdType const resourceId : dependantPass->getInputResources()) {
                     RgResource const *const resource{ getResourceFromId(resourceId) };
                     RgPassIdType dependencyId{ 0 };
                     size_t currentDistance{ -1u };
                     bool hasDependency{ false };
 
                     for(RgPassIdType const dependencyPassId : resource->getWritePasses()) {
+                        //Only check compute passes for dependencies as all render passes will execute on the same queue.
                         if(computePasses.contains(dependencyPassId)) {
                             size_t const dependencyIndex{ indexOf(dependencyPassId) };
+                            //Dependecy needs to be before this pass.
                             if(dependencyIndex > passIndex) {
                                 continue;
                             }
@@ -420,7 +425,7 @@ namespace clove {
 
                     if(hasDependency) {
                         bool createDependency{ true };
-                        //If a render pass before trhis one has a dependency then we don't need to wait because all queue submissions are done in order.
+                        //If a render pass before this one has a dependency then we don't need to wait because all queue submissions are done in order.
                         for(PassDependency const &dependency : dependencies) {
                             if(renderPasses.contains(dependency.waitPass) && indexOf(dependency.waitPass) < passIndex) {
                                 createDependency = false;
@@ -429,9 +434,47 @@ namespace clove {
                         }
 
                         if(createDependency) {
+                            //Get the correct waitstage for the dependency.
+                            //If it's an image we can always assume PipelineStage::PixelShader for now because we only check input resources.
+                            //If it's a buffer we check the submission info if it'll be PipelineStage::VertexShader or PipelineStage::PixelShader
+                            PipelineStage waitStage{ PipelineStage::Top };
+                            if(images.contains(resourceId)) {
+                                waitStage = PipelineStage::PixelShader;
+                                //TODO: Might need to use early / late fragment tests if the image is a depth buffer
+                            } else if(buffers.contains(resourceId)) {
+                                for(auto const &submission : dependantPass->getSubmissions()) {
+                                    if(submission.vertexBuffer == resourceId || submission.indexBuffer == resourceId) {
+                                        waitStage = PipelineStage::VertexInput;
+                                        break;
+                                    }
+
+                                    bool found{ false };
+                                    for(auto const &ubo : submission.shaderUbos) {
+                                        if(ubo.slot == resourceId) {
+                                            if(ubo.shaderStage == GhaShader::Stage::Vertex){
+                                                waitStage = PipelineStage::VertexShader;
+                                                found     = true;
+                                                break;
+                                            }else if(ubo.shaderStage == GhaShader::Stage::Pixel){
+                                                waitStage = PipelineStage::PixelShader;
+                                                found     = true;
+                                                break;
+                                            }
+                                        }
+                                    }
+
+                                    if(found) {
+                                        break;
+                                    }
+                                }
+                            } else {
+                                CLOVE_LOG(LOG_CATEGORY_CLOVE_RENDER_GRAPH, LogLevel::Warning, "{0}: Could not decide waitStage for resource {1}", CLOVE_FUNCTION_NAME_PRETTY, resourceId);
+                            }
+
                             dependencies.emplace_back(PassDependency{
                                 .signalPass = dependencyId,
                                 .waitPass   = passId,
+                                .waitStage  = waitStage,
                                 .semaphore  = frameCache.allocateSemaphore(),
                             });
                         }
