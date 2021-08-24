@@ -484,7 +484,57 @@ namespace clove {
         }
 
         //Second pass - create compute pass dependencies.
-        //TODO
+        for(size_t passIndex{ 0 }; passIndex < passes.size(); ++passIndex) {
+            RgPassIdType const passId{ passes[passIndex] };
+            if(computePasses.contains(passId)) {
+                for(RgResourceIdType const resourceId : computePasses.at(passId)->getInputResources()) {
+                    RgResource const *const resource{ getResourceFromId(resourceId) };
+                    RgPassIdType dependencyId{ 0 };
+                    size_t currentDistance{ -1u };
+                    bool hasDependency{ false };
+
+                    for(RgPassIdType const dependencyPassId : resource->getWritePasses()) {
+                        //Only check render passes for dependencies as all render passes will execute on the same queue.
+                        if(renderPasses.contains(dependencyPassId)) {
+                            size_t const dependencyIndex{ indexOf(dependencyPassId) };
+                            //Dependecy needs to be before this pass.
+                            if(dependencyIndex > passIndex) {
+                                continue;
+                            }
+
+                            size_t const distance{ passId - dependencyIndex };
+                            if(!hasDependency || distance < currentDistance) {
+                                dependencyId    = dependencyPassId;
+                                currentDistance = distance;
+                                hasDependency   = true;
+                            }
+                        }
+
+                        //TODO: Will need to check compute when there is both sync / async compute
+                    }
+
+                    if(hasDependency) {
+                        bool createDependency{ true };
+                        //If a render pass before this one has a dependency then we don't need to wait because all queue submissions are done in order.
+                        for(PassDependency const &dependency : dependencies) {
+                            if(renderPasses.contains(dependency.waitPass) && indexOf(dependency.waitPass) < passIndex) {
+                                createDependency = false;
+                                break;
+                            }
+                        }
+
+                        if(createDependency) {
+                            dependencies.emplace_back(PassDependency{
+                                .signalPass = dependencyId,
+                                .waitPass   = passId,
+                                .waitStage  = PipelineStage::ComputeShader,
+                                .semaphore  = frameCache.allocateSemaphore(),
+                            });
+                        }
+                    }
+                }
+            }
+        }
 
         return dependencies;
     }
