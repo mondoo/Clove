@@ -6,8 +6,4 @@ namespace clove{
 	MTLPixelFormat MetalRenderPass::getDepthPixelFormat() const {
 		return depthPixelFormat;
 	}
-	
-	GhaRenderPass::Descriptor const &MetalRenderPass::getDescriptor() const {
-		return descriptor;
-	}
 }
