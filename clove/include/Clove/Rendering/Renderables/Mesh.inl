@@ -1,8 +1,4 @@
 namespace clove {
-    GhaBuffer *Mesh::getVertexBuffer() const {
-        return vertexBuffer.get();
-    }
-
     GhaBuffer *Mesh::getCombinedBuffer() const {
         return combinedBuffer.get();
     }
