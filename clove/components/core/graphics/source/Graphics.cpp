@@ -9,7 +9,7 @@
 #endif
 
 #if CLOVE_GHA_VALIDATION
-    #include "Clove/Graphics/Validation/ValidationDevice.hpp"
+    #include "Clove/Graphics/Validation/ValidationLog.hpp"
 #endif
 
 #include <Clove/Definitions.hpp>
@@ -17,31 +17,24 @@
 
 namespace clove {
     std::unique_ptr<GhaDevice> createGraphicsDevice(GraphicsApi api, std::any nativeWindow) {
-        std::unique_ptr<GhaDevice> device{ nullptr };
+#if CLOVE_GHA_VALIDATION
+        CLOVE_LOG(LOG_CATEGORY_CLOVE_GHA_VALIDATION, LogLevel::Debug, "GHA validation enabled.");
+#endif
 
         switch(api) {
 #if CLOVE_PLATFORM_WINDOWS
             case GraphicsApi::Vulkan:
-                device = std::make_unique<VulkanDevice>(std::move(nativeWindow));
-                break;
+                return std::make_unique<VulkanDevice>(std::move(nativeWindow));
 #elif CLOVE_PLATFORM_MACOS
             case GraphicsApi::Metal:
-                device = std::make_unique<MetalDevice>(std::move(nativeWindow));
-                break;
+                return std::make_unique<MetalDevice>(std::move(nativeWindow));
 #elif CLOVE_PLATFORM_LINUX
             case GraphicsApi::Vulkan:
-                device = std::make_unique<VulkanDevice>(std::move(nativeWindow));
-                break;
+                return std::make_unique<VulkanDevice>(std::move(nativeWindow));
 #endif
             default:
                 CLOVE_ASSERT("Default statement hit. Could not initialise RenderAPI: {0}", CLOVE_FUNCTION_NAME);
-                break;
+                return nullptr;
         }
-
-#if !CLOVE_GHA_VALIDATION
-        return device;
-#else
-        return std::make_unique<ValidationDevice>(std::move(device));
-#endif
     }
 }

@@ -33,6 +33,8 @@ namespace clove {
     public:
         virtual ~GhaBuffer() = default;
 
+        virtual Descriptor const &getDescriptor() const = 0;
+
         /**
          * @brief Write data into the buffer. Requires the buffer to be created with MemoryType::SystemMemory.
          * @param data A pointer to the data that will be written to this buffer.

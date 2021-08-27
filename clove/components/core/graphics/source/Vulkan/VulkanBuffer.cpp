@@ -41,6 +41,10 @@ namespace clove {
         memoryAllocator->free(allocatedBlock);
     }
 
+    GhaBuffer::Descriptor const &VulkanBuffer::getDescriptor() const {
+        return descriptor;
+    }
+
     void VulkanBuffer::write(void const *data, size_t const offset, size_t const size) {
         void *cpuAccessibleMemory{ nullptr };
 

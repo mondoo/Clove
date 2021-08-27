@@ -14,6 +14,10 @@ namespace clove {
 
 	MetalBuffer::~MetalBuffer() = default;
 
+	GhaBuffer::Descriptor const &MetalBuffer::getDescriptor() const {
+        return descriptor;
+    }
+
 	void MetalBuffer::write(void const *data, size_t const offset, size_t const size) {
 		uint8_t *cpuAccessibleMemory{ reinterpret_cast<uint8_t *>([buffer contents]) };
 		memcpy((cpuAccessibleMemory + offset), data, size);

@@ -163,11 +163,7 @@ set(
 set(
 	ValidationFiles
 		${INCLUDE}/Validation/ValidationBuffer.hpp
-		${SOURCE}/Validation/ValidationBuffer.cpp
-		${INCLUDE}/Validation/ValidationDevice.hpp
-		${SOURCE}/Validation/ValidationDevice.cpp
-		${INCLUDE}/Validation/ValidationFactory.hpp
-		${SOURCE}/Validation/ValidationFactory.cpp
+		${INCLUDE}/Validation/ValidationBuffer.inl
 		${INCLUDE}/Validation/ValidationLog.hpp
 )
 
@@ -203,6 +199,8 @@ add_library(
 		${INCLUDE}/Graphics.hpp		
 		${SOURCE}/Graphics.cpp
 		${INCLUDE}/GraphicsAPI.hpp
+		${INCLUDE}/Helpers.hpp
+		${INCLUDE}/Helpers.inl
 		${INCLUDE}/MemoryBarrier.hpp
 		${INCLUDE}/PipelineObject.hpp
 		${INCLUDE}/Queue.hpp
