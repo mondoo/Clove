@@ -39,7 +39,6 @@ namespace clove {
         }
         endRecordingCalled = false;
         
-        currentUsage = usageFlag;
         passes.clear();
     }
     

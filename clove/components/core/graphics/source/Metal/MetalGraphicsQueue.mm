@@ -47,12 +47,7 @@ namespace clove {
                         CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: Command buffer provided is nullptr", CLOVE_FUNCTION_NAME);
                         continue;
                     }
-                    
-                    // if(metalCommandBuffer->getCommandBufferUsage() == CommandBufferUsage::OneTimeSubmit && metalCommandBuffer->bufferHasBeenUsed()){
-                    //     CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "GraphicsCommandBuffer recorded with CommandBufferUsage::OneTimeSubmit has already been used. Only buffers recorded with CommandBufferUsage::Default can submitted multiples times after being recorded once.");
-                    //     break;
-                    // }
-                    
+                   
                     id<MTLCommandBuffer> executionBuffer{ [commandQueue commandBuffer] };
                     
                     for(auto const &pass : metalCommandBuffer->getEncodedRenderPasses()) {

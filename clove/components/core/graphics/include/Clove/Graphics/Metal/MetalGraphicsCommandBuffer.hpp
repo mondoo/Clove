@@ -31,7 +31,6 @@ namespace clove {
 		CachedIndexBufferData cachedIndexBuffer;
 		
 		//Validation
-		CommandBufferUsage currentUsage{ CommandBufferUsage::Default };
 		bool endRecordingCalled{ true };
 		
 		//FUNCTIONS
@@ -68,8 +67,6 @@ namespace clove {
 		void imageMemoryBarrier(GhaImage &image, ImageMemoryBarrierInfo const &barrierInfo, PipelineStage sourceStage, PipelineStage destinationStage) override;
 		
 		inline std::vector<RenderPass> const &getEncodedRenderPasses() const;
-		
-		inline CommandBufferUsage getCommandBufferUsage() const;
 	};
 }
 

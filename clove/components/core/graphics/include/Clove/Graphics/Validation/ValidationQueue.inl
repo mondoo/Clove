@@ -9,6 +9,19 @@ namespace clove {
         }
 
         template<typename SubmissionType>
+        void validateBuffersUsage(std::vector<SubmissionType> const &submissions) {
+            for(auto const &submitInfo : submissions) {
+                for(auto &commandBuffer : submitInfo.commandBuffers) {
+                    auto *buffer{ dynamic_cast<ValidationCommandBuffer *>(commandBuffer) };
+                    if(buffer->getCommandBufferUsage() == CommandBufferUsage::OneTimeSubmit && buffer->bufferHasBeenUsed()){
+                        CLOVE_ASSERT("GraphicsCommandBuffer recorded with CommandBufferUsage::OneTimeSubmit has already been used. Only buffers recorded with CommandBufferUsage::Default can submitted multiples times after being recorded once.");
+                        break;
+                    }
+                }
+            }
+        }
+
+        template<typename SubmissionType>
         void markBuffersAsUsed(std::vector<SubmissionType> const &submissions) {
             for(auto const &submitInfo : submissions) {
                 for(auto &commandBuffer : submitInfo.commandBuffers) {
@@ -30,6 +43,8 @@ namespace clove {
 
     template<typename BaseQueueType>
     void ValidationGraphicsQueue<BaseQueueType>::submit(std::vector<GraphicsSubmitInfo> const &submissions, GhaFence *signalFence) {
+        detail::validateBuffersUsage(submissions);
+
         BaseQueueType::submit(submissions, signalFence);
 
         detail::markBuffersAsUsed(submissions);
@@ -47,6 +62,8 @@ namespace clove {
 
     template<typename BaseQueueType>
     void ValidationComputeQueue<BaseQueueType>::submit(std::vector<ComputeSubmitInfo> const &submissions, GhaFence *signalFence) {
+        detail::validateBuffersUsage(submissions);
+
         BaseQueueType::submit(submissions, signalFence);
 
         detail::markBuffersAsUsed(submissions);
@@ -64,6 +81,8 @@ namespace clove {
 
     template<typename BaseQueueType>
     void ValidationTransferQueue<BaseQueueType>::submit(std::vector<TransferSubmitInfo> const &submissions, GhaFence *signalFence) {
+        detail::validateBuffersUsage(submissions);
+        
         BaseQueueType::submit(submissions, signalFence);
 
         detail::markBuffersAsUsed(submissions);

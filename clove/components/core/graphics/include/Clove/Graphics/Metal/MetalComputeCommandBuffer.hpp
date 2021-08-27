@@ -13,7 +13,6 @@ namespace clove {
 		std::vector<std::function<void(id<MTLComputeCommandEncoder>)>> commands{};
 		
 		//Validation
-		CommandBufferUsage currentUsage{ CommandBufferUsage::Default };
 		bool endRecordingCalled{ true };
 		
 		//FUNCTIONS
@@ -42,8 +41,6 @@ namespace clove {
 		void imageMemoryBarrier(GhaImage &image, ImageMemoryBarrierInfo const &barrierInfo, PipelineStage sourceStage, PipelineStage destinationStage) override;
 		
 		inline std::vector<std::function<void(id<MTLComputeCommandEncoder>)>> const &getCommands() const;
-		
-		inline CommandBufferUsage getCommandBufferUsage() const;
 	};
 }
 
