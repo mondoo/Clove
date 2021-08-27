@@ -30,5 +30,16 @@ namespace clove {
     void ValidationCommandBuffer::setCommandBufferUsage(CommandBufferUsage usage) {
         currentUsage = usage;
     }
+
+    void ValidationCommandBuffer::validateBeginRecording() {
+        if(!endRecordingCalled) {
+            CLOVE_ASSERT("beginRecording called before endRecording. Command buffer recording must be finished be starting again.");
+        }
+        endRecordingCalled = false;
+    }
+
+    void ValidationCommandBuffer::endRecording() {
+        endRecordingCalled = true;
+    }
 }
 

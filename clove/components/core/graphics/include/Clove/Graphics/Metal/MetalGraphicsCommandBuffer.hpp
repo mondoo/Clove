@@ -30,9 +30,6 @@ namespace clove {
 		//Metal's drawIndexed call takes an index buffer directly so we need to cache the one provided from bindIndexBuffer
 		CachedIndexBufferData cachedIndexBuffer;
 		
-		//Validation
-		bool endRecordingCalled{ true };
-		
 		//FUNCTIONS
 	public:
         MetalGraphicsCommandBuffer();

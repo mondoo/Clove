@@ -18,11 +18,6 @@ namespace clove {
 	MetalComputeCommandBuffer::~MetalComputeCommandBuffer() = default;
 
 	void MetalComputeCommandBuffer::beginRecording(CommandBufferUsage usageFlag) {
-		if(!endRecordingCalled) {
-			CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "beginRecording called before endRecording. Command buffer recording must be finished be starting again.");
-		}
-		endRecordingCalled = false;
-		
 		commands.clear();
 	}
 	

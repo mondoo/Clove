@@ -11,6 +11,7 @@ namespace clove {
         CommandBufferUsage currentUsage{ CommandBufferUsage::Default };
         bool allowReuse{ false };  /**< Will be true if this can be reused (recorded to multiple times without beeing freed) */
         bool hasBeenUsed{ false }; /**< Will be true if this buffer has been used before being rerecorded. */
+        bool endRecordingCalled{ true };
 
         //FUNCTIONS
     public:
@@ -25,6 +26,9 @@ namespace clove {
         void resetUsedFlag();
 
         void setCommandBufferUsage(CommandBufferUsage usage);
+
+        void validateBeginRecording();
+        void onEndRecording();
     };
 
     template<typename BaseCommandBufferType>
@@ -34,6 +38,7 @@ namespace clove {
         using BaseCommandBufferType::BaseCommandBufferType;
 
         void beginRecording(CommandBufferUsage usageFlag) override;
+        void endRecording() override;
     };
 
     template<typename BaseCommandBufferType>
@@ -43,6 +48,7 @@ namespace clove {
         using BaseCommandBufferType::BaseCommandBufferType;
 
         void beginRecording(CommandBufferUsage usageFlag) override;
+        void endRecording() override;
     };
 
     template<typename BaseCommandBufferType>
@@ -52,6 +58,7 @@ namespace clove {
         using BaseCommandBufferType::BaseCommandBufferType;
 
         void beginRecording(CommandBufferUsage usageFlag) override;
+        void endRecording() override;
     };
 }
 

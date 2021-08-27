@@ -11,10 +11,7 @@ namespace clove {
 		//VARIABLES
 	private:
 		std::vector<std::function<void(id<MTLBlitCommandEncoder>)>> commands{};
-		
-		//Validation
-		bool endRecordingCalled{ true };
-		
+			
 		//FUNCTIONS
 	public:
 		MetalTransferCommandBuffer()
