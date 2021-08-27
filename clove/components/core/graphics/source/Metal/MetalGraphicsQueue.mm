@@ -1,5 +1,6 @@
 #include "Clove/Graphics/Metal/MetalGraphicsQueue.hpp"
 
+#include "Clove/Graphics/Helpers.hpp"
 #include "Clove/Graphics/Metal/MetalGraphicsCommandBuffer.hpp"
 #include "Clove/Graphics/Metal/MetalView.hpp"
 #include "Clove/Graphics/Metal/MetalFence.hpp"
@@ -9,9 +10,9 @@
 #include <Clove/Cast.hpp>
 
 namespace clove {
-    MetalGraphicsQueue::MetalGraphicsQueue(clove::CommandQueueDescriptor descriptor, id<MTLCommandQueue> commandQueue)
-        : commandQueue{ commandQueue } {
-        allowBufferReuse = (descriptor.flags & QueueFlags::ReuseBuffers) != 0;
+    MetalGraphicsQueue::MetalGraphicsQueue(CommandQueueDescriptor descriptor, id<MTLCommandQueue> commandQueue)
+        : descriptor{ std::move(descriptor) }
+        , commandQueue{ commandQueue } {
     }
     
     MetalGraphicsQueue::MetalGraphicsQueue(MetalGraphicsQueue &&other) noexcept = default;
@@ -21,7 +22,11 @@ namespace clove {
     MetalGraphicsQueue::~MetalGraphicsQueue() = default;
     
     std::unique_ptr<GhaGraphicsCommandBuffer> MetalGraphicsQueue::allocateCommandBuffer() {
-        return std::make_unique<MetalGraphicsCommandBuffer>(allowBufferReuse);
+        return createGhaObject<MetalGraphicsCommandBuffer>();
+    }
+
+    CommandQueueDescriptor const &MetalGraphicsQueue::getDescriptor() const {
+        return descriptor;
     }
     
     void MetalGraphicsQueue::freeCommandBuffer(GhaGraphicsCommandBuffer &buffer) {
@@ -92,8 +97,6 @@ namespace clove {
                     }
                     
                     [executionBuffer commit];
-                    
-                    metalCommandBuffer->markAsUsed();
                 }
             }
         }

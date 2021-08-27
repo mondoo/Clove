@@ -164,6 +164,10 @@ set(
 	ValidationFiles
 		${INCLUDE}/Validation/ValidationBuffer.hpp
 		${INCLUDE}/Validation/ValidationBuffer.inl
+		${INCLUDE}/Validation/ValidationGraphicsCommandBuffer.hpp
+		${INCLUDE}/Validation/ValidationGraphicsCommandBuffer.inl
+		${INCLUDE}/Validation/ValidationGraphicsQueue.hpp
+		${INCLUDE}/Validation/ValidationGraphicsQueue.inl
 		${INCLUDE}/Validation/ValidationLog.hpp
 )
 

@@ -258,7 +258,7 @@ namespace clove {
         VkQueue queue{ nullptr };
         vkGetDeviceQueue(devicePtr.get(), familyIndex, 0, &queue);
 
-        return std::unique_ptr<GhaGraphicsQueue>{ createGhaObject<VulkanGraphicsQueue>(devicePtr, queue, commandPool, queueFamilyIndices) };
+        return std::unique_ptr<GhaGraphicsQueue>{ createGhaObject<VulkanGraphicsQueue>(std::move(descriptor), devicePtr, queue, commandPool, queueFamilyIndices) };
     }
 
     Expected<std::unique_ptr<GhaPresentQueue>, std::runtime_error> VulkanFactory::createPresentQueue() noexcept {

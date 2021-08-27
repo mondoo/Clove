@@ -2,6 +2,7 @@
 
 #include "Clove/Graphics/GhaGraphicsCommandBuffer.hpp"
 #include "Clove/Graphics/GhaGraphicsPipelineObject.hpp"
+#include "Clove/Graphics/Queue.hpp"
 
 #include <memory>
 #include <vector>
@@ -25,6 +26,8 @@ namespace clove {
         //FUNCTIONS
     public:
         virtual ~GhaGraphicsQueue() = default;
+
+        virtual CommandQueueDescriptor const &getDescriptor() const = 0;
 
         virtual std::unique_ptr<GhaGraphicsCommandBuffer> allocateCommandBuffer() = 0;
         virtual void freeCommandBuffer(GhaGraphicsCommandBuffer &buffer)          = 0;
