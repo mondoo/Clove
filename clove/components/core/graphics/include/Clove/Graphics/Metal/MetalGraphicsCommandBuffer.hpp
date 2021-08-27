@@ -36,10 +36,9 @@ namespace clove {
 		
 		//FUNCTIONS
 	public:
-		MetalGraphicsCommandBuffer() = delete;
-		MetalGraphicsCommandBuffer(bool allowReuse);
-		
-		MetalGraphicsCommandBuffer(MetalGraphicsCommandBuffer const &other) = delete;
+        MetalGraphicsCommandBuffer();
+
+        MetalGraphicsCommandBuffer(MetalGraphicsCommandBuffer const &other) = delete;
 		MetalGraphicsCommandBuffer(MetalGraphicsCommandBuffer &&other) noexcept;
 		
 		MetalGraphicsCommandBuffer& operator=(MetalGraphicsCommandBuffer const &other) = delete;
@@ -71,8 +70,6 @@ namespace clove {
 		inline std::vector<RenderPass> const &getEncodedRenderPasses() const;
 		
 		inline CommandBufferUsage getCommandBufferUsage() const;
-		inline void markAsUsed();
-		inline bool bufferHasBeenUsed() const;
 	};
 }
 

@@ -10,6 +10,8 @@ namespace clove {
     class VulkanComputeQueue : public GhaComputeQueue {
         //VARIABLES
     private:
+        CommandQueueDescriptor descriptor{};
+
         DevicePointer device;
         VkQueue queue{ VK_NULL_HANDLE };
         VkCommandPool commandPool{ VK_NULL_HANDLE };
@@ -19,15 +21,17 @@ namespace clove {
         //FUNCTIONS
     public:
         VulkanComputeQueue() = delete;
-        VulkanComputeQueue(DevicePointer device, VkQueue queue, VkCommandPool commandPool, QueueFamilyIndices queueFamilyIndices);
+        VulkanComputeQueue(CommandQueueDescriptor descriptor, DevicePointer device, VkQueue queue, VkCommandPool commandPool, QueueFamilyIndices queueFamilyIndices);
 
         VulkanComputeQueue(VulkanComputeQueue const &other) = delete;
         VulkanComputeQueue(VulkanComputeQueue &&other) noexcept;
 
-        VulkanComputeQueue &operator=(VulkanComputeQueue const &other)   = delete;
+        VulkanComputeQueue &operator=(VulkanComputeQueue const &other) = delete;
         VulkanComputeQueue &operator=(VulkanComputeQueue &&other) noexcept;
 
         ~VulkanComputeQueue();
+
+        CommandQueueDescriptor const &getDescriptor() const override;
 
         std::unique_ptr<GhaComputeCommandBuffer> allocateCommandBuffer() override;
         void freeCommandBuffer(GhaComputeCommandBuffer &buffer) override;

@@ -9,9 +9,7 @@
 #include <Clove/Cast.hpp>
 
 namespace clove {
-	MetalComputeCommandBuffer::MetalComputeCommandBuffer(bool allowReuse)
-		: allowReuse{ allowReuse } {
-	}
+	MetalComputeCommandBuffer::MetalComputeCommandBuffer() = default;
 	
 	MetalComputeCommandBuffer::MetalComputeCommandBuffer(MetalComputeCommandBuffer &&other) noexcept = default;
 	
@@ -20,17 +18,12 @@ namespace clove {
 	MetalComputeCommandBuffer::~MetalComputeCommandBuffer() = default;
 
 	void MetalComputeCommandBuffer::beginRecording(CommandBufferUsage usageFlag) {
-		if(!allowReuse && hasBeenUsed) {
-			CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Command buffer re-recorded to. Command buffers cannot only be recorded to more than once unless the owning queue has been created with QueueFlags::ReuseBuffers set.");
-		}
-		
 		if(!endRecordingCalled) {
 			CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "beginRecording called before endRecording. Command buffer recording must be finished be starting again.");
 		}
 		endRecordingCalled = false;
 		
 		currentUsage = usageFlag;
-		hasBeenUsed = false;
 		
 		commands.clear();
 	}

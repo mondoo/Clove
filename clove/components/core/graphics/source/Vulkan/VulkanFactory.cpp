@@ -297,7 +297,7 @@ namespace clove {
         VkQueue queue{ nullptr };
         vkGetDeviceQueue(devicePtr.get(), familyIndex, 0, &queue);
 
-        return std::unique_ptr<GhaTransferQueue>{ createGhaObject<VulkanTransferQueue>(devicePtr, queue, commandPool, queueFamilyIndices) };
+        return std::unique_ptr<GhaTransferQueue>{ createGhaObject<VulkanTransferQueue>(std::move(descriptor), devicePtr, queue, commandPool, queueFamilyIndices) };
     }
 
     Expected<std::unique_ptr<GhaComputeQueue>, std::runtime_error> VulkanFactory::createComputeQueue(CommandQueueDescriptor descriptor) noexcept {
@@ -325,7 +325,7 @@ namespace clove {
         VkQueue queue{ nullptr };
         vkGetDeviceQueue(devicePtr.get(), familyIndex, 0, &queue);
 
-        return std::unique_ptr<GhaComputeQueue>{ createGhaObject<VulkanComputeQueue>(devicePtr, queue, commandPool, queueFamilyIndices) };
+        return std::unique_ptr<GhaComputeQueue>{ createGhaObject<VulkanComputeQueue>(std::move(descriptor), devicePtr, queue, commandPool, queueFamilyIndices) };
     }
 
     Expected<std::unique_ptr<GhaSwapchain>, std::runtime_error> VulkanFactory::createSwapChain(GhaSwapchain::Descriptor descriptor) noexcept {

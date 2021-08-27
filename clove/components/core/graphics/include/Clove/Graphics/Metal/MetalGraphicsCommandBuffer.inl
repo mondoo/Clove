@@ -6,12 +6,4 @@ namespace clove {
 	CommandBufferUsage MetalGraphicsCommandBuffer::getCommandBufferUsage() const {
 		return currentUsage;
 	}
-	
-	void MetalGraphicsCommandBuffer::markAsUsed() {
-		hasBeenUsed = true;
-	}
-	
-	bool MetalGraphicsCommandBuffer::bufferHasBeenUsed() const {
-		return hasBeenUsed;
-	}
 }
