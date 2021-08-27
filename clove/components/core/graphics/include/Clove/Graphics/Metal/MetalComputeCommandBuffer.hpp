@@ -25,7 +25,7 @@ namespace clove {
 		~MetalComputeCommandBuffer();
 
 		void beginRecording(CommandBufferUsage usageFlag) override;
-		void endRecording() override;
+        void endRecording() override;
 
 		void bindPipelineObject(GhaComputePipelineObject &pipelineObject) override;
 

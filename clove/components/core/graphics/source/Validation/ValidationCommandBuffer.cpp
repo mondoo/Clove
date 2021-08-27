@@ -20,6 +20,9 @@ namespace clove {
     }
 
     void ValidationCommandBuffer::validateBeginRecording() {
+        CLOVE_ASSERT(endRecordingCalled, "beginRecording called before endRecording. Command buffer recording must be finished be starting again.");
+        endRecordingCalled = false;
+        
         CLOVE_ASSERT(!(!allowReuse && hasBeenUsed), "Command buffer re-recorded to. Command buffers cannot be recorded to more than once unless the owning queue has been created with QueueFlags::ReuseBuffers set.");
     }
 
@@ -31,14 +34,7 @@ namespace clove {
         currentUsage = usage;
     }
 
-    void ValidationCommandBuffer::validateBeginRecording() {
-        if(!endRecordingCalled) {
-            CLOVE_ASSERT("beginRecording called before endRecording. Command buffer recording must be finished be starting again.");
-        }
-        endRecordingCalled = false;
-    }
-
-    void ValidationCommandBuffer::endRecording() {
+    void ValidationCommandBuffer::onEndRecording() {
         endRecordingCalled = true;
     }
 }

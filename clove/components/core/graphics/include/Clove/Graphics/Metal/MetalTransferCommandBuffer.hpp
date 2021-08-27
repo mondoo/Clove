@@ -14,7 +14,7 @@ namespace clove {
 			
 		//FUNCTIONS
 	public:
-		MetalTransferCommandBuffer()
+        MetalTransferCommandBuffer();
 		
 		MetalTransferCommandBuffer(MetalTransferCommandBuffer const &other) = delete;
 		MetalTransferCommandBuffer(MetalTransferCommandBuffer &&other) noexcept;

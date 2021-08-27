@@ -38,7 +38,7 @@ namespace clove {
     }
     
     void MetalGraphicsCommandBuffer::endRecording() {
-        endRecordingCalled = true;
+        //no op
     }
     
     void MetalGraphicsCommandBuffer::beginRenderPass(GhaRenderPass &renderPass, GhaFramebuffer &frameBuffer, RenderArea const &renderArea, std::span<ClearValue> clearValues) {

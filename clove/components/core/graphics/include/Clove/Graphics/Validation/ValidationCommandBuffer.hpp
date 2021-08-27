@@ -2,7 +2,7 @@
 
 #include "Clove/Graphics/GhaComputeCommandBuffer.hpp"
 #include "Clove/Graphics/GhaGraphicsCommandBuffer.hpp"
-#include "clove/Graphics/GhaTransferCommandBuffer.hpp"
+#include "Clove/Graphics/GhaTransferCommandBuffer.hpp"
 
 namespace clove {
     class ValidationCommandBuffer {
@@ -27,7 +27,6 @@ namespace clove {
 
         void setCommandBufferUsage(CommandBufferUsage usage);
 
-        void validateBeginRecording();
         void onEndRecording();
     };
 

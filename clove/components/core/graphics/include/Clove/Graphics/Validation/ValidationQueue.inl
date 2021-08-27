@@ -14,7 +14,7 @@ namespace clove {
                 for(auto &commandBuffer : submitInfo.commandBuffers) {
                     auto *buffer{ dynamic_cast<ValidationCommandBuffer *>(commandBuffer) };
                     if(buffer->getCommandBufferUsage() == CommandBufferUsage::OneTimeSubmit && buffer->bufferHasBeenUsed()){
-                        CLOVE_ASSERT("GraphicsCommandBuffer recorded with CommandBufferUsage::OneTimeSubmit has already been used. Only buffers recorded with CommandBufferUsage::Default can submitted multiples times after being recorded once.");
+                        CLOVE_ASSERT(false, "GraphicsCommandBuffer recorded with CommandBufferUsage::OneTimeSubmit has already been used. Only buffers recorded with CommandBufferUsage::Default can submitted multiples times after being recorded once.");
                         break;
                     }
                 }

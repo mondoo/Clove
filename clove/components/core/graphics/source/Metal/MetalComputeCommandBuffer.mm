@@ -22,7 +22,7 @@ namespace clove {
 	}
 	
 	void MetalComputeCommandBuffer::endRecording() {
-		endRecordingCalled = true;
+		//no op
 	}
 
 	void MetalComputeCommandBuffer::bindPipelineObject(GhaComputePipelineObject &pipelineObject) {

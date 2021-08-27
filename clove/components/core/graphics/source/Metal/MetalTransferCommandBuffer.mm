@@ -25,7 +25,7 @@ namespace clove {
 		}
 	}
 	
-	MetalTransferCommandBuffer::MetalTransferCommandBuffer(bool allowReuse) = default;
+	MetalTransferCommandBuffer::MetalTransferCommandBuffer() = default;
 	
 	MetalTransferCommandBuffer::MetalTransferCommandBuffer(MetalTransferCommandBuffer &&other) noexcept = default;
 	
@@ -38,7 +38,7 @@ namespace clove {
 	}
 	
 	void MetalTransferCommandBuffer::endRecording() {
-		endRecordingCalled = true;
+		//no op
 	}
 
 	void MetalTransferCommandBuffer::copyBufferToBuffer(GhaBuffer &source, size_t const sourceOffset, GhaBuffer &destination, size_t const destinationOffset, size_t const sizeBytes) {
