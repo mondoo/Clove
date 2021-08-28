@@ -15,7 +15,7 @@ namespace clove {
 	 * to detect collisions.
 	 */
     struct RigidBodyComponent {
-        friend class PhysicsLayer;
+        friend class PhysicsSubSystem;
 
     private:
         struct ForceApplication {

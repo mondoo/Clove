@@ -16,7 +16,7 @@ namespace clove {
         /**
          * @brief Contains the world matrix which this transforms local matrix multiplied 
          * by it's parents matrix (if available).
-         * @details This matrix is calculated inside TransformLayer. One frame needs to pass
+         * @details This matrix is calculated inside TransformSubSystem. One frame needs to pass
          * before it is updated
          */
         mat4f worldMatrix{ 1.0f };

@@ -1,4 +1,4 @@
-#include "Clove/Layers/AudioLayer.hpp"
+#include "Clove/SubSystems/AudioSubSystem.hpp"
 
 #include "Clove/Application.hpp"
 #include "Clove/Components/AudioListenerComponent.hpp"
@@ -11,18 +11,18 @@
 #include <Clove/Log/Log.hpp>
 
 namespace clove {
-    AudioLayer::AudioLayer(EntityManager *entityManager)
-        : Layer("Audio")
+    AudioSubSystem::AudioSubSystem(EntityManager *entityManager)
+        : SubSystem("Audio")
         , entityManager{ entityManager } {
     }
 
-    AudioLayer::AudioLayer(AudioLayer &&other) noexcept = default;
+    AudioSubSystem::AudioSubSystem(AudioSubSystem &&other) noexcept = default;
 
-    AudioLayer &AudioLayer::operator=(AudioLayer &&other) noexcept = default;
+    AudioSubSystem &AudioSubSystem::operator=(AudioSubSystem &&other) noexcept = default;
 
-    AudioLayer::~AudioLayer() = default;
+    AudioSubSystem::~AudioSubSystem() = default;
 
-    void AudioLayer::onUpdate(DeltaTime const deltaTime) {
+    void AudioSubSystem::onUpdate(DeltaTime const deltaTime) {
         CLOVE_PROFILE_FUNCTION();
 
         //Listener

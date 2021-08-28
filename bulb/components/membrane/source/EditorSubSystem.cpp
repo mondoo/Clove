@@ -1,4 +1,4 @@
-#include "Membrane/EditorLayer.hpp"
+#include "Membrane/EditorSubSystem.hpp"
 
 #include "Membrane/MessageHandler.hpp"
 #include "Membrane/Messages.hpp"
@@ -12,10 +12,10 @@
 #include <Clove/Components/StaticModelComponent.hpp>
 #include <Clove/Components/TransformComponent.hpp>
 #include <Clove/ECS/EntityManager.hpp>
-#include <Clove/Layers/PhysicsLayer.hpp>
 #include <Clove/Log/Log.hpp>
 #include <Clove/Maths/MathsHelpers.hpp>
 #include <Clove/ModelLoader.hpp>
+#include <Clove/SubSystems/PhysicsSubSystem.hpp>
 #include <Clove/Surface.hpp>
 #include <msclr/marshal_cppstd.h>
 
@@ -24,106 +24,140 @@ namespace membrane {
     /**
      * @brief 
      */
-    private ref class EditorLayerMessageProxy {
+    private ref class EditorSubSystemMessageProxy {
         //VARIABLES
     private:
-        EditorLayer *layer{ nullptr };
+        EditorSubSystem *subSystem{ nullptr };
 
         //FUNCTIONS
     public:
-        EditorLayerMessageProxy(EditorLayer *layer)
-            : layer{ layer } {
-            MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_CreateEntity ^>(this, &EditorLayerMessageProxy::createEntity));
-            MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_DeleteEntity ^>(this, &EditorLayerMessageProxy::deleteEntity));
-            MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_AddComponent ^>(this, &EditorLayerMessageProxy::addComponent));
-            MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_RemoveComponent ^>(this, &EditorLayerMessageProxy::removeComponent));
+        EditorSubSystemMessageProxy(EditorSubSystem *layer)
+            : subSystem{ layer } {
+            MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_CreateEntity ^>(this, &EditorSubSystemMessageProxy::createEntity));
+            MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_DeleteEntity ^>(this, &EditorSubSystemMessageProxy::deleteEntity));
+            MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_AddComponent ^>(this, &EditorSubSystemMessageProxy::addComponent));
+            MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_RemoveComponent ^>(this, &EditorSubSystemMessageProxy::removeComponent));
 
-            MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_UpdateTransform ^>(this, &EditorLayerMessageProxy::updateTransform));
-            MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_UpdateStaticModel ^>(this, &EditorLayerMessageProxy::updateStaticModel));
-            MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_UpdateRigidBody ^>(this, &EditorLayerMessageProxy::updateRigidBody));
-            MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_UpdateSphereShape ^>(this, &EditorLayerMessageProxy::updateSphereShape));
-            MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_UpdateCubeShape ^>(this, &EditorLayerMessageProxy::updateCubeShape));
-            MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_UpdateName ^>(this, &EditorLayerMessageProxy::updateName));
+            MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_UpdateTransform ^>(this, &EditorSubSystemMessageProxy::updateTransform));
+            MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_UpdateStaticModel ^>(this, &EditorSubSystemMessageProxy::updateStaticModel));
+            MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_UpdateRigidBody ^>(this, &EditorSubSystemMessageProxy::updateRigidBody));
+            MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_UpdateSphereShape ^>(this, &EditorSubSystemMessageProxy::updateSphereShape));
+            MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_UpdateCubeShape ^>(this, &EditorSubSystemMessageProxy::updateCubeShape));
+            MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_UpdateName ^>(this, &EditorSubSystemMessageProxy::updateName));
 
-            MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_SaveScene ^>(this, &EditorLayerMessageProxy::saveScene));
-            MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_LoadScene ^>(this, &EditorLayerMessageProxy::loadScene));
+            MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_SaveScene ^>(this, &EditorSubSystemMessageProxy::saveScene));
+            MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_LoadScene ^>(this, &EditorSubSystemMessageProxy::loadScene));
+        }
+
+    public:
+        void reset(){
+            subSystem = nullptr;
         }
 
     private:
         void createEntity(Editor_CreateEntity ^ message) {
-            layer->createEntity();
+            if (subSystem){
+                subSystem->createEntity();
+            }
         }
 
         void deleteEntity(Editor_DeleteEntity ^ message) {
-            clove::Entity const entity{ message->entity };
-            layer->deleteEntity(entity);
+            if (subSystem){
+                clove::Entity const entity{ message->entity };
+                subSystem->deleteEntity(entity);
+            }
         }
 
         void addComponent(Editor_AddComponent ^ message){
-            layer->addComponent(message->entity, message->componentType);
+            if (subSystem){
+                subSystem->addComponent(message->entity, message->componentType);
+            }
         }
 
         void removeComponent(Editor_RemoveComponent ^ message){
-            layer->removeComponent(message->entity, message->componentType);
+            if (subSystem){
+                subSystem->removeComponent(message->entity, message->componentType);
+            }
         }
 
         void updateTransform(Editor_UpdateTransform ^ message){
-            clove::vec3f const pos{message->position.x, message->position.y, message->position.z};
-            clove::vec3f const rot{clove::asRadians(message->rotation.x), clove::asRadians(message->rotation.y), clove::asRadians(message->rotation.z)};
-            clove::vec3f const scale{message->scale.x, message->scale.y, message->scale.z};
+            if (subSystem){
+                clove::vec3f const pos{message->position.x, message->position.y, message->position.z};
+                clove::vec3f const rot{clove::asRadians(message->rotation.x), clove::asRadians(message->rotation.y), clove::asRadians(message->rotation.z)};
+                clove::vec3f const scale{message->scale.x, message->scale.y, message->scale.z};
 
-            layer->updateTransform(message->entity, pos, rot, scale);
+                subSystem->updateTransform(message->entity, pos, rot, scale);
+            }
         }
 
         void updateStaticModel(Editor_UpdateStaticModel ^ message){
-            System::String ^meshPath{ message->meshPath != nullptr ? message->meshPath : "" };
-            System::String ^diffusePath{ message->diffusePath != nullptr ? message->diffusePath : ""};
-            System::String ^specularPath{ message->specularPath != nullptr ? message->specularPath : ""};
-            layer->updateStaticModel(message->entity, msclr::interop::marshal_as<std::string>(meshPath), msclr::interop::marshal_as<std::string>(diffusePath), msclr::interop::marshal_as<std::string>(specularPath));
+            if (subSystem){
+                System::String ^meshPath{ message->meshPath != nullptr ? message->meshPath : "" };
+                System::String ^diffusePath{ message->diffusePath != nullptr ? message->diffusePath : ""};
+                System::String ^specularPath{ message->specularPath != nullptr ? message->specularPath : ""};
+
+                subSystem->updateStaticModel(message->entity, msclr::interop::marshal_as<std::string>(meshPath), msclr::interop::marshal_as<std::string>(diffusePath), msclr::interop::marshal_as<std::string>(specularPath));
+            }
         }
 
         void updateRigidBody(Editor_UpdateRigidBody^ message){
-            layer->updateRigidBody(message->entity, message->mass);
+            if (subSystem){
+                subSystem->updateRigidBody(message->entity, message->mass);
+            }
         }
 
         void updateSphereShape(Editor_UpdateSphereShape ^message){
-            layer->updateSphereShape(message->entity, message->radius);
+            if (subSystem){
+                subSystem->updateSphereShape(message->entity, message->radius);
+            }
         }
 
         void updateCubeShape(Editor_UpdateCubeShape ^message){
-            clove::vec3f const halfExtents{message->halfExtents.x, message->halfExtents.y, message->halfExtents.z};
+            if (subSystem){
+                clove::vec3f const halfExtents{message->halfExtents.x, message->halfExtents.y, message->halfExtents.z};
 
-            layer->updateCubeShape(message->entity, halfExtents);
+                subSystem->updateCubeShape(message->entity, halfExtents);
+            }
         }
 
         void updateName(Editor_UpdateName ^ message){
-            System::String ^name{ message->name };
-            layer->updateName(message->entity, msclr::interop::marshal_as<std::string>(name));
+            if (subSystem){
+                System::String ^name{ message->name };
+                subSystem->updateName(message->entity, msclr::interop::marshal_as<std::string>(name));
+            }
         }
 
         void saveScene(Editor_SaveScene ^message){
-            layer->saveScene();
+            if (subSystem){
+                subSystem->saveScene();
+            }
         }
 
         void loadScene(Editor_LoadScene ^message){
-            layer->loadScene();
+            if (subSystem){
+                subSystem->loadScene();
+            }
         }
     };
     // clang-format on
 }
 
 namespace membrane {
-    EditorLayer::EditorLayer()
-        : clove::Layer{ "Editor Layer" }
+    EditorSubSystem::EditorSubSystem()
+        : clove::SubSystem{ "Editor SubSystem" }
         , currentScene{ clove::Application::get().getEntityManager() } {
-        proxy = gcnew EditorLayerMessageProxy(this);
+        proxy = gcnew EditorSubSystemMessageProxy(this);
     }
 
-    void EditorLayer::onAttach() {
+    EditorSubSystem::~EditorSubSystem() {
+        proxy->reset();
+    }
+
+    void EditorSubSystem::onAttach() {
         auto &app{ clove::Application::get() };
 
         //Pop the physics layer from the application
-        app.popLayer(app.getPhysicsLayer());
+        app.popSubSystem<clove::PhysicsSubSystem>();
 
         //Add the editor camera outside of the current scene
         if(editorCamera == clove::NullEntity) {
@@ -137,7 +171,7 @@ namespace membrane {
         loadScene();
     }
 
-    clove::InputResponse EditorLayer::onInputEvent(clove::InputEvent const &inputEvent) {
+    clove::InputResponse EditorSubSystem::onInputEvent(clove::InputEvent const &inputEvent) {
         if(inputEvent.eventType == clove::InputEvent::Type::Mouse) {
             auto event{ std::get<clove::Mouse::Event>(inputEvent.event) };
 
@@ -164,7 +198,7 @@ namespace membrane {
         return clove::InputResponse::Ignored;
     }
 
-    void EditorLayer::onUpdate(clove::DeltaTime const deltaTime) {
+    void EditorSubSystem::onUpdate(clove::DeltaTime const deltaTime) {
         auto &keyBoard{ clove::Application::get().getSurface()->getKeyboard() };
         auto &mouse{ clove::Application::get().getSurface()->getMouse() };
         auto *const entityManager{ clove::Application::get().getEntityManager() };
@@ -211,16 +245,16 @@ namespace membrane {
         camTrans.position += camTrans.rotation * pos * 10.0f * deltaTime.getDeltaSeconds();
     }
 
-    void EditorLayer::onDetach() {
+    void EditorSubSystem::onDetach() {
         //saveScene();
         currentScene.destroyAllEntities();
     }
 
-    void EditorLayer::saveScene() {
+    void EditorSubSystem::saveScene() {
         currentScene.save(clove::Application::get().getFileSystem()->resolve("./scene.clvscene"));
     }
 
-    void EditorLayer::loadScene() {
+    void EditorSubSystem::loadScene() {
         currentScene.load(clove::Application::get().getFileSystem()->resolve("./scene.clvscene"));
 
         Engine_OnSceneLoaded ^ loadMessage { gcnew Engine_OnSceneLoaded };
@@ -303,7 +337,7 @@ namespace membrane {
         MessageHandler::sendMessage(loadMessage);
     }
 
-    clove::Entity EditorLayer::createEntity(std::string_view name) {
+    clove::Entity EditorSubSystem::createEntity(std::string_view name) {
         clove::Entity entity{ currentScene.createEntity() };
         currentScene.addComponent<NameComponent>(entity, std::string{ std::move(name) });
 
@@ -315,7 +349,7 @@ namespace membrane {
         return entity;
     }
 
-    void EditorLayer::deleteEntity(clove::Entity entity) {
+    void EditorSubSystem::deleteEntity(clove::Entity entity) {
         currentScene.deleteEntity(entity);
 
         Engine_OnEntityDeleted ^ message { gcnew Engine_OnEntityDeleted };
@@ -323,7 +357,7 @@ namespace membrane {
         MessageHandler::sendMessage(message);
     }
 
-    void EditorLayer::addComponent(clove::Entity entity, ComponentType componentType) {
+    void EditorSubSystem::addComponent(clove::Entity entity, ComponentType componentType) {
         bool added{ false };
         System::Object ^ initData;
 
@@ -381,7 +415,7 @@ namespace membrane {
         }
     }
 
-    void EditorLayer::removeComponent(clove::Entity entity, ComponentType componentType) {
+    void EditorSubSystem::removeComponent(clove::Entity entity, ComponentType componentType) {
         switch(componentType) {
             case ComponentType::Transform:
                 currentScene.removeComponent<clove::TransformComponent>(entity);
@@ -406,7 +440,7 @@ namespace membrane {
         MessageHandler::sendMessage(message);
     }
 
-    void EditorLayer::updateTransform(clove::Entity entity, clove::vec3f position, clove::vec3f rotation, clove::vec3f scale) {
+    void EditorSubSystem::updateTransform(clove::Entity entity, clove::vec3f position, clove::vec3f rotation, clove::vec3f scale) {
         if(currentScene.hasComponent<clove::TransformComponent>(entity)) {
             auto &transform{ currentScene.getComponent<clove::TransformComponent>(entity) };
             transform.position = position;
@@ -415,7 +449,7 @@ namespace membrane {
         }
     }
 
-    void EditorLayer::updateStaticModel(clove::Entity entity, std::string meshPath, std::string diffusePath, std::string specularPath) {
+    void EditorSubSystem::updateStaticModel(clove::Entity entity, std::string meshPath, std::string diffusePath, std::string specularPath) {
         if(currentScene.hasComponent<clove::StaticModelComponent>(entity)) {
             auto &staticModel{ currentScene.getComponent<clove::StaticModelComponent>(entity) };
             staticModel.model = clove::Application::get().getAssetManager()->getStaticModel(meshPath);
@@ -428,26 +462,26 @@ namespace membrane {
         }
     }
 
-    void EditorLayer::updateRigidBody(clove::Entity entity, float mass) {
+    void EditorSubSystem::updateRigidBody(clove::Entity entity, float mass) {
         if(currentScene.hasComponent<clove::RigidBodyComponent>(entity)) {
             auto &rigidBody{ currentScene.getComponent<clove::RigidBodyComponent>(entity) };
             rigidBody.mass = mass;
         }
     }
 
-    void EditorLayer::updateSphereShape(clove::Entity entity, float radius) {
+    void EditorSubSystem::updateSphereShape(clove::Entity entity, float radius) {
         if(currentScene.hasComponent<clove::CollisionShapeComponent>(entity)) {
             currentScene.getComponent<clove::CollisionShapeComponent>(entity).shape = clove::CollisionShapeComponent::Sphere{ radius };
         }
     }
 
-    void EditorLayer::updateCubeShape(clove::Entity entity, clove::vec3f halfExtents) {
+    void EditorSubSystem::updateCubeShape(clove::Entity entity, clove::vec3f halfExtents) {
         if(currentScene.hasComponent<clove::CollisionShapeComponent>(entity)) {
             currentScene.getComponent<clove::CollisionShapeComponent>(entity).shape = clove::CollisionShapeComponent::Cube{ halfExtents };
         }
     }
 
-    void EditorLayer::updateName(clove::Entity entity, std::string name) {
+    void EditorSubSystem::updateName(clove::Entity entity, std::string name) {
         if(currentScene.hasComponent<NameComponent>(entity)) {
             currentScene.getComponent<NameComponent>(entity).name = std::move(name);
         }

@@ -65,12 +65,15 @@ namespace membrane {
 
     public ref class MessageHandler {
     private:
+        static bool isSendingMessages{ false };
         static System::Object^ editorLock{ gcnew System::Object() };
 
         static System::Collections::Generic::List<IMessageDelegateWrapper ^> ^delegates{ gcnew System::Collections::Generic::List<IMessageDelegateWrapper^> };
+        static System::Collections::Generic::List<IMessageDelegateWrapper ^> ^pendingDelegates{ gcnew System::Collections::Generic::List<IMessageDelegateWrapper^> }; /**< Delegates added while sending messages. */
 
         static System::Collections::Generic::List<EditorMessage ^> ^editorMessages{ gcnew System::Collections::Generic::List<EditorMessage ^> };
         static System::Collections::Generic::List<EngineMessage ^> ^engineMessages{ gcnew System::Collections::Generic::List<EngineMessage ^> };
+
     public:
         generic<class MessageType> 
         static void bindToMessage(MessageSentHandler<MessageType> ^handler);

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Layer.hpp"
+#include "Clove/SubSystem.hpp"
 
 #include <Clove/DeltaTime.hpp>
 #include <Clove/ECS/ECSEvents.hpp>
@@ -34,7 +34,7 @@ namespace clove {
 }
 
 namespace clove {
-    class PhysicsLayer : public Layer {
+    class PhysicsSubSystem : public SubSystem {
         //TYPES
     private:
         struct CollisionManifold {
@@ -75,18 +75,21 @@ namespace clove {
 
         //FUNCTIONS
     public:
-		PhysicsLayer() = delete;
-		PhysicsLayer(EntityManager *entityManager);
+		PhysicsSubSystem() = delete;
+		PhysicsSubSystem(EntityManager *entityManager);
 
-        PhysicsLayer(PhysicsLayer const &other) = delete;
-        PhysicsLayer(PhysicsLayer &&other) noexcept;
+        PhysicsSubSystem(PhysicsSubSystem const &other) = delete;
+        PhysicsSubSystem(PhysicsSubSystem &&other) noexcept;
 
-        PhysicsLayer &operator=(PhysicsLayer const &other) = delete;
-        PhysicsLayer &operator=(PhysicsLayer &&other) noexcept;
+        PhysicsSubSystem &operator=(PhysicsSubSystem const &other) = delete;
+        PhysicsSubSystem &operator=(PhysicsSubSystem &&other) noexcept;
 
-        ~PhysicsLayer();
+        ~PhysicsSubSystem();
 
+        void onAttach() override{};
+        InputResponse onInputEvent(InputEvent const &inputEvent) override{ return InputResponse::Ignored; }
         void onUpdate(DeltaTime const deltaTime) override;
+        void onDetach() override{};
 
         void setGravity(vec3f const &gravity);
 

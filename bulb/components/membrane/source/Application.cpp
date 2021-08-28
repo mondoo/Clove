@@ -1,25 +1,25 @@
 #include "Membrane/Application.hpp"
 
-#include "Membrane/EditorLayer.hpp"
-#include "Membrane/RuntimeLayer.hpp"
-#include "Membrane/ViewportSurface.hpp"
-#include "Membrane/Messages.hpp"
+#include "Membrane/EditorSubSystem.hpp"
 #include "Membrane/MessageHandler.hpp"
+#include "Membrane/Messages.hpp"
+#include "Membrane/RuntimeSubSystem.hpp"
+#include "Membrane/ViewportSurface.hpp"
 
 #include <Clove/Application.hpp>
 #include <Clove/Audio/Audio.hpp>
 #include <Clove/Components/StaticModelComponent.hpp>
 #include <Clove/Components/TransformComponent.hpp>
 #include <Clove/ECS/EntityManager.hpp>
-#include <Clove/Graphics/GraphicsAPI.hpp>
 #include <Clove/Graphics/GhaBuffer.hpp>
 #include <Clove/Graphics/GhaImage.hpp>
+#include <Clove/Graphics/GraphicsAPI.hpp>
 #include <Clove/Log/Log.hpp>
 #include <Clove/Rendering/GraphicsImageRenderTarget.hpp>
-#include <msclr/marshal_cppstd.h>
-#include <filesystem>
 #include <Clove/Serialisation/Node.hpp>
 #include <Clove/Serialisation/Yaml.hpp>
+#include <filesystem>
+#include <msclr/marshal_cppstd.h>
 
 namespace membrane {
     static std::filesystem::path const cachedProjectsPath{ "projects.yaml" };
@@ -42,13 +42,6 @@ namespace membrane {
         auto pair{ clove::Application::createHeadless(GraphicsApi::Vulkan, AudioApi::OpenAl, std::move(renderTargetImageDescriptor), std::move(vpSurface)) };
         app          = pair.first.release();
         renderTarget = pair.second;
-
-        //Create layers
-        editorLayer  = new std::shared_ptr<EditorLayer>();
-        *editorLayer = std::make_shared<EditorLayer>();
-
-        runtimeLayer  = new std::shared_ptr<RuntimeLayer>();
-        *runtimeLayer = std::make_shared<RuntimeLayer>();
     }
 
     Application::~Application() {
@@ -57,8 +50,6 @@ namespace membrane {
 
     Application::!Application() {
         delete app;
-        delete editorLayer;
-        delete runtimeLayer;
     }
 
     bool Application::hasDefaultProject() {
@@ -72,7 +63,7 @@ namespace membrane {
         return false;
     }
 
-    void Application::openProject(System::String ^projectPath) {
+    void Application::openProject(System::String ^ projectPath) {
         std::string projectPathString{ msclr::interop::marshal_as<std::string>(projectPath) };
 
         openProjectInternal(projectPathString);
@@ -102,7 +93,9 @@ namespace membrane {
     }
 
     void Application::shutdown() {
-        (*editorLayer)->saveScene();
+        if(isInEditorMode) {
+            app->getSubSystem<EditorSubSystem>().saveScene();
+        }
         app->shutdown();
     }
 
@@ -115,8 +108,8 @@ namespace membrane {
         this->height = height;
     }
 
-    System::String ^Application::resolveVfsPath(System::String ^ path) {
-        System::String ^managedPath{ path };
+    System::String ^ Application::resolveVfsPath(System::String ^ path) {
+        System::String ^ managedPath { path };
         std::string unManagedPath{ msclr::interop::marshal_as<std::string>(managedPath) };
         return gcnew System::String(app->getFileSystem()->resolve(unManagedPath).c_str());
     }
@@ -138,8 +131,8 @@ namespace membrane {
 
         std::filesystem::create_directories(vfs->resolve("."));
 
-        //Push layers
-        app->pushLayer(*editorLayer);
+        //Push subSystems
+        app->pushSubSystem<EditorSubSystem>();
 
         //Bind to editor messages
         MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_Stop ^>(this, &Application::setEditorMode));
@@ -147,14 +140,16 @@ namespace membrane {
     }
 
     void Application::setEditorMode(Editor_Stop ^ message) {
-        app->popLayer(*runtimeLayer);
-        app->pushLayer(*editorLayer);
+        app->popSubSystem<RuntimeSubSystem>();
+        app->pushSubSystem<EditorSubSystem>();
+        isInEditorMode = true;
     }
 
-    void Application::setRuntimeMode(Editor_Play ^message) {
-        (*editorLayer)->saveScene();
-
-        app->popLayer(*editorLayer);
-        app->pushLayer(*runtimeLayer);
+    void Application::setRuntimeMode(Editor_Play ^ message) {
+        app->getSubSystem<EditorSubSystem>().saveScene();
+        
+        app->popSubSystem<EditorSubSystem>();
+        app->pushSubSystem<RuntimeSubSystem>();
+        isInEditorMode = false;
     }
 }

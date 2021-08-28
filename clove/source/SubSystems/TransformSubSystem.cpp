@@ -1,4 +1,4 @@
-#include "Clove/Layers/TransformLayer.hpp"
+#include "Clove/SubSystems/TransformSubSystem.hpp"
 
 #include "Clove/Application.hpp"
 #include "Clove/Components/ParentComponent.hpp"
@@ -26,18 +26,18 @@ namespace clove {
         }
     }
 
-    TransformLayer::TransformLayer(EntityManager *entityManager)
-        : Layer("Transform")
+    TransformSubSystem::TransformSubSystem(EntityManager *entityManager)
+        : SubSystem("Transform")
         , entityManager{ entityManager } {
     }
 
-    TransformLayer::TransformLayer(TransformLayer &&other) noexcept = default;
+    TransformSubSystem::TransformSubSystem(TransformSubSystem &&other) noexcept = default;
 
-    TransformLayer &TransformLayer::operator=(TransformLayer &&other) noexcept = default;
+    TransformSubSystem &TransformSubSystem::operator=(TransformSubSystem &&other) noexcept = default;
 
-    TransformLayer::~TransformLayer() = default;
+    TransformSubSystem::~TransformSubSystem() = default;
 
-    void TransformLayer::onUpdate(DeltaTime const deltaTime) {
+    void TransformSubSystem::onUpdate(DeltaTime const deltaTime) {
         CLOVE_PROFILE_FUNCTION();
 
         //Calculate the world matrix of every single transform

@@ -1,30 +1,28 @@
 #include "Clove/Application.hpp"
 
 #include "Clove/InputEvent.hpp"
-#include "Clove/Layer.hpp"
-#include "Clove/Layers/AudioLayer.hpp"
-#include "Clove/Layers/PhysicsLayer.hpp"
-#include "Clove/Layers/RenderLayer.hpp"
-#include "Clove/Layers/TransformLayer.hpp"
 #include "Clove/Rendering/ForwardRenderer3D.hpp"
 #include "Clove/Rendering/GraphicsImageRenderTarget.hpp"
 #include "Clove/Rendering/SwapchainRenderTarget.hpp"
+#include "Clove/SubSystems/AudioSubSystem.hpp"
+#include "Clove/SubSystems/PhysicsSubSystem.hpp"
+#include "Clove/SubSystems/RenderSubSystem.hpp"
+#include "Clove/SubSystems/TransformSubSystem.hpp"
 #include "Clove/WindowSurface.hpp"
 
 #include <Clove/Audio/AhaDevice.hpp>
 #include <Clove/Definitions.hpp>
 #include <Clove/Graphics/GhaDevice.hpp>
 #include <Clove/Graphics/Graphics.hpp>
-#include <Clove/Log/Log.hpp>
 
 namespace clove {
     Application *Application::instance{ nullptr };
 
     Application::~Application() {
-        //Tell all layers they have been detached when the application is shutdown
-        for(auto &&[key, group] : layers) {
-            for(auto &layer : group) {
-                layer->onDetach();
+        //Tell all subSystems they have been detached when the application is shutdown
+        for(auto &&[key, group] : subSystems) {
+            for(auto &subSystem : group) {
+                subSystem->onDetach();
             }
         }
     }
@@ -62,23 +60,6 @@ namespace clove {
         return *instance;
     }
 
-    void Application::pushLayer(std::shared_ptr<Layer> layer, LayerGroup group) {
-        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Attached layer: {0}", layer->getName());
-        layer->onAttach();
-        layers[group].push_back(std::move(layer));
-    }
-
-    void Application::popLayer(std::shared_ptr<Layer> const &layer) {
-        for(auto &&[key, group] : layers) {
-            if(auto it = std::find(group.begin(), group.end(), layer); it != group.end()) {
-                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Popped layer: {0}", (*it)->getName());
-                (*it)->onDetach();
-                group.erase(it);
-                break;
-            }
-        }
-    }
-
     void Application::tick() {
         surface->processInput();
 
@@ -95,9 +76,9 @@ namespace clove {
 
         while(auto keyEvent = surface->getKeyboard().getKeyEvent()) {
             InputEvent const event{ *keyEvent, InputEvent::Type::Keyboard };
-            for(auto &&[key, group] : layers) {
-                for(auto &layer : group) {
-                    if(layer->onInputEvent(event) == InputResponse::Consumed) {
+            for(auto &&[key, group] : subSystems) {
+                for(auto &subSystem : group) {
+                    if(subSystem->onInputEvent(event) == InputResponse::Consumed) {
                         break;
                     }
                 }
@@ -105,18 +86,18 @@ namespace clove {
         }
         while(auto mouseEvent = surface->getMouse().getEvent()) {
             InputEvent const event{ *mouseEvent, InputEvent::Type::Mouse };
-            for(auto &&[key, group] : layers) {
-                for(auto &layer : group) {
-                    if(layer->onInputEvent(event) == InputResponse::Consumed) {
+            for(auto &&[key, group] : subSystems) {
+                for(auto &subSystem : group) {
+                    if(subSystem->onInputEvent(event) == InputResponse::Consumed) {
                         break;
                     }
                 }
             }
         }
 
-        for(auto &&[key, group] : layers) {
-            for(auto &layer : group) {
-                layer->onUpdate(deltaSeonds.count());
+        for(auto &&[key, group] : subSystems) {
+            for(auto &subSystem : group) {
+                subSystem->onUpdate(deltaSeonds.count());
             }
         }
 
@@ -140,12 +121,10 @@ namespace clove {
         //Systems
         renderer = std::make_unique<ForwardRenderer3D>(this->graphicsDevice.get(), std::move(renderTarget));
 
-        //Layers
-        physicsLayer = std::make_shared<PhysicsLayer>(&entityManager);
-
-        pushLayer(std::make_shared<TransformLayer>(&entityManager), LayerGroup::Initialisation);
-        pushLayer(physicsLayer, LayerGroup::Initialisation);
-        pushLayer(std::make_shared<AudioLayer>(&entityManager), LayerGroup::Render);
-        pushLayer(std::make_shared<RenderLayer>(renderer.get(), &entityManager), LayerGroup::Render);
+        //SubSystems
+        pushSubSystem<TransformSubSystem>(SubSystemGroup::Initialisation, &entityManager);
+        pushSubSystem<PhysicsSubSystem>(SubSystemGroup::Initialisation, &entityManager);
+        pushSubSystem<AudioSubSystem>(SubSystemGroup::Render, &entityManager);
+        pushSubSystem<RenderSubSystem>(SubSystemGroup::Render, renderer.get(), &entityManager);
     }
 }

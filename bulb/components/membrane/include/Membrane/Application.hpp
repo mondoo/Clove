@@ -8,8 +8,8 @@ namespace clove {
 }
 
 namespace membrane {
-    class EditorLayer;
-    class RuntimeLayer;
+    class EditorSubSystem;
+    class RuntimeSubSystem;
     class ViewportSurface;
     ref class Editor_Stop;
     ref class Editor_Play;
@@ -26,11 +26,10 @@ public ref class Application {
         clove::GraphicsImageRenderTarget *renderTarget;
         ViewportSurface *surface;
 
-        std::shared_ptr<EditorLayer> *editorLayer;
-        std::shared_ptr<RuntimeLayer> *runtimeLayer;
-
         int width;
         int height;
+
+        bool isInEditorMode{ true };
 
         //FUNCTIONS
     public:

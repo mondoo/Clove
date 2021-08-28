@@ -13,7 +13,11 @@ namespace membrane {
         wrapper->target = gcnew System::WeakReference{ handler->Target };
         wrapper->method = handler->Method;
 
-        delegates->Add(wrapper);
+        if (!isSendingMessages){
+            delegates->Add(wrapper);
+        } else{
+            pendingDelegates->Add(wrapper);
+        }
     }
 
     generic<class MessageType>
@@ -31,6 +35,8 @@ namespace membrane {
     }
 
     void MessageHandler::flushEditor() {
+        isSendingMessages = true;
+
         //All messages are dispatched from the engine thread so we need to lock the editor thread incase it sends a message while we're flushing
         msclr::lock scopedLock{ editorLock };
 
@@ -51,9 +57,16 @@ namespace membrane {
         }
 
         editorMessages->Clear();
+
+        delegates->AddRange(pendingDelegates);
+        pendingDelegates->Clear();
+
+        isSendingMessages = false;
     }
 
     void MessageHandler::flushEngine(System::Windows::Threading::Dispatcher ^editorDispatcher) {
+        isSendingMessages = true;
+
         System::Collections::Generic::List<IMessageDelegateWrapper ^> ^invalidDelegates{ gcnew System::Collections::Generic::List<IMessageDelegateWrapper^> };
 
         for each(EngineMessage ^message in engineMessages) {            
@@ -71,6 +84,11 @@ namespace membrane {
         }
 
         engineMessages->Clear();
+
+        delegates->AddRange(pendingDelegates);
+        pendingDelegates->Clear();
+
+        isSendingMessages = false;
     }
     // clang-format on
 }
