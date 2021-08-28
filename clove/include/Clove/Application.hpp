@@ -1,7 +1,8 @@
 #pragma once
 
-#include "Clove/FileSystem/VirtualFileSystem.hpp"
 #include "Clove/FileSystem/AssetManager.hpp"
+#include "Clove/FileSystem/VirtualFileSystem.hpp"
+#include "Clove/SubSystem.hpp"
 
 #include <Clove/Audio/Audio.hpp>
 #include <Clove/ECS/EntityManager.hpp>
@@ -16,7 +17,6 @@
 namespace clove {
     class Surface;
     class GhaDevice;
-    class SubSystem;
     class ForwardRenderer3D;
     class GraphicsImageRenderTarget;
     class AhaDevice;

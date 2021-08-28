@@ -8,7 +8,7 @@ namespace clove {
 
     template<typename SubSystemType, typename... Args>
     void Application::pushSubSystem(SubSystemGroup group, Args &&...args) {
-        static_assert(std::is_base_of_v<SubSystem, SubSystemType>, CLOVE_FUNCTION_NAME ": SubSystem provided is not derived from SubSystem.");
+        static_assert(std::is_base_of_v<SubSystem, SubSystemType>, "SubSystem provided is not derived from SubSystem.");
 
         std::type_index const subSystemIndex{ typeid(SubSystemType) };
         CLOVE_ASSERT(subSystemToIndex.find(subSystemIndex) == subSystemToIndex.end(), "Only one subsystem can be active at a time.");
