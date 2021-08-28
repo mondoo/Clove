@@ -49,64 +49,94 @@ namespace membrane {
             MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_LoadScene ^>(this, &EditorSubSystemMessageProxy::loadScene));
         }
 
+    public:
+        void reset(){
+            subSystem = nullptr;
+        }
+
     private:
         void createEntity(Editor_CreateEntity ^ message) {
-            subSystem->createEntity();
+            if (subSystem){
+                subSystem->createEntity();
+            }
         }
 
         void deleteEntity(Editor_DeleteEntity ^ message) {
-            clove::Entity const entity{ message->entity };
-            subSystem->deleteEntity(entity);
+            if (subSystem){
+                clove::Entity const entity{ message->entity };
+                subSystem->deleteEntity(entity);
+            }
         }
 
         void addComponent(Editor_AddComponent ^ message){
-            subSystem->addComponent(message->entity, message->componentType);
+            if (subSystem){
+                subSystem->addComponent(message->entity, message->componentType);
+            }
         }
 
         void removeComponent(Editor_RemoveComponent ^ message){
-            subSystem->removeComponent(message->entity, message->componentType);
+            if (subSystem){
+                subSystem->removeComponent(message->entity, message->componentType);
+            }
         }
 
         void updateTransform(Editor_UpdateTransform ^ message){
-            clove::vec3f const pos{message->position.x, message->position.y, message->position.z};
-            clove::vec3f const rot{clove::asRadians(message->rotation.x), clove::asRadians(message->rotation.y), clove::asRadians(message->rotation.z)};
-            clove::vec3f const scale{message->scale.x, message->scale.y, message->scale.z};
+            if (subSystem){
+                clove::vec3f const pos{message->position.x, message->position.y, message->position.z};
+                clove::vec3f const rot{clove::asRadians(message->rotation.x), clove::asRadians(message->rotation.y), clove::asRadians(message->rotation.z)};
+                clove::vec3f const scale{message->scale.x, message->scale.y, message->scale.z};
 
-            subSystem->updateTransform(message->entity, pos, rot, scale);
+                subSystem->updateTransform(message->entity, pos, rot, scale);
+            }
         }
 
         void updateStaticModel(Editor_UpdateStaticModel ^ message){
-            System::String ^meshPath{ message->meshPath != nullptr ? message->meshPath : "" };
-            System::String ^diffusePath{ message->diffusePath != nullptr ? message->diffusePath : ""};
-            System::String ^specularPath{ message->specularPath != nullptr ? message->specularPath : ""};
-            subSystem->updateStaticModel(message->entity, msclr::interop::marshal_as<std::string>(meshPath), msclr::interop::marshal_as<std::string>(diffusePath), msclr::interop::marshal_as<std::string>(specularPath));
+            if (subSystem){
+                System::String ^meshPath{ message->meshPath != nullptr ? message->meshPath : "" };
+                System::String ^diffusePath{ message->diffusePath != nullptr ? message->diffusePath : ""};
+                System::String ^specularPath{ message->specularPath != nullptr ? message->specularPath : ""};
+
+                subSystem->updateStaticModel(message->entity, msclr::interop::marshal_as<std::string>(meshPath), msclr::interop::marshal_as<std::string>(diffusePath), msclr::interop::marshal_as<std::string>(specularPath));
+            }
         }
 
         void updateRigidBody(Editor_UpdateRigidBody^ message){
-            subSystem->updateRigidBody(message->entity, message->mass);
+            if (subSystem){
+                subSystem->updateRigidBody(message->entity, message->mass);
+            }
         }
 
         void updateSphereShape(Editor_UpdateSphereShape ^message){
-            subSystem->updateSphereShape(message->entity, message->radius);
+            if (subSystem){
+                subSystem->updateSphereShape(message->entity, message->radius);
+            }
         }
 
         void updateCubeShape(Editor_UpdateCubeShape ^message){
-            clove::vec3f const halfExtents{message->halfExtents.x, message->halfExtents.y, message->halfExtents.z};
+            if (subSystem){
+                clove::vec3f const halfExtents{message->halfExtents.x, message->halfExtents.y, message->halfExtents.z};
 
-            subSystem->updateCubeShape(message->entity, halfExtents);
+                subSystem->updateCubeShape(message->entity, halfExtents);
+            }
         }
 
         void updateName(Editor_UpdateName ^ message){
-            System::String ^name{ message->name };
-            subSystem->updateName(message->entity, msclr::interop::marshal_as<std::string>(name));
+            if (subSystem){
+                System::String ^name{ message->name };
+                subSystem->updateName(message->entity, msclr::interop::marshal_as<std::string>(name));
+            }
         }
 
         void saveScene(Editor_SaveScene ^message){
-            subSystem->saveScene();
+            if (subSystem){
+                subSystem->saveScene();
+            }
         }
 
         void loadScene(Editor_LoadScene ^message){
-            subSystem->loadScene();
+            if (subSystem){
+                subSystem->loadScene();
+            }
         }
     };
     // clang-format on
@@ -117,6 +147,10 @@ namespace membrane {
         : clove::SubSystem{ "Editor SubSystem" }
         , currentScene{ clove::Application::get().getEntityManager() } {
         proxy = gcnew EditorSubSystemMessageProxy(this);
+    }
+
+    EditorSubSystem::~EditorSubSystem() {
+        proxy->reset();
     }
 
     void EditorSubSystem::onAttach() {

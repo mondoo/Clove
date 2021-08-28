@@ -35,6 +35,7 @@ namespace membrane {
         //FUNCTIONS
     public:
         EditorSubSystem();
+        ~EditorSubSystem();
 
         void onAttach() override;
         clove::InputResponse onInputEvent(clove::InputEvent const &inputEvent) override;
