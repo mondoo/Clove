@@ -18,7 +18,7 @@ namespace clove {
         //FUNCTIONS
     public:
         TransformSubSystem() = delete;
-		TransformSubSystem(EntityManager *entityManager);
+        TransformSubSystem(EntityManager *entityManager);
 
         TransformSubSystem(TransformSubSystem const &other) = delete;
         TransformSubSystem(TransformSubSystem &&other) noexcept;
@@ -28,6 +28,9 @@ namespace clove {
 
         ~TransformSubSystem();
 
+        void onAttach() override{};
+        InputResponse onInputEvent(InputEvent const &inputEvent) override{ return InputResponse::Ignored; }
         void onUpdate(DeltaTime const deltaTime) override;
+        void onDetach() override{};
     };
 }

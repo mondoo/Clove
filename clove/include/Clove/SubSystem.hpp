@@ -16,13 +16,13 @@ namespace clove {
 
         //FUNCTIONS
     public:
-        SubSystem(std::string name = "Layer");
+        inline SubSystem(std::string name);
         virtual ~SubSystem() = default;
 
-        virtual void onAttach() {}
-        virtual InputResponse onInputEvent(InputEvent const &inputEvent);
-        virtual void onUpdate(DeltaTime const deltaTime) {}
-        virtual void onDetach() {}
+        virtual void onAttach() = 0;
+        virtual InputResponse onInputEvent(InputEvent const &inputEvent) = 0;
+        virtual void onUpdate(DeltaTime const deltaTime)                 = 0;
+        virtual void onDetach()                                          = 0;
 
         inline const std::string &getName() const;
     };

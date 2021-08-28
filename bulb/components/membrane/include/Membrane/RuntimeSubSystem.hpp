@@ -23,6 +23,7 @@ namespace membrane {
         RuntimeSubSystem();
 
         void onAttach() override;
+        clove::InputResponse onInputEvent(clove::InputEvent const &inputEvent) override { return clove::InputResponse::Ignored; }
         void onUpdate(clove::DeltaTime const deltaTime) override;
         void onDetach() override;
     };

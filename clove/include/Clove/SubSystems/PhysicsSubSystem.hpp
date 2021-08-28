@@ -86,7 +86,10 @@ namespace clove {
 
         ~PhysicsSubSystem();
 
+        void onAttach() override{};
+        InputResponse onInputEvent(InputEvent const &inputEvent) override{ return InputResponse::Ignored; }
         void onUpdate(DeltaTime const deltaTime) override;
+        void onDetach() override{};
 
         void setGravity(vec3f const &gravity);
 

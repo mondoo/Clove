@@ -180,7 +180,6 @@ add_library(
 
 		${INCLUDE}/SubSystem.hpp
 		${INCLUDE}/SubSystem.inl
-		${SOURCE}/SubSystem.cpp
 		
 		${INCLUDE}/ModelLoader.hpp
 		${SOURCE}/ModelLoader.cpp
