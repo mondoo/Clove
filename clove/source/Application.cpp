@@ -15,16 +15,15 @@
 #include <Clove/Definitions.hpp>
 #include <Clove/Graphics/GhaDevice.hpp>
 #include <Clove/Graphics/Graphics.hpp>
-#include <Clove/Log/Log.hpp>
 
 namespace clove {
     Application *Application::instance{ nullptr };
 
     Application::~Application() {
-        //Tell all layers they have been detached when the application is shutdown
+        //Tell all subSystems they have been detached when the application is shutdown
         for(auto &&[key, group] : subSystems) {
-            for(auto &layer : group) {
-                layer->onDetach();
+            for(auto &subSystem : group) {
+                subSystem->onDetach();
             }
         }
     }
@@ -62,23 +61,6 @@ namespace clove {
         return *instance;
     }
 
-    void Application::pushSubSystem(std::shared_ptr<SubSystem> layer, LayerGroup group) {
-        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Attached layer: {0}", layer->getName());
-        layer->onAttach();
-        subSystems[group].push_back(std::move(layer));
-    }
-
-    void Application::popSubSystem(std::shared_ptr<SubSystem> const &layer) {
-        for(auto &&[key, group] : subSystems) {
-            if(auto it = std::find(group.begin(), group.end(), layer); it != group.end()) {
-                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Popped layer: {0}", (*it)->getName());
-                (*it)->onDetach();
-                group.erase(it);
-                break;
-            }
-        }
-    }
-
     void Application::tick() {
         surface->processInput();
 
@@ -96,8 +78,8 @@ namespace clove {
         while(auto keyEvent = surface->getKeyboard().getKeyEvent()) {
             InputEvent const event{ *keyEvent, InputEvent::Type::Keyboard };
             for(auto &&[key, group] : subSystems) {
-                for(auto &layer : group) {
-                    if(layer->onInputEvent(event) == InputResponse::Consumed) {
+                for(auto &subSystem : group) {
+                    if(subSystem->onInputEvent(event) == InputResponse::Consumed) {
                         break;
                     }
                 }
@@ -106,8 +88,8 @@ namespace clove {
         while(auto mouseEvent = surface->getMouse().getEvent()) {
             InputEvent const event{ *mouseEvent, InputEvent::Type::Mouse };
             for(auto &&[key, group] : subSystems) {
-                for(auto &layer : group) {
-                    if(layer->onInputEvent(event) == InputResponse::Consumed) {
+                for(auto &subSystem : group) {
+                    if(subSystem->onInputEvent(event) == InputResponse::Consumed) {
                         break;
                     }
                 }
@@ -115,8 +97,8 @@ namespace clove {
         }
 
         for(auto &&[key, group] : subSystems) {
-            for(auto &layer : group) {
-                layer->onUpdate(deltaSeonds.count());
+            for(auto &subSystem : group) {
+                subSystem->onUpdate(deltaSeonds.count());
             }
         }
 
@@ -140,12 +122,10 @@ namespace clove {
         //Systems
         renderer = std::make_unique<ForwardRenderer3D>(this->graphicsDevice.get(), std::move(renderTarget));
 
-        //Layers
-        physicsSubSystem = std::make_shared<PhysicsSubSystem>(&entityManager);
-
-        pushSubSystem(std::make_shared<TransformSubSystem>(&entityManager), LayerGroup::Initialisation);
-        pushSubSystem(physicsSubSystem, LayerGroup::Initialisation);
-        pushSubSystem(std::make_shared<AudioSubSystem>(&entityManager), LayerGroup::Render);
-        pushSubSystem(std::make_shared<RenderSubSystem>(renderer.get(), &entityManager), LayerGroup::Render);
+        //SubSystems
+        pushSubSystem<TransformSubSystem>(SubSystemGroup::Initialisation, &entityManager);
+        pushSubSystem<PhysicsSubSystem>(SubSystemGroup::Initialisation, &entityManager);
+        pushSubSystem<AudioSubSystem>(SubSystemGroup::Render, &entityManager);
+        pushSubSystem<RenderSubSystem>(SubSystemGroup::Render, renderer.get(), &entityManager);
     }
 }

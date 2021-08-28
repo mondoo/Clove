@@ -42,13 +42,6 @@ namespace membrane {
         auto pair{ clove::Application::createHeadless(GraphicsApi::Vulkan, AudioApi::OpenAl, std::move(renderTargetImageDescriptor), std::move(vpSurface)) };
         app          = pair.first.release();
         renderTarget = pair.second;
-
-        //Create subSystems
-        editorSubSystem  = new std::shared_ptr<EditorSubSystem>();
-        *editorSubSystem = std::make_shared<EditorSubSystem>();
-
-        runtimeSubSystem  = new std::shared_ptr<RuntimeSubSystem>();
-        *runtimeSubSystem = std::make_shared<RuntimeSubSystem>();
     }
 
     Application::~Application() {
@@ -57,8 +50,6 @@ namespace membrane {
 
     Application::!Application() {
         delete app;
-        delete editorSubSystem;
-        delete runtimeSubSystem;
     }
 
     bool Application::hasDefaultProject() {
@@ -72,7 +63,7 @@ namespace membrane {
         return false;
     }
 
-    void Application::openProject(System::String ^projectPath) {
+    void Application::openProject(System::String ^ projectPath) {
         std::string projectPathString{ msclr::interop::marshal_as<std::string>(projectPath) };
 
         openProjectInternal(projectPathString);
@@ -102,7 +93,9 @@ namespace membrane {
     }
 
     void Application::shutdown() {
-        (*editorSubSystem)->saveScene();
+        if(isInEditorMode) {
+            app->getSubSystem<EditorSubSystem>().saveScene();
+        }
         app->shutdown();
     }
 
@@ -115,8 +108,8 @@ namespace membrane {
         this->height = height;
     }
 
-    System::String ^Application::resolveVfsPath(System::String ^ path) {
-        System::String ^managedPath{ path };
+    System::String ^ Application::resolveVfsPath(System::String ^ path) {
+        System::String ^ managedPath { path };
         std::string unManagedPath{ msclr::interop::marshal_as<std::string>(managedPath) };
         return gcnew System::String(app->getFileSystem()->resolve(unManagedPath).c_str());
     }
@@ -139,7 +132,7 @@ namespace membrane {
         std::filesystem::create_directories(vfs->resolve("."));
 
         //Push subSystems
-        app->pushSubSystem(*editorSubSystem);
+        app->pushSubSystem<EditorSubSystem>();
 
         //Bind to editor messages
         MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_Stop ^>(this, &Application::setEditorMode));
@@ -147,14 +140,16 @@ namespace membrane {
     }
 
     void Application::setEditorMode(Editor_Stop ^ message) {
-        app->popSubSystem(*runtimeSubSystem);
-        app->pushSubSystem(*editorSubSystem);
+        app->popSubSystem<RuntimeSubSystem>();
+        app->pushSubSystem<EditorSubSystem>();
+        isInEditorMode = true;
     }
 
-    void Application::setRuntimeMode(Editor_Play ^message) {
-        (*editorSubSystem)->saveScene();
-
-        app->popSubSystem(*editorSubSystem);
-        app->pushSubSystem(*runtimeSubSystem);
+    void Application::setRuntimeMode(Editor_Play ^ message) {
+        app->getSubSystem<EditorSubSystem>().saveScene();
+        
+        app->popSubSystem<EditorSubSystem>();
+        app->pushSubSystem<RuntimeSubSystem>();
+        isInEditorMode = false;
     }
 }

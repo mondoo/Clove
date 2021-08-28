@@ -33,7 +33,7 @@ namespace clove {
             Stopped
         };
 
-        enum class LayerGroup {
+        enum class SubSystemGroup {
             Initialisation, /**< For layers that need to perform logic before anything else. */
             Core,           /**< The default group. For layers that contain core / general functionality. */
             Interface,      /**< For layers that contain interface logic. Usually UI */
@@ -52,12 +52,12 @@ namespace clove {
 
         std::unique_ptr<ForwardRenderer3D> renderer;
         EntityManager entityManager;
-        std::shared_ptr<PhysicsSubSystem> physicsSubSystem;
 
         VirtualFileSystem fileSystem{};
         AssetManager assetManager;
 
-        std::map<LayerGroup, std::vector<std::shared_ptr<SubSystem>>> subSystems;
+        std::unordered_map<std::type_index, std::pair<SubSystemGroup, size_t>> subSystemToIndex; /**< Contains the index for each subsystem in the subSystems array. */
+        std::map<SubSystemGroup, std::vector<std::unique_ptr<SubSystem>>> subSystems;
 
         std::chrono::system_clock::time_point prevFrameTime;
 
@@ -94,8 +94,16 @@ namespace clove {
 
         static Application &get();
 
-        void pushSubSystem(std::shared_ptr<SubSystem> layer, LayerGroup group = LayerGroup::Core);
-        void popSubSystem(std::shared_ptr<SubSystem> const &layer);
+        template<typename SubSystemType, typename... Args>
+        void pushSubSystem(Args &&...args);
+        template<typename SubSystemType, typename... Args>
+        void pushSubSystem(SubSystemGroup group, Args &&...args);
+
+        template<typename SubSystemType>
+        SubSystemType &getSubSystem();
+
+        template<typename SubSystemType>
+        void popSubSystem();
 
         inline State getState() const;
 
@@ -120,7 +128,6 @@ namespace clove {
         //Systems
         inline ForwardRenderer3D *getRenderer() const;
         inline EntityManager *getEntityManager();
-        inline std::shared_ptr<PhysicsSubSystem> getPhysicsSubSystem() const;
 
         inline AssetManager *getAssetManager();
         inline VirtualFileSystem *getFileSystem();

@@ -19,10 +19,10 @@ namespace membrane {
     void RuntimeSubSystem::onAttach() {
         auto &app{ clove::Application::get() };
 
-        //push the physics layer from the application
-        app.pushSubSystem(app.getPhysicsSubSystem());
+        //push the physics sub system from the application
+        app.pushSubSystem<clove::PhysicsSubSystem>(clove::Application::SubSystemGroup::Initialisation, app.getEntityManager());
 
-        currentScene.load(clove::Application::get().getFileSystem()->resolve("./scene.clvscene"));
+        currentScene.load(app.getFileSystem()->resolve("./scene.clvscene"));
     }
 
     void RuntimeSubSystem::onUpdate(clove::DeltaTime const deltaTime) {

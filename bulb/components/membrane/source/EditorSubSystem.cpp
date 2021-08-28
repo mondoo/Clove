@@ -27,12 +27,12 @@ namespace membrane {
     private ref class EditorSubSystemMessageProxy {
         //VARIABLES
     private:
-        EditorSubSystem *layer{ nullptr };
+        EditorSubSystem *subSystem{ nullptr };
 
         //FUNCTIONS
     public:
         EditorSubSystemMessageProxy(EditorSubSystem *layer)
-            : layer{ layer } {
+            : subSystem{ layer } {
             MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_CreateEntity ^>(this, &EditorSubSystemMessageProxy::createEntity));
             MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_DeleteEntity ^>(this, &EditorSubSystemMessageProxy::deleteEntity));
             MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_AddComponent ^>(this, &EditorSubSystemMessageProxy::addComponent));
@@ -51,20 +51,20 @@ namespace membrane {
 
     private:
         void createEntity(Editor_CreateEntity ^ message) {
-            layer->createEntity();
+            subSystem->createEntity();
         }
 
         void deleteEntity(Editor_DeleteEntity ^ message) {
             clove::Entity const entity{ message->entity };
-            layer->deleteEntity(entity);
+            subSystem->deleteEntity(entity);
         }
 
         void addComponent(Editor_AddComponent ^ message){
-            layer->addComponent(message->entity, message->componentType);
+            subSystem->addComponent(message->entity, message->componentType);
         }
 
         void removeComponent(Editor_RemoveComponent ^ message){
-            layer->removeComponent(message->entity, message->componentType);
+            subSystem->removeComponent(message->entity, message->componentType);
         }
 
         void updateTransform(Editor_UpdateTransform ^ message){
@@ -72,41 +72,41 @@ namespace membrane {
             clove::vec3f const rot{clove::asRadians(message->rotation.x), clove::asRadians(message->rotation.y), clove::asRadians(message->rotation.z)};
             clove::vec3f const scale{message->scale.x, message->scale.y, message->scale.z};
 
-            layer->updateTransform(message->entity, pos, rot, scale);
+            subSystem->updateTransform(message->entity, pos, rot, scale);
         }
 
         void updateStaticModel(Editor_UpdateStaticModel ^ message){
             System::String ^meshPath{ message->meshPath != nullptr ? message->meshPath : "" };
             System::String ^diffusePath{ message->diffusePath != nullptr ? message->diffusePath : ""};
             System::String ^specularPath{ message->specularPath != nullptr ? message->specularPath : ""};
-            layer->updateStaticModel(message->entity, msclr::interop::marshal_as<std::string>(meshPath), msclr::interop::marshal_as<std::string>(diffusePath), msclr::interop::marshal_as<std::string>(specularPath));
+            subSystem->updateStaticModel(message->entity, msclr::interop::marshal_as<std::string>(meshPath), msclr::interop::marshal_as<std::string>(diffusePath), msclr::interop::marshal_as<std::string>(specularPath));
         }
 
         void updateRigidBody(Editor_UpdateRigidBody^ message){
-            layer->updateRigidBody(message->entity, message->mass);
+            subSystem->updateRigidBody(message->entity, message->mass);
         }
 
         void updateSphereShape(Editor_UpdateSphereShape ^message){
-            layer->updateSphereShape(message->entity, message->radius);
+            subSystem->updateSphereShape(message->entity, message->radius);
         }
 
         void updateCubeShape(Editor_UpdateCubeShape ^message){
             clove::vec3f const halfExtents{message->halfExtents.x, message->halfExtents.y, message->halfExtents.z};
 
-            layer->updateCubeShape(message->entity, halfExtents);
+            subSystem->updateCubeShape(message->entity, halfExtents);
         }
 
         void updateName(Editor_UpdateName ^ message){
             System::String ^name{ message->name };
-            layer->updateName(message->entity, msclr::interop::marshal_as<std::string>(name));
+            subSystem->updateName(message->entity, msclr::interop::marshal_as<std::string>(name));
         }
 
         void saveScene(Editor_SaveScene ^message){
-            layer->saveScene();
+            subSystem->saveScene();
         }
 
         void loadScene(Editor_LoadScene ^message){
-            layer->loadScene();
+            subSystem->loadScene();
         }
     };
     // clang-format on
@@ -123,7 +123,7 @@ namespace membrane {
         auto &app{ clove::Application::get() };
 
         //Pop the physics layer from the application
-        app.popSubSystem(app.getPhysicsSubSystem());
+        app.popSubSystem<clove::PhysicsSubSystem>();
 
         //Add the editor camera outside of the current scene
         if(editorCamera == clove::NullEntity) {

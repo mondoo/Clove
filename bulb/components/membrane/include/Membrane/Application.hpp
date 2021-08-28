@@ -26,11 +26,10 @@ public ref class Application {
         clove::GraphicsImageRenderTarget *renderTarget;
         ViewportSurface *surface;
 
-        std::shared_ptr<EditorSubSystem> *editorSubSystem;
-        std::shared_ptr<RuntimeSubSystem> *runtimeSubSystem;
-
         int width;
         int height;
+
+        bool isInEditorMode{ true };
 
         //FUNCTIONS
     public:
