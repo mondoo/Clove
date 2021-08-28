@@ -1,25 +1,25 @@
 #include "Membrane/Application.hpp"
 
-#include "Membrane/EditorLayer.hpp"
-#include "Membrane/RuntimeLayer.hpp"
-#include "Membrane/ViewportSurface.hpp"
-#include "Membrane/Messages.hpp"
+#include "Membrane/EditorSubSystem.hpp"
 #include "Membrane/MessageHandler.hpp"
+#include "Membrane/Messages.hpp"
+#include "Membrane/RuntimeSubSystem.hpp"
+#include "Membrane/ViewportSurface.hpp"
 
 #include <Clove/Application.hpp>
 #include <Clove/Audio/Audio.hpp>
 #include <Clove/Components/StaticModelComponent.hpp>
 #include <Clove/Components/TransformComponent.hpp>
 #include <Clove/ECS/EntityManager.hpp>
-#include <Clove/Graphics/GraphicsAPI.hpp>
 #include <Clove/Graphics/GhaBuffer.hpp>
 #include <Clove/Graphics/GhaImage.hpp>
+#include <Clove/Graphics/GraphicsAPI.hpp>
 #include <Clove/Log/Log.hpp>
 #include <Clove/Rendering/GraphicsImageRenderTarget.hpp>
-#include <msclr/marshal_cppstd.h>
-#include <filesystem>
 #include <Clove/Serialisation/Node.hpp>
 #include <Clove/Serialisation/Yaml.hpp>
+#include <filesystem>
+#include <msclr/marshal_cppstd.h>
 
 namespace membrane {
     static std::filesystem::path const cachedProjectsPath{ "projects.yaml" };
@@ -43,12 +43,12 @@ namespace membrane {
         app          = pair.first.release();
         renderTarget = pair.second;
 
-        //Create layers
-        editorLayer  = new std::shared_ptr<EditorLayer>();
-        *editorLayer = std::make_shared<EditorLayer>();
+        //Create subSystems
+        editorSubSystem  = new std::shared_ptr<EditorSubSystem>();
+        *editorSubSystem = std::make_shared<EditorSubSystem>();
 
-        runtimeLayer  = new std::shared_ptr<RuntimeLayer>();
-        *runtimeLayer = std::make_shared<RuntimeLayer>();
+        runtimeSubSystem  = new std::shared_ptr<RuntimeSubSystem>();
+        *runtimeSubSystem = std::make_shared<RuntimeSubSystem>();
     }
 
     Application::~Application() {
@@ -57,8 +57,8 @@ namespace membrane {
 
     Application::!Application() {
         delete app;
-        delete editorLayer;
-        delete runtimeLayer;
+        delete editorSubSystem;
+        delete runtimeSubSystem;
     }
 
     bool Application::hasDefaultProject() {
@@ -102,7 +102,7 @@ namespace membrane {
     }
 
     void Application::shutdown() {
-        (*editorLayer)->saveScene();
+        (*editorSubSystem)->saveScene();
         app->shutdown();
     }
 
@@ -138,8 +138,8 @@ namespace membrane {
 
         std::filesystem::create_directories(vfs->resolve("."));
 
-        //Push layers
-        app->pushLayer(*editorLayer);
+        //Push subSystems
+        app->pushSubSystem(*editorSubSystem);
 
         //Bind to editor messages
         MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_Stop ^>(this, &Application::setEditorMode));
@@ -147,14 +147,14 @@ namespace membrane {
     }
 
     void Application::setEditorMode(Editor_Stop ^ message) {
-        app->popLayer(*runtimeLayer);
-        app->pushLayer(*editorLayer);
+        app->popSubSystem(*runtimeSubSystem);
+        app->pushSubSystem(*editorSubSystem);
     }
 
     void Application::setRuntimeMode(Editor_Play ^message) {
-        (*editorLayer)->saveScene();
+        (*editorSubSystem)->saveScene();
 
-        app->popLayer(*editorLayer);
-        app->pushLayer(*runtimeLayer);
+        app->popSubSystem(*editorSubSystem);
+        app->pushSubSystem(*runtimeSubSystem);
     }
 }

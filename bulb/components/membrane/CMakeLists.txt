@@ -20,10 +20,10 @@ add_library(
 
         ${INCLUDE}/NameComponent.hpp
 
-        ${INCLUDE}/EditorLayer.hpp
-        ${SOURCE}/EditorLayer.cpp
-        ${INCLUDE}/RuntimeLayer.hpp
-        ${SOURCE}/RuntimeLayer.cpp
+        ${INCLUDE}/EditorSubSystem.hpp
+        ${SOURCE}/EditorSubSystem.cpp
+        ${INCLUDE}/RuntimeSubSystem.hpp
+        ${SOURCE}/RuntimeSubSystem.cpp
         
         ${INCLUDE}/ViewportSurface.hpp
         ${SOURCE}/ViewportSurface.cpp

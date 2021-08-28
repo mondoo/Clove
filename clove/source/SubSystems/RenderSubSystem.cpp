@@ -1,4 +1,4 @@
-#include "Clove/Layers/RenderLayer.hpp"
+#include "Clove/SubSystems/RenderSubSystem.hpp"
 
 #include "Clove/Application.hpp"
 #include "Clove/Components/AnimatedModelComponent.hpp"
@@ -15,19 +15,19 @@
 #include <Clove/Maths/MathsHelpers.hpp>
 
 namespace clove {
-    RenderLayer::RenderLayer(ForwardRenderer3D *renderer, EntityManager *entityManager)
-        : Layer("Render")
+    RenderSubSystem::RenderSubSystem(ForwardRenderer3D *renderer, EntityManager *entityManager)
+        : SubSystem("Render")
         , renderer{ renderer }
         , entityManager{ entityManager } {
     }
 
-    RenderLayer::RenderLayer(RenderLayer &&other) noexcept = default;
+    RenderSubSystem::RenderSubSystem(RenderSubSystem &&other) noexcept = default;
 
-    RenderLayer &RenderLayer::operator=(RenderLayer &&other) noexcept = default;
+    RenderSubSystem &RenderSubSystem::operator=(RenderSubSystem &&other) noexcept = default;
 
-    RenderLayer::~RenderLayer() = default;
+    RenderSubSystem::~RenderSubSystem() = default;
 
-    void RenderLayer::onUpdate(DeltaTime const deltaTime) {
+    void RenderSubSystem::onUpdate(DeltaTime const deltaTime) {
         CLOVE_PROFILE_FUNCTION();
 
         Entity activeCamera{};

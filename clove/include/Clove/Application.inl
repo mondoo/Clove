@@ -23,8 +23,8 @@ namespace clove {
         return &entityManager;
     }
 
-    std::shared_ptr<PhysicsLayer> Application::getPhysicsLayer() const {
-        return physicsLayer;
+    std::shared_ptr<PhysicsSubSystem> Application::getPhysicsSubSystem() const {
+        return physicsSubSystem;
     }
 
     AssetManager *Application::getAssetManager() {

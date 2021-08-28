@@ -16,11 +16,11 @@
 namespace clove {
     class Surface;
     class GhaDevice;
-    class Layer;
+    class SubSystem;
     class ForwardRenderer3D;
     class GraphicsImageRenderTarget;
     class AhaDevice;
-    class PhysicsLayer;
+    class PhysicsSubSystem;
     class RenderTarget;
 }
 
@@ -52,12 +52,12 @@ namespace clove {
 
         std::unique_ptr<ForwardRenderer3D> renderer;
         EntityManager entityManager;
-        std::shared_ptr<PhysicsLayer> physicsLayer;
+        std::shared_ptr<PhysicsSubSystem> physicsSubSystem;
 
         VirtualFileSystem fileSystem{};
         AssetManager assetManager;
 
-        std::map<LayerGroup, std::vector<std::shared_ptr<Layer>>> layers;
+        std::map<LayerGroup, std::vector<std::shared_ptr<SubSystem>>> subSystems;
 
         std::chrono::system_clock::time_point prevFrameTime;
 
@@ -94,8 +94,8 @@ namespace clove {
 
         static Application &get();
 
-        void pushLayer(std::shared_ptr<Layer> layer, LayerGroup group = LayerGroup::Core);
-        void popLayer(std::shared_ptr<Layer> const &layer);
+        void pushSubSystem(std::shared_ptr<SubSystem> layer, LayerGroup group = LayerGroup::Core);
+        void popSubSystem(std::shared_ptr<SubSystem> const &layer);
 
         inline State getState() const;
 
@@ -120,7 +120,7 @@ namespace clove {
         //Systems
         inline ForwardRenderer3D *getRenderer() const;
         inline EntityManager *getEntityManager();
-        inline std::shared_ptr<PhysicsLayer> getPhysicsLayer() const;
+        inline std::shared_ptr<PhysicsSubSystem> getPhysicsSubSystem() const;
 
         inline AssetManager *getAssetManager();
         inline VirtualFileSystem *getFileSystem();

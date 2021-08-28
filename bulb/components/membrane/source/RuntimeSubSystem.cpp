@@ -1,4 +1,4 @@
-#include "Membrane/RuntimeLayer.hpp"
+#include "Membrane/RuntimeSubSystem.hpp"
 
 #include "Membrane/MessageHandler.hpp"
 #include "Membrane/Messages.hpp"
@@ -6,26 +6,26 @@
 #include <Clove/Application.hpp>
 #include <Clove/Components/TransformComponent.hpp>
 #include <Clove/ECS/EntityManager.hpp>
-#include <Clove/Layers/PhysicsLayer.hpp>
 #include <Clove/Maths/MathsHelpers.hpp>
 #include <Clove/ModelLoader.hpp>
+#include <Clove/SubSystems/PhysicsSubSystem.hpp>
 
 namespace membrane {
-    RuntimeLayer::RuntimeLayer()
-        : clove::Layer{ "Runtime Layer" }
+    RuntimeSubSystem::RuntimeSubSystem()
+        : clove::SubSystem{ "Runtime SubSystem" }
         , currentScene{ clove::Application::get().getEntityManager() } {
     }
 
-    void RuntimeLayer::onAttach() {
+    void RuntimeSubSystem::onAttach() {
         auto &app{ clove::Application::get() };
 
         //push the physics layer from the application
-        app.pushLayer(app.getPhysicsLayer());
+        app.pushSubSystem(app.getPhysicsSubSystem());
 
         currentScene.load(clove::Application::get().getFileSystem()->resolve("./scene.clvscene"));
     }
 
-    void RuntimeLayer::onUpdate(clove::DeltaTime const deltaTime) {
+    void RuntimeSubSystem::onUpdate(clove::DeltaTime const deltaTime) {
         //Make sure any movement is reflected in editor
         for(auto &entity : currentScene.getKnownEntities()) {
             if(currentScene.hasComponent<clove::TransformComponent>(entity)) {
@@ -43,7 +43,7 @@ namespace membrane {
         }
     }
 
-    void RuntimeLayer::onDetach() {
+    void RuntimeSubSystem::onDetach() {
         currentScene.destroyAllEntities();
     }
 }

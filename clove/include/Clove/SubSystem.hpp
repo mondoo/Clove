@@ -7,17 +7,17 @@
 
 namespace clove {
     /**
-     * @brief A Layer represents a slice of functionality that can be injected into Clove.
+     * @brief A SubSystem represents a slice of functionality that can be injected into Clove.
      */
-    class Layer {
+    class SubSystem {
         //VARIABLES
     protected:
         std::string debugName;
 
         //FUNCTIONS
     public:
-        Layer(std::string name = "Layer");
-        virtual ~Layer() = default;
+        SubSystem(std::string name = "Layer");
+        virtual ~SubSystem() = default;
 
         virtual void onAttach() {}
         virtual InputResponse onInputEvent(InputEvent const &inputEvent);
@@ -28,4 +28,4 @@ namespace clove {
     };
 }
 
-#include "Layer.inl"
+#include "SubSystem.inl"

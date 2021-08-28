@@ -2,7 +2,7 @@
 
 #include "Membrane/Scene.hpp"
 
-#include <Clove/Layer.hpp>
+#include <Clove/SubSystem.hpp>
 
 namespace clove {
     class EntityManager;
@@ -10,17 +10,17 @@ namespace clove {
 
 namespace membrane {
     /**
-     * @brief The layer that is active while the game is running.
+     * @brief The sub system that is active while the game is running.
      * Deliberately does not handle editor events to simulate the game running.
      */
-    class RuntimeLayer : public clove::Layer {
+    class RuntimeSubSystem : public clove::SubSystem {
         //VARIABLES
     private:
         Scene currentScene;
 
         //FUNCTIONS
     public:
-        RuntimeLayer();
+        RuntimeSubSystem();
 
         void onAttach() override;
         void onUpdate(clove::DeltaTime const deltaTime) override;
