@@ -17,7 +17,7 @@ namespace clove {
     public:
         void setAllowBufferReuse(bool canReuse);
         void markAsUsed();
-        bool bufferHasBeenUsed();
+        bool bufferHasBeenUsed() const;
 
         CommandBufferUsage getCommandBufferUsage() const;
 

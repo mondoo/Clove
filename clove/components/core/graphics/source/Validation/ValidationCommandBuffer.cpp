@@ -11,7 +11,7 @@ namespace clove {
         hasBeenUsed = true;
     }
 
-    bool ValidationCommandBuffer::bufferHasBeenUsed() {
+    bool ValidationCommandBuffer::bufferHasBeenUsed() const {
         return hasBeenUsed;
     }
 

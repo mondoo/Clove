@@ -9,7 +9,7 @@
 
 namespace clove {
     MetalComputeQueue::MetalComputeQueue(CommandQueueDescriptor descriptor, id<MTLCommandQueue> commandQueue)
-        : descriptor{ std::move(descriptor) }
+        : descriptor{ descriptor }
         , commandQueue{ commandQueue } {
     }
     

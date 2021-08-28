@@ -11,7 +11,7 @@
 
 namespace clove {
     MetalGraphicsQueue::MetalGraphicsQueue(CommandQueueDescriptor descriptor, id<MTLCommandQueue> commandQueue)
-        : descriptor{ std::move(descriptor) }
+        : descriptor{ descriptor }
         , commandQueue{ commandQueue } {
     }
     

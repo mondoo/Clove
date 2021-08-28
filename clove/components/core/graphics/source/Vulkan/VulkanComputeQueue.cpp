@@ -12,7 +12,7 @@
 
 namespace clove {
     VulkanComputeQueue::VulkanComputeQueue(CommandQueueDescriptor descriptor, DevicePointer device, VkQueue queue, VkCommandPool commandPool, QueueFamilyIndices queueFamilyIndices)
-        : descriptor{ std::move(descriptor) }
+        : descriptor{ descriptor }
         , device{ std::move(device) }
         , queue{ queue }
         , commandPool{ commandPool }
