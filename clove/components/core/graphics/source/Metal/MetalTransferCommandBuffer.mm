@@ -25,9 +25,7 @@ namespace clove {
 		}
 	}
 	
-	MetalTransferCommandBuffer::MetalTransferCommandBuffer(bool allowReuse)
-		: allowReuse{ allowReuse } {
-	}
+	MetalTransferCommandBuffer::MetalTransferCommandBuffer() = default;
 	
 	MetalTransferCommandBuffer::MetalTransferCommandBuffer(MetalTransferCommandBuffer &&other) noexcept = default;
 	
@@ -36,23 +34,11 @@ namespace clove {
 	MetalTransferCommandBuffer::~MetalTransferCommandBuffer() = default;
 
 	void MetalTransferCommandBuffer::beginRecording(CommandBufferUsage usageFlag) {
-		if(!allowReuse && hasBeenUsed) {
-			CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Command buffer re-recorded to. Command buffers cannot only be recorded to more than once unless the owning queue has been created with QueueFlags::ReuseBuffers set.");
-		}
-		
-		if(!endRecordingCalled) {
-			CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "beginRecording called before endRecording. Command buffer recording must be finished be starting again.");
-		}
-		endRecordingCalled = false;
-		
-		currentUsage = usageFlag;
-		hasBeenUsed = false;
-		
 		commands.clear();
 	}
 	
 	void MetalTransferCommandBuffer::endRecording() {
-		endRecordingCalled = true;
+		//no op
 	}
 
 	void MetalTransferCommandBuffer::copyBufferToBuffer(GhaBuffer &source, size_t const sourceOffset, GhaBuffer &destination, size_t const destinationOffset, size_t const sizeBytes) {

@@ -8,11 +8,19 @@
     #include "Clove/Graphics/Vulkan/VulkanDevice.hpp"
 #endif
 
+#if CLOVE_GHA_VALIDATION
+    #include "Clove/Graphics/Validation/ValidationLog.hpp"
+#endif
+
 #include <Clove/Definitions.hpp>
 #include <Clove/Log/Log.hpp>
 
 namespace clove {
     std::unique_ptr<GhaDevice> createGraphicsDevice(GraphicsApi api, std::any nativeWindow) {
+#if CLOVE_GHA_VALIDATION
+        CLOVE_LOG(LOG_CATEGORY_CLOVE_GHA_VALIDATION, LogLevel::Debug, "GHA validation enabled.");
+#endif
+
         switch(api) {
 #if CLOVE_PLATFORM_WINDOWS
             case GraphicsApi::Vulkan:
@@ -25,7 +33,7 @@ namespace clove {
                 return std::make_unique<VulkanDevice>(std::move(nativeWindow));
 #endif
             default:
-                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Default statement hit. Could not initialise RenderAPI: {0}", CLOVE_FUNCTION_NAME);
+                CLOVE_ASSERT("Default statement hit. Could not initialise RenderAPI: {0}", CLOVE_FUNCTION_NAME);
                 return nullptr;
         }
     }

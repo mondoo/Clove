@@ -1,5 +1,6 @@
 #include "Clove/Graphics/Vulkan/VulkanGraphicsQueue.hpp"
 
+#include "Clove/Graphics/Helpers.hpp"
 #include "Clove/Graphics/Vulkan/VulkanFence.hpp"
 #include "Clove/Graphics/Vulkan/VulkanGraphicsCommandBuffer.hpp"
 #include "Clove/Graphics/Vulkan/VulkanGraphicsPipelineObject.hpp"
@@ -11,8 +12,9 @@
 #include <Clove/Log/Log.hpp>
 
 namespace clove {
-    VulkanGraphicsQueue::VulkanGraphicsQueue(DevicePointer device, VkQueue queue, VkCommandPool commandPool, QueueFamilyIndices queueFamilyIndices)
-        : device{ std::move(device) }
+    VulkanGraphicsQueue::VulkanGraphicsQueue(CommandQueueDescriptor descriptor, DevicePointer device, VkQueue queue, VkCommandPool commandPool, QueueFamilyIndices queueFamilyIndices)
+        : descriptor{ descriptor }
+        , device{ std::move(device) }
         , queue{ queue }
         , commandPool{ commandPool }
         , queueFamilyIndices{ queueFamilyIndices } {
@@ -24,6 +26,10 @@ namespace clove {
 
     VulkanGraphicsQueue::~VulkanGraphicsQueue() {
         vkDestroyCommandPool(device.get(), commandPool, nullptr);
+    }
+
+    CommandQueueDescriptor const &VulkanGraphicsQueue::getDescriptor() const {
+        return descriptor;
     }
 
     std::unique_ptr<GhaGraphicsCommandBuffer> VulkanGraphicsQueue::allocateCommandBuffer() {
@@ -41,7 +47,7 @@ namespace clove {
             return nullptr;
         }
 
-        return std::make_unique<VulkanGraphicsCommandBuffer>(commandBuffer, queueFamilyIndices);
+        return createGhaObject<VulkanGraphicsCommandBuffer>(commandBuffer, queueFamilyIndices);
     }
 
     void VulkanGraphicsQueue::freeCommandBuffer(GhaGraphicsCommandBuffer &buffer) {

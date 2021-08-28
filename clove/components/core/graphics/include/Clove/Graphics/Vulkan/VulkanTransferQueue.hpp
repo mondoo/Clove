@@ -10,6 +10,8 @@ namespace clove {
     class VulkanTransferQueue : public GhaTransferQueue {
         //VARIABLES
     private:
+        CommandQueueDescriptor descriptor{};
+
         DevicePointer device;
         VkQueue queue{ VK_NULL_HANDLE };
         VkCommandPool commandPool{ VK_NULL_HANDLE };
@@ -19,7 +21,7 @@ namespace clove {
         //FUNCTIONS
     public:
         VulkanTransferQueue() = delete;
-        VulkanTransferQueue(DevicePointer device, VkQueue queue, VkCommandPool commandPool, QueueFamilyIndices queueFamilyIndices);
+        VulkanTransferQueue(CommandQueueDescriptor descriptor, DevicePointer device, VkQueue queue, VkCommandPool commandPool, QueueFamilyIndices queueFamilyIndices);
 
         VulkanTransferQueue(VulkanTransferQueue const &other) = delete;
         VulkanTransferQueue(VulkanTransferQueue &&other) noexcept;
@@ -28,6 +30,8 @@ namespace clove {
         VulkanTransferQueue &operator=(VulkanTransferQueue &&other) noexcept;
 
         ~VulkanTransferQueue();
+
+        CommandQueueDescriptor const &getDescriptor() const override;
 
         std::unique_ptr<GhaTransferCommandBuffer> allocateCommandBuffer() override;
         void freeCommandBuffer(GhaTransferCommandBuffer &buffer) override;

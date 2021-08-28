@@ -159,6 +159,19 @@ set(
 		${SOURCE}/Metal/MetalView.mm
 )
 
+#Validation
+set(
+	ValidationFiles
+		${INCLUDE}/Validation/ValidationBuffer.hpp
+		${INCLUDE}/Validation/ValidationBuffer.inl
+		${INCLUDE}/Validation/ValidationCommandBuffer.hpp
+		${INCLUDE}/Validation/ValidationCommandBuffer.inl
+		${SOURCE}/Validation/ValidationCommandBuffer.cpp
+		${INCLUDE}/Validation/ValidationLog.hpp
+		${INCLUDE}/Validation/ValidationQueue.hpp
+		${INCLUDE}/Validation/ValidationQueue.inl
+)
+
 #Library
 add_library(
 	CloveGraphics STATIC
@@ -191,6 +204,8 @@ add_library(
 		${INCLUDE}/Graphics.hpp		
 		${SOURCE}/Graphics.cpp
 		${INCLUDE}/GraphicsAPI.hpp
+		${INCLUDE}/Helpers.hpp
+		${INCLUDE}/Helpers.inl
 		${INCLUDE}/MemoryBarrier.hpp
 		${INCLUDE}/PipelineObject.hpp
 		${INCLUDE}/Queue.hpp
@@ -201,6 +216,7 @@ add_library(
 		
 		${VulkanFiles}
 		${MetalFiles}
+		${ValidationFiles}
 
 		#shaderc files required to use the file includer
 		${CMAKE_CURRENT_SOURCE_DIR}/external/shaderc/glslc/file_includer.h

@@ -1,5 +1,6 @@
 #include "Clove/Graphics/Metal/MetalComputeQueue.hpp"
 
+#include "Clove/Graphics/Helpers.hpp"
 #include "Clove/Graphics/Metal/MetalComputeCommandBuffer.hpp"
 #include "Clove/Graphics/Metal/MetalSemaphore.hpp"
 #include "Clove/Graphics/Metal/MetalFence.hpp"
@@ -8,8 +9,8 @@
 
 namespace clove {
     MetalComputeQueue::MetalComputeQueue(CommandQueueDescriptor descriptor, id<MTLCommandQueue> commandQueue)
-        : commandQueue{ commandQueue } {
-        allowBufferReuse = (descriptor.flags & QueueFlags::ReuseBuffers) != 0;
+        : descriptor{ descriptor }
+        , commandQueue{ commandQueue } {
     }
     
     MetalComputeQueue::MetalComputeQueue(MetalComputeQueue &&other) noexcept = default;
@@ -17,9 +18,13 @@ namespace clove {
     MetalComputeQueue &MetalComputeQueue::operator=(MetalComputeQueue &&other) noexcept = default;
     
     MetalComputeQueue::~MetalComputeQueue() = default;
+
+    CommandQueueDescriptor const &MetalComputeQueue::getDescriptor() const {
+        return descriptor;
+    }
     
     std::unique_ptr<GhaComputeCommandBuffer> MetalComputeQueue::allocateCommandBuffer() {
-        return std::make_unique<MetalComputeCommandBuffer>(allowBufferReuse);
+        return createGhaObject<MetalComputeCommandBuffer>();
     }
     
     void MetalComputeQueue::freeCommandBuffer(GhaComputeCommandBuffer &buffer) {
@@ -40,12 +45,7 @@ namespace clove {
                         CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: Command buffer provided is nullptr", CLOVE_FUNCTION_NAME);
                         continue;
                     }
-                    
-                    if(metalCommandBuffer->getCommandBufferUsage() == CommandBufferUsage::OneTimeSubmit && metalCommandBuffer->bufferHasBeenUsed()){
-                        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "ComputeCommandBuffer recorded with CommandBufferUsage::OneTimeSubmit has already been used. Only buffers recorded with CommandBufferUsage::Default can submitted multiples times after being recorded once.");
-                        break;
-                    }
-                    
+
                     id<MTLCommandBuffer> executionBuffer{ [commandQueue commandBuffer] };
                     id<MTLComputeCommandEncoder> encoder{ [executionBuffer computeCommandEncoder] };
                     
@@ -82,8 +82,6 @@ namespace clove {
                     
                     [encoder endEncoding];
                     [executionBuffer commit];
-                    
-                    metalCommandBuffer->markAsUsed();
                 }
             }
         }

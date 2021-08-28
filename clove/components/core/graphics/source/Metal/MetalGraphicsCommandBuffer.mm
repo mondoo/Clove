@@ -25,9 +25,7 @@ namespace clove {
         }
     }
     
-    MetalGraphicsCommandBuffer::MetalGraphicsCommandBuffer(bool allowReuse)
-        : allowReuse{ allowReuse } {
-    }
+    MetalGraphicsCommandBuffer::MetalGraphicsCommandBuffer() = default;
     
     MetalGraphicsCommandBuffer::MetalGraphicsCommandBuffer(MetalGraphicsCommandBuffer &&other) noexcept = default;
     
@@ -36,22 +34,11 @@ namespace clove {
     MetalGraphicsCommandBuffer::~MetalGraphicsCommandBuffer() = default;
     
     void MetalGraphicsCommandBuffer::beginRecording(CommandBufferUsage usageFlag) {
-        if(!allowReuse && hasBeenUsed) {
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Command buffer re-recorded to. Command buffers cannot only be recorded to more than once unless the owning queue has been created with QueueFlags::ReuseBuffers set.");
-        }
-        
-        if(!endRecordingCalled) {
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "beginRecording called before endRecording. Command buffer recording must be finished be starting again.");
-        }
-        endRecordingCalled = false;
-        
-        currentUsage = usageFlag;
-        hasBeenUsed = false;
         passes.clear();
     }
     
     void MetalGraphicsCommandBuffer::endRecording() {
-        endRecordingCalled = true;
+        //no op
     }
     
     void MetalGraphicsCommandBuffer::beginRenderPass(GhaRenderPass &renderPass, GhaFramebuffer &frameBuffer, RenderArea const &renderArea, std::span<ClearValue> clearValues) {

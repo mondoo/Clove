@@ -1,5 +1,6 @@
 #include "Clove/Graphics/Vulkan/VulkanTransferQueue.hpp"
 
+#include "Clove/Graphics/Helpers.hpp"
 #include "Clove/Graphics/Vulkan/VulkanFence.hpp"
 #include "Clove/Graphics/Vulkan/VulkanGraphicsPipelineObject.hpp"
 #include "Clove/Graphics/Vulkan/VulkanPipelineObject.hpp"
@@ -11,8 +12,9 @@
 #include <Clove/Log/Log.hpp>
 
 namespace clove {
-    VulkanTransferQueue::VulkanTransferQueue(DevicePointer device, VkQueue queue, VkCommandPool commandPool, QueueFamilyIndices queueFamilyIndices)
-        : device{ std::move(device) }
+    VulkanTransferQueue::VulkanTransferQueue(CommandQueueDescriptor descriptor, DevicePointer device, VkQueue queue, VkCommandPool commandPool, QueueFamilyIndices queueFamilyIndices)
+        : descriptor{ descriptor }
+        , device{ std::move(device) }
         , queue{ queue }
         , commandPool{ commandPool }
         , queueFamilyIndices{ queueFamilyIndices } {
@@ -24,6 +26,10 @@ namespace clove {
 
     VulkanTransferQueue::~VulkanTransferQueue() {
         vkDestroyCommandPool(device.get(), commandPool, nullptr);
+    }
+
+    CommandQueueDescriptor const &VulkanTransferQueue::getDescriptor() const {
+        return descriptor;
     }
 
     std::unique_ptr<GhaTransferCommandBuffer> VulkanTransferQueue::allocateCommandBuffer() {
@@ -43,12 +49,12 @@ namespace clove {
             return nullptr;
         }
 
-        return std::make_unique<VulkanTransferCommandBuffer>(commandBuffer, queueFamilyIndices);
+        return createGhaObject<VulkanTransferCommandBuffer>(commandBuffer, queueFamilyIndices);
     }
 
     void VulkanTransferQueue::freeCommandBuffer(GhaTransferCommandBuffer &buffer) {
         VkCommandBuffer const vkbuffer{ polyCast<VulkanTransferCommandBuffer>(&buffer)->getCommandBuffer() };
-        
+
         vkFreeCommandBuffers(device.get(), commandPool, 1, &vkbuffer);
     }
 

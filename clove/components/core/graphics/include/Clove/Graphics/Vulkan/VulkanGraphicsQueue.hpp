@@ -10,6 +10,8 @@ namespace clove {
     class VulkanGraphicsQueue : public GhaGraphicsQueue {
         //VARIABLES
     private:
+        CommandQueueDescriptor descriptor{};
+        
         DevicePointer device;
         VkQueue queue{ VK_NULL_HANDLE };
         VkCommandPool commandPool{ VK_NULL_HANDLE };
@@ -19,7 +21,7 @@ namespace clove {
         //FUNCTIONS
     public:
         VulkanGraphicsQueue() = delete;
-        VulkanGraphicsQueue(DevicePointer device, VkQueue queue, VkCommandPool commandPool, QueueFamilyIndices queueFamilyIndices);
+        VulkanGraphicsQueue(CommandQueueDescriptor descriptor, DevicePointer device, VkQueue queue, VkCommandPool commandPool, QueueFamilyIndices queueFamilyIndices);
 
         VulkanGraphicsQueue(VulkanGraphicsQueue const &other) = delete;
         VulkanGraphicsQueue(VulkanGraphicsQueue &&other) noexcept;
@@ -28,6 +30,8 @@ namespace clove {
         VulkanGraphicsQueue &operator=(VulkanGraphicsQueue &&other) noexcept;
 
         ~VulkanGraphicsQueue();
+
+        CommandQueueDescriptor const &getDescriptor() const override;
 
         std::unique_ptr<GhaGraphicsCommandBuffer> allocateCommandBuffer() override;
         void freeCommandBuffer(GhaGraphicsCommandBuffer &buffer) override;

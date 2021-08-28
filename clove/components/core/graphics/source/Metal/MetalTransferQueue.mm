@@ -1,5 +1,6 @@
 #include "Clove/Graphics/Metal/MetalTransferQueue.hpp"
 
+#include "Clove/Graphics/Helpers.hpp"
 #include "Clove/Graphics/Metal/MetalPipelineObject.hpp"
 #include "Clove/Graphics/Metal/MetalTransferCommandBuffer.hpp"
 #include "Clove/Graphics/Metal/MetalSemaphore.hpp"
@@ -9,8 +10,8 @@
 
 namespace clove {
     MetalTransferQueue::MetalTransferQueue(CommandQueueDescriptor descriptor, id<MTLCommandQueue> commandQueue)
-        : commandQueue{ commandQueue } {
-        allowBufferReuse = (descriptor.flags & QueueFlags::ReuseBuffers) != 0;
+        : descriptor{ descriptor }
+        , commandQueue{ commandQueue } {
     }
     
     MetalTransferQueue::MetalTransferQueue(MetalTransferQueue &&other) noexcept = default;
@@ -18,9 +19,13 @@ namespace clove {
     MetalTransferQueue& MetalTransferQueue::operator=(MetalTransferQueue &&other) noexcept = default;
     
     MetalTransferQueue::~MetalTransferQueue() = default;
+
+    CommandQueueDescriptor const &MetalTransferQueue::getDescriptor() const {
+        return descriptor;
+    }
     
     std::unique_ptr<GhaTransferCommandBuffer> MetalTransferQueue::allocateCommandBuffer() {
-        return std::make_unique<MetalTransferCommandBuffer>(allowBufferReuse);
+        return createGhaObject<MetalTransferCommandBuffer>();
     }
     
     void MetalTransferQueue::freeCommandBuffer(GhaTransferCommandBuffer &buffer) {
@@ -40,11 +45,6 @@ namespace clove {
                     if(metalCommandBuffer == nullptr) {
                         CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: Command buffer provided is nullptr", CLOVE_FUNCTION_NAME);
                         continue;
-                    }
-                    
-                    if(metalCommandBuffer->getCommandBufferUsage() == CommandBufferUsage::OneTimeSubmit && metalCommandBuffer->bufferHasBeenUsed()){
-                        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "TransferCommandBuffer recorded with CommandBufferUsage::OneTimeSubmit has already been used. Only buffers recorded with CommandBufferUsage::Default can submitted multiples times after being recorded once.");
-                        break;
                     }
                     
                     id<MTLCommandBuffer> executionBuffer{ [commandQueue commandBuffer] };
@@ -83,8 +83,6 @@ namespace clove {
                     
                     [encoder endEncoding];
                     [executionBuffer commit];
-                    
-                    metalCommandBuffer->markAsUsed();
                 }
             }
         }
