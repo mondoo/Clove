@@ -667,6 +667,18 @@ namespace clove {
                     .format = VertexAttributeFormat::R32G32B32_SFLOAT,
                     .offset = offsetof(Vertex, position),
                 },
+                VertexAttributeDescriptor{
+                    .format = VertexAttributeFormat::R32G32B32_SFLOAT,
+                    .offset = offsetof(Vertex, normal),
+                },
+                VertexAttributeDescriptor{
+                    .format = VertexAttributeFormat::R32G32_SFLOAT,
+                    .offset = offsetof(Vertex, texCoord),
+                },
+                VertexAttributeDescriptor{
+                    .format = VertexAttributeFormat::R32G32B32_SFLOAT,
+                    .offset = offsetof(Vertex, colour),
+                },
             };
 
             //TEMP: Using dynamic for now
