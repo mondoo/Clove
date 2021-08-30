@@ -139,7 +139,7 @@ namespace clove {
         prevFrameTime = std::chrono::system_clock::now();
 
         //Systems
-        renderer = std::make_unique<ForwardRenderer3D>(this->graphicsDevice->getGraphicsFactory(), std::move(renderTarget));
+        renderer = std::make_unique<ForwardRenderer3D>(this->graphicsDevice.get(), std::move(renderTarget));
 
         //Layers
         physicsLayer = std::make_shared<PhysicsLayer>(&entityManager);

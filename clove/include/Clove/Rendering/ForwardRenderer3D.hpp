@@ -10,6 +10,7 @@
 #include <unordered_map>
 
 namespace clove {
+    class GhaDevice;
     class RenderTarget;
     class Camera;
     class Sprite;
@@ -59,6 +60,8 @@ namespace clove {
         size_t maxFramesInFlight{};
         size_t currentFrame{ 0 };//The current frame we're operating on
 
+        GhaDevice *ghaDevice{ nullptr };
+
         std::unordered_map<std::string, std::string> shaderIncludes;
 
         std::unique_ptr<RenderTarget> renderTarget;
@@ -94,7 +97,7 @@ namespace clove {
         //FUNCTIONS
     public:
         ForwardRenderer3D() = delete;
-        ForwardRenderer3D(GhaFactory *graphicsFactory, std::unique_ptr<RenderTarget> renderTarget);
+        ForwardRenderer3D(GhaDevice *ghaDevice, std::unique_ptr<RenderTarget> renderTarget);
 
         ForwardRenderer3D(ForwardRenderer3D const &other) = delete;
         ForwardRenderer3D(ForwardRenderer3D &&other) noexcept;

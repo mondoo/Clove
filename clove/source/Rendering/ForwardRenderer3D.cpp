@@ -39,9 +39,12 @@ extern "C" const char mesh_p[];
 extern "C" const size_t mesh_pLength;
 
 namespace clove {
-    ForwardRenderer3D::ForwardRenderer3D(GhaFactory *graphicsFactory, std::unique_ptr<RenderTarget> renderTarget)
-        : renderTarget{ std::move(renderTarget) }
-        , globalCache{ graphicsFactory } {
+    ForwardRenderer3D::ForwardRenderer3D(GhaDevice *ghaDevice, std::unique_ptr<RenderTarget> renderTarget)
+        : ghaDevice{ ghaDevice }
+        , renderTarget{ std::move(renderTarget) }
+        , globalCache{ ghaDevice->getGraphicsFactory() } {
+        GhaFactory *ghaFactory{ ghaDevice->getGraphicsFactory() };
+
         size_t const maxImages{ this->renderTarget->getImages().size() };
         maxFramesInFlight = std::max(static_cast<size_t>(1), maxImages - 1);
 
@@ -53,12 +56,12 @@ namespace clove {
 
         shaderIncludes["Constants.glsl"] = { constants, constantsLength };
 
-        graphicsQueue = graphicsFactory->createGraphicsQueue(CommandQueueDescriptor{ .flags = QueueFlags::ReuseBuffers }).getValue();
-        computeQueue  = graphicsFactory->createComputeQueue(CommandQueueDescriptor{ .flags = QueueFlags::ReuseBuffers }).getValue();
-        transferQueue = graphicsFactory->createTransferQueue(CommandQueueDescriptor{ .flags = QueueFlags::ReuseBuffers }).getValue();
+        graphicsQueue = ghaFactory->createGraphicsQueue(CommandQueueDescriptor{ .flags = QueueFlags::ReuseBuffers }).getValue();
+        computeQueue  = ghaFactory->createComputeQueue(CommandQueueDescriptor{ .flags = QueueFlags::ReuseBuffers }).getValue();
+        transferQueue = ghaFactory->createTransferQueue(CommandQueueDescriptor{ .flags = QueueFlags::ReuseBuffers }).getValue();
 
         for(size_t i{ 0 }; i < maxFramesInFlight + 1; ++i) {
-            frameCaches.emplace_back(graphicsFactory, graphicsQueue.get(), computeQueue.get(), transferQueue.get());
+            frameCaches.emplace_back(ghaFactory, graphicsQueue.get(), computeQueue.get(), transferQueue.get());
         }
 
 #if 0
@@ -68,18 +71,18 @@ namespace clove {
 
         //Create semaphores for frame synchronisation
         for(auto &skinningFinishedSemaphore : skinningFinishedSemaphores) {
-            skinningFinishedSemaphore = *graphicsFactory->createSemaphore();
+            skinningFinishedSemaphore = *ghaFactory->createSemaphore();
         }
         for(auto &renderFinishedSemaphore : renderFinishedSemaphores) {
-            renderFinishedSemaphore = *graphicsFactory->createSemaphore();
+            renderFinishedSemaphore = *ghaFactory->createSemaphore();
         }
         for(auto &imageAvailableSemaphore : imageAvailableSemaphores) {
-            imageAvailableSemaphore = *graphicsFactory->createSemaphore();
+            imageAvailableSemaphore = *ghaFactory->createSemaphore();
         }
 
         //Create fences to wait for images in flight
         for(auto &fence : framesInFlight) {
-            fence = *graphicsFactory->createFence({ true });
+            fence = *ghaFactory->createFence({ true });
         }
 
 #if 0
@@ -119,7 +122,10 @@ namespace clove {
 
     ForwardRenderer3D &ForwardRenderer3D::operator=(ForwardRenderer3D &&other) noexcept = default;
 
-    ForwardRenderer3D::~ForwardRenderer3D() = default;
+    ForwardRenderer3D::~ForwardRenderer3D() {
+        //Wait for an idle device before implicitly destructing the render graph caches.
+        ghaDevice->waitForIdleDevice();
+    }
 
     void ForwardRenderer3D::begin() {
         currentFrameData.meshes.clear();
@@ -325,7 +331,12 @@ namespace clove {
                                                                     .slot  = 5,
                                                                     .image = specularTexture,
                                                                 },
-                                                                RgImageBinding{ .slot = 7, .image = directionalShadowMap, .arrayIndex = 0, .arrayCount = MAX_LIGHTS },
+                                                                RgImageBinding{
+                                                                    .slot       = 7,
+                                                                    .image      = directionalShadowMap,
+                                                                    .arrayIndex = 0,
+                                                                    .arrayCount = MAX_LIGHTS,
+                                                                },
                                                                 RgImageBinding{
                                                                     .slot       = 8,
                                                                     .image      = pointShadowMap,
