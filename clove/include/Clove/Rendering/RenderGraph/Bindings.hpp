@@ -14,7 +14,7 @@ namespace clove {
         GhaShader::Stage shaderStage{};//TEMP: Manually set shader stage in place of shader reflection.
     };
 
-    struct RgImageBindng {
+    struct RgImageBinding {
         uint32_t slot{};
         RgResourceIdType image{};
         uint32_t arrayIndex{ 0 }; /**< If image is an image array, which index to bind from.*/

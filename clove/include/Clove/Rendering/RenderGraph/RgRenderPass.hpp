@@ -40,7 +40,7 @@ namespace clove {
             RgResourceIdType indexBuffer{};
 
             std::vector<RgBufferBinding> shaderUbos{};
-            std::vector<RgImageBindng> shaderImages{};
+            std::vector<RgImageBinding> shaderImages{};
             std::vector<RgSamplerBinding> shaderSamplers{};
 
             size_t indexCount{ 0 };
