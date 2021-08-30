@@ -35,7 +35,7 @@ namespace clove {
 
     RgResourceIdType RenderGraph::createBuffer(GhaBuffer *buffer, size_t const offset, size_t const size) {
         RgResourceIdType const bufferId{ nextResourceId++ };
-        buffers[bufferId] = std::make_unique<RgBuffer>(bufferId, buffer, size, offset);
+        buffers[bufferId] = std::make_unique<RgBuffer>(bufferId, buffer, offset, size);
 
         return bufferId;
     }
@@ -874,7 +874,7 @@ namespace clove {
             for(auto const &ubo : submission.shaderUbos) {
                 //TODO: Handle different allocations within the same buffer
                 std::unique_ptr<RgBuffer> const &buffer{ buffers.at(ubo.buffer) };
-                descriptorSet->map(*buffer->getGhaBuffer(frameCache), 0, buffer->getBufferSize(), DescriptorType::UniformBuffer, ubo.slot);
+                descriptorSet->map(*buffer->getGhaBuffer(frameCache), buffer->getBufferOffset(), buffer->getBufferSize(), DescriptorType::UniformBuffer, ubo.slot);
             }
             for(auto const &image : submission.shaderImages) {
                 descriptorSet->map(*images.at(image.image)->createGhaImageView(frameCache, image.arrayIndex, image.arrayCount), GhaImage::Layout::ShaderReadOnlyOptimal, image.slot);
