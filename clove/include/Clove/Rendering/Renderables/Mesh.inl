@@ -19,6 +19,10 @@ namespace clove {
         return indexOffset;
     }
 
+    size_t Mesh::getIndexBufferSize() const {
+        return indexBufferSize;
+    }
+
     size_t Mesh::getIndexCount() const {
         return indices.size();
     }

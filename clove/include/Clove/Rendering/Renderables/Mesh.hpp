@@ -27,6 +27,7 @@ namespace clove {
         size_t vertexOffset{ 0 };
         size_t vertexBufferSize{ 0 };
         size_t indexOffset{ 0 };
+        size_t indexBufferSize{ 0 };
 
         //FUNCTIONS
     public:
@@ -60,6 +61,7 @@ namespace clove {
          * @brief Returns the offset into the combinedBuffer for the indices.
          */
         inline size_t getIndexOffset() const;
+        inline size_t getIndexBufferSize() const;
         inline size_t getIndexCount() const;
     };
 }

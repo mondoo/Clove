@@ -32,7 +32,7 @@ namespace clove {
         GhaFactory &factory{ *Application::get().getGraphicsDevice()->getGraphicsFactory() };
 
         vertexBufferSize = sizeof(Vertex) * this->vertices.size();
-        size_t const indexBufferSize{ sizeof(uint16_t) * this->indices.size() };
+        indexBufferSize  = sizeof(uint16_t) * this->indices.size();
         size_t const totalSize{ vertexBufferSize + indexBufferSize };
 
         vertexOffset = 0;
@@ -80,7 +80,6 @@ namespace clove {
         , vertexOffset{ other.vertexOffset }
         , vertexBufferSize{ other.vertexBufferSize }
         , indexOffset{ other.indexOffset } {
-
         size_t const indexBufferSize{ sizeof(uint16_t) * indices.size() };
         size_t const totalSize{ vertexBufferSize + indexBufferSize };
 
