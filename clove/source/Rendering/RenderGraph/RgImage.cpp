@@ -32,7 +32,8 @@ namespace clove {
 
     RgImage::RgImage(RgResourceIdType id, GhaImage *ghaImage)
         : RgResource{ id }
-        , ghaImage{ ghaImage } {
+        , ghaImage{ ghaImage }
+        , ghaImageDescriptor{ ghaImage->getDescriptor() } {
         externalImage = true;
     }
 
@@ -42,20 +43,18 @@ namespace clove {
 
     RgImage::~RgImage() = default;
 
-    GhaImageView *RgImage::getGhaImageView(RgFrameCache &cache, uint32_t const arrayIndex, uint32_t const arrayCount) {
+   GhaImageView *RgImage::createGhaImageView(RgFrameCache &cache, uint32_t const arrayIndex, uint32_t const arrayCount) {
         if(ghaImage == nullptr) {
             CLOVE_ASSERT(!externalImage, "RgImage is registered as an external image but does not have a valid GhaImageView.");
             ghaImage = cache.allocateImage(ghaImageDescriptor);
         }
 
         //TODO: This will allocate a new view per usage - rather than reusing them when possible
-        ghaImageView = cache.allocateImageView(ghaImage, GhaImageView::Descriptor{
-                                                             .type       = getViewType(ghaImageDescriptor.type),
-                                                             .layer      = arrayIndex,
-                                                             .layerCount = arrayCount,
-                                                         });
-
-        return ghaImageView;
+        return cache.allocateImageView(ghaImage, GhaImageView::Descriptor{
+                                                     .type       = getViewType(ghaImageDescriptor.type),
+                                                     .layer      = arrayIndex,
+                                                     .layerCount = arrayCount,
+                                                 });
     }
 
     void RgImage::addImageUsage(GhaImage::UsageMode usage) {

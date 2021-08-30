@@ -31,6 +31,8 @@ namespace clove {
         StoreOperation storeOp{};
         ColourValue clearColour{};
         RgResourceIdType target{};
+        uint32_t imageArrayIndex{ 0 }; /**< If image is an image array, which index to bind from. */
+        uint32_t imageArrayCount{ 1 }; /**< If image is an image array, how many images to bind. */
     };
 
     struct RgDepthStencilBinding {
@@ -38,5 +40,7 @@ namespace clove {
         StoreOperation storeOp{};
         DepthStencilValue clearValue{};
         RgResourceIdType target{};
+        uint32_t imageArrayIndex{ 0 }; /**< If image is an image array, which index to bind from.*/
+        uint32_t imageArrayCount{ 1 }; /**< If image is an image array, how many images to bind. */
     };
 }

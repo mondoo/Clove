@@ -47,9 +47,9 @@ namespace clove {
         return imageId;
     }
 
-    RgResourceIdType RenderGraph::createImage(GhaImageView *ghaImageView) {
+    RgResourceIdType RenderGraph::createImage(GhaImage *ghaImage) {
         RgResourceIdType const imageId{ nextResourceId++ };
-        images[imageId] = std::make_unique<RgImage>(imageId, ghaImageView);
+        images[imageId] = std::make_unique<RgImage>(imageId, ghaImage);
 
         return imageId;
     }
@@ -610,7 +610,7 @@ namespace clove {
             std::vector<AttachmentDescriptor> colourAttachments{};
             for(auto &renderTarget : passDescriptor.renderTargets) {
                 colourAttachments.emplace_back(AttachmentDescriptor{
-                    .format         = images[renderTarget.target]->getGhaImageView(frameCache)->getImageFormat(),
+                    .format         = images[renderTarget.target]->getFormat(),
                     .loadOperation  = renderTarget.loadOp,
                     .storeOperation = renderTarget.storeOp,
                     .initialLayout  = getPreviousLayout(passes, i, renderTarget.target),
@@ -621,7 +621,7 @@ namespace clove {
 
             RgDepthStencilBinding const &depthStencil{ passDescriptor.depthStencil };
             AttachmentDescriptor depthStencilAttachment{
-                .format         = images[depthStencil.target]->getGhaImageView(frameCache)->getImageFormat(),
+                .format         = images[depthStencil.target]->getFormat(),
                 .loadOperation  = depthStencil.loadOp,
                 .storeOperation = depthStencil.storeOp,
                 .initialLayout  = getPreviousLayout(passes, i, depthStencil.target),
@@ -694,15 +694,15 @@ namespace clove {
             //Allocate the frame buffer
             std::vector<GhaImageView const *> attachments{};
             for(auto &renderTarget : passDescriptor.renderTargets) {
-                attachments.push_back(images.at(renderTarget.target)->getGhaImageView(frameCache));
+                attachments.push_back(images.at(renderTarget.target)->createGhaImageView(frameCache, renderTarget.imageArrayIndex, renderTarget.imageArrayCount));
             }
-            attachments.push_back(images.at(passDescriptor.depthStencil.target)->getGhaImageView(frameCache));
+            attachments.push_back(images.at(passDescriptor.depthStencil.target)->createGhaImageView(frameCache, passDescriptor.depthStencil.imageArrayIndex, passDescriptor.depthStencil.imageArrayCount));
 
             outFramebuffers[passId] = frameCache.allocateFramebuffer(GhaFramebuffer::Descriptor{
                 .renderPass  = outRenderPasses.at(passId),
                 .attachments = std::move(attachments),
-                .width       = images[passDescriptor.renderTargets[0].target]->getGhaImageView(frameCache)->getImageDimensions().x,//TEMP: Just using the first target as the size. This will need to be validated
-                .height      = images[passDescriptor.renderTargets[0].target]->getGhaImageView(frameCache)->getImageDimensions().y,
+                .width       = images[passDescriptor.renderTargets[0].target]->getDimensions().x,//TEMP: Just using the first target as the size. This will need to be validated
+                .height      = images[passDescriptor.renderTargets[0].target]->getDimensions().y,
             });
 
             //Count descriptor sets required for the entire pass
@@ -865,7 +865,7 @@ namespace clove {
                 descriptorSet->map(*buffer->getGhaBuffer(frameCache), 0, buffer->getBufferSize(), DescriptorType::UniformBuffer, ubo.slot);
             }
             for(auto const &image : submission.shaderImages) {
-                descriptorSet->map(*images.at(image.image)->getGhaImageView(frameCache, image.arrayIndex, image.arrayCount), GhaImage::Layout::ShaderReadOnlyOptimal, image.slot);
+                descriptorSet->map(*images.at(image.image)->createGhaImageView(frameCache, image.arrayIndex, image.arrayCount), GhaImage::Layout::ShaderReadOnlyOptimal, image.slot);
             }
             for(auto const &sampler : submission.shaderSamplers) {
                 descriptorSet->map(*samplers.at(sampler.sampler), sampler.slot);

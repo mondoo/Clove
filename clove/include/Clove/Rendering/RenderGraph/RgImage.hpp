@@ -19,7 +19,6 @@ namespace clove {
         //VARIABLES
     private:
         GhaImage *ghaImage{ nullptr }; /**< The GHA image this object views. */
-        GhaImageView *ghaImageView{ nullptr }; /**< The GHA image view this object represents. */
         GhaImage::Descriptor ghaImageDescriptor{};
         bool externalImage{ false }; /**< Will be true if this was registered with an external image. Preventing the descriptor being built. */
 
@@ -38,12 +37,14 @@ namespace clove {
         ~RgImage();
 
         /**
-         * @brief Get the GhaImageView for this object. Will create any resources required.
+         * @brief Creates an image view for this object's internal image.
          * @param ghaFactory 
          * @return 
          */
-        GhaImageView *getGhaImageView(RgFrameCache &cache, uint32_t const arrayIndex, uint32_t const arrayCount);
+        GhaImageView *createGhaImageView(RgFrameCache &cache, uint32_t const arrayIndex, uint32_t const arrayCount);
 
+        inline GhaImage::Format getFormat() const;
+        inline vec2ui const &getDimensions() const;
         inline bool isExternalImage() const;
 
         void addImageUsage(GhaImage::UsageMode usage);
