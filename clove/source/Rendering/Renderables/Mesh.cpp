@@ -52,7 +52,7 @@ namespace clove {
         //Combined Buffer
         combinedBuffer = *factory.createBuffer(GhaBuffer::Descriptor{
             .size        = totalSize,
-            .usageFlags  = GhaBuffer::UsageMode::TransferSource | GhaBuffer::UsageMode::TransferDestination | GhaBuffer::UsageMode::StorageBuffer | GhaBuffer::UsageMode::VertexBuffer | GhaBuffer::UsageMode::IndexBuffer,
+            .usageFlags  = GhaBuffer::UsageMode::TransferDestination | GhaBuffer::UsageMode::StorageBuffer | GhaBuffer::UsageMode::VertexBuffer | GhaBuffer::UsageMode::IndexBuffer,
             .sharingMode = SharingMode::Concurrent,
             .memoryType  = MemoryType::VideoMemory,
         });
@@ -79,10 +79,10 @@ namespace clove {
         , indices{ other.indices }
         , vertexOffset{ other.vertexOffset }
         , vertexBufferSize{ other.vertexBufferSize }
-        , indexOffset{ other.indexOffset } {
-        size_t const indexBufferSize{ sizeof(uint16_t) * indices.size() };
-        size_t const totalSize{ vertexBufferSize + indexBufferSize };
+        , indexOffset{ other.indexOffset }
+        , indexBufferSize{ other.indexBufferSize } {
 
+        size_t const totalSize{ vertexBufferSize + indexBufferSize };
         copyFullBuffer(*other.combinedBuffer, *combinedBuffer, totalSize);
     }
 
@@ -94,10 +94,9 @@ namespace clove {
         vertexOffset     = other.vertexOffset;
         vertexBufferSize = other.vertexBufferSize;
         indexOffset      = other.indexOffset;
+        indexBufferSize  = other.indexBufferSize;
 
-        size_t const indexBufferSize{ sizeof(uint16_t) * indices.size() };
         size_t const totalSize{ vertexBufferSize + indexBufferSize };
-
         copyFullBuffer(*other.combinedBuffer, *combinedBuffer, totalSize);
 
         return *this;
