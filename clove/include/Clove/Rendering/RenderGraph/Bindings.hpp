@@ -17,6 +17,8 @@ namespace clove {
     struct RgImageBindng {
         uint32_t slot{};
         RgResourceIdType image{};
+        uint32_t arrayIndex{ 0 }; /**< If image is an image array, which index to bind from.*/
+        uint32_t arrayCount{ 1 }; /**< If image is an image array, how many images to bind. */
     };
 
     struct RgSamplerBinding {

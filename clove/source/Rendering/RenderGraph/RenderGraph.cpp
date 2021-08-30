@@ -40,9 +40,9 @@ namespace clove {
         return bufferId;
     }
 
-    RgResourceIdType RenderGraph::createImage(GhaImage::Type imageType, GhaImage::Format format, vec2ui dimensions) {
+    RgResourceIdType RenderGraph::createImage(GhaImage::Type imageType, GhaImage::Format format, vec2ui dimensions, uint32_t const arrayCount) {
         RgResourceIdType const imageId{ nextResourceId++ };
-        images[imageId] = std::make_unique<RgImage>(imageId, imageType, format, dimensions);
+        images[imageId] = std::make_unique<RgImage>(imageId, imageType, format, dimensions, arrayCount);
 
         return imageId;
     }
@@ -865,7 +865,7 @@ namespace clove {
                 descriptorSet->map(*buffer->getGhaBuffer(frameCache), 0, buffer->getBufferSize(), DescriptorType::UniformBuffer, ubo.slot);
             }
             for(auto const &image : submission.shaderImages) {
-                descriptorSet->map(*images.at(image.image)->getGhaImageView(frameCache), GhaImage::Layout::ShaderReadOnlyOptimal, image.slot);
+                descriptorSet->map(*images.at(image.image)->getGhaImageView(frameCache, image.arrayIndex, image.arrayCount), GhaImage::Layout::ShaderReadOnlyOptimal, image.slot);
             }
             for(auto const &sampler : submission.shaderSamplers) {
                 descriptorSet->map(*samplers.at(sampler.sampler), sampler.slot);

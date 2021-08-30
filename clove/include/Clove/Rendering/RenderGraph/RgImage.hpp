@@ -26,8 +26,8 @@ namespace clove {
         //FUNCTIONS
     public:
         RgImage() = delete;
-        RgImage(RgResourceIdType id, GhaImage::Type imageType, GhaImage::Format format, vec2ui dimensions);
-        RgImage(RgResourceIdType id, GhaImageView *ghaImageView);
+        RgImage(RgResourceIdType id, GhaImage::Type imageType, GhaImage::Format format, vec2ui dimensions, uint32_t arrayCount);
+        RgImage(RgResourceIdType id, GhaImage *ghaImage);
 
         RgImage(RgImage const &other) = delete;
         RgImage(RgImage &&other) noexcept;
@@ -42,7 +42,7 @@ namespace clove {
          * @param ghaFactory 
          * @return 
          */
-        GhaImageView *getGhaImageView(RgFrameCache &cache);
+        GhaImageView *getGhaImageView(RgFrameCache &cache, uint32_t const arrayIndex, uint32_t const arrayCount);
 
         inline bool isExternalImage() const;
 

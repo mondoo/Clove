@@ -61,6 +61,7 @@ namespace clove {
         CacheUtils::hashCombine(imageId, descriptor.usageFlags);
         CacheUtils::hashCombine(imageId, descriptor.dimensions.x);
         CacheUtils::hashCombine(imageId, descriptor.dimensions.y);
+        CacheUtils::hashCombine(imageId, descriptor.arrayCount);
         CacheUtils::hashCombine(imageId, descriptor.format);
         CacheUtils::hashCombine(imageId, descriptor.sharingMode);
 

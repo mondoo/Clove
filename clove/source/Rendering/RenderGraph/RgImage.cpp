@@ -18,20 +18,21 @@ namespace clove {
         }
     }
 
-    RgImage::RgImage(RgResourceIdType id, GhaImage::Type imageType, GhaImage::Format format, vec2ui dimensions)
+    RgImage::RgImage(RgResourceIdType id, GhaImage::Type imageType, GhaImage::Format format, vec2ui dimensions, uint32_t arrayCount)
         : RgResource{ id } {
         ghaImageDescriptor = GhaImage::Descriptor{
             .type        = imageType,
             .usageFlags  = static_cast<GhaImage::UsageMode>(0),//Will be built when executing the graph
             .dimensions  = dimensions,
+            .arrayCount  = arrayCount,
             .format      = format,
-            .sharingMode = SharingMode::Exclusive,//Assume exclusive to beigin with
+            .sharingMode = SharingMode::Exclusive,//Images are always exclusive.
         };
     }
 
-    RgImage::RgImage(RgResourceIdType id, GhaImageView *ghaImageView)
+    RgImage::RgImage(RgResourceIdType id, GhaImage *ghaImage)
         : RgResource{ id }
-        , ghaImageView{ ghaImageView } {
+        , ghaImage{ ghaImage } {
         externalImage = true;
     }
 
@@ -41,12 +42,18 @@ namespace clove {
 
     RgImage::~RgImage() = default;
 
-    GhaImageView *RgImage::getGhaImageView(RgFrameCache &cache) {
-        if(ghaImageView == nullptr) {
+    GhaImageView *RgImage::getGhaImageView(RgFrameCache &cache, uint32_t const arrayIndex, uint32_t const arrayCount) {
+        if(ghaImage == nullptr) {
             CLOVE_ASSERT(!externalImage, "RgImage is registered as an external image but does not have a valid GhaImageView.");
-            ghaImage     = cache.allocateImage(ghaImageDescriptor);
-            ghaImageView = cache.allocateImageView(ghaImage, GhaImageView::Descriptor{ .type = getViewType(ghaImageDescriptor.type) });
+            ghaImage = cache.allocateImage(ghaImageDescriptor);
         }
+
+        //TODO: This will allocate a new view per usage - rather than reusing them when possible
+        ghaImageView = cache.allocateImageView(ghaImage, GhaImageView::Descriptor{
+                                                             .type       = getViewType(ghaImageDescriptor.type),
+                                                             .layer      = arrayIndex,
+                                                             .layerCount = arrayCount,
+                                                         });
 
         return ghaImageView;
     }

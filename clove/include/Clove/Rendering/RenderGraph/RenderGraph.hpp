@@ -99,7 +99,7 @@ namespace clove {
          */
         RgResourceIdType createBuffer(size_t const bufferSize);
         /**
-         * @brief Constructs an RgBuffer from an existing GhaBuffer. Usefull if wanting to use
+         * @brief Constructs an RgBuffer from an existing GhaBuffer. Useful if wanting to use
          * pre set up buffers (such as vertex / index buffers).
          * @param buffer GhaBuffer to construct from. Note that the render graph will not own the buffer.
          * @param offset The offset into the GhaBuffer that this RgBuffer will view.
@@ -113,16 +113,17 @@ namespace clove {
          * @param imageType 
          * @param format
          * @param dimensions 
+         * @param arrayCount How many elements in the image array to create. If type is GhaImage::Type::Cube then it will create an image with arrayCount * 6.
          * @return 
          */
-        RgResourceIdType createImage(GhaImage::Type imageType, GhaImage::Format format, vec2ui dimensions);
+        RgResourceIdType createImage(GhaImage::Type imageType, GhaImage::Format format, vec2ui dimensions, uint32_t const arrayCount = 1);
         /**
-         * @brief Creates a new RgImage from an existing image view. Usefull
-         * if wanting to use pre made images (such as backbuffers) in the render graph.
-         * @param ghaImageView GhaImageView to construct from. Note that the render graph will not own the view.
+         * @brief Creates a new RgImage from an existing image. Useful if wanting to use
+         * pre made images (such as backbuffers) in the render graph.
+         * @param ghaImage GhaImage to construct from. Note that the render graph will not own the image.
          * @return 
          */
-        RgResourceIdType createImage(GhaImageView *ghaImageView);
+        RgResourceIdType createImage(GhaImage *ghaImage);
 
         /**
          * @brief Creates a new RgSampler
