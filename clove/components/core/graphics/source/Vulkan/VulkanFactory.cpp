@@ -428,13 +428,19 @@ namespace clove {
         }
 
         std::vector<VkImage> images{};
-        std::vector<std::unique_ptr<VulkanImageView>> imageViews{};
+        std::vector<std::unique_ptr<VulkanImage>> vulkanImages{};
 
         GhaImage::Format const imageFormat{ VulkanImage::convertFormat(surfaceFormat.format) };
         vec2ui const swapchainSize{ swapchainExtent.width, swapchainExtent.height };
 
-        GhaImageView::Descriptor const viewDescriptor{
-            .type = GhaImageView::Type::_2D,
+        //Descriptor is reconstructed from the image* settings in the VkSwapchainCreateInfoKHR
+        GhaImage::Descriptor const imageDescriptor{
+            .type        = GhaImage::Type::_2D,
+            .usageFlags  = GhaImage::UsageMode::ColourAttachment,
+            .dimensions  = swapchainSize,
+            .arrayCount  = 1,
+            .format      = imageFormat,
+            .sharingMode = SharingMode::Exclusive,
         };
 
         uint32_t createdImageCount{ 0 };
@@ -442,18 +448,12 @@ namespace clove {
         images.resize(createdImageCount);
         vkGetSwapchainImagesKHR(devicePtr.get(), swapchain, &createdImageCount, images.data());
 
-        imageViews.resize(images.size());
+        vulkanImages.resize(images.size());
         for(size_t i{ 0 }; i < images.size(); ++i) {
-            auto result{ createVkImageView(devicePtr.get(), images[i], viewDescriptor, imageFormat) };
-            if(!result.hasValue()) {
-                vkDestroySwapchainKHR(devicePtr.get(), swapchain, nullptr);
-                return Unexpected{ result.getError() };
-            }
-
-            imageViews[i] = std::make_unique<VulkanImageView>(imageFormat, swapchainSize, devicePtr.get(), result.getValue());
+            vulkanImages[i] = std::make_unique<VulkanImage>(devicePtr, images[i], imageDescriptor);
         }
 
-        return std::unique_ptr<GhaSwapchain>{ std::make_unique<VulkanSwapchain>(devicePtr, swapchain, surfaceFormat.format, swapchainExtent, std::move(imageViews)) };
+        return std::unique_ptr<GhaSwapchain>{ std::make_unique<VulkanSwapchain>(devicePtr, swapchain, surfaceFormat.format, swapchainExtent, std::move(vulkanImages)) };
     }
 
     Expected<std::unique_ptr<GhaShader>, std::runtime_error> VulkanFactory::createShaderFromFile(std::filesystem::path const &file, GhaShader::Stage shaderStage) noexcept {

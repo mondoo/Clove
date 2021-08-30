@@ -70,8 +70,8 @@ namespace clove {
         return imageDescriptor.dimensions;
     }
 
-    std::vector<GhaImageView *> GraphicsImageRenderTarget::getImageViews() const {
-        return { renderTargetView.get() };
+    std::vector<GhaImage *> GraphicsImageRenderTarget::getImages() const {
+        return { renderTargetImage.get() };
     }
 
     void GraphicsImageRenderTarget::resize(vec2ui size) {
@@ -95,11 +95,6 @@ namespace clove {
         onPropertiesChangedBegin.broadcast();
 
         renderTargetImage = *factory->createImage(imageDescriptor);
-        renderTargetView  = *factory->createImageView(*renderTargetImage, GhaImageView::Descriptor{
-                                                                             .type       = GhaImageView::Type::_2D,
-                                                                             .layer      = 0,
-                                                                             .layerCount = 1,
-                                                                         });
 
         size_t constexpr bytesPerPixel{ 4 };//Assuming image format is 4 bbp
         size_t const bufferSize{ imageDescriptor.dimensions.x * imageDescriptor.dimensions.y * bytesPerPixel };

@@ -21,19 +21,20 @@ namespace clove {
 
         Descriptor descriptor{};
 
-        std::shared_ptr<MemoryAllocator> memoryAllocator;
-        const MemoryAllocator::Chunk* allocatedBlock{ nullptr };
+        std::shared_ptr<MemoryAllocator> memoryAllocator{ nullptr };
+        const MemoryAllocator::Chunk *allocatedBlock{ nullptr };
 
         //FUNCTIONS
     public:
         VulkanImage() = delete;
-        VulkanImage(DevicePointer device, VkImage image, Descriptor descriptor, std::shared_ptr<MemoryAllocator> memoryAllocator);
+        VulkanImage(DevicePointer device, VkImage image, Descriptor descriptor, std::shared_ptr<MemoryAllocator> memoryAllocator); /**< Constructor for images owned by this object. */
+        VulkanImage(DevicePointer device, VkImage image, Descriptor descriptor);                                                   /**< Constructor for images not owned by this object (i.e swap chain). */
 
-        VulkanImage(VulkanImage const& other) = delete;
-        VulkanImage(VulkanImage&& other) noexcept;
+        VulkanImage(VulkanImage const &other) = delete;
+        VulkanImage(VulkanImage &&other) noexcept;
 
-        VulkanImage& operator=(VulkanImage const& other) = delete;
-        VulkanImage& operator=(VulkanImage&& other) noexcept;
+        VulkanImage &operator=(VulkanImage const &other) = delete;
+        VulkanImage &operator                            =(VulkanImage &&other) noexcept;
 
         ~VulkanImage();
 

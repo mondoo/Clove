@@ -70,8 +70,8 @@ namespace clove {
         return swapchain->getSize();
     }
 
-    std::vector<GhaImageView *> SwapchainRenderTarget::getImageViews() const {
-        return swapchain->getImageViews();
+    std::vector<GhaImage *> SwapchainRenderTarget::getImages() const {
+        return swapchain->getImages();
     }
 
     void SwapchainRenderTarget::onSurfaceSizeChanged(vec2ui const &size) {

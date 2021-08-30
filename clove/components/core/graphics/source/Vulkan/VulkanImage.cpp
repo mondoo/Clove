@@ -21,13 +21,21 @@ namespace clove {
         vkBindImageMemory(this->device.get(), image, allocatedBlock->memory, allocatedBlock->offset);
     }
 
+    VulkanImage::VulkanImage(DevicePointer device, VkImage image, Descriptor descriptorr)
+        : device{ std::move(device) }
+        , image{ image }
+        , descriptor{ descriptor } {
+    }
+
     VulkanImage::VulkanImage(VulkanImage &&other) noexcept = default;
 
     VulkanImage &VulkanImage::operator=(VulkanImage &&other) noexcept = default;
 
     VulkanImage::~VulkanImage() {
-        vkDestroyImage(device.get(), image, nullptr);
-        memoryAllocator->free(allocatedBlock);
+        if(memoryAllocator != nullptr) {
+            vkDestroyImage(device.get(), image, nullptr);
+            memoryAllocator->free(allocatedBlock);
+        }
     }
 
     VulkanImage::Descriptor const &VulkanImage::getDescriptor() const {

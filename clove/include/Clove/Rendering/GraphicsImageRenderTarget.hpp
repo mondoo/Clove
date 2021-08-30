@@ -34,7 +34,6 @@ namespace clove {
         std::unique_ptr<GhaFence> frameInFlight;
 
         std::unique_ptr<GhaImage> renderTargetImage;
-        std::unique_ptr<GhaImageView> renderTargetView;
         std::unique_ptr<GhaBuffer> renderTargetBuffer;
 
         bool requiresResize{ false };
@@ -59,7 +58,7 @@ namespace clove {
         GhaImage::Format getImageFormat() const override;
         vec2ui getSize() const override;
 
-        std::vector<GhaImageView *> getImageViews() const override;
+        std::vector<GhaImage *> getImages() const override;
 
         void resize(vec2ui size);
 

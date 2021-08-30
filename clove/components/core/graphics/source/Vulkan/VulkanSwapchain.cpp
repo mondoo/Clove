@@ -1,19 +1,18 @@
 #include "Clove/Graphics/Vulkan/VulkanSwapchain.hpp"
 
 #include "Clove/Graphics/Vulkan/VulkanImage.hpp"
-#include "Clove/Graphics/Vulkan/VulkanImageView.hpp"
 #include "Clove/Graphics/Vulkan/VulkanResult.hpp"
 #include "Clove/Graphics/Vulkan/VulkanSemaphore.hpp"
 
 #include <Clove/Cast.hpp>
 
 namespace clove {
-    VulkanSwapchain::VulkanSwapchain(DevicePointer device, VkSwapchainKHR swapchain, VkFormat swapChainImageFormat, VkExtent2D swapChainExtent, std::vector<std::unique_ptr<VulkanImageView>> imageViews)
+    VulkanSwapchain::VulkanSwapchain(DevicePointer device, VkSwapchainKHR swapchain, VkFormat swapChainImageFormat, VkExtent2D swapChainExtent, std::vector<std::unique_ptr<VulkanImage>> images)
         : device{ std::move(device) }
         , swapchain{ swapchain }
         , swapChainImageFormat{ swapChainImageFormat }
         , swapChainExtent{ swapChainExtent }
-        , imageViews{ std::move(imageViews) } {
+        , images{ std::move(images) } {
     }
 
     VulkanSwapchain::VulkanSwapchain(VulkanSwapchain &&other) noexcept = default;
@@ -40,15 +39,15 @@ namespace clove {
         return { swapChainExtent.width, swapChainExtent.height };
     }
 
-    std::vector<GhaImageView *> VulkanSwapchain::getImageViews() const {
-        std::vector<GhaImageView *> views{};
-        views.reserve(imageViews.size());
-        
-        for(auto const &view : imageViews){
-            views.push_back(view.get());
+    std::vector<GhaImage *> VulkanSwapchain::getImages() const {
+        std::vector<GhaImage *> ghaImages{};
+        ghaImages.reserve(images.size());
+
+        for(auto const &image : images){
+            ghaImages.push_back(image.get());
         }
 
-        return views;
+        return ghaImages;
     }
 
     VkSwapchainKHR VulkanSwapchain::getSwapchain() const {

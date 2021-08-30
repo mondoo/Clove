@@ -43,6 +43,6 @@ namespace clove {
          * of the views are tied to this object.
          * @return 
          */
-        virtual std::vector<GhaImageView *> getImageViews() const = 0;
+        virtual std::vector<GhaImage *> getImages() const = 0;
     };
 }

@@ -38,7 +38,7 @@ namespace clove {
 		GhaImage::Format getImageFormat() const override;
 		vec2ui getSize() const override;
 
-		std::vector<GhaImageView *> getImageViews() const override;
+		std::vector<GhaImage *> getImages() const override;
 		
 		/**
 		 * @brief Tells the swapchain that the image index is free to use again.

@@ -26,11 +26,6 @@ namespace clove {
         size_t const size{ this->dimensions.x * this->dimensions.y * this->channels };
 
         image     = createImageWithData(factory, textureDesc, this->buffer.get(), size);
-        imageView = *factory.createImageView(*image, GhaImageView::Descriptor{
-                                                         .type       = GhaImageView::Type::_2D,
-                                                         .layer      = 0,
-                                                         .layerCount = 1,
-                                                     });
     }
 
     Texture::Texture(Texture &&other) noexcept = default;
