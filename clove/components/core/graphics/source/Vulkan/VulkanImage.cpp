@@ -21,7 +21,7 @@ namespace clove {
         vkBindImageMemory(this->device.get(), image, allocatedBlock->memory, allocatedBlock->offset);
     }
 
-    VulkanImage::VulkanImage(DevicePointer device, VkImage image, Descriptor descriptorr)
+    VulkanImage::VulkanImage(DevicePointer device, VkImage image, Descriptor descriptor)
         : device{ std::move(device) }
         , image{ image }
         , descriptor{ descriptor } {
