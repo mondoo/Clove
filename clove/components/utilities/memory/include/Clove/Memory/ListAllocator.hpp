@@ -21,11 +21,12 @@ namespace clove {
 
         //VARIABLES
     private:
-        std::byte *rawList;
+        std::byte *rawList{ nullptr }; /**< The raw list to allocate from if there are no free blocks. */
         size_t listSize{ 0 };
+
         std::byte *head{ nullptr };
 
-        std::list<Header *> list;
+        std::list<Header *> freeList; /**< Keeps track of any previously allocated blocks that are now free. */
 
         bool freeMemory{ true };
 
@@ -44,11 +45,23 @@ namespace clove {
         ~ListAllocator();
 
         /**
-         * @brief Allocates X bytes from the list.
+         * @brief Allocates size amounts of bytes from the list.
+         * @param size
+         * @param alignment
          * @returns A Pointer to the allocated block of memory.
          */
-        void *alloc(size_t bytes);
+        void *alloc(size_t size, size_t alignment);
+
+        /**
+         * @brief Allocate a block of memory for T.
+         * @tparam T 
+         * @return 
+         */
+        template<typename T>
+        T *alloc();
 
         void free(void *ptr);
     };
 }
+
+#include "ListAllocator.inl"

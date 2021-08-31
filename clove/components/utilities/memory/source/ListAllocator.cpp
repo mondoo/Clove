@@ -1,6 +1,5 @@
 #include "Clove/Memory/ListAllocator.hpp"
 
-#include <Clove/Definitions.hpp>
 #include <Clove/Log/Log.hpp>
 #include <cstdlib>
 
@@ -18,25 +17,22 @@ namespace clove {
         head    = rawList;
     }
 
-    ListAllocator::ListAllocator(ListAllocator &&other) noexcept {
-        rawList  = other.rawList;
-        listSize = other.listSize;
-        head     = other.head;
-
-        list = std::move(list);
-
-        freeMemory       = other.freeMemory;
+    ListAllocator::ListAllocator(ListAllocator &&other) noexcept
+        : rawList{ other.rawList }
+        , listSize{ other.listSize }
+        , head{ other.head }
+        , freeList{ std::move(other.freeList) }
+        , freeMemory{ other.freeMemory } {
         other.freeMemory = false;
     }
 
     ListAllocator &ListAllocator::operator=(ListAllocator &&other) noexcept {
-        rawList  = other.rawList;
-        listSize = other.listSize;
-        head     = other.head;
+        rawList    = other.rawList;
+        listSize   = other.listSize;
+        head       = other.head;
+        freeList       = std::move(freeList);
+        freeMemory = other.freeMemory;
 
-        list = std::move(list);
-
-        freeMemory       = other.freeMemory;
         other.freeMemory = false;
 
         return *this;
@@ -48,35 +44,42 @@ namespace clove {
         }
     }
 
-    void *ListAllocator::alloc(size_t bytes) {
-        Header *header = nullptr;
-        for(auto *freeHeader : list) {//Finding first available
-            if(bytes <= freeHeader->blockSize) {
+    void *ListAllocator::alloc(size_t size, size_t alignment) {
+        size_t const totalAllocationSize{ size + alignment };
+
+        Header *header{ nullptr };
+        for(auto *freeHeader : freeList) {
+            if(freeHeader->blockSize >= totalAllocationSize) {
                 header = freeHeader;
-                list.remove(header);
+                freeList.remove(header);
                 break;
                 //TODO: Can reduce fragmentation by putting remaining bytes back in the list
             }
         }
 
         if(header == nullptr) {
-            if((head - rawList) + bytes > listSize) {
-                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: Not enough space left to allocate {1} bytes.", CLOVE_FUNCTION_NAME_PRETTY, bytes);
+            if((head - rawList) + totalAllocationSize > listSize) {
+                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: Not enough space left to allocate {1} bytes.", CLOVE_FUNCTION_NAME_PRETTY, size);
                 return nullptr;
             }
 
-            header = reinterpret_cast<Header *>(head);
-            header->blockSize = bytes;
-            head += sizeof(Header) + bytes;
+            header            = reinterpret_cast<Header *>(head);
+            header->blockSize = totalAllocationSize;
+            head += sizeof(Header) + totalAllocationSize;
         }
 
-        return reinterpret_cast<char *>(header) + sizeof(Header);
+        //Get a pointer to the piece of memory after the header. Cast to uint8_t so the + operator knows how many bytes to advance by.
+        uint8_t *memory{ reinterpret_cast<uint8_t *>(header) + sizeof(Header) };
+
+        size_t const remainingAlignment{ alignment != 0 ? reinterpret_cast<uintptr_t>(memory) % alignment : 0 };
+        size_t const alignmentOffset{ remainingAlignment != 0 ? alignment - remainingAlignment : 0 };
+        return memory + alignmentOffset;
     }
 
     void ListAllocator::free(void *ptr) {
         std::byte *data{ reinterpret_cast<std::byte *>(ptr) };
         Header *header{ reinterpret_cast<Header *>(data - sizeof(Header)) };
 
-        list.push_back(header);
+        freeList.push_back(header);
     }
 }
