@@ -15,18 +15,19 @@ namespace clove {
     class ListAllocator {
         //TYPES
     private:
-        struct Header {
-            size_t blockSize{ 0 };
+        struct Block {
+            bool free{ true };
+            size_t offset{ 0 };        /**< Offset into the backing memory of the block. */
+            size_t alignedOffset{ 0 }; /**< The offset into the backing memory that respects the allocation's alignment. */
+            size_t size{ 0 };          /**< Size of the entire block of memory. */
         };
 
         //VARIABLES
     private:
-        std::byte *rawList{ nullptr }; /**< The raw list to allocate from if there are no free blocks. */
-        size_t listSize{ 0 };
+        std::byte *backingMemory{ nullptr }; /**< Underlying memory of the free list. */
+        size_t backingMemorySize{ 0 };
 
-        std::byte *head{ nullptr };
-
-        std::list<Header *> freeList; /**< Keeps track of any previously allocated blocks that are now free. */
+        std::list<Block> freeList{}; /**< Current list of all free blocks on memory. */
 
         bool freeMemory{ true };
 

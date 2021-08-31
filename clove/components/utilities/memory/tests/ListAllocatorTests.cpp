@@ -4,9 +4,10 @@
 
 using namespace clove;
 
+static size_t constexpr allocatorSize{ 1024 };
+
 TEST(ListAllocatorTests, CanAllocateAnAmountOfBytes) {
-    size_t constexpr allocatorSize{ 256 * 1024 };//256kb
-    ListAllocator allocator(allocatorSize);
+    ListAllocator allocator{ allocatorSize };
 
     void *data1{ allocator.alloc(100, 0) };
     uint32_t *data2{ allocator.alloc<uint32_t>() };
@@ -16,8 +17,7 @@ TEST(ListAllocatorTests, CanAllocateAnAmountOfBytes) {
 }
 
 TEST(ListAllocatorTests, AllocationsAreProperlyAligned) {
-    size_t constexpr allocatorSize{ 256 * 1024 };//256kb
-    ListAllocator allocator(allocatorSize);
+    ListAllocator allocator{ allocatorSize };
 
     size_t constexpr alignment{ 16 };
 
@@ -29,8 +29,7 @@ TEST(ListAllocatorTests, AllocationsAreProperlyAligned) {
 }
 
 TEST(ListAllocatorTests, MultipleAllocationsDoNotOverlap) {
-    size_t constexpr allocatorSize{ 256 * 1024 };//256kb
-    ListAllocator allocator(allocatorSize);
+    ListAllocator allocator{ allocatorSize };
 
     size_t constexpr alignment{ 16 };
 
@@ -64,8 +63,7 @@ TEST(ListAllocatorTests, MultipleAllocationsDoNotOverlap) {
 }
 
 TEST(ListAllocatorTests, CannotAllocateMoreThanTheAllocatorHas) {
-    size_t constexpr allocatorSize{ 256 * 1024 };//256kb
-    ListAllocator allocator(allocatorSize);
+    ListAllocator allocator{ allocatorSize };
 
     void *data{ allocator.alloc(allocatorSize + 1, 0) };
 
@@ -73,8 +71,7 @@ TEST(ListAllocatorTests, CannotAllocateMoreThanTheAllocatorHas) {
 }
 
 TEST(ListAllocatorTests, CanFreeAndReallocateBytes) {
-    size_t constexpr allocatorSize{ 256 * 1024 };//256kb
-    ListAllocator allocator(allocatorSize);
+    ListAllocator allocator{ allocatorSize };
 
     void *allData{ allocator.alloc(allocatorSize, 0) };
 
@@ -88,8 +85,8 @@ TEST(ListAllocatorTests, CanFreeAndReallocateBytes) {
 }
 
 TEST(ListAllocatorTests, CanInitialiseWithARangeOfMemory) {
-    std::array<std::byte, 256 * 1024> allocatorRange;
-    ListAllocator allocator(allocatorRange.data(), allocatorRange.size());
+    std::array<std::byte, allocatorSize> allocatorRange;
+    ListAllocator allocator{ allocatorRange.data(), allocatorRange.size() };
 
     void *data{ allocator.alloc(100, 0) };
 
@@ -97,8 +94,7 @@ TEST(ListAllocatorTests, CanInitialiseWithARangeOfMemory) {
 }
 
 TEST(ListAllocatorTests, FreeWillFreeAndReallocTheCorrectRange) {
-    size_t constexpr allocatorSize{ 256 * 1024 };//256kb
-    ListAllocator allocator(allocatorSize);
+    ListAllocator allocator{ allocatorSize };
 
     uint32_t constexpr value{ 5 };
 
@@ -110,4 +106,39 @@ TEST(ListAllocatorTests, FreeWillFreeAndReallocTheCorrectRange) {
     uint32_t *second{ allocator.alloc<uint32_t>() };
 
     EXPECT_EQ(value, *second);
+}
+
+TEST(ListAllocatorTests, AllocatedBlocksAreClampedtoCorrectSize) {
+    ListAllocator allocator{ allocatorSize };
+
+    void *all{ allocator.alloc(allocatorSize, 0) };
+    allocator.free(all);
+
+    uint32_t *first{ allocator.alloc<uint32_t>() };
+    uint32_t *second{ allocator.alloc<uint32_t>() };
+
+    EXPECT_TRUE(first != nullptr);
+    EXPECT_TRUE(second != nullptr);
+}
+
+TEST(ListAllocatorTests, AllocatedBlocksAreMergedAfterBeingFreed) {
+    ListAllocator allocator{ allocatorSize };
+
+    std::vector<void *> allocations{ allocatorSize, nullptr };
+    for(size_t i{ 0 }; i < allocatorSize; ++i) {
+        if(void *allocation{ allocator.alloc(1, 0) }) {
+            allocations[i] = allocation;
+        } else {
+            break;
+        }
+    }
+    for(void *allocation : allocations) {
+        allocator.free(allocation);
+    }
+
+    void *data{ allocator.alloc(1000, 0) };
+
+    EXPECT_TRUE(data != nullptr);
+
+    allocations.resize(0);
 }
