@@ -6,10 +6,12 @@ add_library(
 	CloveMemory STATIC
 		${INCLUDE}/AllocatorStrategy.hpp
         ${INCLUDE}/ListAllocator.hpp
+        ${INCLUDE}/ListAllocator.inl
 		${SOURCE}/ListAllocator.cpp
 		${INCLUDE}/PoolAllocator.hpp
 		${INCLUDE}/PoolAllocator.inl
 		${INCLUDE}/StackAllocator.hpp
+		${INCLUDE}/StackAllocator.inl
 		${SOURCE}/StackAllocator.cpp
 )
 

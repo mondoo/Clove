@@ -4,64 +4,74 @@
 
 using namespace clove;
 
-TEST(StackAllocatorTests, CanAllocateAnAmountOfBytes) {
-    const size_t allocatorSize = 256 * 1024;//256kb
-    StackAllocator allocator(allocatorSize);
+static size_t constexpr allocatorSize{ 1024 };
 
-    void *data = allocator.alloc(100);
+TEST(StackAllocatorTests, CanAllocateAnAmountOfBytes) {
+    StackAllocator allocator{ allocatorSize };
+
+    void *data = allocator.alloc(100, 0);
 
     EXPECT_TRUE(data != nullptr);
 }
 
-TEST(StackAllocatorTests, CannotAllocateMoreThanTheAllocatorHas) {
-    const size_t allocatorSize = 256 * 1024;//256kb
-    StackAllocator allocator(allocatorSize);
+TEST(StackAllocatorTests, AllocationsAreProperlyAligned) {
+    StackAllocator allocator{ allocatorSize };
 
-    void *data = allocator.alloc(allocatorSize + 1);
+    size_t constexpr alignment{ 16 };
+
+    void *data1{ allocator.alloc(100, alignment) };
+    uint32_t *data2{ allocator.alloc<uint32_t>() };
+
+    EXPECT_EQ(reinterpret_cast<uintptr_t>(data1) % alignment, 0);
+    EXPECT_EQ(reinterpret_cast<uintptr_t>(data2) % alignof(uint32_t), 0);
+}
+
+TEST(StackAllocatorTests, CannotAllocateMoreThanTheAllocatorHas) {
+    StackAllocator allocator{ allocatorSize };
+
+    void *data{ allocator.alloc(allocatorSize + 1, 0) };
 
     EXPECT_FALSE(data != nullptr);
 }
 
 TEST(StackAllocatorTests, CanFreeAndReallocateBytes) {
-    const size_t allocatorSize = 256 * 1024;//256kb
-    StackAllocator allocator(allocatorSize);
+    StackAllocator allocator{ allocatorSize };
 
-    void *allData = allocator.alloc(allocatorSize);
+    void *allData{ allocator.alloc(allocatorSize, 0) };
 
     EXPECT_TRUE(allData != nullptr);
 
     allocator.free();
 
-    void *someData = allocator.alloc(500);
+    void *someData{ allocator.alloc(500, 0) };
 
     EXPECT_TRUE(someData != nullptr);
 }
 
 TEST(StackAllocatorTests, CanInitialiseWithARangeOfMemory) {
-    std::array<std::byte, 256 * 1024> allocatorRange;
-    StackAllocator allocator(allocatorRange.data(), allocatorRange.size());
+    std::array<std::byte, allocatorSize> allocatorRange;
+    StackAllocator allocator{ allocatorRange.data(), allocatorRange.size() };
 
-    void *data = allocator.alloc(100);
+    void *data{ allocator.alloc(100, 0) };
 
     EXPECT_TRUE(data != nullptr);
 }
 
 TEST(StackAllocatorTests, CanFreeToAMarker) {
-    const size_t allocatorSize = 256 * 1024;//256kb
-    StackAllocator allocator(allocatorSize);
+    StackAllocator allocator{ allocatorSize };
 
-    float *a = reinterpret_cast<float *>(allocator.alloc(sizeof(float)));
+    float *a{ allocator.alloc<float>() };
 
-    StackAllocator::Marker marker = allocator.markPosition();
+    StackAllocator::Marker marker{ allocator.markPosition() };
 
-    float *b = reinterpret_cast<float *>(allocator.alloc(sizeof(float)));
+    float *b{ allocator.alloc<float>() };
 
     *a = 1;
     *b = 2;
 
     allocator.free(marker);
 
-    float *c = reinterpret_cast<float *>(allocator.alloc(sizeof(float)));
+    float *c{ allocator.alloc<float>() };
 
     *c = 3;
 
