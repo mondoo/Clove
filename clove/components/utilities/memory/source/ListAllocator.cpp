@@ -58,7 +58,7 @@ namespace clove {
         }
 
         if(header == nullptr) {
-            if((head - rawList) + totalAllocationSize > listSize) {
+            if((head - rawList) + sizeof(Header) + totalAllocationSize > listSize) {
                 CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: Not enough space left to allocate {1} bytes.", CLOVE_FUNCTION_NAME_PRETTY, size);
                 return nullptr;
             }
