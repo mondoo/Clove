@@ -7,14 +7,14 @@ namespace clove {
     ListAllocator::ListAllocator(size_t sizeBytes)
         : backingMemorySize(sizeBytes) {
         backingMemory = reinterpret_cast<std::byte *>(malloc(backingMemorySize));
-        freeList.emplace_back(true, 0, 0, backingMemorySize);
+        freeList.emplace_back(Block{ .size = backingMemorySize });
     }
 
     ListAllocator::ListAllocator(std::byte *start, size_t sizeBytes)
         : backingMemorySize{ sizeBytes }
         , freeMemory{ false } {
         backingMemory = reinterpret_cast<std::byte *>(start);
-        freeList.emplace_back(true, 0, 0, backingMemorySize);
+        freeList.emplace_back(Block{ .size = backingMemorySize });
     }
 
     ListAllocator::ListAllocator(ListAllocator &&other) noexcept
