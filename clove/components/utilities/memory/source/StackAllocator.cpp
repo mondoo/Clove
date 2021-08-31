@@ -32,14 +32,20 @@ namespace clove {
         return top - stack;
     }
 
-    void *StackAllocator::alloc(size_t bytes) {
-        if((top - stack) + bytes > stackSize) {
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: Not enough space left to allocate {1} bytes.", CLOVE_FUNCTION_NAME_PRETTY, bytes);
+    void *StackAllocator::alloc(size_t size, size_t alignment) {
+        size_t const totalAllocationSize{ size + alignment };
+
+        if((top - stack) + totalAllocationSize > stackSize) {
+            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: Not enough space left to allocate {1} bytes.", CLOVE_FUNCTION_NAME_PRETTY, totalAllocationSize);
             return nullptr;
         }
 
-        void *element = top;
-        top += bytes;
+        size_t const remainingAlignment{ alignment != 0 ? reinterpret_cast<uintptr_t>(top) % alignment : 0 };
+        size_t const alignmentOffset{ remainingAlignment != 0 ? alignment - remainingAlignment : 0 };
+
+        void *element{ top + alignmentOffset };
+        top += totalAllocationSize;
+
         return element;
     }
 

@@ -11,6 +11,7 @@ add_library(
 		${INCLUDE}/PoolAllocator.hpp
 		${INCLUDE}/PoolAllocator.inl
 		${INCLUDE}/StackAllocator.hpp
+		${INCLUDE}/StackAllocator.inl
 		${SOURCE}/StackAllocator.cpp
 )
 
