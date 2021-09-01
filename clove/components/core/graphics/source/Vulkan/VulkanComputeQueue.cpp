@@ -5,10 +5,10 @@
 #include "Clove/Graphics/Vulkan/VulkanFence.hpp"
 #include "Clove/Graphics/Vulkan/VulkanPipelineObject.hpp"
 #include "Clove/Graphics/Vulkan/VulkanSemaphore.hpp"
+#include "Clove/Graphics/Vulkan/VulkanLog.hpp"
 
 #include <Clove/Cast.hpp>
 #include <Clove/Definitions.hpp>
-#include <Clove/Log/Log.hpp>
 
 namespace clove {
     VulkanComputeQueue::VulkanComputeQueue(CommandQueueDescriptor descriptor, DevicePointer device, VkQueue queue, VkCommandPool commandPool, QueueFamilyIndices queueFamilyIndices)
@@ -42,7 +42,7 @@ namespace clove {
         };
 
         if(vkAllocateCommandBuffers(device.get(), &allocInfo, &commandBuffer) != VK_SUCCESS) {
-            CLOVE_LOG(Clove, LogLevel::Error, "Failed to allocate command buffer");
+            CLOVE_LOG(CloveGhaVulkan, LogLevel::Error, "Failed to allocate command buffer");
             return nullptr;
         }
 
@@ -100,7 +100,7 @@ namespace clove {
 
         uint32_t constexpr submitCount{ 1 };
         if(vkQueueSubmit(queue, submitCount, &submitInfo, vkFence) != VK_SUCCESS) {
-            CLOVE_LOG(Clove, LogLevel::Error, "Failed to submit compute command buffer(s)");
+            CLOVE_LOG(CloveGhaVulkan, LogLevel::Error, "Failed to submit compute command buffer(s)");
         }
     }
 }

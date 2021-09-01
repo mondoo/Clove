@@ -5,10 +5,12 @@
 
 #define CLV_WINDOWS_QUIT 25397841//Note: this number is completely random
 
+CLOVE_DECLARE_LOG_CATEGORY(ClovePlatformWindows)
+
 namespace clove {
     WindowsWindow::WindowsWindow(Descriptor const &descriptor)
         : Window(keyboardDispatcher, mouseDispatcher) {
-        CLOVE_LOG(Clove, LogLevel::Trace, "Creating window: {0} ({1}, {2})", descriptor.title, descriptor.width, descriptor.height);
+        CLOVE_LOG(ClovePlatformWindows, LogLevel::Trace, "Creating window: {0} ({1}, {2})", descriptor.title, descriptor.width, descriptor.height);
 
         instance = GetModuleHandle(nullptr);
 
@@ -27,7 +29,7 @@ namespace clove {
         };
         RegisterClassEx(&windowClass);
 
-        CLOVE_LOG(Clove, LogLevel::Trace, "Windows class registered");
+        CLOVE_LOG(ClovePlatformWindows, LogLevel::Trace, "Windows class registered");
 
         std::string const wideTitle(descriptor.title.begin(), descriptor.title.end());
 
@@ -56,7 +58,7 @@ namespace clove {
 
         open = true;
 
-        CLOVE_LOG(Clove, LogLevel::Trace, "Window created");
+        CLOVE_LOG(ClovePlatformWindows, LogLevel::Trace, "Window created");
     }
 
     WindowsWindow::~WindowsWindow() {

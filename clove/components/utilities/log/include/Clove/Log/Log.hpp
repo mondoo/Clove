@@ -56,10 +56,12 @@ namespace clove {
 #define CLOVE_LOG(category, level, ...) ::clove::Logger::get().log(CLOVE_EXPAND_CATEGORY(category)::name, level, __VA_ARGS__);
 
 #if CLOVE_ENABLE_ASSERTIONS
+    CLOVE_DECLARE_LOG_CATEGORY(CloveAssert)
+    
     #define CLOVE_ASSERT(x, ...)                                                                     \
         {                                                                                            \
             if(!(x)) {                                                                               \
-                CLOVE_LOG(Clove, ::clove::LogLevel::Critical, "Assertion Failed: {0}", __VA_ARGS__); \
+                CLOVE_LOG(CloveAssert, ::clove::LogLevel::Critical, "Assertion Failed: {0}", __VA_ARGS__); \
                 CLOVE_DEBUG_BREAK;                                                                   \
             }                                                                                        \
         }
@@ -68,5 +70,3 @@ namespace clove {
 #endif
 
 #include "Log.inl"
-
-CLOVE_DECLARE_LOG_CATEGORY(Clove)

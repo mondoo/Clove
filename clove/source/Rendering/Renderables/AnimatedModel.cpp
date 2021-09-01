@@ -1,6 +1,7 @@
 #include "Clove/Rendering/Renderables/AnimatedModel.hpp"
 
 #include "Clove/Rendering/Techniques/ForwardLightingTechnique.hpp"
+#include "Clove/Rendering/RenderingLog.hpp"
 
 #include <Clove/Log/Log.hpp>
 
@@ -9,8 +10,8 @@ namespace clove {
         : StaticModel{ std::move(meshes), { createSkinnedForwardLightingTechnique() } }
         , skeleton{ std::move(skeleton) }
         , animClips{ std::move(animClips) } {
-        if(std::size(this->animClips) == 0) {
-            CLOVE_LOG(Clove, LogLevel::Warning, "AnimatedModel initialised without any animation clips. Won't be able to play animations");
+        if(this->animClips.size() == 0) {
+            CLOVE_LOG(CloveRendering, LogLevel::Warning, "AnimatedModel initialised without any animation clips. Won't be able to play animations");
         } else {
             animator.setCurrentClip(&this->animClips[0]);
         }
@@ -24,8 +25,8 @@ namespace clove {
             clip.skeleton = skeleton.get();
         }
 
-        if(std::size(animClips) == 0) {
-            CLOVE_LOG(Clove, LogLevel::Warning, "AnimatedModel initialised without any animation clips. Won't be able to play animations");
+        if(this->animClips.size() == 0) {
+            CLOVE_LOG(CloveRendering, LogLevel::Warning, "AnimatedModel initialised without any animation clips. Won't be able to play animations");
         } else {
             animator.setCurrentClip(&animClips[0]);
         }
@@ -48,7 +49,7 @@ namespace clove {
         }
 
         if(std::size(animClips) == 0) {
-            CLOVE_LOG(Clove, LogLevel::Warning, "AnimatedModel initialised without any animation clips. Won't be able to play animations");
+            CLOVE_LOG(CloveRendering, LogLevel::Warning, "AnimatedModel initialised without any animation clips. Won't be able to play animations");
         } else {
             animator.setCurrentClip(&animClips[0]);
         }

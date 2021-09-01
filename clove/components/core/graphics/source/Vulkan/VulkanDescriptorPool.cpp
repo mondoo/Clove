@@ -2,9 +2,9 @@
 
 #include "Clove/Graphics/Vulkan/VulkanDescriptorSet.hpp"
 #include "Clove/Graphics/Vulkan/VulkanDescriptorSetLayout.hpp"
+#include "Clove/Graphics/Vulkan/VulkanLog.hpp"
 
 #include <Clove/Cast.hpp>
-#include <Clove/Log/Log.hpp>
 
 namespace clove {
     VulkanDescriptorPool::VulkanDescriptorPool(DevicePointer device, VkDescriptorPool pool, Descriptor descriptor)
@@ -44,7 +44,7 @@ namespace clove {
         };
 
         if(vkAllocateDescriptorSets(device.get(), &allocInfo, std::data(vulkanSets)) != VK_SUCCESS) {
-            CLOVE_LOG(Clove, LogLevel::Error, "Failed to allocate new descriptor sets");
+            CLOVE_LOG(CloveGhaVulkan, LogLevel::Error, "Failed to allocate new descriptor sets");
             return {};
         }
 
@@ -69,7 +69,7 @@ namespace clove {
         }
 
         if(vkFreeDescriptorSets(device.get(), pool, numSets, std::data(vulkanSets)) != VK_SUCCESS) {
-            CLOVE_LOG(Clove, LogLevel::Error, "Failed to free descriptor sets");
+            CLOVE_LOG(CloveGhaVulkan, LogLevel::Error, "Failed to free descriptor sets");
         }
     }
 

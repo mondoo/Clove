@@ -18,13 +18,13 @@
 
 #include "Clove/Graphics/Vulkan/VulkanDevice.hpp"
 #include "Clove/Graphics/Vulkan/VulkanFactory.hpp"
+#include "Clove/Graphics/Vulkan/VulkanLog.hpp"
 
 #include <Clove/Definitions.hpp>
-#include <Clove/Log/Log.hpp>
 #include <set>
 #include <unordered_set>
 
-CLOVE_DECLARE_LOG_CATEGORY(VulkanApi)
+CLOVE_DECLARE_LOG_CATEGORY(Vulkan)
 
 static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
     VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
@@ -32,11 +32,11 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
     VkDebugUtilsMessengerCallbackDataEXT const *pCallbackData,
     void *pUserData) {
     if((messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT) != 0) {
-        CLOVE_LOG(VulkanApi, clove::LogLevel::Trace, pCallbackData->pMessage);
+        CLOVE_LOG(Vulkan, clove::LogLevel::Trace, pCallbackData->pMessage);
     } else if((messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT) != 0) {
-        CLOVE_LOG(VulkanApi, clove::LogLevel::Warning, pCallbackData->pMessage);
+        CLOVE_LOG(Vulkan, clove::LogLevel::Warning, pCallbackData->pMessage);
     } else if((messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT) != 0) {
-        CLOVE_LOG(VulkanApi, clove::LogLevel::Error, pCallbackData->pMessage);
+        CLOVE_LOG(Vulkan, clove::LogLevel::Error, pCallbackData->pMessage);
     }
 
     return VK_FALSE;
@@ -79,7 +79,7 @@ namespace clove {
         }
 
         QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface) {
-            CLOVE_LOG(Clove, LogLevel::Trace, "Generating queue family indicies...");
+            CLOVE_LOG(CloveGhaVulkan, LogLevel::Trace, "Generating queue family indicies...");
 
             QueueFamilyIndices indices{};
             std::set<size_t> graphicsFamilyIndices{};
@@ -90,7 +90,7 @@ namespace clove {
             uint32_t queueFamilyCount{ 0 };
             vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
 
-            CLOVE_LOG(Clove, LogLevel::Trace, "{0} queue families available", queueFamilyCount);
+            CLOVE_LOG(CloveGhaVulkan, LogLevel::Trace, "{0} queue families available", queueFamilyCount);
 
             std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
             vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
@@ -119,10 +119,10 @@ namespace clove {
             }
 
             if((presentFamilyIndices.empty() && surface != VK_NULL_HANDLE) || graphicsFamilyIndices.empty() || transferFamilyIndices.empty() || computeFamilyIndices.empty()) {
-                CLOVE_LOG(Clove, LogLevel::Error, "Some queue types are unsupported. {0} failed.", CLOVE_FUNCTION_NAME);
+                CLOVE_LOG(CloveGhaVulkan, LogLevel::Error, "Some queue types are unsupported. {0} failed.", CLOVE_FUNCTION_NAME);
             }
 
-            CLOVE_LOG(Clove, LogLevel::Trace, "Distributing family types. Aiming for a unique family per queue type...");
+            CLOVE_LOG(CloveGhaVulkan, LogLevel::Trace, "Distributing family types. Aiming for a unique family per queue type...");
             //Just taking the first one available for now. Not forcing the present queue to be unique for now.
             //TODO: Should just make graphics and present the same one?
             if(surface != VK_NULL_HANDLE) {
@@ -144,13 +144,13 @@ namespace clove {
 
             indices.computeFamily = *computeFamilyIndices.begin();
 
-            CLOVE_LOG(Clove, LogLevel::Debug, "Vulkan queue types successfully distributed!");
+            CLOVE_LOG(CloveGhaVulkan, LogLevel::Debug, "Vulkan queue types successfully distributed!");
             if(surface != VK_NULL_HANDLE) {
-                CLOVE_LOG(Clove, LogLevel::Trace, "\tPresent:\tid: {0}, count: {1}", *indices.presentFamily, queueFamilies[*indices.presentFamily].queueCount);
+                CLOVE_LOG(CloveGhaVulkan, LogLevel::Trace, "\tPresent:\tid: {0}, count: {1}", *indices.presentFamily, queueFamilies[*indices.presentFamily].queueCount);
             }
-            CLOVE_LOG(Clove, LogLevel::Trace, "\tGraphics:\tid: {0}, count: {1}", *indices.graphicsFamily, queueFamilies[*indices.graphicsFamily].queueCount);
-            CLOVE_LOG(Clove, LogLevel::Trace, "\tTransfer:\tid: {0}, count: {1}", *indices.transferFamily, queueFamilies[*indices.transferFamily].queueCount);
-            CLOVE_LOG(Clove, LogLevel::Trace, "\tCompute:\tid: {0}, count: {1}", *indices.computeFamily, queueFamilies[*indices.computeFamily].queueCount);
+            CLOVE_LOG(CloveGhaVulkan, LogLevel::Trace, "\tGraphics:\tid: {0}, count: {1}", *indices.graphicsFamily, queueFamilies[*indices.graphicsFamily].queueCount);
+            CLOVE_LOG(CloveGhaVulkan, LogLevel::Trace, "\tTransfer:\tid: {0}, count: {1}", *indices.transferFamily, queueFamilies[*indices.transferFamily].queueCount);
+            CLOVE_LOG(CloveGhaVulkan, LogLevel::Trace, "\tCompute:\tid: {0}, count: {1}", *indices.computeFamily, queueFamilies[*indices.computeFamily].queueCount);
 
             return indices;
         }
@@ -232,7 +232,7 @@ namespace clove {
         };
 
         if(!checkValidationLayerSupport(validationLayers)) {
-            CLOVE_LOG(Clove, LogLevel::Warning, "Vulkan validation layers are not supported on this device. Unable to provide debugging infomation");
+            CLOVE_LOG(CloveGhaVulkan, LogLevel::Warning, "Vulkan validation layers are not supported on this device. Unable to provide debugging infomation");
         }
 #endif
 
@@ -277,13 +277,13 @@ namespace clove {
             };
 
             if(vkCreateInstance(&createInfo, nullptr, &instance) != VK_SUCCESS) {
-                CLOVE_LOG(Clove, LogLevel::Error, "Failed to create VK instance");
+                CLOVE_LOG(CloveGhaVulkan, LogLevel::Error, "Failed to create VK instance");
                 return;
             }
 
 #if CLOVE_GHA_VALIDATION
             if(createDebugUtilsMessengerEXT(instance, &debugMessengerCreateInfo, nullptr, &debugMessenger) != VK_SUCCESS) {
-                CLOVE_LOG(Clove, LogLevel::Error, "Failed to create vk debug message callback");
+                CLOVE_LOG(CloveGhaVulkan, LogLevel::Error, "Failed to create vk debug message callback");
                 return;
             }
 #endif
@@ -300,7 +300,7 @@ namespace clove {
             };
 
             if(vkCreateWin32SurfaceKHR(instance, &createInfo, nullptr, &surface) != VK_SUCCESS) {
-                CLOVE_LOG(Clove, LogLevel::Error, "Failed to create Vulkan surface");
+                CLOVE_LOG(CloveGhaVulkan, LogLevel::Error, "Failed to create Vulkan surface");
                 return;
             }
 #elif CLOVE_PLATFORM_MACOS
@@ -315,7 +315,7 @@ namespace clove {
             };
 
             if(vkCreateXlibSurfaceKHR(instance, &createInfo, nullptr, &surface) != VK_SUCCESS) {
-                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to create Vulkan surface");
+                CLOVE_LOG(CloveGhaVulkan, LogLevel::Error, "Failed to create Vulkan surface");
                 return;
             }
 #endif
@@ -324,22 +324,22 @@ namespace clove {
         //Pick physical device
         VkPhysicalDevice physicalDevice{ VK_NULL_HANDLE };
         {
-            CLOVE_LOG(Clove, LogLevel::Trace, "Searching for a suitable physical device...");
+            CLOVE_LOG(CloveGhaVulkan, LogLevel::Trace, "Searching for a suitable physical device...");
 
             uint32_t deviceCount{ 0 };
             vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
             if(deviceCount == 0) {
-                CLOVE_LOG(Clove, LogLevel::Error, "Failed to find GPUs with Vulkan support!");
+                CLOVE_LOG(CloveGhaVulkan, LogLevel::Error, "Failed to find GPUs with Vulkan support!");
                 return;
             }
             std::vector<VkPhysicalDevice> devices(deviceCount);
             vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
 
-            CLOVE_LOG(Clove, LogLevel::Trace, "Found {0} potential devices:", deviceCount);
+            CLOVE_LOG(CloveGhaVulkan, LogLevel::Trace, "Found {0} potential devices:", deviceCount);
             for(auto const &device : devices) {
                 VkPhysicalDeviceProperties devicePoperties{};
                 vkGetPhysicalDeviceProperties(device, &devicePoperties);
-                CLOVE_LOG(Clove, LogLevel::Trace, "\t{0}", devicePoperties.deviceName);
+                CLOVE_LOG(CloveGhaVulkan, LogLevel::Trace, "\t{0}", devicePoperties.deviceName);
             }
 
             for(auto const &device : devices) {
@@ -350,16 +350,16 @@ namespace clove {
             }
 
             if(physicalDevice == VK_NULL_HANDLE) {
-                CLOVE_LOG(Clove, LogLevel::Error, "Failed to find a suitable GPU!");
+                CLOVE_LOG(CloveGhaVulkan, LogLevel::Error, "Failed to find a suitable GPU!");
                 return;
             } else {
                 VkPhysicalDeviceProperties devicePoperties;
                 vkGetPhysicalDeviceProperties(physicalDevice, &devicePoperties);
 
-                CLOVE_LOG(Clove, LogLevel::Info, "Vulkan capable physical device found");
-                CLOVE_LOG(Clove, LogLevel::Info, "\tDevice:\t{0}", devicePoperties.deviceName);
-                CLOVE_LOG(Clove, LogLevel::Info, "\tDriver:\t{0}.{1}.{2}", VK_VERSION_MAJOR(devicePoperties.driverVersion), VK_VERSION_MINOR(devicePoperties.driverVersion), VK_VERSION_PATCH(devicePoperties.driverVersion));
-                CLOVE_LOG(Clove, LogLevel::Info, "\tAPI:\t{0}.{1}.{2}", VK_VERSION_MAJOR(devicePoperties.apiVersion), VK_VERSION_MINOR(devicePoperties.apiVersion), VK_VERSION_PATCH(devicePoperties.apiVersion));
+                CLOVE_LOG(CloveGhaVulkan, LogLevel::Info, "Vulkan capable physical device found");
+                CLOVE_LOG(CloveGhaVulkan, LogLevel::Info, "\tDevice:\t{0}", devicePoperties.deviceName);
+                CLOVE_LOG(CloveGhaVulkan, LogLevel::Info, "\tDriver:\t{0}.{1}.{2}", VK_VERSION_MAJOR(devicePoperties.driverVersion), VK_VERSION_MINOR(devicePoperties.driverVersion), VK_VERSION_PATCH(devicePoperties.driverVersion));
+                CLOVE_LOG(CloveGhaVulkan, LogLevel::Info, "\tAPI:\t{0}.{1}.{2}", VK_VERSION_MAJOR(devicePoperties.apiVersion), VK_VERSION_MINOR(devicePoperties.apiVersion), VK_VERSION_PATCH(devicePoperties.apiVersion));
             }
         }
 
@@ -413,7 +413,7 @@ namespace clove {
             };
 
             if(vkCreateDevice(physicalDevice, &createInfo, nullptr, &logicalDevice) != VK_SUCCESS) {
-                CLOVE_LOG(Clove, LogLevel::Error, "Failed to create logical device");
+                CLOVE_LOG(CloveGhaVulkan, LogLevel::Error, "Failed to create logical device");
                 return;
             }
         }
@@ -436,16 +436,16 @@ namespace clove {
         if(VkResult const result{ vkDeviceWaitIdle(devicePtr.get()) }; result != VK_SUCCESS) {
             switch(result) {
                 case VK_ERROR_OUT_OF_HOST_MEMORY:
-                    CLOVE_LOG(Clove, LogLevel::Error, "Error while waiting for device. Out of host memory.");
+                    CLOVE_LOG(CloveGhaVulkan, LogLevel::Error, "Error while waiting for device. Out of host memory.");
                     break;
                 case VK_ERROR_OUT_OF_DEVICE_MEMORY:
-                    CLOVE_LOG(Clove, LogLevel::Error, "Error while waiting for device. Out of device memory.");
+                    CLOVE_LOG(CloveGhaVulkan, LogLevel::Error, "Error while waiting for device. Out of device memory.");
                     break;
                 case VK_ERROR_DEVICE_LOST:
-                    CLOVE_LOG(Clove, LogLevel::Error, "Error while waiting for device. Device lost.");
+                    CLOVE_LOG(CloveGhaVulkan, LogLevel::Error, "Error while waiting for device. Device lost.");
                     break;
                 default:
-                    CLOVE_LOG(Clove, LogLevel::Error, "Unknown error while waiting for device.");
+                    CLOVE_LOG(CloveGhaVulkan, LogLevel::Error, "Unknown error while waiting for device.");
                     break;
             }
         }

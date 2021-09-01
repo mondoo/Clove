@@ -117,6 +117,7 @@ add_library(
 		${INCLUDE}/Rendering/RenderingConstants.hpp
 		${INCLUDE}/Rendering/RenderingHelpers.hpp
 		${SOURCE}/Rendering/RenderingHelpers.cpp
+		${INCLUDE}/Rendering/RenderingLog.hpp
 		${INCLUDE}/Rendering/RenderTarget.hpp
 		${INCLUDE}/Rendering/SwapchainRenderTarget.hpp
 		${SOURCE}/Rendering/SwapchainRenderTarget.cpp

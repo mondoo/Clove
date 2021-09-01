@@ -5,6 +5,8 @@
 #include <Clove/Log/Log.hpp>
 #include <type_traits>
 
+CLOVE_DECLARE_LOG_CATEGORY(CloveEcs)
+
 namespace clove {
     bool ComponentContainerInterface::hasComponent(Entity entity) {
         return entity != NullEntity && entityToIndex.size() > entity && entityToIndex[entity] != nullIndex;
@@ -68,7 +70,7 @@ namespace clove {
         if constexpr(std::is_copy_constructible_v<ComponentType>) {
             addComponent(to, getComponent(from));
         } else {
-            CLOVE_LOG(Clove, LogLevel::Warning, "{0}: Component is not copy constructable. Entity {1} will be incomplete.", CLOVE_FUNCTION_NAME_PRETTY, to);
+            CLOVE_LOG(CloveEcs, LogLevel::Warning, "{0}: Component is not copy constructable. Entity {1} will be incomplete.", CLOVE_FUNCTION_NAME_PRETTY, to);
         }
     }
 

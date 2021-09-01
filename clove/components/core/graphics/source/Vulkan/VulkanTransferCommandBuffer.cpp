@@ -4,10 +4,10 @@
 #include "Clove/Graphics/Vulkan/VulkanCommandBuffer.hpp"
 #include "Clove/Graphics/Vulkan/VulkanGraphicsPipelineObject.hpp"
 #include "Clove/Graphics/Vulkan/VulkanImage.hpp"
+#include "Clove/Graphics/Vulkan/VulkanLog.hpp"
 
 #include <Clove/Cast.hpp>
 #include <Clove/Definitions.hpp>
-#include <Clove/Log/Log.hpp>
 
 namespace clove {
     VulkanTransferCommandBuffer::VulkanTransferCommandBuffer(VkCommandBuffer commandBuffer, QueueFamilyIndices queueFamilyIndices)
@@ -29,13 +29,13 @@ namespace clove {
         };
 
         if(vkBeginCommandBuffer(commandBuffer, &beginInfo) != VK_SUCCESS) {
-            CLOVE_LOG(Clove, LogLevel::Error, "Failed to begin recording command buffer");
+            CLOVE_LOG(CloveGhaVulkan, LogLevel::Error, "Failed to begin recording command buffer");
         }
     }
 
     void VulkanTransferCommandBuffer::endRecording() {
         if(vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {
-            CLOVE_LOG(Clove, LogLevel::Error, "Failed to end recording command buffer");
+            CLOVE_LOG(CloveGhaVulkan, LogLevel::Error, "Failed to end recording command buffer");
         }
     }
 
@@ -97,7 +97,7 @@ namespace clove {
             barrierInfo.newImageLayout != GhaImage::Layout::DepthStencilReadOnlyOptimal;
 
         if(!isValidLayout) {
-            CLOVE_LOG(Clove, LogLevel::Error, "{0}: Invalid newLayout. This command buffer cannot handle transfering images to the following layouts:\n\tImageLayout::ShaderReadOnlyOptimal\n\tImageLayout::ColourAttachmentOptimal\n\tImageLayout::DepthStencilAttachmentOptimal\n\tImageLayout::DepthStencilReadOnlyOptimal", CLOVE_FUNCTION_NAME);
+            CLOVE_LOG(CloveGhaVulkan, LogLevel::Error, "{0}: Invalid newLayout. This command buffer cannot handle transfering images to the following layouts:\n\tImageLayout::ShaderReadOnlyOptimal\n\tImageLayout::ColourAttachmentOptimal\n\tImageLayout::DepthStencilAttachmentOptimal\n\tImageLayout::DepthStencilReadOnlyOptimal", CLOVE_FUNCTION_NAME);
             return;
         }
 

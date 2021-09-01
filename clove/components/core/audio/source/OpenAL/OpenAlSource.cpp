@@ -2,10 +2,10 @@
 
 #include "Clove/Audio/OpenAL/OpenAlBuffer.hpp"
 #include "Clove/Audio/OpenAL/OpenAlError.hpp"
+#include "Clove/Audio/OpenAL/OpenAlLog.hpp"
 
 #include <Clove/Cast.hpp>
 #include <Clove/Definitions.hpp>
-#include <Clove/Log/Log.hpp>
 #include <set>
 
 namespace clove {
@@ -25,7 +25,7 @@ namespace clove {
         OpenAlBuffer const *const alBuffer{ polyCast<OpenAlBuffer const>(buffer.get()) };
 
         if(alBuffer == nullptr) {
-            CLOVE_LOG(Clove, LogLevel::Error, "{0} called with nullptr", CLOVE_FUNCTION_NAME_PRETTY);
+            CLOVE_LOG(CloveAhaOpenAl, LogLevel::Error, "{0} called with nullptr", CLOVE_FUNCTION_NAME_PRETTY);
             return;
         }
 
@@ -43,7 +43,7 @@ namespace clove {
             if(alBuffer != nullptr) {
                 alBuffers[i] = alBuffer->getBufferId();
             } else {
-                CLOVE_LOG(Clove, LogLevel::Error, "{0}: Buffer at index {1} is nullptr. Audio playback is likely affected", CLOVE_FUNCTION_NAME_PRETTY, i);
+                CLOVE_LOG(CloveAhaOpenAl, LogLevel::Error, "{0}: Buffer at index {1} is nullptr. Audio playback is likely affected", CLOVE_FUNCTION_NAME_PRETTY, i);
             }
         }
 
@@ -60,7 +60,7 @@ namespace clove {
 #if CLOVE_AHA_VALIDATION
             CLOVE_ASSERT(numToUnqueue <= maxAbleToUnQueue, "{0}: Can't unqueue {1} buffers. Only {2} buffers have been processed", CLOVE_FUNCTION_NAME_PRETTY, numToUnqueue, maxAbleToUnQueue);
 #else
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Warning, "{0}: {1} buffers attempted to unqueue but only {2} are avaiable. Clamping to {2}", CLOVE_FUNCTION_NAME_PRETTY, numToUnqueue, maxAbleToUnQueue);
+            CLOVE_LOG(CloveAhaOpenAl, LogLevel::Warning, "{0}: {1} buffers attempted to unqueue but only {2} are avaiable. Clamping to {2}", CLOVE_FUNCTION_NAME_PRETTY, numToUnqueue, maxAbleToUnQueue);
             numToUnqueue = maxAbleToUnQueue;
 #endif
         }
@@ -79,7 +79,7 @@ namespace clove {
             OpenAlBuffer const *const alBuffer{ polyCast<OpenAlBuffer const>(buffer.get()) };
 
             if(alBuffer == nullptr) {
-                CLOVE_LOG(Clove, LogLevel::Warning, "nullptr buffer found when un queueing buffers");
+                CLOVE_LOG(CloveAhaOpenAl, LogLevel::Warning, "nullptr buffer found when un queueing buffers");
                 return true;
             }
 

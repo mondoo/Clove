@@ -6,6 +6,7 @@
 #include "Clove/Graphics/Vulkan/VulkanFramebuffer.hpp"
 #include "Clove/Graphics/Vulkan/VulkanGraphicsPipelineObject.hpp"
 #include "Clove/Graphics/Vulkan/VulkanImage.hpp"
+#include "Clove/Graphics/Vulkan/VulkanLog.hpp"
 #include "Clove/Graphics/Vulkan/VulkanRenderPass.hpp"
 #include "Clove/Graphics/Vulkan/VulkanShader.hpp"
 
@@ -48,13 +49,13 @@ namespace clove {
         };
 
         if(vkBeginCommandBuffer(commandBuffer, &beginInfo) != VK_SUCCESS) {
-            CLOVE_LOG(Clove, LogLevel::Error, "Failed to begin recording command buffer");
+            CLOVE_LOG(CloveGhaVulkan, LogLevel::Error, "Failed to begin recording command buffer");
         }
     }
 
     void VulkanGraphicsCommandBuffer::endRecording() {
         if(vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {
-            CLOVE_LOG(Clove, LogLevel::Error, "Failed to end recording command buffer");
+            CLOVE_LOG(CloveGhaVulkan, LogLevel::Error, "Failed to end recording command buffer");
         }
     }
 

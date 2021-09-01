@@ -24,9 +24,9 @@
 #include "Clove/Graphics/Vulkan/VulkanShader.hpp"
 #include "Clove/Graphics/Vulkan/VulkanSwapchain.hpp"
 #include "Clove/Graphics/Vulkan/VulkanTransferQueue.hpp"
+#include "Clove/Graphics/Vulkan/VulkanLog.hpp"
 
 #include <Clove/Cast.hpp>
-#include <Clove/Log/Log.hpp>
 #include <fstream>
 
 namespace clove {
@@ -52,7 +52,7 @@ namespace clove {
             }
 
             //Fall back to the first one if we can't find a surface format we want
-            CLOVE_LOG(Clove, LogLevel::Warning, "GhaSwapchain could not find desired format. Using first available format from the surface");
+            CLOVE_LOG(CloveGhaVulkan, LogLevel::Warning, "GhaSwapchain could not find desired format. Using first available format from the surface");
             return availableFormats[0];
         }
 

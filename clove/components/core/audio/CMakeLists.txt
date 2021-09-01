@@ -26,6 +26,7 @@ add_library(
 	${SOURCE}/OpenAL/OpenAlFactory.cpp
 	${INCLUDE}/OpenAL/OpenAlListener.hpp
 	${SOURCE}/OpenAL/OpenAlListener.cpp
+	${INCLUDE}/OpenAL/OpenAlLog.hpp
 	${INCLUDE}/OpenAL/OpenAlSource.hpp
 	${SOURCE}/OpenAL/OpenAlSource.cpp
 )

@@ -1,6 +1,6 @@
 #include "Clove/Graphics/Vulkan/VulkanImageView.hpp"
 
-#include <Clove/Log/Log.hpp>
+#include "Clove/Graphics/Vulkan/VulkanLog.hpp"
 
 namespace clove {
     VulkanImageView::VulkanImageView(VkDevice device, VkImageView imageView)
@@ -41,7 +41,7 @@ namespace clove {
 
         VkImageView imageView{ nullptr };
         if(vkCreateImageView(device, &viewInfo, nullptr, &imageView) != VK_SUCCESS) {
-            CLOVE_LOG(Clove, LogLevel::Error, "Failed to create texture image view");
+            CLOVE_LOG(CloveGhaVulkan, LogLevel::Error, "Failed to create texture image view");
             return VK_NULL_HANDLE;
         }
 
