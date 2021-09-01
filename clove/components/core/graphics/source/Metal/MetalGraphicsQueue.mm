@@ -40,7 +40,7 @@ namespace clove {
                 
                 auto *metalCommandBuffer{ polyCast<MetalGraphicsCommandBuffer>(commandBuffer) };
                 if(metalCommandBuffer == nullptr) {
-                    CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: Command buffer provided is nullptr", CLOVE_FUNCTION_NAME);
+                    CLOVE_LOG(Clove, LogLevel::Error, "{0}: Command buffer provided is nullptr", CLOVE_FUNCTION_NAME);
                     continue;
                 }
                
@@ -53,7 +53,7 @@ namespace clove {
                     for (auto const &semaphore : submission.waitSemaphores) {
                         auto const *const metalSemaphore{ polyCast<MetalSemaphore const>(semaphore.first) };
                         if(metalSemaphore == nullptr) {
-                            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: Semaphore provided is nullptr", CLOVE_FUNCTION_NAME);
+                            CLOVE_LOG(Clove, LogLevel::Error, "{0}: Semaphore provided is nullptr", CLOVE_FUNCTION_NAME);
                             continue;
                         }
                         

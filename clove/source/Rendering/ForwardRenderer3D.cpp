@@ -196,7 +196,7 @@ namespace clove {
         //Aquire the next available image from the render target
         Expected<uint32_t, std::string> const result{ renderTarget->aquireNextImage(currentFrame) };
         if(!result.hasValue()) {
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Debug, result.getError());
+            CLOVE_LOG(Clove, LogLevel::Debug, result.getError());
             return;
         }
 

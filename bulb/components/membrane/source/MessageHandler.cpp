@@ -30,7 +30,7 @@ namespace membrane {
         } else if (baseType == EngineMessage::typeid) {
             engineMessages->Add((EngineMessage^)message);
         } else {
-            CLOVE_LOG(LOG_CATEGORY_MEMBRANE, clove::LogLevel::Warning, "{0} called with neither an Editor or Engine message! Base type is: {1}", CLOVE_FUNCTION_NAME_PRETTY, msclr::interop::marshal_as<std::string>(baseType->Name));
+            CLOVE_LOG(Membrane, clove::LogLevel::Warning, "{0} called with neither an Editor or Engine message! Base type is: {1}", CLOVE_FUNCTION_NAME_PRETTY, msclr::interop::marshal_as<std::string>(baseType->Name));
         }
     }
 

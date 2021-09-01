@@ -50,7 +50,7 @@ namespace clove::ShaderCompiler {
                     result->content            = source.c_str();
                     result->content_length     = source.length();
                 } else {
-                    CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: Requested source {1} was not found.", CLOVE_FUNCTION_NAME_PRETTY, requested_source);
+                    CLOVE_LOG(Clove, LogLevel::Error, "{0}: Requested source {1} was not found.", CLOVE_FUNCTION_NAME_PRETTY, requested_source);
 
                     std::string error{ "Source not available in map" };
 
@@ -85,7 +85,7 @@ namespace clove::ShaderCompiler {
             std::ifstream file(filePath.c_str(), std::ios::ate | std::ios::binary);
 
             if(!file.is_open()) {
-                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: Failed to open file", CLOVE_FUNCTION_NAME);
+                CLOVE_LOG(Clove, LogLevel::Error, "{0}: Failed to open file", CLOVE_FUNCTION_NAME);
                 return {};
             }
 
@@ -101,7 +101,7 @@ namespace clove::ShaderCompiler {
         }
 
         Expected<std::vector<uint32_t>, std::runtime_error> compile(std::string_view source, std::unique_ptr<shaderc::CompileOptions::IncluderInterface> includer, std::string_view shaderName, GhaShader::Stage shaderStage) {
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Compiling shader {0}...", shaderName);
+            CLOVE_LOG(Clove, LogLevel::Trace, "Compiling shader {0}...", shaderName);
 
             shaderc::CompileOptions options{};
             options.SetIncluder(std::move(includer));
@@ -115,11 +115,11 @@ namespace clove::ShaderCompiler {
             shaderc::SpvCompilationResult spirvResult{ compiler.CompileGlslToSpv(source.data(), source.size(), getShadercStage(shaderStage), shaderName.data(), options) };
 
             if(spirvResult.GetCompilationStatus() != shaderc_compilation_status_success) {
-                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to compile shader {0}:\n\t{1}", shaderName, spirvResult.GetErrorMessage());
+                CLOVE_LOG(Clove, LogLevel::Error, "Failed to compile shader {0}:\n\t{1}", shaderName, spirvResult.GetErrorMessage());
                 return Unexpected{ std::runtime_error{ "Failed to compile shader. See output log for details." } };
             }
 
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Debug, "Successfully compiled shader {0}!", shaderName);
+            CLOVE_LOG(Clove, LogLevel::Debug, "Successfully compiled shader {0}!", shaderName);
             return std::vector<uint32_t>{ spirvResult.begin(), spirvResult.end() };
         }
     }

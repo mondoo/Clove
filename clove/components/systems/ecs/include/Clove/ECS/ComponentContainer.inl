@@ -68,7 +68,7 @@ namespace clove {
         if constexpr(std::is_copy_constructible_v<ComponentType>) {
             addComponent(to, getComponent(from));
         } else {
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Warning, "{0}: Component is not copy constructable. Entity {1} will be incomplete.", CLOVE_FUNCTION_NAME_PRETTY, to);
+            CLOVE_LOG(Clove, LogLevel::Warning, "{0}: Component is not copy constructable. Entity {1} will be incomplete.", CLOVE_FUNCTION_NAME_PRETTY, to);
         }
     }
 

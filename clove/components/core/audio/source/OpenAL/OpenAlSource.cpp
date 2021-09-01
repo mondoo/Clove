@@ -25,7 +25,7 @@ namespace clove {
         OpenAlBuffer const *const alBuffer{ polyCast<OpenAlBuffer const>(buffer.get()) };
 
         if(alBuffer == nullptr) {
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0} called with nullptr", CLOVE_FUNCTION_NAME_PRETTY);
+            CLOVE_LOG(Clove, LogLevel::Error, "{0} called with nullptr", CLOVE_FUNCTION_NAME_PRETTY);
             return;
         }
 
@@ -43,7 +43,7 @@ namespace clove {
             if(alBuffer != nullptr) {
                 alBuffers[i] = alBuffer->getBufferId();
             } else {
-                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: Buffer at index {1} is nullptr. Audio playback is likely affected", CLOVE_FUNCTION_NAME_PRETTY, i);
+                CLOVE_LOG(Clove, LogLevel::Error, "{0}: Buffer at index {1} is nullptr. Audio playback is likely affected", CLOVE_FUNCTION_NAME_PRETTY, i);
             }
         }
 
@@ -79,7 +79,7 @@ namespace clove {
             OpenAlBuffer const *const alBuffer{ polyCast<OpenAlBuffer const>(buffer.get()) };
 
             if(alBuffer == nullptr) {
-                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Warning, "nullptr buffer found when un queueing buffers");
+                CLOVE_LOG(Clove, LogLevel::Warning, "nullptr buffer found when un queueing buffers");
                 return true;
             }
 

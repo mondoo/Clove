@@ -48,13 +48,13 @@ namespace clove {
         };
 
         if(vkBeginCommandBuffer(commandBuffer, &beginInfo) != VK_SUCCESS) {
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to begin recording command buffer");
+            CLOVE_LOG(Clove, LogLevel::Error, "Failed to begin recording command buffer");
         }
     }
 
     void VulkanGraphicsCommandBuffer::endRecording() {
         if(vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to end recording command buffer");
+            CLOVE_LOG(Clove, LogLevel::Error, "Failed to end recording command buffer");
         }
     }
 

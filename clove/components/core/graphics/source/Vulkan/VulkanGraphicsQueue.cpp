@@ -43,7 +43,7 @@ namespace clove {
         };
 
         if(vkAllocateCommandBuffers(device.get(), &allocInfo, &commandBuffer) != VK_SUCCESS) {
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to allocate command buffer");
+            CLOVE_LOG(Clove, LogLevel::Error, "Failed to allocate command buffer");
             return nullptr;
         }
 
@@ -101,7 +101,7 @@ namespace clove {
 
         uint32_t constexpr submitCount{ 1 };
         if(vkQueueSubmit(queue, submitCount, &submitInfo, vkFence) != VK_SUCCESS) {
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to submit graphics command buffer(s)");
+            CLOVE_LOG(Clove, LogLevel::Error, "Failed to submit graphics command buffer(s)");
         }
     }
 }

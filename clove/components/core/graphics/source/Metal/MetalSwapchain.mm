@@ -33,7 +33,7 @@ namespace clove {
 		//TODO: Handle resizing;
 		
 		if(imageQueue.empty()) {
-			CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0} has no available images", CLOVE_FUNCTION_NAME_PRETTY);
+			CLOVE_LOG(Clove, LogLevel::Error, "{0} has no available images", CLOVE_FUNCTION_NAME_PRETTY);
 			return { -1, Result::Unkown };
 		}
 		

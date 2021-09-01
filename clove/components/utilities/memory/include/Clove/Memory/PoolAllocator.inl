@@ -37,7 +37,7 @@ namespace clove {
                 arena          = std::move(newArena);
                 nextFree       = &arena->storage[0];
             } else {
-                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: At the end of the free list. Cannot allocate new elements", CLOVE_FUNCTION_NAME_PRETTY);
+                CLOVE_LOG(Clove, LogLevel::Error, "{0}: At the end of the free list. Cannot allocate new elements", CLOVE_FUNCTION_NAME_PRETTY);
                 return nullptr;
             }
         }

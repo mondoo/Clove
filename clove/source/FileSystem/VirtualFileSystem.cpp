@@ -26,7 +26,7 @@ namespace clove {
                 fullPath /= relPath;
             }
         } else {
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: Unknown VFS root: \"{1}\". Returning empty path", CLOVE_FUNCTION_NAME, vfsRoot);
+            CLOVE_LOG(Clove, LogLevel::Error, "{0}: Unknown VFS root: \"{1}\". Returning empty path", CLOVE_FUNCTION_NAME, vfsRoot);
         }
 
         return fullPath.make_preferred();

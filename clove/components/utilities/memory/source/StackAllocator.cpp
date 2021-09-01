@@ -36,7 +36,7 @@ namespace clove {
         size_t const totalAllocationSize{ size + alignment };
 
         if((top - stack) + totalAllocationSize > stackSize) {
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: Not enough space left to allocate {1} bytes.", CLOVE_FUNCTION_NAME_PRETTY, totalAllocationSize);
+            CLOVE_LOG(Clove, LogLevel::Error, "{0}: Not enough space left to allocate {1} bytes.", CLOVE_FUNCTION_NAME_PRETTY, totalAllocationSize);
             return nullptr;
         }
 

@@ -347,14 +347,14 @@ namespace clove::ModelLoader {
     StaticModel loadStaticModel(std::filesystem::path const &modelFilePath) {
         CLOVE_PROFILE_FUNCTION();
 
-        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Loading static model: {0}", modelFilePath.string());
+        CLOVE_LOG(Clove, LogLevel::Trace, "Loading static model: {0}", modelFilePath.string());
 
         std::vector<std::shared_ptr<Mesh>> meshes;
 
         Assimp::Importer importer;
         const aiScene *scene{ openFile(modelFilePath, importer) };
         if(scene == nullptr || ((scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE) != 0u) || scene->mRootNode == nullptr) {
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Assimp Error: {0}", importer.GetErrorString());
+            CLOVE_LOG(Clove, LogLevel::Error, "Assimp Error: {0}", importer.GetErrorString());
             return { meshes };
         }
 
@@ -363,7 +363,7 @@ namespace clove::ModelLoader {
             meshes.emplace_back(processMesh(mesh, scene, MeshType::Default));
         }
 
-        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Debug, "Finished loading static model: {0}", modelFilePath.string());
+        CLOVE_LOG(Clove, LogLevel::Debug, "Finished loading static model: {0}", modelFilePath.string());
         //TEMP: Storing the path of the model for serialisation purposes
         StaticModel model{ meshes };
         return model;
@@ -372,7 +372,7 @@ namespace clove::ModelLoader {
     AnimatedModel loadAnimatedModel(std::filesystem::path const &modelFilePath) {
         CLOVE_PROFILE_FUNCTION();
 
-        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Loading animated model: {0}", modelFilePath.string());
+        CLOVE_LOG(Clove, LogLevel::Trace, "Loading animated model: {0}", modelFilePath.string());
 
         std::vector<std::shared_ptr<Mesh>> meshes;
         std::unique_ptr<Skeleton> skeleton{ std::make_unique<Skeleton>() };//TODO: Support multiple skeletons?
@@ -380,7 +380,7 @@ namespace clove::ModelLoader {
         Assimp::Importer importer;
         const aiScene *scene{ openFile(modelFilePath, importer) };
         if(scene == nullptr || ((scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE) != 0u) || scene->mRootNode == nullptr) {
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Assimp Error: {0}", importer.GetErrorString());
+            CLOVE_LOG(Clove, LogLevel::Error, "Assimp Error: {0}", importer.GetErrorString());
             return { meshes, nullptr, {} };
         }
 
@@ -397,7 +397,7 @@ namespace clove::ModelLoader {
             if(mesh->mNumBones <= 0) {
                 continue;
             } else if(skeletonSet) {
-                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Warning, "Multiple skeletons detected in {0}. Currently Clove only support one skeleton per model. Animations may be innacrate.", modelFilePath.string());
+                CLOVE_LOG(Clove, LogLevel::Warning, "Multiple skeletons detected in {0}. Currently Clove only support one skeleton per model. Animations may be innacrate.", modelFilePath.string());
                 continue;
             }
 
@@ -423,7 +423,7 @@ namespace clove::ModelLoader {
         }
 
         if(skeleton->joints.size() > MAX_JOINTS) {
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0} has too many joints (Max supported {1}, current amount {2}). Could not import animations", modelFilePath.string(), MAX_JOINTS, skeleton->joints.size());
+            CLOVE_LOG(Clove, LogLevel::Error, "{0} has too many joints (Max supported {1}, current amount {2}). Could not import animations", modelFilePath.string(), MAX_JOINTS, skeleton->joints.size());
             return { meshes, nullptr, {} };
         }
 
@@ -478,7 +478,7 @@ namespace clove::ModelLoader {
             }
         }
 
-        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Debug, "Finished loading animated model: {0}", modelFilePath.string());
+        CLOVE_LOG(Clove, LogLevel::Debug, "Finished loading animated model: {0}", modelFilePath.string());
         return { meshes, std::move(skeleton), std::move(animationClips) };
     }
 }

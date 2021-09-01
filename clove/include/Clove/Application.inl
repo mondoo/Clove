@@ -15,7 +15,7 @@ namespace clove {
 
         auto subSystem{ std::make_unique<SubSystemType>(std::forward<Args>(args)...) };
 
-        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Attached sub system: {0}", subSystem->getName());
+        CLOVE_LOG(Clove, LogLevel::Trace, "Attached sub system: {0}", subSystem->getName());
 
         subSystem->onAttach();
         subSystems[group].push_back(std::move(subSystem));
@@ -38,7 +38,7 @@ namespace clove {
         std::type_index const subSystemIndex{ typeid(SubSystemType) };
 
         if(subSystemToIndex.find(subSystemIndex) == subSystemToIndex.end()) {
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Warning, "{0}: No subsystem of type provided is currently attached.", CLOVE_FUNCTION_NAME_PRETTY);
+            CLOVE_LOG(Clove, LogLevel::Warning, "{0}: No subsystem of type provided is currently attached.", CLOVE_FUNCTION_NAME_PRETTY);
             return;
         }
 

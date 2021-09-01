@@ -44,7 +44,7 @@ namespace clove {
         };
 
         if(vkAllocateDescriptorSets(device.get(), &allocInfo, std::data(vulkanSets)) != VK_SUCCESS) {
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to allocate new descriptor sets");
+            CLOVE_LOG(Clove, LogLevel::Error, "Failed to allocate new descriptor sets");
             return {};
         }
 
@@ -69,7 +69,7 @@ namespace clove {
         }
 
         if(vkFreeDescriptorSets(device.get(), pool, numSets, std::data(vulkanSets)) != VK_SUCCESS) {
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to free descriptor sets");
+            CLOVE_LOG(Clove, LogLevel::Error, "Failed to free descriptor sets");
         }
     }
 

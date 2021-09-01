@@ -36,11 +36,11 @@ namespace clove {
             if(FT_Init_FreeType(&library) != FT_Err_Ok) {
                 CLOVE_ASSERT(false, "Could not load freetype");
             } else {
-                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Constructed FreeType library");
+                CLOVE_LOG(Clove, LogLevel::Trace, "Constructed FreeType library");
             }
 
             auto const libraryDeleter = [](FT_Library lib) {
-                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "FreeType library has been deleted");
+                CLOVE_LOG(Clove, LogLevel::Trace, "FreeType library has been deleted");
                 FT_Done_FreeType(lib);
             };
             ftLibReference = FTLibSharedPtr(library, libraryDeleter);

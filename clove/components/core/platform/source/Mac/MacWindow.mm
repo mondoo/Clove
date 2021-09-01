@@ -27,7 +27,7 @@ namespace clove{
         //Window specific init
         NSString *nameString = [NSString stringWithCString:descriptor.title.c_str() encoding:[NSString defaultCStringEncoding]];
         if(nameString == nullptr) {
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Critical, "nameString returned nullptr. Aborting");
+            CLOVE_LOG(Clove, LogLevel::Critical, "nameString returned nullptr. Aborting");
             abort();
         }
         

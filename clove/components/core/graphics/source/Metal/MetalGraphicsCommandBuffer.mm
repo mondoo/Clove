@@ -99,7 +99,7 @@ namespace clove {
         currentPass->commands.emplace_back([pipelineObject = &pipelineObject](id<MTLRenderCommandEncoder> encoder){
             auto const *const metalPipeline{ polyCast<MetalGraphicsPipelineObject const>(pipelineObject) };
             if(metalPipeline == nullptr){
-                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: PipelineObject is nullptr", CLOVE_FUNCTION_NAME);
+                CLOVE_LOG(Clove, LogLevel::Error, "{0}: PipelineObject is nullptr", CLOVE_FUNCTION_NAME);
                 return;
             }
             
@@ -129,7 +129,7 @@ namespace clove {
         currentPass->commands.emplace_back([descriptorSet = &descriptorSet, setNum](id<MTLRenderCommandEncoder> encoder){
             auto const *const metalDescriptorSet{ polyCast<MetalDescriptorSet>(descriptorSet) };
             if(metalDescriptorSet == nullptr){
-                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: DescriptorSet is nullptr", CLOVE_FUNCTION_NAME);
+                CLOVE_LOG(Clove, LogLevel::Error, "{0}: DescriptorSet is nullptr", CLOVE_FUNCTION_NAME);
                 return;
             }
             

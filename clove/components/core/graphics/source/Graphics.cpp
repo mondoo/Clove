@@ -18,7 +18,7 @@
 namespace clove {
     std::unique_ptr<GhaDevice> createGraphicsDevice(GraphicsApi api, std::any nativeWindow) {
 #if CLOVE_GHA_VALIDATION
-        CLOVE_LOG(LOG_CATEGORY_CLOVE_GHA_VALIDATION, LogLevel::Debug, "GHA validation enabled.");
+        CLOVE_LOG(CloveGhaValidation, LogLevel::Debug, "GHA validation enabled.");
 #endif
 
         switch(api) {

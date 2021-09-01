@@ -6,7 +6,7 @@
 namespace clove {
     LinuxWindow::LinuxWindow(Descriptor const &descriptor)
         : Window(keyboardDispatcher, mouseDispatcher) {
-        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Creating window: {0} ({1}, {2})", descriptor.title, descriptor.width, descriptor.height);
+        CLOVE_LOG(Clove, LogLevel::Trace, "Creating window: {0} ({1}, {2})", descriptor.title, descriptor.width, descriptor.height);
         CLOVE_ASSERT(window == 0, "Window already exists! Currently only a single window on linux is supported");
 
         if(display == nullptr) {
@@ -16,7 +16,7 @@ namespace clove {
 
         if(display == nullptr) {
             //TODO: Exception
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Could not open display");
+            CLOVE_LOG(Clove, LogLevel::Error, "Could not open display");
             return;
         }
 
@@ -51,7 +51,7 @@ namespace clove {
 
         open = true;
 
-        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Window created");
+        CLOVE_LOG(Clove, LogLevel::Trace, "Window created");
     }
 
     LinuxWindow::~LinuxWindow() {
