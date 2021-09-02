@@ -214,7 +214,7 @@ namespace clove {
         size_t const viewPositionSize{ sizeof(currentFrameData.viewPosition) };
 
         size_t const viewDataOffset{ 0 };
-        size_t const viewPositionOffset{ viewDataSize + viewDataSize % minUboOffsetAlignment };
+        size_t const viewPositionOffset{ viewDataOffset + viewDataSize + (minUboOffsetAlignment - ((viewDataOffset + viewDataSize) % minUboOffsetAlignment)) };
 
         RgResourceIdType viewUniformBuffer{ renderGraph.createBuffer(viewPositionOffset + viewPositionSize) };
 
@@ -227,8 +227,8 @@ namespace clove {
         size_t const lightsSize{ sizeof(currentFrameData.lights) };
 
         size_t const numLightsOffset{ 0 };
-        size_t const dirShadowTransformsOffset{ 0 };
-        size_t const lightsOffset{ 0 };
+        size_t const dirShadowTransformsOffset{ numLightsOffset + numLightsSize + (minUboOffsetAlignment - ((numLightsOffset + numLightsSize) % minUboOffsetAlignment)) };
+        size_t const lightsOffset{ dirShadowTransformsOffset + dirShadowTransformsSize + (minUboOffsetAlignment - ((dirShadowTransformsOffset + dirShadowTransformsSize) % minUboOffsetAlignment)) };
 
         RgResourceIdType lightsUnfiromBuffer{ renderGraph.createBuffer(lightsOffset + lightsSize) };
 
