@@ -142,6 +142,7 @@ add_library(
 		${INCLUDE}/Rendering/RenderGraph/CacheUtils.inl
 		${INCLUDE}/Rendering/RenderGraph/RenderGraph.hpp
 		${SOURCE}/Rendering/RenderGraph/RenderGraph.cpp
+		${INCLUDE}/Rendering/RenderGraph/RenderGraphLog.hpp
 		${INCLUDE}/Rendering/RenderGraph/Bindings.hpp
 		${INCLUDE}/Rendering/RenderGraph/RgBuffer.hpp
 		${INCLUDE}/Rendering/RenderGraph/RgBuffer.inl

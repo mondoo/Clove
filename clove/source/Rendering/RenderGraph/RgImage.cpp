@@ -45,7 +45,7 @@ namespace clove {
 
    GhaImageView *RgImage::createGhaImageView(RgFrameCache &cache, uint32_t const arrayIndex, uint32_t const arrayCount) {
         if(ghaImage == nullptr) {
-            CLOVE_ASSERT(!externalImage, "RgImage is registered as an external image but does not have a valid GhaImageView.");
+            CLOVE_ASSERT_MSG(!externalImage, "RgImage is registered as an external image but does not have a valid GhaImageView.");
             ghaImage = cache.allocateImage(ghaImageDescriptor);
         }
 
@@ -58,7 +58,7 @@ namespace clove {
     }
 
     void RgImage::addImageUsage(GhaImage::UsageMode usage) {
-        CLOVE_ASSERT(!externalImage, "Cannot change usage mode. RgImage is registered as an external image.");
+        CLOVE_ASSERT_MSG(!externalImage, "Cannot change usage mode. RgImage is registered as an external image.");
         ghaImageDescriptor.usageFlags |= usage;
     }
 }

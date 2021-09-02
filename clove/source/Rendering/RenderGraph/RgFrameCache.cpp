@@ -2,7 +2,6 @@
 
 #include "Clove/Rendering/RenderGraph/CacheUtils.hpp"
 
-#include <Clove/Log/Log.hpp>
 #include <functional>
 
 namespace clove {

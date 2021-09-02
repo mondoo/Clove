@@ -1,5 +1,6 @@
 #include "Clove/Rendering/RenderGraph/RenderGraph.hpp"
 
+#include "Clove/Rendering/RenderGraph/RenderGraphLog.hpp"
 #include "Clove/Rendering/RenderGraph/RgFrameCache.hpp"
 #include "Clove/Rendering/RenderGraph/RgGlobalCache.hpp"
 #include "Clove/Rendering/Vertex.hpp"
@@ -13,9 +14,6 @@
 #include <Clove/Graphics/GhaGraphicsPipelineObject.hpp>
 #include <Clove/Graphics/GhaRenderPass.hpp>
 #include <Clove/Graphics/GhaSampler.hpp>
-#include <Clove/Log/Log.hpp>
-
-CLOVE_DECLARE_LOG_CATEGORY(CLOVE_RENDER_GRAPH)
 
 namespace clove {
     RenderGraph::RenderGraph(RgFrameCache &frameCache, RgGlobalCache &globalCache)
@@ -216,7 +214,7 @@ namespace clove {
     }
 
     void RenderGraph::execute(ExecutionInfo const &info) {
-        CLOVE_ASSERT(outputResource != INVALID_RESOURCE_ID, "No output resource has been specified");
+        CLOVE_ASSERT_MSG(outputResource != INVALID_RESOURCE_ID, "No output resource has been specified");
 
         //Build the array of passes to execute. Only adding passes which will ultimately effect the output resource.
         std::vector<RgPassIdType> executionPasses{};
@@ -451,11 +449,11 @@ namespace clove {
                                     bool found{ false };
                                     for(auto const &ubo : submission.shaderUbos) {
                                         if(ubo.slot == resourceId) {
-                                            if(ubo.shaderStage == GhaShader::Stage::Vertex){
+                                            if(ubo.shaderStage == GhaShader::Stage::Vertex) {
                                                 waitStage = PipelineStage::VertexShader;
                                                 found     = true;
                                                 break;
-                                            }else if(ubo.shaderStage == GhaShader::Stage::Pixel){
+                                            } else if(ubo.shaderStage == GhaShader::Stage::Pixel) {
                                                 waitStage = PipelineStage::PixelShader;
                                                 found     = true;
                                                 break;
@@ -468,7 +466,7 @@ namespace clove {
                                     }
                                 }
                             } else {
-                                CLOVE_LOG(LOG_CATEGORY_CLOVE_RENDER_GRAPH, LogLevel::Warning, "{0}: Could not decide waitStage for resource {1}", CLOVE_FUNCTION_NAME_PRETTY, resourceId);
+                                CLOVE_LOG(CloveRenderGraph, LogLevel::Warning, "{0}: Could not decide waitStage for resource {1}", CLOVE_FUNCTION_NAME_PRETTY, resourceId);
                             }
 
                             dependencies.emplace_back(PassDependency{
@@ -555,7 +553,7 @@ namespace clove {
                     }
                 }
 
-                CLOVE_ASSERT(false, "ImageId is not in any render target's submissions even though it's marked as an input resource");
+                CLOVE_ASSERT_MSG(false, "ImageId is not in any render target's submissions even though it's marked as an input resource");
             } else if(renderPass->getOutputResources().contains(imageId)) {
                 for(auto const &renderTarget : renderPass->getDescriptor().renderTargets) {
                     if(renderTarget.target == imageId) {
@@ -566,7 +564,7 @@ namespace clove {
                     return GhaImage::Layout::ColourAttachmentOptimal;
                 }
 
-                CLOVE_ASSERT(false, "ImageId is not in any render target's output even though it's marked as an output resource");
+                CLOVE_ASSERT_MSG(false, "ImageId is not in any render target's output even though it's marked as an output resource");
             }
         }
 
@@ -591,7 +589,7 @@ namespace clove {
         } else if(transferPasses.contains(passId)) {
             return transferPasses.at(passId).get();
         } else {
-            CLOVE_ASSERT(false, "Could not find pass ID");
+            CLOVE_ASSERT_MSG(false, "Could not find pass ID");
             return nullptr;
         }
     }

@@ -1,9 +1,9 @@
 #include "Clove/Rendering/RenderGraph/RgGlobalCache.hpp"
 
 #include "Clove/Rendering/RenderGraph/CacheUtils.hpp"
+#include "Clove/Rendering/RenderGraph/RenderGraphLog.hpp"
 
 #include <Clove/Graphics/GhaFactory.hpp>
-#include <Clove/Log/Log.hpp>
 #include <fstream>
 
 namespace clove {
@@ -22,7 +22,7 @@ namespace clove {
         std::ifstream fileStream(file.c_str(), std::ios::ate | std::ios::binary);
 
         if(!fileStream.is_open()) {
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: Failed to open file", CLOVE_FUNCTION_NAME);
+            CLOVE_LOG(CloveRenderGraph, LogLevel::Error, "{0}: Failed to open file", CLOVE_FUNCTION_NAME);
             return {};
         }
 

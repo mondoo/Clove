@@ -32,7 +32,7 @@ namespace clove {
 
     GhaBuffer *RgBuffer::getGhaBuffer(RgFrameCache &cache) {
         if(ghaBuffer == nullptr) {
-            CLOVE_ASSERT(!externalBuffer, "RgBuffer is registered as an external buffer but does not have a valid GhaBuffer.");
+            CLOVE_ASSERT_MSG(!externalBuffer, "RgBuffer is registered as an external buffer but does not have a valid GhaBuffer.");
             ghaBuffer = cache.allocateBuffer(ghaBufferDescriptor);
         }
 
@@ -40,17 +40,17 @@ namespace clove {
     }
 
     void RgBuffer::addBufferUsage(GhaBuffer::UsageMode usage) {
-        CLOVE_ASSERT(!externalBuffer, "Cannot change usage mode. RgBuffer is registered as an external buffer.");
+        CLOVE_ASSERT_MSG(!externalBuffer, "Cannot change usage mode. RgBuffer is registered as an external buffer.");
         ghaBufferDescriptor.usageFlags |= usage;
     }
 
     void RgBuffer::makeCpuAccessable() {
-        CLOVE_ASSERT(!externalBuffer, "Cannot change memory type. RgBuffer is registered as an external buffer.");
+        CLOVE_ASSERT_MSG(!externalBuffer, "Cannot change memory type. RgBuffer is registered as an external buffer.");
         ghaBufferDescriptor.memoryType = MemoryType::SystemMemory;
     }
 
     void RgBuffer::setSharingMode(SharingMode mode) {
-        CLOVE_ASSERT(!externalBuffer, "Cannot change sharing mode. RgBuffer is registered as an external buffer.");
+        CLOVE_ASSERT_MSG(!externalBuffer, "Cannot change sharing mode. RgBuffer is registered as an external buffer.");
         ghaBufferDescriptor.sharingMode = mode;
     }
 }
