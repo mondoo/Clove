@@ -318,12 +318,6 @@ namespace clove {
                 executeGraphicsPass(passId, *graphicsCommandBufffer, allocatedRenderPasses, allocatedFramebuffers, allocatedGraphicsPipelines, allocatedSamplers, allocatedDescriptorSets);
                 graphicsCommandBufffer->endRecording();
 
-                for(RgPassIdType passId : executionPasses) {
-                    if(renderPasses.contains(passId)) {
-                        continue;
-                    }
-                }
-
                 frameCache.submit(GraphicsSubmitInfo{
                                       .waitSemaphores   = waitSemaphores,
                                       .commandBuffers   = { graphicsCommandBufffer },
