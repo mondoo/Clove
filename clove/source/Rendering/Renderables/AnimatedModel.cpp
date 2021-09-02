@@ -10,7 +10,7 @@ namespace clove {
         : StaticModel{ std::move(meshes), { createSkinnedForwardLightingTechnique() } }
         , skeleton{ std::move(skeleton) }
         , animClips{ std::move(animClips) } {
-        if(this->animClips.size() == 0) {
+        if(this->animClips.empty()) {
             CLOVE_LOG(CloveRendering, LogLevel::Warning, "AnimatedModel initialised without any animation clips. Won't be able to play animations");
         } else {
             animator.setCurrentClip(&this->animClips[0]);
@@ -25,7 +25,7 @@ namespace clove {
             clip.skeleton = skeleton.get();
         }
 
-        if(this->animClips.size() == 0) {
+        if(this->animClips.empty()) {
             CLOVE_LOG(CloveRendering, LogLevel::Warning, "AnimatedModel initialised without any animation clips. Won't be able to play animations");
         } else {
             animator.setCurrentClip(&animClips[0]);
