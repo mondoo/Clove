@@ -62,7 +62,7 @@ namespace clove {
             }
         }
         
-        CLOVE_ASSERT(false, "{0}: Could not find binding", CLOVE_FUNCTION_NAME_PRETTY);
+        CLOVE_ASSERT_MSG(false, "{0}: Could not find binding", CLOVE_FUNCTION_NAME_PRETTY);
         return GhaShader::Stage::Vertex;
     }
 }

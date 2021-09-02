@@ -15,17 +15,19 @@ namespace clove {
     class ListAllocator {
         //TYPES
     private:
-        struct Header {
-            size_t blockSize{ 0 };
+        struct Block {
+            bool free{ true };
+            size_t offset{ 0 };        /**< Offset into the backing memory of the block. */
+            size_t alignedOffset{ 0 }; /**< The offset into the backing memory that respects the allocation's alignment. */
+            size_t size{ 0 };          /**< Size of the entire block of memory. */
         };
 
         //VARIABLES
     private:
-        std::byte *rawList;
-        size_t listSize{ 0 };
-        std::byte *head{ nullptr };
+        std::byte *backingMemory{ nullptr }; /**< Underlying memory of the free list. */
+        size_t backingMemorySize{ 0 };
 
-        std::list<Header *> list;
+        std::list<Block> freeList{}; /**< Current list of all free blocks on memory. */
 
         bool freeMemory{ true };
 
@@ -44,11 +46,23 @@ namespace clove {
         ~ListAllocator();
 
         /**
-         * @brief Allocates X bytes from the list.
+         * @brief Allocates size amounts of bytes from the list.
+         * @param size
+         * @param alignment
          * @returns A Pointer to the allocated block of memory.
          */
-        void *alloc(size_t bytes);
+        void *alloc(size_t size, size_t alignment);
+
+        /**
+         * @brief Allocate a block of memory for T.
+         * @tparam T 
+         * @return 
+         */
+        template<typename T>
+        T *alloc();
 
         void free(void *ptr);
     };
 }
+
+#include "ListAllocator.inl"

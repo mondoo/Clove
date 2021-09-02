@@ -18,11 +18,15 @@ namespace clove {
         wrapper->device = MTLCreateSystemDefaultDevice();
         
         //Create view
-        NSWindow *nsWindow{ std::any_cast<NSWindow *>(nativeWindow) };
-        wrapper->view = [[MetalView alloc] initWithFrame:[nsWindow frame]];
-        [wrapper->view setDevice:wrapper->device];
+        if(nativeWindow.has_value()) {
+            NSWindow *nsWindow{ std::any_cast<NSWindow *>(nativeWindow) };
+            wrapper->view = [[MetalView alloc] initWithFrame:[nsWindow frame]];
+            [wrapper->view setDevice:wrapper->device];
         
-        [nsWindow setContentView:wrapper->view];
+            [nsWindow setContentView:wrapper->view];
+        }else {
+            wrapper->view = nullptr;
+        }
         
         factory = std::make_unique<MetalFactory>(wrapper->device, wrapper->view);
     }
@@ -42,7 +46,10 @@ namespace clove {
     }
     
     GhaDevice::Limits MetalDevice::getLimits() const {
-        //TODO
-        return {};
+        size_t constexpr metalMinUboOffsetAlignment{ 16 };//Hard coding as a minimum of 16 as metal does not provide this data.
+        
+        return Limits {
+            .minUniformBufferOffsetAlignment = metalMinUboOffsetAlignment,
+        };
     }
 }

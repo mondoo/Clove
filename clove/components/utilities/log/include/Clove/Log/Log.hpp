@@ -5,11 +5,6 @@
 #include <string>
 #include <string_view>
 
-#define CLOVE_DECLARE_LOG_CATEGORY(categoryName)                 \
-    struct LOG_CATEGORY_##categoryName {                         \
-        static std::string_view constexpr name{ #categoryName }; \
-    };
-
 namespace spdlog {
     class logger;
     namespace sinks {
@@ -51,20 +46,38 @@ namespace clove {
     };
 }
 
-#define CLOVE_LOG(category, level, ...) ::clove::Logger::get().log(category::name, level, __VA_ARGS__);
+#define CLOVE_EXPAND_CATEGORY(category) LOG_CATEGORY_##category
+
+#define CLOVE_DECLARE_LOG_CATEGORY(categoryName)                 \
+    struct CLOVE_EXPAND_CATEGORY(categoryName) {                 \
+        static std::string_view constexpr name{ #categoryName }; \
+    };
+
+#define CLOVE_LOG(category, level, ...) ::clove::Logger::get().log(CLOVE_EXPAND_CATEGORY(category)::name, level, __VA_ARGS__);
 
 #if CLOVE_ENABLE_ASSERTIONS
-    #define CLOVE_ASSERT(x, ...)                                                                                  \
-        {                                                                                                         \
-            if(!(x)) {                                                                                            \
-                CLOVE_LOG(LOG_CATEGORY_CLOVE, ::clove::LogLevel::Critical, "Assertion Failed: {0}", __VA_ARGS__); \
-                CLOVE_DEBUG_BREAK;                                                                                \
-            }                                                                                                     \
+CLOVE_DECLARE_LOG_CATEGORY(CloveAssert)
+
+    #define CLOVE_ASSERT(x)                                                                                                  \
+        {                                                                                                                    \
+            if(!(x)) {                                                                                                       \
+                CLOVE_LOG(CloveAssert, ::clove::LogLevel::Critical, "Assertion failed: {0}", #x);                            \
+                CLOVE_LOG(CloveAssert, ::clove::LogLevel::Critical, "Assertion function:\n{0}", CLOVE_FUNCTION_NAME_PRETTY); \
+                CLOVE_DEBUG_BREAK;                                                                                           \
+            }                                                                                                                \
+        }
+
+    #define CLOVE_ASSERT_MSG(x, ...)                                                                    \
+        {                                                                                               \
+            if(!(x)) {                                                                                  \
+                CLOVE_LOG(CloveAssert, ::clove::LogLevel::Critical, "Assertion failed: {0}", #x);       \
+                CLOVE_LOG(CloveAssert, ::clove::LogLevel::Critical, "Assertion message: " __VA_ARGS__); \
+                CLOVE_DEBUG_BREAK;                                                                      \
+            }                                                                                           \
         }
 #else
-    #define CLOVE_ASSERT(x, ...) (x)
+    #define CLOVE_ASSERT(x)
+    #define CLOVE_ASSERT_MSG(x, ...)
 #endif
 
 #include "Log.inl"
-
-CLOVE_DECLARE_LOG_CATEGORY(CLOVE)

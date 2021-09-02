@@ -117,6 +117,7 @@ add_library(
 		${INCLUDE}/Rendering/RenderingConstants.hpp
 		${INCLUDE}/Rendering/RenderingHelpers.hpp
 		${SOURCE}/Rendering/RenderingHelpers.cpp
+		${INCLUDE}/Rendering/RenderingLog.hpp
 		${INCLUDE}/Rendering/RenderTarget.hpp
 		${INCLUDE}/Rendering/SwapchainRenderTarget.hpp
 		${SOURCE}/Rendering/SwapchainRenderTarget.cpp
@@ -186,14 +187,14 @@ add_library(
 		${SOURCE}/Rendering/Techniques/ForwardLightingTechnique.cpp
 		${INCLUDE}/Rendering/Techniques/Technique.hpp
 
-		${INCLUDE}/Layers/AudioLayer.hpp
-		${SOURCE}/Layers/AudioLayer.cpp
-		${INCLUDE}/Layers/PhysicsLayer.hpp
-		${SOURCE}/Layers/PhysicsLayer.cpp
-		${INCLUDE}/Layers/RenderLayer.hpp
-		${SOURCE}/Layers/RenderLayer.cpp
-		${INCLUDE}/Layers/TransformLayer.hpp
-		${SOURCE}/Layers/TransformLayer.cpp
+		${INCLUDE}/SubSystems/AudioSubSystem.hpp
+		${SOURCE}/SubSystems/AudioSubSystem.cpp
+		${INCLUDE}/SubSystems/PhysicsSubSystem.hpp
+		${SOURCE}/SubSystems/PhysicsSubSystem.cpp
+		${INCLUDE}/SubSystems/RenderSubSystem.hpp
+		${SOURCE}/SubSystems/RenderSubSystem.cpp
+		${INCLUDE}/SubSystems/TransformSubSystem.hpp
+		${SOURCE}/SubSystems/TransformSubSystem.cpp
 
 		${INCLUDE}/UI/DrawableElement.hpp
 		${INCLUDE}/UI/Image.hpp
@@ -213,9 +214,8 @@ add_library(
 		${INCLUDE}/InputEvent.hpp
 		${INCLUDE}/InputResponse.hpp
 
-		${INCLUDE}/Layer.hpp
-		${INCLUDE}/Layer.inl
-		${SOURCE}/Layer.cpp
+		${INCLUDE}/SubSystem.hpp
+		${INCLUDE}/SubSystem.inl
 		
 		${INCLUDE}/ModelLoader.hpp
 		${SOURCE}/ModelLoader.cpp

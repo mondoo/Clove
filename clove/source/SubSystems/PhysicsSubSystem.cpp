@@ -1,4 +1,4 @@
-#include "Clove/Layers/PhysicsLayer.hpp"
+#include "Clove/SubSystems/PhysicsSubSystem.hpp"
 
 #include "Clove/Application.hpp"
 #include "Clove/Components/CollisionResponseComponent.hpp"
@@ -69,8 +69,8 @@ namespace clove {
         }
     }
 
-    PhysicsLayer::PhysicsLayer(EntityManager *entityManager)
-        : Layer("Physics")
+    PhysicsSubSystem::PhysicsSubSystem(EntityManager *entityManager)
+        : SubSystem("Physics")
         , entityManager{ entityManager } {
         collisionConfiguration = std::make_unique<btDefaultCollisionConfiguration>();
         dispatcher             = std::make_unique<btCollisionDispatcher>(collisionConfiguration.get());
@@ -84,13 +84,13 @@ namespace clove {
         });
     }
 
-    PhysicsLayer::PhysicsLayer(PhysicsLayer &&other) noexcept = default;
+    PhysicsSubSystem::PhysicsSubSystem(PhysicsSubSystem &&other) noexcept = default;
 
-    PhysicsLayer &PhysicsLayer::operator=(PhysicsLayer &&other) noexcept = default;
+    PhysicsSubSystem &PhysicsSubSystem::operator=(PhysicsSubSystem &&other) noexcept = default;
 
-    PhysicsLayer::~PhysicsLayer() = default;
+    PhysicsSubSystem::~PhysicsSubSystem() = default;
 
-    void PhysicsLayer::onUpdate(DeltaTime const deltaTime) {
+    void PhysicsSubSystem::onUpdate(DeltaTime const deltaTime) {
         CLOVE_PROFILE_FUNCTION();
 
         std::vector<Entity> proxiesToRemove{};
@@ -292,15 +292,15 @@ namespace clove {
         }
     }
 
-    void PhysicsLayer::setGravity(vec3f const &gravity) {
+    void PhysicsSubSystem::setGravity(vec3f const &gravity) {
         dynamicsWorld->setGravity({ gravity.x, gravity.y, gravity.z });
     }
 
-    Entity PhysicsLayer::rayCast(vec3f const &begin, vec3f const &end) {
+    Entity PhysicsSubSystem::rayCast(vec3f const &begin, vec3f const &end) {
         return rayCast(begin, end, ~0, ~0);
     }
 
-    Entity PhysicsLayer::rayCast(vec3f const &begin, vec3f const &end, uint32_t const collisionGroup, uint32_t const collisionMask) {
+    Entity PhysicsSubSystem::rayCast(vec3f const &begin, vec3f const &end, uint32_t const collisionGroup, uint32_t const collisionMask) {
         btVector3 const btBegin{ begin.x, begin.y, begin.z };
         btVector3 const btEnd{ end.x, end.y, end.z };
 
@@ -316,7 +316,7 @@ namespace clove {
         }
     }
 
-    void PhysicsLayer::initialiseCollisionShape(Entity entity, CollisionShapeComponent const &shape) {
+    void PhysicsSubSystem::initialiseCollisionShape(Entity entity, CollisionShapeComponent const &shape) {
         PhysicsProxyComponent proxy{
             .collisionObject = std::make_unique<btGhostObject>(),
         };
@@ -334,7 +334,7 @@ namespace clove {
         entityManager->addComponent<ShapeOnlyComponent>(entity);
     }
 
-    void PhysicsLayer::initialiseRigidBody(Entity entity, RigidBodyComponent const &body) {
+    void PhysicsSubSystem::initialiseRigidBody(Entity entity, RigidBodyComponent const &body) {
         float constexpr defaultSphereSize{ 0.1f };
         PhysicsProxyComponent proxy{
             .collisionShape = std::make_unique<btSphereShape>(defaultSphereSize),
@@ -348,7 +348,7 @@ namespace clove {
         entityManager->addComponent<BodyOnlyComponent>(entity);
     }
 
-    void PhysicsLayer::initialiseRigidBodyShape(Entity entity, CollisionShapeComponent const &shape, RigidBodyComponent const &body) {
+    void PhysicsSubSystem::initialiseRigidBodyShape(Entity entity, CollisionShapeComponent const &shape, RigidBodyComponent const &body) {
         PhysicsProxyComponent proxy{};
 
         createProxyShape(proxy, shape);
@@ -359,7 +359,7 @@ namespace clove {
         entityManager->addComponent<PhysicsProxyComponent>(entity, std::move(proxy));
     }
 
-    void PhysicsLayer::onProxyRemoved(ComponentRemovedEvent<PhysicsProxyComponent> const &event) {
+    void PhysicsSubSystem::onProxyRemoved(ComponentRemovedEvent<PhysicsProxyComponent> const &event) {
         dynamicsWorld->removeCollisionObject(event.component.collisionObject.get());
     }
 }

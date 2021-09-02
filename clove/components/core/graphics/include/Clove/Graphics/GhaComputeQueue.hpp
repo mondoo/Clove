@@ -2,6 +2,7 @@
 
 #include "Clove/Graphics/GhaComputeCommandBuffer.hpp"
 #include "Clove/Graphics/GhaGraphicsPipelineObject.hpp"
+#include "Clove/Graphics/Queue.hpp"
 
 #include <memory>
 #include <vector>
@@ -26,16 +27,19 @@ namespace clove {
     public:
         virtual ~GhaComputeQueue() = default;
 
-        virtual std::unique_ptr<GhaComputeCommandBuffer> allocateCommandBuffer() = 0;
-        virtual void freeCommandBuffer(GhaComputeCommandBuffer &buffer)          = 0;
+        virtual CommandQueueDescriptor const &getDescriptor() const = 0;
+
+        virtual std::unique_ptr<GhaComputeCommandBuffer> allocateCommandBuffer()         = 0;
+        virtual void freeCommandBuffer(std::unique_ptr<GhaComputeCommandBuffer> &buffer) = 0;
 
         /**
          * @brief Submit command buffers to be processed.
          * @details All buffers in a single submission will start in order but will likely finish out of order.
          * Batch them together like this if they can run at the same time. Each call to this submit function
          * will need to wait on previous submissions.
-         * @param signalFence An optional fence that will be signaled when all submissions are complete.
+         * @param submission
+         * @param signalFence An optional fence that will be signaled when the submission is complete.
          */
-        virtual void submit(std::vector<ComputeSubmitInfo> const &submissions, GhaFence *signalFence) = 0;
+        virtual void submit(ComputeSubmitInfo const &submission, GhaFence *signalFence) = 0;
     };
 }

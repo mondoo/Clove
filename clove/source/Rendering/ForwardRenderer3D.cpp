@@ -11,6 +11,7 @@
 #include "Clove/Rendering/RenderTarget.hpp"
 #include "Clove/Rendering/Renderables/Mesh.hpp"
 #include "Clove/Rendering/RenderingHelpers.hpp"
+#include "Clove/Rendering/RenderingLog.hpp"
 #include "Clove/Rendering/Vertex.hpp"
 
 #include <Clove/Graphics/GhaDescriptorSet.hpp>
@@ -18,7 +19,6 @@
 #include <Clove/Graphics/GhaFactory.hpp>
 #include <Clove/Graphics/GhaImageView.hpp>
 #include <Clove/Graphics/Graphics.hpp>
-#include <Clove/Log/Log.hpp>
 #include <Clove/Platform/Window.hpp>
 #include <algorithm>
 
@@ -186,7 +186,7 @@ namespace clove {
         //Aquire the next available image from the render target
         Expected<uint32_t, std::string> const result{ renderTarget->aquireNextImage(imageAvailableSemaphores[currentFrame].get()) };
         if(!result.hasValue()) {
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Debug, result.getError());
+            CLOVE_LOG(CloveRendering, LogLevel::Debug, result.getError());
             return;
         }
 
@@ -378,10 +378,10 @@ namespace clove {
         frameBuffers.clear();
 
         for(auto &imageData : inFlightImageData) {
-            graphicsQueue->freeCommandBuffer(*imageData.commandBuffer);
-            graphicsQueue->freeCommandBuffer(*imageData.shadowMapCommandBuffer);
-            graphicsQueue->freeCommandBuffer(*imageData.cubeShadowMapCommandBuffer);
-            computeQueue->freeCommandBuffer(*imageData.skinningCommandBuffer);
+            graphicsQueue->freeCommandBuffer(imageData.commandBuffer);
+            graphicsQueue->freeCommandBuffer(imageData.shadowMapCommandBuffer);
+            graphicsQueue->freeCommandBuffer(imageData.cubeShadowMapCommandBuffer);
+            computeQueue->freeCommandBuffer(imageData.skinningCommandBuffer);
         }
     }
 

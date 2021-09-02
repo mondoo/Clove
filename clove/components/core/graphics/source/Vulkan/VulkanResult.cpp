@@ -13,7 +13,7 @@ namespace clove {
             case VK_ERROR_OUT_OF_DATE_KHR:
                 return Result::Error_SwapchainOutOfDate;
             default:
-                CLOVE_ASSERT(false, "Unkown result type");
+                CLOVE_ASSERT_MSG(false, "Unkown result type");
                 return Result::Unkown;
         }
     }

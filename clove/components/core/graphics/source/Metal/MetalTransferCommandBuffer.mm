@@ -3,6 +3,7 @@
 #include "Clove/Graphics/Metal/MetalBuffer.hpp"
 #include "Clove/Graphics/Metal/MetalImage.hpp"
 #include "Clove/Graphics/Metal/MetalPipelineObject.hpp"
+#include "Clove/Graphics/Metal/MetalLog.hpp"
 
 #include <Clove/Cast.hpp>
 
@@ -19,15 +20,13 @@ namespace clove {
 					return 4;
 				case GhaImage::Format::Unkown:
 				default:
-					CLOVE_ASSERT(false, "Unknown format type");
+					CLOVE_ASSERT_MSG(false, "Unknown format type");
 					return 0;
 			}
 		}
 	}
 	
-	MetalTransferCommandBuffer::MetalTransferCommandBuffer(bool allowReuse)
-		: allowReuse{ allowReuse } {
-	}
+	MetalTransferCommandBuffer::MetalTransferCommandBuffer() = default;
 	
 	MetalTransferCommandBuffer::MetalTransferCommandBuffer(MetalTransferCommandBuffer &&other) noexcept = default;
 	
@@ -36,23 +35,11 @@ namespace clove {
 	MetalTransferCommandBuffer::~MetalTransferCommandBuffer() = default;
 
 	void MetalTransferCommandBuffer::beginRecording(CommandBufferUsage usageFlag) {
-		if(!allowReuse && hasBeenUsed) {
-			CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Command buffer re-recorded to. Command buffers cannot only be recorded to more than once unless the owning queue has been created with QueueFlags::ReuseBuffers set.");
-		}
-		
-		if(!endRecordingCalled) {
-			CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "beginRecording called before endRecording. Command buffer recording must be finished be starting again.");
-		}
-		endRecordingCalled = false;
-		
-		currentUsage = usageFlag;
-		hasBeenUsed = false;
-		
 		commands.clear();
 	}
 	
 	void MetalTransferCommandBuffer::endRecording() {
-		endRecordingCalled = true;
+		//no op
 	}
 
 	void MetalTransferCommandBuffer::copyBufferToBuffer(GhaBuffer &source, size_t const sourceOffset, GhaBuffer &destination, size_t const destinationOffset, size_t const sizeBytes) {
@@ -69,7 +56,7 @@ namespace clove {
 		commands.emplace_back([source = &source, sourceOffset, destination = &destination, destinationOffset, destinationExtent](id<MTLBlitCommandEncoder> encoder){
 			auto const *const metalImage{ polyCast<MetalImage>(destination) };
             if(metalImage == nullptr){
-                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: Source image is nullptr", CLOVE_FUNCTION_NAME);
+                CLOVE_LOG(CloveGhaMetal, LogLevel::Error, "{0}: Source image is nullptr", CLOVE_FUNCTION_NAME);
                 return;
             }
             
@@ -91,7 +78,7 @@ namespace clove {
 		commands.emplace_back([source = &source, sourceOffset, sourceExtent, destination = &destination, destinationOffset](id<MTLBlitCommandEncoder> encoder){
 			auto const *const metalImage{ polyCast<MetalImage>(source) };
             if(metalImage == nullptr){
-                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: Source image is nullptr", CLOVE_FUNCTION_NAME);
+                CLOVE_LOG(CloveGhaMetal, LogLevel::Error, "{0}: Source image is nullptr", CLOVE_FUNCTION_NAME);
                 return;
             }
             

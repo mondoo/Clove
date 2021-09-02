@@ -36,11 +36,26 @@ namespace clove {
         ~StackAllocator();
 
         /**
-         * @returns A marker of the current stack position of the allocator.
+         * @brief Creates a marker of the current stack position of the allocator.
+         * @returns 
          */
         Marker markPosition();
 
-        void *alloc(size_t bytes);
+        /**
+         * @brief Allocates a chunk of memory of the required size and alignment.
+         * @param size 
+         * @param alignment
+         * @return Pointer to the begining of the chunk of memory
+         */
+        void *alloc(size_t size, size_t alignment);
+
+        /**
+         * @brief Allocates enough memory for a type T.
+         * @tparam T 
+         * @return 
+         */
+        template<typename T>
+        T *alloc();
 
         /**
          * @brief Free the entire allocator, effectively resetting the stack.
@@ -48,7 +63,10 @@ namespace clove {
         void free();
         /**
          * @brief Free everything allocated after the marker.
+         * @param marker
          */
         void free(Marker marker);
     };
 }
+
+#include "StackAllocator.inl"

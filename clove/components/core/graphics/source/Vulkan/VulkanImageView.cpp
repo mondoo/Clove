@@ -1,8 +1,6 @@
 #include "Clove/Graphics/Vulkan/VulkanImageView.hpp"
 
-#include "Clove/Graphics/GhaImageView.hpp"
-
-#include <Clove/Log/Log.hpp>
+#include "Clove/Graphics/Vulkan/VulkanLog.hpp"
 
 namespace clove {
     VulkanImageView::VulkanImageView(GhaImage::Format viewedFormat, vec2ui viewedDimensions, VkDevice device, VkImageView imageView)
@@ -47,7 +45,7 @@ namespace clove {
                 }
             }
             default:
-                CLOVE_ASSERT(false, "{0}: Unhandled image type");
+                CLOVE_ASSERT_MSG(false, "{0}: Unhandled image type");
                 return VK_IMAGE_VIEW_TYPE_2D;
         }
     }

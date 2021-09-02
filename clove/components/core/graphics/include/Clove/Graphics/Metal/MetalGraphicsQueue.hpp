@@ -8,30 +8,31 @@
 @class MetalView;
 
 namespace clove {
-	class MetalGraphicsQueue : public GhaGraphicsQueue {
-		//VARIABLES
-	private:
-		id<MTLCommandQueue> commandQueue;
-		
-		bool allowBufferReuse{ false };
+    class MetalGraphicsQueue : public GhaGraphicsQueue {
+        //VARIABLES
+    private:
+        CommandQueueDescriptor descriptor{};
 
-		//FUNCTIONS
-	public:
-		MetalGraphicsQueue() = delete;
-		MetalGraphicsQueue(CommandQueueDescriptor descriptor, id<MTLCommandQueue> commandQueue);
-		
-		MetalGraphicsQueue(MetalGraphicsQueue const &other) = delete;
-		MetalGraphicsQueue(MetalGraphicsQueue &&other) noexcept;
-		
-		MetalGraphicsQueue& operator=(MetalGraphicsQueue const &other) = delete;
-		MetalGraphicsQueue& operator=(MetalGraphicsQueue &&other) noexcept;
-		
-		~MetalGraphicsQueue();
+        id<MTLCommandQueue> commandQueue;
 
-		std::unique_ptr<GhaGraphicsCommandBuffer> allocateCommandBuffer() override;
-		void freeCommandBuffer(GhaGraphicsCommandBuffer &buffer) override;
+        //FUNCTIONS
+    public:
+        MetalGraphicsQueue() = delete;
+        MetalGraphicsQueue(CommandQueueDescriptor descriptor, id<MTLCommandQueue> commandQueue);
 
-		void submit(std::vector<GraphicsSubmitInfo> const &submissions, GhaFence *signalFence) override;
-	};
+        MetalGraphicsQueue(MetalGraphicsQueue const &other) = delete;
+        MetalGraphicsQueue(MetalGraphicsQueue &&other) noexcept;
+
+        MetalGraphicsQueue &operator=(MetalGraphicsQueue const &other) = delete;
+        MetalGraphicsQueue &operator=(MetalGraphicsQueue &&other) noexcept;
+
+        ~MetalGraphicsQueue();
+
+        CommandQueueDescriptor const &getDescriptor() const override;
+
+        std::unique_ptr<GhaGraphicsCommandBuffer> allocateCommandBuffer() override;
+        void freeCommandBuffer(std::unique_ptr<GhaGraphicsCommandBuffer> &buffer) override;
+
+        void submit(GraphicsSubmitInfo const &submission, GhaFence *signalFence) override;
+    };
 }
-

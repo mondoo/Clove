@@ -9,6 +9,7 @@
 #include "Clove/Graphics/Metal/MetalDescriptorSet.hpp"
 #include "Clove/Graphics/Metal/MetalDescriptorSetLayout.hpp"
 #include "Clove/Graphics/Metal/MetalPipelineObject.hpp"
+#include "Clove/Graphics/Metal/MetalLog.hpp"
 
 #include <Clove/Cast.hpp>
 
@@ -19,15 +20,13 @@ namespace clove {
                 case IndexType::Uint16:
                     return MTLIndexTypeUInt16;
                 default:
-                    CLOVE_ASSERT(false, "{0}: Unkown index type", CLOVE_FUNCTION_NAME);
+                    CLOVE_ASSERT_MSG(false, "{0}: Unkown index type", CLOVE_FUNCTION_NAME);
                     return MTLIndexTypeUInt16;
             }
         }
     }
     
-    MetalGraphicsCommandBuffer::MetalGraphicsCommandBuffer(bool allowReuse)
-        : allowReuse{ allowReuse } {
-    }
+    MetalGraphicsCommandBuffer::MetalGraphicsCommandBuffer() = default;
     
     MetalGraphicsCommandBuffer::MetalGraphicsCommandBuffer(MetalGraphicsCommandBuffer &&other) noexcept = default;
     
@@ -36,22 +35,11 @@ namespace clove {
     MetalGraphicsCommandBuffer::~MetalGraphicsCommandBuffer() = default;
     
     void MetalGraphicsCommandBuffer::beginRecording(CommandBufferUsage usageFlag) {
-        if(!allowReuse && hasBeenUsed) {
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Command buffer re-recorded to. Command buffers cannot only be recorded to more than once unless the owning queue has been created with QueueFlags::ReuseBuffers set.");
-        }
-        
-        if(!endRecordingCalled) {
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "beginRecording called before endRecording. Command buffer recording must be finished be starting again.");
-        }
-        endRecordingCalled = false;
-        
-        currentUsage = usageFlag;
-        hasBeenUsed = false;
         passes.clear();
     }
     
     void MetalGraphicsCommandBuffer::endRecording() {
-        endRecordingCalled = true;
+        //no op
     }
     
     void MetalGraphicsCommandBuffer::beginRenderPass(GhaRenderPass &renderPass, GhaFramebuffer &frameBuffer, RenderArea const &renderArea, std::span<ClearValue> clearValues) {
@@ -112,7 +100,7 @@ namespace clove {
         currentPass->commands.emplace_back([pipelineObject = &pipelineObject](id<MTLRenderCommandEncoder> encoder){
             auto const *const metalPipeline{ polyCast<MetalGraphicsPipelineObject const>(pipelineObject) };
             if(metalPipeline == nullptr){
-                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: PipelineObject is nullptr", CLOVE_FUNCTION_NAME);
+                CLOVE_LOG(CloveGhaMetal, LogLevel::Error, "{0}: PipelineObject is nullptr", CLOVE_FUNCTION_NAME);
                 return;
             }
             
@@ -142,7 +130,7 @@ namespace clove {
         currentPass->commands.emplace_back([descriptorSet = &descriptorSet, setNum](id<MTLRenderCommandEncoder> encoder){
             auto const *const metalDescriptorSet{ polyCast<MetalDescriptorSet>(descriptorSet) };
             if(metalDescriptorSet == nullptr){
-                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: DescriptorSet is nullptr", CLOVE_FUNCTION_NAME);
+                CLOVE_LOG(CloveGhaMetal, LogLevel::Error, "{0}: DescriptorSet is nullptr", CLOVE_FUNCTION_NAME);
                 return;
             }
             
@@ -208,7 +196,7 @@ namespace clove {
                                           atIndex:pushConstantSlot];
                         break;
                     default:
-                        CLOVE_ASSERT(false, "{0}: Unknown shader stage provided", CLOVE_FUNCTION_NAME_PRETTY);
+                        CLOVE_ASSERT_MSG(false, "{0}: Unknown shader stage provided", CLOVE_FUNCTION_NAME_PRETTY);
                         break;
                 }
             }

@@ -19,7 +19,7 @@ namespace clove {
                 case SoundFile::SeekPosition::End:
                     return SEEK_END;
                 default:
-                    CLOVE_ASSERT(false, "{0}: Default statement hit", CLOVE_FUNCTION_NAME);
+                    CLOVE_ASSERT_MSG(false, "{0}: Default statement hit", CLOVE_FUNCTION_NAME);
                     return 0;
             }
         }
@@ -76,7 +76,7 @@ namespace clove {
             return Format::S32;
         }
 
-        CLOVE_ASSERT(false, "{0}, Unknown file format", CLOVE_FUNCTION_NAME_PRETTY);
+        CLOVE_ASSERT_MSG(false, "{0}, Unknown file format", CLOVE_FUNCTION_NAME_PRETTY);
         return Format::Unknown;
     }
 

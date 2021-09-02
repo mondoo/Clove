@@ -64,6 +64,7 @@ set(
 		${INCLUDE}/Vulkan/VulkanImageView.hpp
 		${INCLUDE}/Vulkan/VulkanImageView.inl
 		${SOURCE}/Vulkan/VulkanImageView.cpp
+		${INCLUDE}/Vulkan/VulkanLog.hpp
 		${INCLUDE}/Vulkan/VulkanMemoryBarrier.hpp
 		${SOURCE}/Vulkan/VulkanMemoryBarrier.cpp
 		${INCLUDE}/Vulkan/VulkanPipelineObject.hpp
@@ -132,6 +133,7 @@ set(
 		${SOURCE}/Metal/MetalImage.mm
 		${INCLUDE}/Metal/MetalImageView.hpp
 		${SOURCE}/Metal/MetalImageView.mm
+		${INCLUDE}/Metal/MetalLog.hpp
 		${INCLUDE}/Metal/MetalPipelineObject.hpp
 		${SOURCE}/Metal/MetalPipelineObject.mm
 		${INCLUDE}/Metal/MetalPresentQueue.hpp
@@ -157,6 +159,19 @@ set(
 		${SOURCE}/Metal/MetalTransferQueue.mm
 		${INCLUDE}/Metal/MetalView.hpp
 		${SOURCE}/Metal/MetalView.mm
+)
+
+#Validation
+set(
+	ValidationFiles
+		${INCLUDE}/Validation/ValidationBuffer.hpp
+		${INCLUDE}/Validation/ValidationBuffer.inl
+		${INCLUDE}/Validation/ValidationCommandBuffer.hpp
+		${INCLUDE}/Validation/ValidationCommandBuffer.inl
+		${SOURCE}/Validation/ValidationCommandBuffer.cpp
+		${INCLUDE}/Validation/ValidationLog.hpp
+		${INCLUDE}/Validation/ValidationQueue.hpp
+		${INCLUDE}/Validation/ValidationQueue.inl
 )
 
 #Library
@@ -191,6 +206,8 @@ add_library(
 		${INCLUDE}/Graphics.hpp		
 		${SOURCE}/Graphics.cpp
 		${INCLUDE}/GraphicsAPI.hpp
+		${INCLUDE}/Helpers.hpp
+		${INCLUDE}/Helpers.inl
 		${INCLUDE}/MemoryBarrier.hpp
 		${INCLUDE}/PipelineObject.hpp
 		${INCLUDE}/Queue.hpp
@@ -201,6 +218,7 @@ add_library(
 		
 		${VulkanFiles}
 		${MetalFiles}
+		${ValidationFiles}
 
 		#shaderc files required to use the file includer
 		${CMAKE_CURRENT_SOURCE_DIR}/external/shaderc/glslc/file_includer.h

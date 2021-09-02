@@ -2,12 +2,12 @@
 
 #include "Clove/Graphics/Vulkan/VulkanBuffer.hpp"
 #include "Clove/Graphics/Vulkan/VulkanCommandBuffer.hpp"
-#include "Clove/Graphics/Vulkan/VulkanImage.hpp"
-#include "Clove/Graphics/Vulkan/VulkanDescriptorSet.hpp"
 #include "Clove/Graphics/Vulkan/VulkanComputePipelineObject.hpp"
+#include "Clove/Graphics/Vulkan/VulkanDescriptorSet.hpp"
+#include "Clove/Graphics/Vulkan/VulkanImage.hpp"
+#include "Clove/Graphics/Vulkan/VulkanLog.hpp"
 
 #include <Clove/Cast.hpp>
-#include <Clove/Log/Log.hpp>
 
 namespace clove {
     VulkanComputeCommandBuffer::VulkanComputeCommandBuffer(VkCommandBuffer commandBuffer, QueueFamilyIndices queueFamilyIndices)
@@ -29,13 +29,13 @@ namespace clove {
         };
 
         if(vkBeginCommandBuffer(commandBuffer, &beginInfo) != VK_SUCCESS) {
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to begin recording command buffer");
+            CLOVE_LOG(CloveGhaVulkan, LogLevel::Error, "Failed to begin recording command buffer");
         }
     }
 
     void VulkanComputeCommandBuffer::endRecording() {
         if(vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to end recording command buffer");
+            CLOVE_LOG(CloveGhaVulkan, LogLevel::Error, "Failed to end recording command buffer");
         }
     }
 

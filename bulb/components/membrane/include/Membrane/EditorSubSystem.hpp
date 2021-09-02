@@ -4,7 +4,7 @@
 #include "Membrane/Scene.hpp"
 
 #include <Clove/ECS/Entity.hpp>
-#include <Clove/Layer.hpp>
+#include <Clove/SubSystem.hpp>
 #include <Clove/Rendering/Camera.hpp>
 #include <msclr/gcroot.h>
 #include <string_view>
@@ -12,15 +12,15 @@
 
 namespace membrane {
     /**
-     * @brief The layer that controls the interaction between the editor and the engine.
+     * @brief The sub system that controls the interaction between the editor and the engine.
      * Is active while 'editing' and allows the user to build a scene
      */
-    class EditorLayer : public clove::Layer {
-        friend ref class EditorLayerMessageProxy;
+    class EditorSubSystem : public clove::SubSystem {
+        friend ref class EditorSubSystemMessageProxy;
 
         //VARIABLES
     private:
-        msclr::gcroot<EditorLayerMessageProxy ^> proxy;
+        msclr::gcroot<EditorSubSystemMessageProxy ^> proxy;
 
         Scene currentScene;
 
@@ -34,7 +34,8 @@ namespace membrane {
 
         //FUNCTIONS
     public:
-        EditorLayer();
+        EditorSubSystem();
+        ~EditorSubSystem();
 
         void onAttach() override;
         clove::InputResponse onInputEvent(clove::InputEvent const &inputEvent) override;

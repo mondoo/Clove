@@ -2,8 +2,7 @@
 
 #include "Clove/Graphics/Metal/MetalImage.hpp"
 #include "Clove/Graphics/Metal/MetalImageView.hpp"
-
-#include <Clove/Log/Log.hpp>
+#include "Clove/Graphics/Metal/MetalLog.hpp"
 
 namespace clove {
 	MetalSwapchain::MetalSwapchain(std::vector<std::unique_ptr<GhaImage>> images, std::vector<std::unique_ptr<GhaImageView>> imageViews, GhaImage::Format imageFormat, vec2ui imageSize)
@@ -27,7 +26,7 @@ namespace clove {
 		//TODO: Handle resizing;
 		
 		if(imageQueue.empty()) {
-			CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0} has no available images", CLOVE_FUNCTION_NAME_PRETTY);
+			CLOVE_LOG(CloveGhaMetal, LogLevel::Error, "{0} has no available images", CLOVE_FUNCTION_NAME_PRETTY);
 			return { -1, Result::Unkown };
 		}
 		

@@ -6,29 +6,32 @@
 #include <MetalKit/MetalKit.h>
 
 namespace clove {
-	class MetalComputeQueue : public GhaComputeQueue {
-		//VARIABLES
-	private:
-		id<MTLCommandQueue> commandQueue{ nullptr };
-		
-		bool allowBufferReuse{ false };
-		
-		//FUNCTIONS
-	public:
-		MetalComputeQueue() = delete;
-		MetalComputeQueue(CommandQueueDescriptor descriptor, id<MTLCommandQueue> commandQueue);
-		
-		MetalComputeQueue(MetalComputeQueue const &other) = delete;
-		MetalComputeQueue(MetalComputeQueue &&other) noexcept;
-		
-		MetalComputeQueue &operator=(MetalComputeQueue const &other) = delete;
-		MetalComputeQueue &operator=(MetalComputeQueue &&other) noexcept;
-		
-		~MetalComputeQueue();
+    class MetalComputeQueue : public GhaComputeQueue {
+        //VARIABLES
+    private:
+        CommandQueueDescriptor descriptor{};
+        id<MTLCommandQueue> commandQueue{ nullptr };
 
-		std::unique_ptr<GhaComputeCommandBuffer> allocateCommandBuffer() override;
-		void freeCommandBuffer(GhaComputeCommandBuffer &buffer) override;
+        bool allowBufferReuse{ false };
 
-		void submit(std::vector<ComputeSubmitInfo> const &submissions, GhaFence *signalFence) override;
-	};
+        //FUNCTIONS
+    public:
+        MetalComputeQueue() = delete;
+        MetalComputeQueue(CommandQueueDescriptor descriptor, id<MTLCommandQueue> commandQueue);
+
+        MetalComputeQueue(MetalComputeQueue const &other) = delete;
+        MetalComputeQueue(MetalComputeQueue &&other) noexcept;
+
+        MetalComputeQueue &operator=(MetalComputeQueue const &other) = delete;
+        MetalComputeQueue &operator=(MetalComputeQueue &&other) noexcept;
+
+        ~MetalComputeQueue();
+
+        CommandQueueDescriptor const &getDescriptor() const override;
+
+        std::unique_ptr<GhaComputeCommandBuffer> allocateCommandBuffer() override;
+        void freeCommandBuffer(std::unique_ptr<GhaComputeCommandBuffer> &buffer) override;
+
+        void submit(ComputeSubmitInfo const &submission, GhaFence *signalFence) override;
+    };
 }

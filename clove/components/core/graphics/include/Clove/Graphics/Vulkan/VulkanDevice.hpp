@@ -4,6 +4,8 @@
 #include "Clove/Graphics/Vulkan/DevicePointer.hpp"
 #include "Clove/Graphics/Vulkan/VulkanTypes.hpp"
 
+#include "Clove/Graphics/Vulkan/VulkanFactory.hpp"
+
 #include <any>
 #include <memory>
 
@@ -13,6 +15,12 @@ namespace clove {
 
 namespace clove {
     class VulkanDevice : public GhaDevice {
+        //TYPES
+    public:
+#if CLOVE_GHA_VALIDATION
+        using FactoryType = VulkanFactory;
+#endif
+
         //VARIABLES
     private:
         DevicePointer devicePtr;

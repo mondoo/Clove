@@ -30,18 +30,11 @@ namespace clove {
 		//Metal's drawIndexed call takes an index buffer directly so we need to cache the one provided from bindIndexBuffer
 		CachedIndexBufferData cachedIndexBuffer;
 		
-		//Validation
-		CommandBufferUsage currentUsage{ CommandBufferUsage::Default };
-		bool hasBeenUsed{ false }; /**< Will be true if this buffer has been used before being rerecorded. */
-		bool allowReuse{ false }; /**< Will be true if this can be reused (recorded to multiple times without beeing freed) */
-		bool endRecordingCalled{ true };
-		
 		//FUNCTIONS
 	public:
-		MetalGraphicsCommandBuffer() = delete;
-		MetalGraphicsCommandBuffer(bool allowReuse);
-		
-		MetalGraphicsCommandBuffer(MetalGraphicsCommandBuffer const &other) = delete;
+        MetalGraphicsCommandBuffer();
+
+        MetalGraphicsCommandBuffer(MetalGraphicsCommandBuffer const &other) = delete;
 		MetalGraphicsCommandBuffer(MetalGraphicsCommandBuffer &&other) noexcept;
 		
 		MetalGraphicsCommandBuffer& operator=(MetalGraphicsCommandBuffer const &other) = delete;
@@ -71,10 +64,6 @@ namespace clove {
 		void imageMemoryBarrier(GhaImage &image, ImageMemoryBarrierInfo const &barrierInfo, PipelineStage sourceStage, PipelineStage destinationStage) override;
 		
 		inline std::vector<RenderPass> const &getEncodedRenderPasses() const;
-		
-		inline CommandBufferUsage getCommandBufferUsage() const;
-		inline void markAsUsed();
-		inline bool bufferHasBeenUsed() const;
 	};
 }
 

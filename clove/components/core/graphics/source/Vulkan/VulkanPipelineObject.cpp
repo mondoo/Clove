@@ -24,7 +24,7 @@ namespace clove {
             case PipelineStage::ColourAttachmentOutput:
                 return VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
             default:
-                CLOVE_ASSERT(false, "{0}: Unkown pipeline stage", CLOVE_FUNCTION_NAME);
+                CLOVE_ASSERT_MSG(false, "{0}: Unkown pipeline stage", CLOVE_FUNCTION_NAME);
                 return VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
         }
     }

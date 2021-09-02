@@ -36,6 +36,8 @@ namespace clove {
 
         ~VulkanBuffer();
 
+        Descriptor const &getDescriptor() const override;
+
         void write(void const *data, size_t const offset, size_t const size) override;
 
         void read(void *data, size_t const offset, size_t const size) override;
