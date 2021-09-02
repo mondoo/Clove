@@ -3,6 +3,7 @@
 #include "Clove/Graphics/Metal/MetalBuffer.hpp"
 #include "Clove/Graphics/Metal/MetalImage.hpp"
 #include "Clove/Graphics/Metal/MetalPipelineObject.hpp"
+#include "Clove/Graphics/Metal/MetalLog.hpp"
 
 #include <Clove/Cast.hpp>
 
