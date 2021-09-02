@@ -11,6 +11,8 @@ namespace clove {
     struct RgBufferBinding {
         uint32_t slot{};
         RgResourceIdType buffer{};
+        size_t offset{};               /**< Offset into the buffer to start binding from. */
+        size_t size{};                 /**< Size of the binding within the buffer. */
         GhaShader::Stage shaderStage{};//TEMP: Manually set shader stage in place of shader reflection.
     };
 

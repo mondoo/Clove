@@ -124,6 +124,7 @@ namespace clove {
 
     ForwardRenderer3D::~ForwardRenderer3D() {
         //Wait for an idle device before implicitly destructing the render graph caches.
+        //This prevents issues when trying to destroy objects while they might still be in use.
         ghaDevice->waitForIdleDevice();
     }
 
@@ -200,24 +201,40 @@ namespace clove {
 
         framesInFlight[currentFrame]->reset();
 
+        size_t const minUboOffsetAlignment{ ghaDevice->getLimits().minUniformBufferOffsetAlignment };
+
         //Build the render graph
         RenderGraph renderGraph{ frameCaches[imageIndex], globalCache };
 
         RgResourceIdType renderTargetImage{ renderGraph.createImage(renderTarget->getImages()[imageIndex]) };
         renderGraph.registerGraphOutput(renderTargetImage);
 
-        //FINAL COLOUR
-        RgResourceIdType viewBuffer{ renderGraph.createBuffer(sizeof(currentFrameData.viewData)) };
-        RgResourceIdType lightCountBuffer{ renderGraph.createBuffer(sizeof(currentFrameData.numLights)) };
-        RgResourceIdType lightSpaceBuffer{ renderGraph.createBuffer(sizeof(currentFrameData.directionalShadowTransforms)) };
-        RgResourceIdType viewPosBuffer{ renderGraph.createBuffer(sizeof(currentFrameData.viewPosition)) };
-        RgResourceIdType lightArrayBuffer{ renderGraph.createBuffer(sizeof(currentFrameData.lights)) };
+        //View uniform buffer
+        size_t const viewDataSize{ sizeof(currentFrameData.viewData) };
+        size_t const viewPositionSize{ sizeof(currentFrameData.viewPosition) };
 
-        renderGraph.writeToBuffer(viewBuffer, &currentFrameData.viewData, 0, sizeof(currentFrameData.viewData));
-        renderGraph.writeToBuffer(lightCountBuffer, &currentFrameData.numLights, 0, sizeof(currentFrameData.numLights));
-        renderGraph.writeToBuffer(lightSpaceBuffer, &currentFrameData.directionalShadowTransforms, 0, sizeof(currentFrameData.directionalShadowTransforms));
-        renderGraph.writeToBuffer(viewPosBuffer, &currentFrameData.viewPosition, 0, sizeof(currentFrameData.viewPosition));
-        renderGraph.writeToBuffer(lightArrayBuffer, &currentFrameData.lights, 0, sizeof(currentFrameData.lights));
+        size_t const viewDataOffset{ 0 };
+        size_t const viewPositionOffset{ viewDataSize + viewDataSize % minUboOffsetAlignment };
+
+        RgResourceIdType viewUniformBuffer{ renderGraph.createBuffer(viewPositionOffset + viewPositionSize) };
+
+        renderGraph.writeToBuffer(viewUniformBuffer, &currentFrameData.viewData, viewDataOffset, viewDataSize);
+        renderGraph.writeToBuffer(viewUniformBuffer, &currentFrameData.viewPosition, viewPositionOffset, viewPositionSize);
+
+        //Lights uniform buffer
+        size_t const numLightsSize{ sizeof(currentFrameData.numLights) };
+        size_t const dirShadowTransformsSize{ sizeof(currentFrameData.directionalShadowTransforms) };
+        size_t const lightsSize{ sizeof(currentFrameData.lights) };
+
+        size_t const numLightsOffset{ 0 };
+        size_t const dirShadowTransformsOffset{ 0 };
+        size_t const lightsOffset{ 0 };
+
+        RgResourceIdType lightsUnfiromBuffer{ renderGraph.createBuffer(lightsOffset + lightsSize) };
+
+        renderGraph.writeToBuffer(lightsUnfiromBuffer, &currentFrameData.numLights, numLightsOffset, numLightsSize);
+        renderGraph.writeToBuffer(lightsUnfiromBuffer, &currentFrameData.directionalShadowTransforms, dirShadowTransformsOffset, dirShadowTransformsSize);
+        renderGraph.writeToBuffer(lightsUnfiromBuffer, &currentFrameData.lights, lightsOffset, lightsSize);
 
         //TEMP: Shadow maps
         RgResourceIdType directionalShadowMap{ renderGraph.createImage(GhaImage::Type::_2D, GhaImage::Format::D32_SFLOAT, { shadowMapSize, shadowMapSize }, MAX_LIGHTS) };
@@ -231,6 +248,7 @@ namespace clove {
             .enableAnisotropy = false,
         }) };
 
+        //FINAL COLOUR
         RgPassIdType colourPass{ renderGraph.createRenderPass(RgRenderPass::Descriptor{
             .vertexShader  = renderGraph.createShader({ mesh_v, mesh_vLength }, shaderIncludes, "Mesh (vertex)", GhaShader::Stage::Vertex),
             .pixelShader   = renderGraph.createShader({ mesh_p, mesh_pLength }, shaderIncludes, "Mesh (pixel)", GhaShader::Stage::Pixel),
@@ -255,12 +273,24 @@ namespace clove {
             auto const &mesh{ meshInfo.mesh };
             float constexpr anisotropy{ 16.0f };
 
+            //Mesh data
             RgResourceIdType vertexBuffer{ renderGraph.createBuffer(mesh->getCombinedBuffer(), mesh->getVertexOffset(), mesh->getVertexBufferSize()) };
             RgResourceIdType indexBuffer{ renderGraph.createBuffer(mesh->getCombinedBuffer(), mesh->getIndexOffset(), mesh->getIndexBufferSize()) };
 
+            //Uniform buffer
             RgResourceIdType modelBuffer{ renderGraph.createBuffer(sizeof(ModelData)) };
             RgResourceIdType colourBuffer{ renderGraph.createBuffer(sizeof(vec4f)) };
 
+            ModelData const modelData{
+                .model                 = meshInfo.transform,
+                .inverseTransposeModel = inverse(transpose(meshInfo.transform)),
+            };
+            vec4f const colourData{ meshInfo.material->getColour() };
+
+            renderGraph.writeToBuffer(modelBuffer, &modelData, 0, sizeof(modelData));
+            renderGraph.writeToBuffer(colourBuffer, &colourData, 0, sizeof(colourData));
+
+            //Textures
             RgResourceIdType diffuseTexture{ renderGraph.createImage(meshInfo.material->getDiffuseImage()) };
             RgResourceIdType specularTexture{ renderGraph.createImage(meshInfo.material->getSpecularImage()) };
             RgSampler materialSampler{ renderGraph.createSampler(GhaSampler::Descriptor{
@@ -273,15 +303,6 @@ namespace clove {
                 .maxAnisotropy    = anisotropy,
             }) };
 
-            ModelData const modelData{
-                .model                 = meshInfo.transform,
-                .inverseTransposeModel = inverse(transpose(meshInfo.transform)),
-            };
-            vec4f const colourData{ meshInfo.material->getColour() };
-
-            renderGraph.writeToBuffer(modelBuffer, &modelData, 0, sizeof(modelData));
-            renderGraph.writeToBuffer(colourBuffer, &colourData, 0, sizeof(colourData));
-
             renderGraph.addRenderSubmission(colourPass, RgRenderPass::Submission{
                                                             .vertexBuffer = vertexBuffer,
                                                             .indexBuffer  = indexBuffer,
@@ -289,36 +310,50 @@ namespace clove {
                                                                 RgBufferBinding{
                                                                     .slot        = 0,
                                                                     .buffer      = modelBuffer,
+                                                                    .offset      = 0,
+                                                                    .size        = sizeof(modelData),
                                                                     .shaderStage = GhaShader::Stage::Vertex,
                                                                 },
                                                                 RgBufferBinding{
                                                                     .slot        = 1,
-                                                                    .buffer      = viewBuffer,
+                                                                    .buffer      = viewUniformBuffer,
+                                                                    .offset      = viewDataOffset,
+                                                                    .size        = viewDataSize,
                                                                     .shaderStage = GhaShader::Stage::Vertex,
                                                                 },
                                                                 RgBufferBinding{
                                                                     .slot        = 2,
-                                                                    .buffer      = lightCountBuffer,
+                                                                    .buffer      = lightsUnfiromBuffer,
+                                                                    .offset      = numLightsOffset,
+                                                                    .size        = numLightsSize,
                                                                     .shaderStage = GhaShader::Stage::Vertex | GhaShader::Stage::Pixel,
                                                                 },
                                                                 RgBufferBinding{
                                                                     .slot        = 3,
-                                                                    .buffer      = lightSpaceBuffer,
+                                                                    .buffer      = lightsUnfiromBuffer,
+                                                                    .offset      = dirShadowTransformsOffset,
+                                                                    .size        = dirShadowTransformsSize,
                                                                     .shaderStage = GhaShader::Stage::Vertex,
                                                                 },
                                                                 RgBufferBinding{
                                                                     .slot        = 10,
-                                                                    .buffer      = viewPosBuffer,
+                                                                    .buffer      = viewUniformBuffer,
+                                                                    .offset      = viewPositionOffset,
+                                                                    .size        = viewPositionSize,
                                                                     .shaderStage = GhaShader::Stage::Pixel,
                                                                 },
                                                                 RgBufferBinding{
                                                                     .slot        = 11,
-                                                                    .buffer      = lightArrayBuffer,
+                                                                    .buffer      = lightsUnfiromBuffer,
+                                                                    .offset      = lightsOffset,
+                                                                    .size        = lightsSize,
                                                                     .shaderStage = GhaShader::Stage::Pixel,
                                                                 },
                                                                 RgBufferBinding{
                                                                     .slot        = 12,
                                                                     .buffer      = colourBuffer,
+                                                                    .offset      = 0,
+                                                                    .size        = sizeof(colourData),
                                                                     .shaderStage = GhaShader::Stage::Pixel,
                                                                 },
                                                             },

@@ -17,7 +17,7 @@ namespace clove {
          * @brief Contains information about the limits of the device used by the GHA.
          */
         struct Limits {
-            size_t minUniformBufferOffsetAlignment{ 0 }; /**< The minimum offset allowed (if greater than 0) when calling GhaDescriptorSet::map with a GhaBuffer. */
+            size_t minUniformBufferOffsetAlignment{ 0 }; /**< If multiple descriptor bindings exist in a single GhaBuffer then this is the minimum alignment that each binding needs to have within that buffer. */
         };
 
         //FUNCTIONS

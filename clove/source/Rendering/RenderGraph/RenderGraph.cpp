@@ -872,7 +872,7 @@ namespace clove {
             for(auto const &ubo : submission.shaderUbos) {
                 //TODO: Handle different allocations within the same buffer
                 std::unique_ptr<RgBuffer> const &buffer{ buffers.at(ubo.buffer) };
-                descriptorSet->map(*buffer->getGhaBuffer(frameCache), buffer->getBufferOffset(), buffer->getBufferSize(), DescriptorType::UniformBuffer, ubo.slot);
+                descriptorSet->map(*buffer->getGhaBuffer(frameCache), buffer->getBufferOffset() + ubo.offset, ubo.size, DescriptorType::UniformBuffer, ubo.slot);
             }
             for(auto const &image : submission.shaderImages) {
                 descriptorSet->map(*images.at(image.image)->createGhaImageView(frameCache, image.arrayIndex, image.arrayCount), GhaImage::Layout::ShaderReadOnlyOptimal, image.slot);

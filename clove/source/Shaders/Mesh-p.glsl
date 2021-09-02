@@ -146,7 +146,7 @@ void main(){
 #if 0
 	const vec3 lighting = (totalAmbient + ((1.0f - shadow) * (totalDiffuse + totalSpecular)));
 #else
-	const vec3 lighting = vec3(1.0f);
+	const vec3 lighting = diffuseColour;
 #endif
 
 	outColour = vec4(lighting, 1.0f) * colour;
