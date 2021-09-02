@@ -55,7 +55,7 @@ namespace clove {
 		commands.emplace_back([source = &source, sourceOffset, destination = &destination, destinationOffset, destinationExtent](id<MTLBlitCommandEncoder> encoder){
 			auto const *const metalImage{ polyCast<MetalImage>(destination) };
             if(metalImage == nullptr){
-                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: Source image is nullptr", CLOVE_FUNCTION_NAME);
+                CLOVE_LOG(CloveGhaMetal, LogLevel::Error, "{0}: Source image is nullptr", CLOVE_FUNCTION_NAME);
                 return;
             }
             
@@ -77,7 +77,7 @@ namespace clove {
 		commands.emplace_back([source = &source, sourceOffset, sourceExtent, destination = &destination, destinationOffset](id<MTLBlitCommandEncoder> encoder){
 			auto const *const metalImage{ polyCast<MetalImage>(source) };
             if(metalImage == nullptr){
-                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: Source image is nullptr", CLOVE_FUNCTION_NAME);
+                CLOVE_LOG(CloveGhaMetal, LogLevel::Error, "{0}: Source image is nullptr", CLOVE_FUNCTION_NAME);
                 return;
             }
             
