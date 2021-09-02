@@ -26,18 +26,18 @@ namespace clove {
         descriptorPoolPool.reset();
         semaphorePool.reset();
 
-        for(auto const &commandBuffer : allocatedGraphicsCommandBuffers) {
-            graphicsQueue->freeCommandBuffer(*commandBuffer);
+        for(auto &commandBuffer : allocatedGraphicsCommandBuffers) {
+            graphicsQueue->freeCommandBuffer(commandBuffer);
         }
         allocatedGraphicsCommandBuffers.clear();
 
-        for(auto const &commandBuffer : allocatedComputeCommandBuffers) {
-            computeQueue->freeCommandBuffer(*commandBuffer);
+        for(auto &commandBuffer : allocatedComputeCommandBuffers) {
+            computeQueue->freeCommandBuffer(commandBuffer);
         }
         allocatedComputeCommandBuffers.clear();
 
-        for(auto const &commandBuffer : allocatedTransferCommandBuffers) {
-            transferQueue->freeCommandBuffer(*commandBuffer);
+        for(auto &commandBuffer : allocatedTransferCommandBuffers) {
+            transferQueue->freeCommandBuffer(commandBuffer);
         }
         allocatedTransferCommandBuffers.clear();
     }
