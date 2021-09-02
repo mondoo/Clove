@@ -92,13 +92,13 @@ namespace clove::serialiser {
 namespace clove {
     template<typename UnkownType>
     serialiser::Node serialise(UnkownType const &object) {
-        CLOVE_ASSERT(false, "No template specialisation provided");
+        CLOVE_ASSERT_MSG(false, "No template specialisation provided");
         return {};
     }
 
     template<typename UnkownType>
     UnkownType deserialise(serialiser::Node const &node) {
-        CLOVE_ASSERT(false, "No template specialisation provided");
+        CLOVE_ASSERT_MSG(false, "No template specialisation provided");
         return {};
     }
 }

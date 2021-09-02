@@ -19,7 +19,7 @@ namespace clove {
                 case IndexType::Uint16:
                     return VK_INDEX_TYPE_UINT16;
                 default:
-                    CLOVE_ASSERT(false, "{0}: Unkown index type", CLOVE_FUNCTION_NAME);
+                    CLOVE_ASSERT_MSG(false, "{0}: Unkown index type", CLOVE_FUNCTION_NAME);
                     return VK_INDEX_TYPE_UINT16;
             }
         }

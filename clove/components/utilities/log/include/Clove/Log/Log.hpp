@@ -56,17 +56,28 @@ namespace clove {
 #define CLOVE_LOG(category, level, ...) ::clove::Logger::get().log(CLOVE_EXPAND_CATEGORY(category)::name, level, __VA_ARGS__);
 
 #if CLOVE_ENABLE_ASSERTIONS
-    CLOVE_DECLARE_LOG_CATEGORY(CloveAssert)
-    
-    #define CLOVE_ASSERT(x, ...)                                                                     \
-        {                                                                                            \
-            if(!(x)) {                                                                               \
-                CLOVE_LOG(CloveAssert, ::clove::LogLevel::Critical, "Assertion Failed: {0}", __VA_ARGS__); \
-                CLOVE_DEBUG_BREAK;                                                                   \
-            }                                                                                        \
+CLOVE_DECLARE_LOG_CATEGORY(CloveAssert)
+
+    #define CLOVE_ASSERT(x)                                                                                                  \
+        {                                                                                                                    \
+            if(!(x)) {                                                                                                       \
+                CLOVE_LOG(CloveAssert, ::clove::LogLevel::Critical, "Assertion failed: {0}", #x);                            \
+                CLOVE_LOG(CloveAssert, ::clove::LogLevel::Critical, "Assertion function:\n{0}", CLOVE_FUNCTION_NAME_PRETTY); \
+                CLOVE_DEBUG_BREAK;                                                                                           \
+            }                                                                                                                \
+        }
+
+    #define CLOVE_ASSERT_MSG(x, ...)                                                                    \
+        {                                                                                               \
+            if(!(x)) {                                                                                  \
+                CLOVE_LOG(CloveAssert, ::clove::LogLevel::Critical, "Assertion failed: {0}", #x);       \
+                CLOVE_LOG(CloveAssert, ::clove::LogLevel::Critical, "Assertion message: " __VA_ARGS__); \
+                CLOVE_DEBUG_BREAK;                                                                      \
+            }                                                                                           \
         }
 #else
-    #define CLOVE_ASSERT(x, ...)
+    #define CLOVE_ASSERT(x)
+    #define CLOVE_ASSERT_MSG(x, ...)
 #endif
 
 #include "Log.inl"

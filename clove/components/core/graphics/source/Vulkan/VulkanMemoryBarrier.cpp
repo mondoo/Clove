@@ -16,7 +16,7 @@ namespace clove {
             case QueueType::Compute:
                 return *indices.computeFamily;
             default:
-                CLOVE_ASSERT(false, "{0}: Unkown queue type", CLOVE_FUNCTION_NAME);
+                CLOVE_ASSERT_MSG(false, "{0}: Unkown queue type", CLOVE_FUNCTION_NAME);
                 return VK_QUEUE_FAMILY_IGNORED;
         }
     }

@@ -304,7 +304,7 @@ namespace clove {
                 return;
             }
 #elif CLOVE_PLATFORM_MACOS
-            CLOVE_ASSERT(false, "Vulkan implementation not provided on MacOS");
+            CLOVE_ASSERT_MSG(false, "Vulkan implementation not provided on MacOS");
 #elif CLOVE_PLATFORM_LINUX
             auto const [display, window] = std::any_cast<std::pair<Display *, ::Window>>(nativeWindow);
 

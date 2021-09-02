@@ -41,7 +41,7 @@ namespace clove {
 
     template<typename AssetType>
     AssetType &AssetPtr<AssetType>::get() {
-        CLOVE_ASSERT(isValid(), "{0}: AssetPtr requires a valid path before it can load");
+        CLOVE_ASSERT_MSG(isValid(), "{0}: AssetPtr requires a valid path before it can load");
 
         if(!isLoaded()) {
             *asset = loadFunction();
@@ -52,7 +52,7 @@ namespace clove {
 
     template<typename AssetType>
     AssetType const &AssetPtr<AssetType>::get() const {
-        CLOVE_ASSERT(isValid(), "{0}: AssetPtr requires a valid path before it can load");
+        CLOVE_ASSERT_MSG(isValid(), "{0}: AssetPtr requires a valid path before it can load");
 
         if(!isLoaded()) {
             *asset = loadFunction();

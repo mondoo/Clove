@@ -15,7 +15,7 @@ namespace clove {
 			case PipelineStage::ColourAttachmentOutput:
 				return MTLRenderStageFragment;
 			default:
-				CLOVE_ASSERT(false, "{0}: Provided stage does not convert properly", CLOVE_FUNCTION_NAME_PRETTY);
+				CLOVE_ASSERT_MSG(false, "{0}: Provided stage does not convert properly", CLOVE_FUNCTION_NAME_PRETTY);
 				return MTLRenderStageFragment;
 		}
 	}

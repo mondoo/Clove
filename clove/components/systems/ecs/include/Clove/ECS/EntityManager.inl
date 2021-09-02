@@ -7,13 +7,13 @@ namespace clove {
 
     template<typename ComponentType, typename... ConstructArgs>
     ComponentType &EntityManager::addComponent(Entity entity, ConstructArgs &&... args) {
-        CLOVE_ASSERT(isValid(entity), "{0}: Invalid entity provided", CLOVE_FUNCTION_NAME_PRETTY);
+        CLOVE_ASSERT_MSG(isValid(entity), "{0}: Invalid entity provided", CLOVE_FUNCTION_NAME_PRETTY);
         return componentManager.addComponent<ComponentType>(entity, std::forward<ConstructArgs>(args)...);
     }
 
     template<typename ComponentType>
     ComponentType &EntityManager::getComponent(Entity entity) {
-        CLOVE_ASSERT(isValid(entity), "{0}: Invalid entity provided", CLOVE_FUNCTION_NAME_PRETTY);
+        CLOVE_ASSERT_MSG(isValid(entity), "{0}: Invalid entity provided", CLOVE_FUNCTION_NAME_PRETTY);
         return componentManager.getComponent<ComponentType>(entity);
     }
 

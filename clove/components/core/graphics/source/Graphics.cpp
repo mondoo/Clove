@@ -33,7 +33,7 @@ namespace clove {
                 return std::make_unique<VulkanDevice>(std::move(nativeWindow));
 #endif
             default:
-                CLOVE_ASSERT("Default statement hit. Could not initialise RenderAPI: {0}", CLOVE_FUNCTION_NAME);
+                CLOVE_ASSERT_MSG(false, "Default statement hit. Could not initialise RenderAPI: {0}", CLOVE_FUNCTION_NAME);
                 return nullptr;
         }
     }

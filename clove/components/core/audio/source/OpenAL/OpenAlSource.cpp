@@ -58,7 +58,7 @@ namespace clove {
         {
             const uint32_t maxAbleToUnQueue{ getNumBuffersProcessed() };
 #if CLOVE_AHA_VALIDATION
-            CLOVE_ASSERT(numToUnqueue <= maxAbleToUnQueue, "{0}: Can't unqueue {1} buffers. Only {2} buffers have been processed", CLOVE_FUNCTION_NAME_PRETTY, numToUnqueue, maxAbleToUnQueue);
+            CLOVE_ASSERT_MSG(numToUnqueue <= maxAbleToUnQueue, "{0}: Can't unqueue {1} buffers. Only {2} buffers have been processed", CLOVE_FUNCTION_NAME_PRETTY, numToUnqueue, maxAbleToUnQueue);
 #else
             CLOVE_LOG(CloveAhaOpenAl, LogLevel::Warning, "{0}: {1} buffers attempted to unqueue but only {2} are avaiable. Clamping to {2}", CLOVE_FUNCTION_NAME_PRETTY, numToUnqueue, maxAbleToUnQueue);
             numToUnqueue = maxAbleToUnQueue;

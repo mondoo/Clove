@@ -61,7 +61,7 @@ namespace clove {
 
     template<typename ComponentType>
     ComponentType &ComponentContainer<ComponentType>::getComponent(Entity entity) {
-        CLOVE_ASSERT(hasComponent(entity), "{0}: Entity does not have component", CLOVE_FUNCTION_NAME_PRETTY);
+        CLOVE_ASSERT_MSG(hasComponent(entity), "{0}: Entity does not have component", CLOVE_FUNCTION_NAME_PRETTY);
         return components[entityToIndex[entity]];
     }
 

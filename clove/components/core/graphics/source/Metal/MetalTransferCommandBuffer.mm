@@ -19,7 +19,7 @@ namespace clove {
 					return 4;
 				case GhaImage::Format::Unkown:
 				default:
-					CLOVE_ASSERT(false, "Unknown format type");
+					CLOVE_ASSERT_MSG(false, "Unknown format type");
 					return 0;
 			}
 		}

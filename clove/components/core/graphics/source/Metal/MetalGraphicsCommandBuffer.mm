@@ -20,7 +20,7 @@ namespace clove {
                 case IndexType::Uint16:
                     return MTLIndexTypeUInt16;
                 default:
-                    CLOVE_ASSERT(false, "{0}: Unkown index type", CLOVE_FUNCTION_NAME);
+                    CLOVE_ASSERT_MSG(false, "{0}: Unkown index type", CLOVE_FUNCTION_NAME);
                     return MTLIndexTypeUInt16;
             }
         }
@@ -196,7 +196,7 @@ namespace clove {
                                           atIndex:pushConstantSlot];
                         break;
                     default:
-                        CLOVE_ASSERT(false, "{0}: Unknown shader stage provided", CLOVE_FUNCTION_NAME_PRETTY);
+                        CLOVE_ASSERT_MSG(false, "{0}: Unknown shader stage provided", CLOVE_FUNCTION_NAME_PRETTY);
                         break;
                 }
             }

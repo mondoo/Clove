@@ -24,7 +24,7 @@ namespace clove {
 
         Font::FacePtr copyFace(FT_Face face) {
             if(FT_Reference_Face(face) != FT_Err_Ok) {
-                CLOVE_ASSERT(false, "Could not reference face");
+                CLOVE_ASSERT_MSG(false, "Could not reference face");
             }
             return makeUniqueFace(face);
         }
@@ -38,7 +38,7 @@ namespace clove {
         if(ftLib.use_count() == 0) {
             FT_Library library{ nullptr };
             if(FT_Init_FreeType(&library) != FT_Err_Ok) {
-                CLOVE_ASSERT(false, "Could not load freetype");
+                CLOVE_ASSERT_MSG(false, "Could not load freetype");
             } else {
                 CLOVE_LOG(FreeType, LogLevel::Trace, "Constructed FreeType library");
             }
@@ -134,7 +134,7 @@ namespace clove {
     Font::FacePtr Font::createFace(std::string const &filePath) {
         FT_Face face{ nullptr };
         if(FT_New_Face(ftLibReference.get(), filePath.c_str(), 0, &face) != FT_Err_Ok) {
-            CLOVE_ASSERT(false, "Could not load font");
+            CLOVE_ASSERT_MSG(false, "Could not load font");
         }
 
         return makeUniqueFace(face);
@@ -143,7 +143,7 @@ namespace clove {
     Font::FacePtr Font::createFace(std::span<std::byte const> bytes) {
         FT_Face face{ nullptr };
         if(FT_New_Memory_Face(ftLibReference.get(), reinterpret_cast<unsigned char const *>(bytes.data()), static_cast<FT_Long>(bytes.size_bytes()), 0, &face) != FT_Err_Ok) {
-            CLOVE_ASSERT(false, "Could not load font");
+            CLOVE_ASSERT_MSG(false, "Could not load font");
         }
 
         return makeUniqueFace(face);

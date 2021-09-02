@@ -77,7 +77,7 @@ namespace clove::ShaderCompiler {
                 case GhaShader::Stage::Compute:
                     return shaderc_compute_shader;
                 default:
-                    CLOVE_ASSERT(false, "Unsupported shader stage {0}", CLOVE_FUNCTION_NAME);
+                    CLOVE_ASSERT_MSG(false, "Unsupported shader stage {0}", CLOVE_FUNCTION_NAME);
                     return shaderc_vertex_shader;
             }
         }
