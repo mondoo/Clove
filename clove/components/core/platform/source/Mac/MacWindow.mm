@@ -2,6 +2,8 @@
 
 #include <Clove/Log/Log.hpp>
 
+CLOVE_DECLARE_LOG_CATEGORY(ClovePlatformMacOS)
+
 @implementation MacWindowProxy
 - (void)windowWillClose:(NSNotification *)notification {
     _cloveWindow->close();
@@ -17,6 +19,8 @@
 namespace clove{
     MacWindow::MacWindow(Descriptor const &descriptor)
         : Window(keyboardDispatcher, mouseDispatcher) {
+        CLOVE_LOG(ClovePlatformMacOS, LogLevel::Trace, "Creating window: {0} ({1}, {2})", descriptor.title, descriptor.width, descriptor.height);
+
         //Application specific init
         [NSApplication sharedApplication];
         [NSApp finishLaunching];
@@ -27,7 +31,7 @@ namespace clove{
         //Window specific init
         NSString *nameString = [NSString stringWithCString:descriptor.title.c_str() encoding:[NSString defaultCStringEncoding]];
         if(nameString == nullptr) {
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Critical, "nameString returned nullptr. Aborting");
+            CLOVE_LOG(ClovePlatformMacOS, LogLevel::Critical, "nameString returned nullptr. Aborting");
             abort();
         }
         
@@ -49,6 +53,8 @@ namespace clove{
         windowProxy.cloveWindow = this;
         
         open = true;
+
+        CLOVE_LOG(ClovePlatformMacOS, LogLevel::Trace, "Window created");
     }
     
     MacWindow::~MacWindow() = default;

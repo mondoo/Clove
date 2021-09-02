@@ -23,7 +23,7 @@ namespace clove {
                         return MTLTextureTypeCube;
                     }
                 default:
-                    CLOVE_ASSERT(false, "{0}: Unkown type passed", CLOVE_FUNCTION_NAME_PRETTY);
+                    CLOVE_ASSERT_MSG(false, "{0}: Unkown type passed", CLOVE_FUNCTION_NAME_PRETTY);
                     return MTLTextureType2D;
             }
         }
@@ -77,7 +77,7 @@ namespace clove {
             case Format::D32_SFLOAT:
                 return MTLPixelFormatDepth32Float;
             default:
-                CLOVE_ASSERT(false, "{0}: Unkown format", CLOVE_FUNCTION_NAME);
+                CLOVE_ASSERT_MSG(false, "{0}: Unkown format", CLOVE_FUNCTION_NAME);
                 return MTLPixelFormatInvalid;
         }
     }
@@ -97,7 +97,7 @@ namespace clove {
             case MTLPixelFormatDepth32Float:
                 return Format::D32_SFLOAT;
             default:
-                CLOVE_ASSERT(false, "{0}: Unkown format", CLOVE_FUNCTION_NAME);
+                CLOVE_ASSERT_MSG(false, "{0}: Unkown format", CLOVE_FUNCTION_NAME);
                 return Format::Unkown;
         }
     }

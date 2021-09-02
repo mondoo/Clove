@@ -75,7 +75,7 @@ namespace clove {
     }
 
     GhaBuffer *GraphicsImageRenderTarget::getNextReadyBuffer() {
-        CLOVE_ASSERT(!requiresResize, "Cannot get next ready buffer while a resize is pending");
+        CLOVE_ASSERT_MSG(!requiresResize, "Cannot get next ready buffer while a resize is pending");
 
         //Stall until we are ready to return the image.
         frameInFlight->wait();

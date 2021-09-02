@@ -1,6 +1,7 @@
 #include "Clove/Memory/ListAllocator.hpp"
 
-#include <Clove/Log/Log.hpp>
+#include "Clove/Memory/MemoryLog.hpp"
+
 #include <cstdlib>
 
 namespace clove {
@@ -67,7 +68,7 @@ namespace clove {
             }
         }
 
-        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: Not enough space left to allocate {1} bytes.", CLOVE_FUNCTION_NAME_PRETTY, totalAllocationSize);
+        CLOVE_LOG(CloveMemory, LogLevel::Error, "{0}: Not enough space left to allocate {1} bytes.", CLOVE_FUNCTION_NAME_PRETTY, totalAllocationSize);
         return nullptr;
     }
 

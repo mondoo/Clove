@@ -10,12 +10,12 @@
 #include "Clove/Rendering/RenderTarget.hpp"
 #include "Clove/Rendering/Renderables/Mesh.hpp"
 #include "Clove/Rendering/RenderingHelpers.hpp"
+#include "Clove/Rendering/RenderingLog.hpp"
 #include "Clove/Rendering/Vertex.hpp"
 
 #include <Clove/Graphics/GhaDescriptorSet.hpp>
 #include <Clove/Graphics/GhaImageView.hpp>
 #include <Clove/Graphics/Graphics.hpp>
-#include <Clove/Log/Log.hpp>
 #include <Clove/Platform/Window.hpp>
 
 extern "C" const char constants[];
@@ -93,9 +93,9 @@ namespace clove {
         createRenderTargetResources();
 
         //Create semaphores for frame synchronisation
-		for(auto &skinningFinishedSemaphore : skinningFinishedSemaphores) {
-			skinningFinishedSemaphore = *ghaFactory->createSemaphore();
-		}
+        for(auto &skinningFinishedSemaphore : skinningFinishedSemaphores) {
+            skinningFinishedSemaphore = *ghaFactory->createSemaphore();
+        }
 
         std::vector<Vertex> const uiVertices{
             Vertex{
@@ -196,7 +196,7 @@ namespace clove {
         //Aquire the next available image from the render target
         Expected<uint32_t, std::string> const result{ renderTarget->aquireNextImage(currentFrame) };
         if(!result.hasValue()) {
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Debug, result.getError());
+            CLOVE_LOG(CloveRendering, LogLevel::Debug, result.getError());
             return;
         }
 
@@ -616,7 +616,7 @@ namespace clove {
             imageData.lightingDescriptorSet->map(*imageData.frameDataBuffer, offsetof(FrameData::BufferData, directionalShadowTransforms), sizeof(currentFrameData.bufferData.directionalShadowTransforms), DescriptorType::UniformBuffer, 2);
             imageData.lightingDescriptorSet->map(*imageData.shadowMapViews, GhaImage::Layout::ShaderReadOnlyOptimal, 3);
             imageData.lightingDescriptorSet->map(*imageData.cubeShadowMapViews, GhaImage::Layout::ShaderReadOnlyOptimal, 4);
-            imageData.lightingDescriptorSet->map(*shadowSampler, 5); //NOLINT
+            imageData.lightingDescriptorSet->map(*shadowSampler, 5);//NOLINT
         }
     }
 

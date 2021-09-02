@@ -14,7 +14,7 @@ namespace clove {
             case DescriptorType::Sampler:
                 return VK_DESCRIPTOR_TYPE_SAMPLER;
             default:
-                CLOVE_ASSERT(false, "{0}: Unkown type", CLOVE_FUNCTION_NAME);
+                CLOVE_ASSERT_MSG(false, "{0}: Unkown type", CLOVE_FUNCTION_NAME);
                 return VK_DESCRIPTOR_TYPE_MAX_ENUM;
         }
     }

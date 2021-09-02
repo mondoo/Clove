@@ -6,6 +6,7 @@
 #include "Clove/Graphics/Vulkan/VulkanFramebuffer.hpp"
 #include "Clove/Graphics/Vulkan/VulkanGraphicsPipelineObject.hpp"
 #include "Clove/Graphics/Vulkan/VulkanImage.hpp"
+#include "Clove/Graphics/Vulkan/VulkanLog.hpp"
 #include "Clove/Graphics/Vulkan/VulkanRenderPass.hpp"
 #include "Clove/Graphics/Vulkan/VulkanShader.hpp"
 
@@ -18,7 +19,7 @@ namespace clove {
                 case IndexType::Uint16:
                     return VK_INDEX_TYPE_UINT16;
                 default:
-                    CLOVE_ASSERT(false, "{0}: Unkown index type", CLOVE_FUNCTION_NAME);
+                    CLOVE_ASSERT_MSG(false, "{0}: Unkown index type", CLOVE_FUNCTION_NAME);
                     return VK_INDEX_TYPE_UINT16;
             }
         }
@@ -48,13 +49,13 @@ namespace clove {
         };
 
         if(vkBeginCommandBuffer(commandBuffer, &beginInfo) != VK_SUCCESS) {
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to begin recording command buffer");
+            CLOVE_LOG(CloveGhaVulkan, LogLevel::Error, "Failed to begin recording command buffer");
         }
     }
 
     void VulkanGraphicsCommandBuffer::endRecording() {
         if(vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "Failed to end recording command buffer");
+            CLOVE_LOG(CloveGhaVulkan, LogLevel::Error, "Failed to end recording command buffer");
         }
     }
 

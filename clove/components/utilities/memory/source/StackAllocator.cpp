@@ -1,7 +1,8 @@
 #include "Clove/Memory/StackAllocator.hpp"
 
+#include "Clove/Memory/MemoryLog.hpp"
+
 #include <Clove/Definitions.hpp>
-#include <Clove/Log/Log.hpp>
 #include <cstdlib>
 
 namespace clove {
@@ -36,7 +37,7 @@ namespace clove {
         size_t const totalAllocationSize{ size + alignment };
 
         if((top - stack) + totalAllocationSize > stackSize) {
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: Not enough space left to allocate {1} bytes.", CLOVE_FUNCTION_NAME_PRETTY, totalAllocationSize);
+            CLOVE_LOG(CloveMemory, LogLevel::Error, "{0}: Not enough space left to allocate {1} bytes.", CLOVE_FUNCTION_NAME_PRETTY, totalAllocationSize);
             return nullptr;
         }
 

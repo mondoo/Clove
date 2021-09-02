@@ -9,6 +9,7 @@
 #include "Clove/Graphics/Metal/MetalDescriptorSet.hpp"
 #include "Clove/Graphics/Metal/MetalDescriptorSetLayout.hpp"
 #include "Clove/Graphics/Metal/MetalPipelineObject.hpp"
+#include "Clove/Graphics/Metal/MetalLog.hpp"
 
 #include <Clove/Cast.hpp>
 
@@ -19,7 +20,7 @@ namespace clove {
                 case IndexType::Uint16:
                     return MTLIndexTypeUInt16;
                 default:
-                    CLOVE_ASSERT(false, "{0}: Unkown index type", CLOVE_FUNCTION_NAME);
+                    CLOVE_ASSERT_MSG(false, "{0}: Unkown index type", CLOVE_FUNCTION_NAME);
                     return MTLIndexTypeUInt16;
             }
         }
@@ -99,7 +100,7 @@ namespace clove {
         currentPass->commands.emplace_back([pipelineObject = &pipelineObject](id<MTLRenderCommandEncoder> encoder){
             auto const *const metalPipeline{ polyCast<MetalGraphicsPipelineObject const>(pipelineObject) };
             if(metalPipeline == nullptr){
-                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: PipelineObject is nullptr", CLOVE_FUNCTION_NAME);
+                CLOVE_LOG(CloveGhaMetal, LogLevel::Error, "{0}: PipelineObject is nullptr", CLOVE_FUNCTION_NAME);
                 return;
             }
             
@@ -129,7 +130,7 @@ namespace clove {
         currentPass->commands.emplace_back([descriptorSet = &descriptorSet, setNum](id<MTLRenderCommandEncoder> encoder){
             auto const *const metalDescriptorSet{ polyCast<MetalDescriptorSet>(descriptorSet) };
             if(metalDescriptorSet == nullptr){
-                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Error, "{0}: DescriptorSet is nullptr", CLOVE_FUNCTION_NAME);
+                CLOVE_LOG(CloveGhaMetal, LogLevel::Error, "{0}: DescriptorSet is nullptr", CLOVE_FUNCTION_NAME);
                 return;
             }
             
@@ -195,7 +196,7 @@ namespace clove {
                                           atIndex:pushConstantSlot];
                         break;
                     default:
-                        CLOVE_ASSERT(false, "{0}: Unknown shader stage provided", CLOVE_FUNCTION_NAME_PRETTY);
+                        CLOVE_ASSERT_MSG(false, "{0}: Unknown shader stage provided", CLOVE_FUNCTION_NAME_PRETTY);
                         break;
                 }
             }

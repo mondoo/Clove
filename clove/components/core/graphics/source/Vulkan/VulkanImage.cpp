@@ -28,7 +28,7 @@ namespace clove {
                     }
                 }
                 default:
-                    CLOVE_ASSERT(false, "{0}: Unhandled image type");
+                    CLOVE_ASSERT_MSG(false, "{0}: Unhandled image type");
                     return VK_IMAGE_VIEW_TYPE_2D;
             }
         }
@@ -78,7 +78,7 @@ namespace clove {
             case VK_FORMAT_D32_SFLOAT:
                 return Format::D32_SFLOAT;
             default:
-                CLOVE_ASSERT(false, "{0}: Format not supported by garlic", CLOVE_FUNCTION_NAME);
+                CLOVE_ASSERT_MSG(false, "{0}: Format not supported by garlic", CLOVE_FUNCTION_NAME);
                 return Format::Unkown;
         }
     }
@@ -98,7 +98,7 @@ namespace clove {
             case Format::D32_SFLOAT:
                 return VK_FORMAT_D32_SFLOAT;
             default:
-                CLOVE_ASSERT(false, "{0}: Unkown format", CLOVE_FUNCTION_NAME);
+                CLOVE_ASSERT_MSG(false, "{0}: Unkown format", CLOVE_FUNCTION_NAME);
                 return VK_FORMAT_UNDEFINED;
         }
     }
@@ -124,7 +124,7 @@ namespace clove {
             case Layout::DepthStencilReadOnlyOptimal:
                 return VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
             default:
-                CLOVE_ASSERT(false, "{0}: Unkown image layout", CLOVE_FUNCTION_NAME);
+                CLOVE_ASSERT_MSG(false, "{0}: Unkown image layout", CLOVE_FUNCTION_NAME);
                 return VK_IMAGE_LAYOUT_UNDEFINED;
         }
     }

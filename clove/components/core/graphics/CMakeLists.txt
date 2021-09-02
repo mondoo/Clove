@@ -64,6 +64,7 @@ set(
 		${INCLUDE}/Vulkan/VulkanImageView.hpp
 		${INCLUDE}/Vulkan/VulkanImageView.inl
 		${SOURCE}/Vulkan/VulkanImageView.cpp
+		${INCLUDE}/Vulkan/VulkanLog.hpp
 		${INCLUDE}/Vulkan/VulkanMemoryBarrier.hpp
 		${SOURCE}/Vulkan/VulkanMemoryBarrier.cpp
 		${INCLUDE}/Vulkan/VulkanPipelineObject.hpp
@@ -132,6 +133,7 @@ set(
 		${SOURCE}/Metal/MetalImage.mm
 		${INCLUDE}/Metal/MetalImageView.hpp
 		${SOURCE}/Metal/MetalImageView.mm
+		${INCLUDE}/Metal/MetalLog.hpp
 		${INCLUDE}/Metal/MetalPipelineObject.hpp
 		${SOURCE}/Metal/MetalPipelineObject.mm
 		${INCLUDE}/Metal/MetalPresentQueue.hpp

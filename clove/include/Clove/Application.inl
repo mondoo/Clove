@@ -1,5 +1,7 @@
 #include <Clove/Log/Log.hpp>
 
+CLOVE_DECLARE_LOG_CATEGORY(CloveApp)
+
 namespace clove {
     template<typename SubSystemType, typename... Args>
     void Application::pushSubSystem(Args &&...args) {
@@ -11,11 +13,11 @@ namespace clove {
         static_assert(std::is_base_of_v<SubSystem, SubSystemType>, "SubSystem provided is not derived from SubSystem.");
 
         std::type_index const subSystemIndex{ typeid(SubSystemType) };
-        CLOVE_ASSERT(subSystemToIndex.find(subSystemIndex) == subSystemToIndex.end(), "Only one subsystem can be active at a time.");
+        CLOVE_ASSERT_MSG(subSystemToIndex.find(subSystemIndex) == subSystemToIndex.end(), "Only one subsystem can be active at a time.");
 
         auto subSystem{ std::make_unique<SubSystemType>(std::forward<Args>(args)...) };
 
-        CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Trace, "Attached sub system: {0}", subSystem->getName());
+        CLOVE_LOG(CloveApp, LogLevel::Trace, "Attached sub system: {0}", subSystem->getName());
 
         subSystem->onAttach();
         subSystems[group].push_back(std::move(subSystem));
@@ -27,7 +29,7 @@ namespace clove {
     SubSystemType &Application::getSubSystem() {
         std::type_index const subSystemIndex{ typeid(SubSystemType) };
 
-        CLOVE_ASSERT(subSystemToIndex.find(subSystemIndex) != subSystemToIndex.end(), "{0}: No subsystem of type provided is currently attached.", CLOVE_FUNCTION_NAME_PRETTY);
+        CLOVE_ASSERT_MSG(subSystemToIndex.find(subSystemIndex) != subSystemToIndex.end(), "{0}: No subsystem of type provided is currently attached.", CLOVE_FUNCTION_NAME_PRETTY);
 
         auto &&[group, index] = subSystemToIndex.at(subSystemIndex);
         return *static_cast<SubSystemType *>(subSystems[group][index].get());
@@ -38,7 +40,7 @@ namespace clove {
         std::type_index const subSystemIndex{ typeid(SubSystemType) };
 
         if(subSystemToIndex.find(subSystemIndex) == subSystemToIndex.end()) {
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Warning, "{0}: No subsystem of type provided is currently attached.", CLOVE_FUNCTION_NAME_PRETTY);
+            CLOVE_LOG(CloveApp, LogLevel::Warning, "{0}: No subsystem of type provided is currently attached.", CLOVE_FUNCTION_NAME_PRETTY);
             return;
         }
 

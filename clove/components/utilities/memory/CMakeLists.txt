@@ -5,8 +5,9 @@ set(SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/source)
 add_library(
 	CloveMemory STATIC
 		${INCLUDE}/AllocatorStrategy.hpp
-        ${INCLUDE}/ListAllocator.hpp
-        ${INCLUDE}/ListAllocator.inl
+		${INCLUDE}/ListAllocator.hpp
+		${INCLUDE}/ListAllocator.inl
+		${INCLUDE}/MemoryLog.hpp
 		${SOURCE}/ListAllocator.cpp
 		${INCLUDE}/PoolAllocator.hpp
 		${INCLUDE}/PoolAllocator.inl

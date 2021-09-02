@@ -113,7 +113,7 @@ namespace clove {
         , audioDevice{ std::move(audioDevice) }
         , surface{ std::move(surface) }
         , assetManager{ &fileSystem } {
-        CLOVE_ASSERT(instance == nullptr, "Only one Application can be active");
+        CLOVE_ASSERT_MSG(instance == nullptr, "Only one Application can be active");
         instance = this;
 
         prevFrameTime = std::chrono::system_clock::now();

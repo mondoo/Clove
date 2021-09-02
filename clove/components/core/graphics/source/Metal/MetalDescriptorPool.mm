@@ -2,6 +2,7 @@
 
 #include "Clove/Graphics/Metal/MetalDescriptorSet.hpp"
 #include "Clove/Graphics/Metal/MetalDescriptorSetLayout.hpp"
+#include "Clove/Graphics/Metal/MetalLog.hpp"
 
 #include <Clove/Cast.hpp>
 
@@ -124,7 +125,7 @@ namespace clove {
         for(auto const &descriptorSet : descriptorSets) {
             auto const *const mtlDescriptorSet{ polyCast<MetalDescriptorSet const>(descriptorSet) };
             if(mtlDescriptorSet == nullptr) {
-                CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Warning, "{0}: Descriptor set provided is nullptr. Buffers might never be freed", CLOVE_FUNCTION_NAME);
+                CLOVE_LOG(CloveGhaMetal, LogLevel::Warning, "{0}: Descriptor set provided is nullptr. Buffers might never be freed", CLOVE_FUNCTION_NAME);
                 continue;
             }
             

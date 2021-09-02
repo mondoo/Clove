@@ -8,7 +8,7 @@
 #include <spdlog/pattern_formatter.h>
 
 //Making the assumption that this library will only be used with Bulb
-CLOVE_DECLARE_LOG_CATEGORY(BULB);
+CLOVE_DECLARE_LOG_CATEGORY(Bulb);
 
 namespace membrane {
     namespace {
@@ -62,7 +62,7 @@ namespace membrane {
     }
 
     void Log::write(LogLevel level, System::String ^ message) {
-        CLOVE_LOG(LOG_CATEGORY_BULB, convertLevel(level), msclr::interop::marshal_as<std::string>(message));
+        CLOVE_LOG(Bulb, convertLevel(level), msclr::interop::marshal_as<std::string>(message));
     }
 
     void Log::addSink(LogSink ^ sink, System::String ^ pattern) {

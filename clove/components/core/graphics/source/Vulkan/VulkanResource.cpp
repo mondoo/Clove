@@ -34,7 +34,7 @@ namespace clove {
         }
 
         if(total != static_cast<AccessFlagsType>(garlicAccess)) {
-            CLOVE_ASSERT(false, "{0}: Unhandled access type", CLOVE_FUNCTION_NAME);
+            CLOVE_ASSERT_MSG(false, "{0}: Unhandled access type", CLOVE_FUNCTION_NAME);
         }
 
         return flags;

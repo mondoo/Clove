@@ -40,7 +40,7 @@ namespace clove {
                 case VertexAttributeFormat::R32G32B32A32_SINT:
                     return MTLVertexFormatInt4;
                 default:
-                    CLOVE_ASSERT(false, "{0}: Unkown format passed", CLOVE_FUNCTION_NAME_PRETTY);
+                    CLOVE_ASSERT_MSG(false, "{0}: Unkown format passed", CLOVE_FUNCTION_NAME_PRETTY);
                     return MTLVertexFormatFloat;
             }
         }
@@ -62,7 +62,7 @@ namespace clove {
                         return MTLTextureTypeCube;
                     }
                 default:
-                    CLOVE_ASSERT(false, "{0}: Unkown type passed", CLOVE_FUNCTION_NAME_PRETTY);
+                    CLOVE_ASSERT_MSG(false, "{0}: Unkown type passed", CLOVE_FUNCTION_NAME_PRETTY);
                     return MTLTextureType2D;
             }
         }
@@ -98,7 +98,7 @@ namespace clove {
                 case LoadOperation::DontCare:
                     return MTLLoadActionDontCare;
                 default:
-                    CLOVE_ASSERT(false, "{0}: Unkown operation", CLOVE_FUNCTION_NAME);
+                    CLOVE_ASSERT_MSG(false, "{0}: Unkown operation", CLOVE_FUNCTION_NAME);
                     return MTLLoadActionDontCare;
             }
         }
@@ -110,7 +110,7 @@ namespace clove {
                 case StoreOperation::DontCare:
                     return MTLStoreActionDontCare;
                 default:
-                    CLOVE_ASSERT(false, "{0}: Unkown operation", CLOVE_FUNCTION_NAME);
+                    CLOVE_ASSERT_MSG(false, "{0}: Unkown operation", CLOVE_FUNCTION_NAME);
                     return MTLStoreActionUnknown;
             }
         }
@@ -122,7 +122,7 @@ namespace clove {
                 case GhaSampler::Filter::Linear:
                     return MTLSamplerMinMagFilterLinear;
                 default:
-                    CLOVE_ASSERT(false, "{0}: Unkown filter", CLOVE_FUNCTION_NAME);
+                    CLOVE_ASSERT_MSG(false, "{0}: Unkown filter", CLOVE_FUNCTION_NAME);
                     return MTLSamplerMinMagFilterNearest;
             }
         }
@@ -138,7 +138,7 @@ namespace clove {
                 case GhaSampler::AddressMode::ClampToBorder:
                     return MTLSamplerAddressModeClampToBorderColor;
                 default:
-                    CLOVE_ASSERT(false, "{0}: Unkown address mode", CLOVE_FUNCTION_NAME);
+                    CLOVE_ASSERT_MSG(false, "{0}: Unkown address mode", CLOVE_FUNCTION_NAME);
                     return MTLSamplerAddressModeRepeat;
             }
         }

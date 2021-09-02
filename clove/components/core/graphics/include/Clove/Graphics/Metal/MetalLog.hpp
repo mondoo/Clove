@@ -2,4 +2,4 @@
 
 #include <Clove/Log/Log.hpp>
 
-CLOVE_DECLARE_LOG_CATEGORY(Membrane)
+CLOVE_DECLARE_LOG_CATEGORY(CloveGhaMetal)

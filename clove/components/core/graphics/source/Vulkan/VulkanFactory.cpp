@@ -24,9 +24,9 @@
 #include "Clove/Graphics/Vulkan/VulkanShader.hpp"
 #include "Clove/Graphics/Vulkan/VulkanSwapchain.hpp"
 #include "Clove/Graphics/Vulkan/VulkanTransferQueue.hpp"
+#include "Clove/Graphics/Vulkan/VulkanLog.hpp"
 
 #include <Clove/Cast.hpp>
-#include <Clove/Log/Log.hpp>
 #include <fstream>
 
 namespace clove {
@@ -52,7 +52,7 @@ namespace clove {
             }
 
             //Fall back to the first one if we can't find a surface format we want
-            CLOVE_LOG(LOG_CATEGORY_CLOVE, LogLevel::Warning, "GhaSwapchain could not find desired format. Using first available format from the surface");
+            CLOVE_LOG(CloveGhaVulkan, LogLevel::Warning, "GhaSwapchain could not find desired format. Using first available format from the surface");
             return availableFormats[0];
         }
 
@@ -86,7 +86,7 @@ namespace clove {
                 case LoadOperation::DontCare:
                     return VK_ATTACHMENT_LOAD_OP_DONT_CARE;
                 default:
-                    CLOVE_ASSERT(false, "{0}: Unkown operation", CLOVE_FUNCTION_NAME);
+                    CLOVE_ASSERT_MSG(false, "{0}: Unkown operation", CLOVE_FUNCTION_NAME);
                     return VK_ATTACHMENT_LOAD_OP_DONT_CARE;
             }
         }
@@ -98,7 +98,7 @@ namespace clove {
                 case StoreOperation::DontCare:
                     return VK_ATTACHMENT_STORE_OP_DONT_CARE;
                 default:
-                    CLOVE_ASSERT(false, "{0}: Unkown operation", CLOVE_FUNCTION_NAME);
+                    CLOVE_ASSERT_MSG(false, "{0}: Unkown operation", CLOVE_FUNCTION_NAME);
                     return VK_ATTACHMENT_STORE_OP_DONT_CARE;
             }
         }
@@ -116,7 +116,7 @@ namespace clove {
                 case VertexAttributeFormat::R32G32B32A32_SINT:
                     return VK_FORMAT_R32G32B32A32_SINT;
                 default:
-                    CLOVE_ASSERT(false, "{0}: Unkown format passed", CLOVE_FUNCTION_NAME_PRETTY);
+                    CLOVE_ASSERT_MSG(false, "{0}: Unkown format passed", CLOVE_FUNCTION_NAME_PRETTY);
                     return VK_FORMAT_UNDEFINED;
             }
         }
@@ -128,7 +128,7 @@ namespace clove {
                 case GhaDescriptorPool::Flag::FreeDescriptorSet:
                     return VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
                 default:
-                    CLOVE_ASSERT(false, "{0} Unknown flag", CLOVE_FUNCTION_NAME);
+                    CLOVE_ASSERT_MSG(false, "{0} Unknown flag", CLOVE_FUNCTION_NAME);
             }
         }
 
@@ -187,7 +187,7 @@ namespace clove {
                 case GhaImage::Type::_3D:
                     return VK_IMAGE_TYPE_3D;
                 default:
-                    CLOVE_ASSERT(false, "{0}: Unhandled image type");
+                    CLOVE_ASSERT_MSG(false, "{0}: Unhandled image type");
                     return VK_IMAGE_TYPE_2D;
             }
         }
@@ -199,7 +199,7 @@ namespace clove {
                 case GhaSampler::Filter::Linear:
                     return VK_FILTER_LINEAR;
                 default:
-                    CLOVE_ASSERT(false, "{0}: Unkown type", CLOVE_FUNCTION_NAME);
+                    CLOVE_ASSERT_MSG(false, "{0}: Unkown type", CLOVE_FUNCTION_NAME);
                     return VK_FILTER_NEAREST;
             }
         }
@@ -215,7 +215,7 @@ namespace clove {
                 case GhaSampler::AddressMode::ClampToBorder:
                     return VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
                 default:
-                    CLOVE_ASSERT(false, "{0}: Unkown type", CLOVE_FUNCTION_NAME);
+                    CLOVE_ASSERT_MSG(false, "{0}: Unkown type", CLOVE_FUNCTION_NAME);
                     return VK_SAMPLER_ADDRESS_MODE_REPEAT;
             }
         }

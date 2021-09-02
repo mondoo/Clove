@@ -16,7 +16,7 @@ namespace clove {
             case clove::CommandBufferUsage::OneTimeSubmit:
                 return VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
             default:
-                CLOVE_ASSERT(false, "{0}: Unkown usage type", CLOVE_FUNCTION_NAME);
+                CLOVE_ASSERT_MSG(false, "{0}: Unkown usage type", CLOVE_FUNCTION_NAME);
                 return 0;
         }
     }
