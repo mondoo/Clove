@@ -1,9 +1,16 @@
 #pragma once
 
 #include <cstddef>
+#include <string>
 
 namespace clove {
     class GhaFactory;
+
+    struct Version{
+        uint32_t major{ 0 };
+        uint32_t minor{ 0 };
+        uint32_t patch{ 0 };
+    };
 }
 
 namespace clove {
@@ -13,6 +20,16 @@ namespace clove {
     class GhaDevice {
         //TYPES
     public:
+        /**
+         * @brief Contains info about the device itself that the GHA is using.
+         */
+        struct Info {
+            std::string ApiName{};
+            std::string deviceName{};
+            Version driverVersion{};
+            Version ApiVersion{};
+        };
+
         /**
          * @brief Contains information about the limits of the device used by the GHA.
          */
@@ -36,6 +53,7 @@ namespace clove {
          */
         virtual void waitForIdleDevice() = 0;
 
+        virtual Info getInfo() const     = 0;
         virtual Limits getLimits() const = 0;
     };
 }
