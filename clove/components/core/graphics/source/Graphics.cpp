@@ -48,9 +48,13 @@ namespace clove {
             GhaDevice::Info const info{ device->getInfo() };
 
             CLOVE_LOG(CloveGha, LogLevel::Trace, "GHA device created with a {0} backend.", info.ApiName);
-            CLOVE_LOG(CloveGha, LogLevel::Trace, "\tAPI:\t{0}.{1}.{2}", info.ApiVersion.major, info.ApiVersion.minor, info.ApiVersion.patch);
+            if(info.ApiVersion.has_value()) {
+                CLOVE_LOG(CloveGha, LogLevel::Trace, "\tAPI:\t{0}.{1}.{2}", info.ApiVersion->major, info.ApiVersion->minor, info.ApiVersion->patch);
+            }
             CLOVE_LOG(CloveGha, LogLevel::Trace, "\tDevice:\t{0}", info.deviceName);
-            CLOVE_LOG(CloveGha, LogLevel::Trace, "\tDriver:\t{0}.{1}.{2}", info.driverVersion.major, info.driverVersion.minor, info.driverVersion.patch);
+            if(info.driverVersion.has_value()) {
+                CLOVE_LOG(CloveGha, LogLevel::Trace, "\tDriver:\t{0}.{1}.{2}", info.driverVersion->major, info.driverVersion->minor, info.driverVersion->patch);
+            }
         } else {
             CLOVE_LOG(CloveGha, LogLevel::Error, "GHA Device creation failed.");
         }

@@ -2,6 +2,7 @@
 
 #include <cstddef>
 #include <string>
+#include <optional>
 
 namespace clove {
     class GhaFactory;
@@ -26,8 +27,8 @@ namespace clove {
         struct Info {
             std::string ApiName{};
             std::string deviceName{};
-            Version driverVersion{};
-            Version ApiVersion{};
+            std::optional<Version> driverVersion{}; /**< Not provided by some APIs. */
+            std::optional<Version> ApiVersion{};    /**< Not provided by some APIs. */
         };
 
         /**

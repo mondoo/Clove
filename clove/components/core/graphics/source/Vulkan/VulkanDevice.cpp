@@ -451,12 +451,12 @@ namespace clove {
         return Info{
             .ApiName       = "Vulkan",
             .deviceName    = devicePoperties.deviceName,
-            .driverVersion = {
+            .driverVersion = Version{
                 .major = VK_VERSION_MAJOR(devicePoperties.driverVersion),
                 .minor = VK_VERSION_MINOR(devicePoperties.driverVersion),
                 .patch = VK_VERSION_PATCH(devicePoperties.driverVersion),
             },
-            .ApiVersion = {
+            .ApiVersion = Version{
                 .major = VK_VERSION_MAJOR(devicePoperties.apiVersion),
                 .minor = VK_VERSION_MINOR(devicePoperties.apiVersion),
                 .patch = VK_VERSION_PATCH(devicePoperties.apiVersion),
