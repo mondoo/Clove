@@ -45,6 +45,13 @@ namespace clove {
         //No op
     }
     
+    GhaDevice::Info MetalDevice::getInfo() const {
+        return Info {
+            .ApiName = "Metal",
+            .deviceName = [wrapper->device.name UTF8String],
+        };
+    }
+    
     GhaDevice::Limits MetalDevice::getLimits() const {
         size_t constexpr metalMinUboOffsetAlignment{ 16 };//Hard coding as a minimum of 16 as metal does not provide this data.
         

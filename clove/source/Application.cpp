@@ -27,24 +27,28 @@ namespace clove {
         }
     }
 
-    std::unique_ptr<Application> Application::create(GraphicsApi graphicsApi, AudioApi audioApi, Window::Descriptor const &windowDescriptor) {	
-		auto window{ Window::create(windowDescriptor) };
-		auto *windowPtr{ window.get() };
-		
-		auto graphicsDevice{ createGraphicsDevice(graphicsApi, window->getNativeWindow()) };
-		auto audioDevice{ createAudioDevice(audioApi) };
-		
-		auto surface{ std::make_unique<WindowSurface>(std::move(window)) };
-		
-		auto renderTarget{ std::make_unique<SwapchainRenderTarget>(*surface, graphicsDevice.get()) };
-		
-		std::unique_ptr<Application> app{ new Application{ std::move(graphicsDevice), std::move(audioDevice), std::move(surface), std::move(renderTarget) } };
-		windowPtr->onWindowCloseDelegate.bind(&Application::shutdown, app.get());
-		
+    std::unique_ptr<Application> Application::create(GraphicsApi graphicsApi, AudioApi audioApi, Window::Descriptor const &windowDescriptor) {
+        CLOVE_LOG(CloveApplication, LogLevel::Info, "Creating windowed application ({0}, {1}).", windowDescriptor.width, windowDescriptor.height);
+
+        auto window{ Window::create(windowDescriptor) };
+        auto *windowPtr{ window.get() };
+
+        auto graphicsDevice{ createGraphicsDevice(graphicsApi, window->getNativeWindow()) };
+        auto audioDevice{ createAudioDevice(audioApi) };
+
+        auto surface{ std::make_unique<WindowSurface>(std::move(window)) };
+
+        auto renderTarget{ std::make_unique<SwapchainRenderTarget>(*surface, graphicsDevice.get()) };
+
+        std::unique_ptr<Application> app{ new Application{ std::move(graphicsDevice), std::move(audioDevice), std::move(surface), std::move(renderTarget) } };
+        windowPtr->onWindowCloseDelegate.bind(&Application::shutdown, app.get());
+
         return app;
     }
 
     std::pair<std::unique_ptr<Application>, GraphicsImageRenderTarget *> Application::createHeadless(GraphicsApi graphicsApi, AudioApi audioApi, GhaImage::Descriptor renderTargetDescriptor, std::unique_ptr<Surface> surface) {
+        CLOVE_LOG(CloveApplication, LogLevel::Info, "Creating headless application.");
+
         auto graphicsDevice{ createGraphicsDevice(graphicsApi, std::any{}) };
         auto audioDevice{ createAudioDevice(audioApi) };
 

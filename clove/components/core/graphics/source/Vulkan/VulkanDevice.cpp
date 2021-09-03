@@ -23,6 +23,7 @@
 #include <Clove/Definitions.hpp>
 #include <set>
 #include <unordered_set>
+#include <sstream>
 
 CLOVE_DECLARE_LOG_CATEGORY(Vulkan)
 
@@ -352,14 +353,6 @@ namespace clove {
             if(physicalDevice == VK_NULL_HANDLE) {
                 CLOVE_LOG(CloveGhaVulkan, LogLevel::Error, "Failed to find a suitable GPU!");
                 return;
-            } else {
-                VkPhysicalDeviceProperties devicePoperties;
-                vkGetPhysicalDeviceProperties(physicalDevice, &devicePoperties);
-
-                CLOVE_LOG(CloveGhaVulkan, LogLevel::Info, "Vulkan capable physical device found");
-                CLOVE_LOG(CloveGhaVulkan, LogLevel::Info, "\tDevice:\t{0}", devicePoperties.deviceName);
-                CLOVE_LOG(CloveGhaVulkan, LogLevel::Info, "\tDriver:\t{0}.{1}.{2}", VK_VERSION_MAJOR(devicePoperties.driverVersion), VK_VERSION_MINOR(devicePoperties.driverVersion), VK_VERSION_PATCH(devicePoperties.driverVersion));
-                CLOVE_LOG(CloveGhaVulkan, LogLevel::Info, "\tAPI:\t{0}.{1}.{2}", VK_VERSION_MAJOR(devicePoperties.apiVersion), VK_VERSION_MINOR(devicePoperties.apiVersion), VK_VERSION_PATCH(devicePoperties.apiVersion));
             }
         }
 
@@ -449,6 +442,26 @@ namespace clove {
                     break;
             }
         }
+    }
+
+    GhaDevice::Info VulkanDevice::getInfo() const {
+        VkPhysicalDeviceProperties devicePoperties;
+        vkGetPhysicalDeviceProperties(devicePtr.getPhysical(), &devicePoperties);
+
+        return Info{
+            .ApiName       = "Vulkan",
+            .deviceName    = devicePoperties.deviceName,
+            .driverVersion = Version{
+                .major = VK_VERSION_MAJOR(devicePoperties.driverVersion),
+                .minor = VK_VERSION_MINOR(devicePoperties.driverVersion),
+                .patch = VK_VERSION_PATCH(devicePoperties.driverVersion),
+            },
+            .ApiVersion = Version{
+                .major = VK_VERSION_MAJOR(devicePoperties.apiVersion),
+                .minor = VK_VERSION_MINOR(devicePoperties.apiVersion),
+                .patch = VK_VERSION_PATCH(devicePoperties.apiVersion),
+            },
+        };
     }
 
     GhaDevice::Limits VulkanDevice::getLimits() const {
