@@ -44,6 +44,7 @@ namespace clove {
 
         void waitForIdleDevice() override;
 
+        Info getInfo() const override;
         Limits getLimits() const override;
     };
 }

@@ -23,6 +23,7 @@
 #include <Clove/Definitions.hpp>
 #include <set>
 #include <unordered_set>
+#include <sstream>
 
 CLOVE_DECLARE_LOG_CATEGORY(Vulkan)
 
@@ -441,6 +442,26 @@ namespace clove {
                     break;
             }
         }
+    }
+
+    GhaDevice::Info VulkanDevice::getInfo() const {
+        VkPhysicalDeviceProperties devicePoperties;
+        vkGetPhysicalDeviceProperties(devicePtr.getPhysical(), &devicePoperties);
+
+        return Info{
+            .ApiName       = "Vulkan",
+            .deviceName    = devicePoperties.deviceName,
+            .driverVersion = {
+                .major = VK_VERSION_MAJOR(devicePoperties.driverVersion),
+                .minor = VK_VERSION_MINOR(devicePoperties.driverVersion),
+                .patch = VK_VERSION_PATCH(devicePoperties.driverVersion),
+            },
+            .ApiVersion = {
+                .major = VK_VERSION_MAJOR(devicePoperties.apiVersion),
+                .minor = VK_VERSION_MINOR(devicePoperties.apiVersion),
+                .patch = VK_VERSION_PATCH(devicePoperties.apiVersion),
+            },
+        };
     }
 
     GhaDevice::Limits VulkanDevice::getLimits() const {
