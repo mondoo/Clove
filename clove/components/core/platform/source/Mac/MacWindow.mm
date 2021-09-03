@@ -19,8 +19,6 @@ CLOVE_DECLARE_LOG_CATEGORY(ClovePlatformMacOS)
 namespace clove{
     MacWindow::MacWindow(Descriptor const &descriptor)
         : Window(keyboardDispatcher, mouseDispatcher) {
-        CLOVE_LOG(ClovePlatformMacOS, LogLevel::Trace, "Creating window: {0} ({1}, {2})", descriptor.title, descriptor.width, descriptor.height);
-
         //Application specific init
         [NSApplication sharedApplication];
         [NSApp finishLaunching];
@@ -53,8 +51,6 @@ namespace clove{
         windowProxy.cloveWindow = this;
         
         open = true;
-
-        CLOVE_LOG(ClovePlatformMacOS, LogLevel::Trace, "Window created");
     }
     
     MacWindow::~MacWindow() = default;

@@ -10,8 +10,6 @@ CLOVE_DECLARE_LOG_CATEGORY(ClovePlatformWindows)
 namespace clove {
     WindowsWindow::WindowsWindow(Descriptor const &descriptor)
         : Window(keyboardDispatcher, mouseDispatcher) {
-        CLOVE_LOG(ClovePlatformWindows, LogLevel::Trace, "Creating window: {0} ({1}, {2})", descriptor.title, descriptor.width, descriptor.height);
-
         instance = GetModuleHandle(nullptr);
 
         WNDCLASSEX windowClass {
@@ -28,8 +26,6 @@ namespace clove {
             .lpszClassName = className,
         };
         RegisterClassEx(&windowClass);
-
-        CLOVE_LOG(ClovePlatformWindows, LogLevel::Trace, "Windows class registered");
 
         std::string const wideTitle(descriptor.title.begin(), descriptor.title.end());
 
@@ -57,8 +53,6 @@ namespace clove {
             this);
 
         open = true;
-
-        CLOVE_LOG(ClovePlatformWindows, LogLevel::Trace, "Window created");
     }
 
     WindowsWindow::~WindowsWindow() {

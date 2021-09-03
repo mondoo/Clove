@@ -8,7 +8,6 @@ CLOVE_DECLARE_LOG_CATEGORY(ClovePlatformLinux)
 namespace clove {
     LinuxWindow::LinuxWindow(Descriptor const &descriptor)
         : Window(keyboardDispatcher, mouseDispatcher) {
-        CLOVE_LOG(ClovePlatformLinux, LogLevel::Trace, "Creating window: {0} ({1}, {2})", descriptor.title, descriptor.width, descriptor.height);
         CLOVE_ASSERT_MSG(window == 0, "Window already exists! Currently only a single window on linux is supported");
 
         if(display == nullptr) {
@@ -52,8 +51,6 @@ namespace clove {
         XMapRaised(display, window);
 
         open = true;
-
-        CLOVE_LOG(ClovePlatformLinux, LogLevel::Trace, "Window created");
     }
 
     LinuxWindow::~LinuxWindow() {
