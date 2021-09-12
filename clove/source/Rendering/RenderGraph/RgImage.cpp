@@ -18,7 +18,7 @@ namespace clove {
         }
     }
 
-    RgImage::RgImage(RgResourceIdType id, GhaImage::Type imageType, GhaImage::Format format, vec2ui dimensions, uint32_t arrayCount)
+    RgImage::RgImage(RgResourceIdType const id, GhaImage::Type const imageType, GhaImage::Format const format, vec2ui const dimensions, uint32_t const arrayCount)
         : RgResource{ id } {
         ghaImageDescriptor = GhaImage::Descriptor{
             .type        = imageType,
@@ -30,7 +30,7 @@ namespace clove {
         };
     }
 
-    RgImage::RgImage(RgResourceIdType id, GhaImage *ghaImage)
+    RgImage::RgImage(RgResourceIdType const id, GhaImage *ghaImage)
         : RgResource{ id }
         , ghaImage{ ghaImage }
         , ghaImageDescriptor{ ghaImage->getDescriptor() } {
@@ -43,21 +43,25 @@ namespace clove {
 
     RgImage::~RgImage() = default;
 
-   GhaImageView *RgImage::createGhaImageView(RgFrameCache &cache, uint32_t const arrayIndex, uint32_t const arrayCount) {
+    GhaImage *RgImage::getGhaImage(RgFrameCache &cache) {
         if(ghaImage == nullptr) {
             CLOVE_ASSERT_MSG(!externalImage, "RgImage is registered as an external image but does not have a valid GhaImageView.");
             ghaImage = cache.allocateImage(ghaImageDescriptor);
         }
 
-        //TODO: This will allocate a new view per usage - rather than reusing them when possible
-        return cache.allocateImageView(ghaImage, GhaImageView::Descriptor{
-                                                     .type       = getViewType(ghaImageDescriptor.type),
-                                                     .layer      = arrayIndex,
-                                                     .layerCount = arrayCount,
-                                                 });
+        return ghaImage;
     }
 
-    void RgImage::addImageUsage(GhaImage::UsageMode usage) {
+    GhaImageView *RgImage::createGhaImageView(RgFrameCache &cache, uint32_t const arrayIndex, uint32_t const arrayCount) {
+        //TODO: This will allocate a new view per usage - rather than reusing them when possible
+        return cache.allocateImageView(getGhaImage(cache), GhaImageView::Descriptor{
+                                                               .type       = getViewType(ghaImageDescriptor.type),
+                                                               .layer      = arrayIndex,
+                                                               .layerCount = 1,
+                                                           });
+    }
+
+    void RgImage::addImageUsage(GhaImage::UsageMode const usage) {
         CLOVE_ASSERT_MSG(!externalImage, "Cannot change usage mode. RgImage is registered as an external image.");
         ghaImageDescriptor.usageFlags |= usage;
     }
