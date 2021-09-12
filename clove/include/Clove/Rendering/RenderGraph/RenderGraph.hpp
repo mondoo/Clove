@@ -50,7 +50,7 @@ namespace clove {
     private:
         struct PassDependency {
             RgPassIdType signalPass{};
-            
+
             RgPassIdType waitPass{};
             PipelineStage waitStage{};
 
@@ -69,7 +69,8 @@ namespace clove {
 
         //Resources
         std::unordered_map<RgResourceIdType, std::unique_ptr<RgBuffer>> buffers{};
-        std::unordered_map<RgResourceIdType, std::unique_ptr<RgImage>> images{};
+        std::unordered_map<RgResourceIdType, std::unique_ptr<RgImage>> images{};         /**< Images are only used externally. */
+        std::unordered_map<RgResourceIdType, std::unique_ptr<RgImageView>> imageViews{}; /**< Used within the graph itself. We need to track each view so we know what array element needs what layout.*/
         std::unordered_map<RgResourceIdType, GhaSampler *> samplers{};
         std::unordered_map<RgResourceIdType, GhaShader *> shaders{};
 
@@ -92,14 +93,14 @@ namespace clove {
         ~RenderGraph();
 
         /**
-         * @brief Constructs an RgBuffer with the specified size.
+         * @brief Constructs a buffer with the specified size.
          * @details Buffers are created in video memory unless written to from the CPU.
          * @param bufferSize 
          * @return 
          */
         RgResourceIdType createBuffer(size_t const bufferSize);
         /**
-         * @brief Constructs an RgBuffer from an existing GhaBuffer. Useful if wanting to use
+         * @brief Constructs a buffer from an existing GhaBuffer. Useful if wanting to use
          * pre set up buffers (such as vertex / index buffers).
          * @param buffer GhaBuffer to construct from. Note that the render graph will not own the buffer.
          * @param offset The offset into the GhaBuffer that this RgBuffer will view.
@@ -109,7 +110,7 @@ namespace clove {
         RgResourceIdType createBuffer(GhaBuffer *buffer, size_t const offset, size_t const size);
 
         /**
-         * @brief Constructs a new RgImage with the specified type and dimensions.
+         * @brief Constructs an image with the specified type and dimensions.
          * @param imageType 
          * @param format
          * @param dimensions 
@@ -118,7 +119,7 @@ namespace clove {
          */
         RgResourceIdType createImage(GhaImage::Type imageType, GhaImage::Format format, vec2ui dimensions, uint32_t const arrayCount = 1);
         /**
-         * @brief Creates a new RgImage from an existing image. Useful if wanting to use
+         * @brief Creates an image from an existing image. Useful if wanting to use
          * pre made images (such as backbuffers) in the render graph.
          * @param ghaImage GhaImage to construct from. Note that the render graph will not own the image.
          * @return 
@@ -200,6 +201,8 @@ namespace clove {
         void execute(ExecutionInfo const &info);
 
     private:
+        RgResourceIdType createImageView(RgImage *image, uint32_t const arrayIndex, uint32_t const arrayCount);
+
         void buildExecutionPasses(std::vector<RgPassIdType> &outPasses, RgResourceIdType resourceId);
         GhaImage::Layout getPreviousLayout(std::vector<RgPassIdType> const &passes, int32_t const currentPassIndex, RgResourceIdType const imageId);
 

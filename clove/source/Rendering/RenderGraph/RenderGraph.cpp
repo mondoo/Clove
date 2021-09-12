@@ -78,22 +78,34 @@ namespace clove {
 
         for(auto &renderTarget : passDescriptor.renderTargets) {
             RgResourceIdType const imageId{ renderTarget.target };
-
             auto &image{ images.at(imageId) };
-            if(!image->isExternalImage()) {
-                image->addImageUsage(GhaImage::UsageMode::ColourAttachment);
+
+            //Remap the target to the view so we can track the usage of each individual view rather than the whole image itself.
+            //This allows the graph to transition elements of an image array to the correct layout.
+            RgResourceIdType const viewId{ createImageView(image.get(), renderTarget.imageArrayIndex, renderTarget.imageArrayCount) };
+            renderTarget.target = viewId;
+            auto &view{ imageViews.at(viewId) };
+
+            if(!view->isExternalImage()) {
+                view->addImageUsage(GhaImage::UsageMode::ColourAttachment);
             }
-            image->addWritePass(renderPassId);
+            view->addWritePass(renderPassId);
         }
 
         {
             RgResourceIdType const imageId{ passDescriptor.depthStencil.target };
-
             auto &image{ images.at(imageId) };
-            if(!image->isExternalImage()) {
-                image->addImageUsage(GhaImage::UsageMode::DepthStencilAttachment);
+
+            //Remap the target to the view so we can track the usage of each individual view rather than the whole image itself.
+            //This allows the graph to transition elements of an image array to the correct layout.
+            RgResourceIdType const viewId{ createImageView(image.get(), passDescriptor.depthStencil.imageArrayIndex, passDescriptor.depthStencil.imageArrayCount) };
+            passDescriptor.depthStencil.target = viewId;
+            auto &view{ imageViews.at(viewId) };
+
+            if(!view->isExternalImage()) {
+                view->addImageUsage(GhaImage::UsageMode::DepthStencilAttachment);
             }
-            image->addWritePass(renderPassId);
+            view->addWritePass(renderPassId);
         }
 
         renderPasses[renderPassId] = std::make_unique<RgRenderPass>(renderPassId, std::move(passDescriptor));
@@ -164,14 +176,20 @@ namespace clove {
             buffer->addReadPass(renderPass);
         }
 
-        for(auto const &shaderImage : submission.shaderImages) {
+        for(auto &shaderImage : submission.shaderImages) {
             RgResourceIdType const imageId{ shaderImage.image };
-
             auto &image{ images.at(imageId) };
-            if(!image->isExternalImage()) {
-                image->addImageUsage(GhaImage::UsageMode::Sampled);
+
+            //Remap the image to the view so we can track the usage of each individual view rather than the whole image itself.
+            //This allows the graph to transition elements of an image array to the correct layout.
+            RgResourceIdType const viewId{ createImageView(image.get(), shaderImage.arrayIndex, shaderImage.arrayCount) };
+            shaderImage.image = viewId;
+            auto &view{ imageViews.at(viewId) };
+
+            if(!view->isExternalImage()) {
+                view->addImageUsage(GhaImage::UsageMode::Sampled);
             }
-            image->addReadPass(renderPass);
+            view->addReadPass(renderPass);
         }
 
         pass->addSubmission(std::move(submission));
@@ -290,6 +308,22 @@ namespace clove {
             }
         }
 
+        //For images without a write pass (can happen with shadow maps that aren't rendered to) insert a memory barrier to set it to it's initial layout
+        GhaGraphicsCommandBuffer *graphicsCommandBufffer{ frameCache.allocateGraphicsCommandBuffer() };
+        graphicsCommandBufffer->beginRecording(CommandBufferUsage::OneTimeSubmit);
+        for(auto &&[id, imageView] : imageViews) {
+            if(imageView->getWritePasses().empty() && !imageView->getReadPasses().empty()) {
+                ImageMemoryBarrierInfo const barrier{
+                    .currentImageLayout = GhaImage::Layout::Undefined,
+                    .newImageLayout     = GhaImage::Layout::ShaderReadOnlyOptimal,
+                    .baseArrayLayer     = imageView->getArrayIndex(),
+                    .layerCount         = imageView->getArrayCount(),
+                };
+                graphicsCommandBufffer->imageMemoryBarrier(*imageView->getGhaImage(frameCache), barrier, PipelineStage::Top, PipelineStage::Top);
+            }
+        }
+        graphicsCommandBufffer->endRecording();
+
         for(RgPassIdType passId : executionPasses) {
             //Construct any synchronisation objects the pass will need
             std::vector<std::pair<GhaSemaphore const *, PipelineStage>> waitSemaphores{};
@@ -355,8 +389,17 @@ namespace clove {
         }
     }
 
+    RgResourceIdType RenderGraph::createImageView(RgImage *image, uint32_t const arrayIndex, uint32_t const arrayCount) {
+        RgResourceIdType const viewId{ nextResourceId++ };
+
+        imageViews[viewId] = std::make_unique<RgImageView>(image, arrayIndex, arrayCount);
+
+        return viewId;
+    }
+
     void RenderGraph::buildExecutionPasses(std::vector<RgPassIdType> &outPasses, RgResourceIdType resourceId) {
         RgResource *resource{ getResourceFromId(resourceId) };
+        CLOVE_ASSERT(resource != nullptr);
 
         std::vector<RgPassIdType> resourceWritePasses{};
         for(RgPassIdType passId : resource->getWritePasses()) {
@@ -430,7 +473,7 @@ namespace clove {
                             //If it's an image we can always assume PipelineStage::PixelShader for now because we only check input resources.
                             //If it's a buffer we check the submission info if it'll be PipelineStage::VertexShader or PipelineStage::PixelShader
                             PipelineStage waitStage{ PipelineStage::Top };
-                            if(images.contains(resourceId)) {
+                            if(imageViews.contains(resourceId)) {
                                 waitStage = PipelineStage::PixelShader;
                                 //TODO: Might need to use early / late fragment tests if the image is a depth buffer
                             } else if(buffers.contains(resourceId)) {
@@ -532,9 +575,9 @@ namespace clove {
     }
 
     GhaImage::Layout RenderGraph::getPreviousLayout(std::vector<RgPassIdType> const &passes, int32_t const currentPassIndex, RgResourceIdType const imageId) {
-        for(int32_t i = currentPassIndex - 1; i >= 0; --i) {
+        for(int32_t i{ currentPassIndex - 1 }; i >= 0; --i) {
             if(!renderPasses.contains(passes[i])) {
-                continue;//Only evaluate renderpasses for now
+                continue;//Only evaluate renderpasses for now. Images are not supported in compute yet
             }
             std::unique_ptr<RgRenderPass> const &renderPass{ renderPasses.at(passes[i]) };
 
@@ -555,7 +598,7 @@ namespace clove {
                     }
                 }
                 if(renderPass->getDescriptor().depthStencil.target == imageId) {
-                    return GhaImage::Layout::ColourAttachmentOptimal;
+                    return GhaImage::Layout::DepthStencilAttachmentOptimal;
                 }
 
                 CLOVE_ASSERT_MSG(false, "ImageId is not in any render target's output even though it's marked as an output resource");
@@ -566,8 +609,8 @@ namespace clove {
     }
 
     RgResource *RenderGraph::getResourceFromId(RgResourceIdType resourceId) {
-        if(images.contains(resourceId)) {
-            return images.at(resourceId).get();
+        if(imageViews.contains(resourceId)) {
+            return imageViews.at(resourceId).get();
         } else if(buffers.contains(resourceId)) {
             return buffers.at(resourceId).get();
         } else {
@@ -602,7 +645,7 @@ namespace clove {
             std::vector<AttachmentDescriptor> colourAttachments{};
             for(auto &renderTarget : passDescriptor.renderTargets) {
                 colourAttachments.emplace_back(AttachmentDescriptor{
-                    .format         = images[renderTarget.target]->getFormat(),
+                    .format         = imageViews[renderTarget.target]->getFormat(),
                     .loadOperation  = renderTarget.loadOp,
                     .storeOperation = renderTarget.storeOp,
                     .initialLayout  = getPreviousLayout(passes, i, renderTarget.target),
@@ -613,7 +656,7 @@ namespace clove {
 
             RgDepthStencilBinding const &depthStencil{ passDescriptor.depthStencil };
             AttachmentDescriptor depthStencilAttachment{
-                .format         = images[depthStencil.target]->getFormat(),
+                .format         = imageViews[depthStencil.target]->getFormat(),
                 .loadOperation  = depthStencil.loadOp,
                 .storeOperation = depthStencil.storeOp,
                 .initialLayout  = getPreviousLayout(passes, i, depthStencil.target),
@@ -698,15 +741,15 @@ namespace clove {
             //Allocate the frame buffer
             std::vector<GhaImageView const *> attachments{};
             for(auto &renderTarget : passDescriptor.renderTargets) {
-                attachments.push_back(images.at(renderTarget.target)->createGhaImageView(frameCache, renderTarget.imageArrayIndex, renderTarget.imageArrayCount));
+                attachments.push_back(imageViews.at(renderTarget.target)->getGhaImageView(frameCache));
             }
-            attachments.push_back(images.at(passDescriptor.depthStencil.target)->createGhaImageView(frameCache, passDescriptor.depthStencil.imageArrayIndex, passDescriptor.depthStencil.imageArrayCount));
+            attachments.push_back(imageViews.at(passDescriptor.depthStencil.target)->getGhaImageView(frameCache));
 
             outFramebuffers[passId] = frameCache.allocateFramebuffer(GhaFramebuffer::Descriptor{
                 .renderPass  = outRenderPasses.at(passId),
                 .attachments = std::move(attachments),
-                .width       = images[passDescriptor.renderTargets[0].target]->getDimensions().x,//TEMP: Just using the first target as the size. This will need to be validated
-                .height      = images[passDescriptor.renderTargets[0].target]->getDimensions().y,
+                .width       = imageViews.at(passDescriptor.renderTargets[0].target)->getDimensions().x,//TEMP: Just using the first target as the size. This will need to be validated
+                .height      = imageViews.at(passDescriptor.renderTargets[0].target)->getDimensions().y,
             });
 
             //Count descriptor sets required for the entire pass
@@ -864,12 +907,11 @@ namespace clove {
             std::unique_ptr<GhaDescriptorSet> const &descriptorSet{ allocatedDescriptorSets.at(passId)[index] };
 
             for(auto const &ubo : submission.shaderUbos) {
-                //TODO: Handle different allocations within the same buffer
                 std::unique_ptr<RgBuffer> const &buffer{ buffers.at(ubo.buffer) };
                 descriptorSet->map(*buffer->getGhaBuffer(frameCache), buffer->getBufferOffset() + ubo.offset, ubo.size, DescriptorType::UniformBuffer, ubo.slot);
             }
             for(auto const &image : submission.shaderImages) {
-                descriptorSet->map(*images.at(image.image)->createGhaImageView(frameCache, image.arrayIndex, image.arrayCount), GhaImage::Layout::ShaderReadOnlyOptimal, image.slot);
+                descriptorSet->map(*imageViews.at(image.image)->getGhaImageView(frameCache), GhaImage::Layout::ShaderReadOnlyOptimal, image.slot);
             }
             for(auto const &sampler : submission.shaderSamplers) {
                 descriptorSet->map(*samplers.at(sampler.sampler), sampler.slot);

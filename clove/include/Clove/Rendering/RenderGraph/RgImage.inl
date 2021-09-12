@@ -1,13 +1,21 @@
 namespace clove {
-    GhaImage::Format RgImage::getFormat() const {
-        return ghaImageDescriptor.format;
+    GhaImage::Format RgImageView::getFormat() const {
+        return image->ghaImageDescriptor.format;
     }
 
-    vec2ui const &RgImage::getDimensions() const {
-        return ghaImageDescriptor.dimensions;
+    vec2ui const &RgImageView::getDimensions() const {
+        return image->ghaImageDescriptor.dimensions;
     }
 
-    bool RgImage::isExternalImage() const {
-        return externalImage;
+    bool RgImageView::isExternalImage() const {
+        return image->externalImage;
+    }
+
+    uint32_t RgImageView::getArrayIndex() const {
+        return arrayIndex;
+    }
+
+    uint32_t RgImageView::getArrayCount() const {
+        return arrayCount;
     }
 }

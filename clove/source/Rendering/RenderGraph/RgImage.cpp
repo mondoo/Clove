@@ -41,26 +41,41 @@ namespace clove {
 
     RgImage::~RgImage() = default;
 
-    GhaImage *RgImage::getGhaImage(RgFrameCache &cache) {
-        if(ghaImage == nullptr) {
-            CLOVE_ASSERT_MSG(!externalImage, "RgImage is registered as an external image but does not have a valid GhaImageView.");
-            ghaImage = cache.allocateImage(ghaImageDescriptor);
+    RgImageView::RgImageView(RgImage *image, uint32_t const arrayIndex, uint32_t const arrayCount)
+        : image{ image }
+        , arrayIndex{ arrayIndex }
+        , arrayCount{ arrayCount } {
+    }
+
+    RgImageView::RgImageView(RgImageView &&other) noexcept = default;
+
+    RgImageView &RgImageView::operator=(RgImageView &&other) noexcept = default;
+
+    RgImageView::~RgImageView() = default;
+
+    GhaImage *RgImageView::getGhaImage(RgFrameCache &cache) {
+        if(image->ghaImage == nullptr) {
+            CLOVE_ASSERT_MSG(!image->externalImage, "RgImage is registered as an external image but does not have a valid GhaImageView.");
+            image->ghaImage = cache.allocateImage(image->ghaImageDescriptor);
         }
 
-        return ghaImage;
+        return image->ghaImage;
     }
 
-    GhaImageView *RgImage::createGhaImageView(RgFrameCache &cache, uint32_t const arrayIndex, uint32_t const arrayCount) {
-        //TODO: This will allocate a new view per usage - rather than reusing them when possible
-        return cache.allocateImageView(getGhaImage(cache), GhaImageView::Descriptor{
-                                                               .type       = getViewType(ghaImageDescriptor.type),
-                                                               .layer      = arrayIndex,
-                                                               .layerCount = 1,
-                                                           });
+    GhaImageView *RgImageView::getGhaImageView(RgFrameCache &cache) {
+        if(ghaImageView == nullptr) {
+            ghaImageView = cache.allocateImageView(getGhaImage(cache), GhaImageView::Descriptor{
+                                                                           .type       = getViewType(image->ghaImageDescriptor.type),
+                                                                           .layer      = arrayIndex,
+                                                                           .layerCount = arrayCount,
+                                                                       });
+        }
+
+        return ghaImageView;
     }
 
-    void RgImage::addImageUsage(GhaImage::UsageMode const usage) {
-        CLOVE_ASSERT_MSG(!externalImage, "Cannot change usage mode. RgImage is registered as an external image.");
-        ghaImageDescriptor.usageFlags |= usage;
+    void RgImageView::addImageUsage(GhaImage::UsageMode const usage) {
+        CLOVE_ASSERT_MSG(!image->externalImage, "Cannot change usage mode. RgImage is registered as an external image.");
+        image->ghaImageDescriptor.usageFlags |= usage;
     }
 }
