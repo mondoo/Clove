@@ -28,8 +28,8 @@ namespace clove {
         //FUNCTIONS
     public:
         RgBuffer() = delete;
-        RgBuffer(RgResourceIdType id, size_t size);
-        RgBuffer(RgResourceIdType id, GhaBuffer *ghaBuffer, size_t offset, size_t size);
+        RgBuffer(size_t size);
+        RgBuffer(GhaBuffer *ghaBuffer, size_t offset, size_t size);
 
         RgBuffer(RgBuffer const &other) = delete;
         RgBuffer(RgBuffer &&other) noexcept;

@@ -7,10 +7,6 @@ namespace clove {
         readPasses.emplace(pass);
     }
 
-    RgResourceIdType RgResource::getId() const {
-        return id;
-    }
-
     std::unordered_set<RgPassIdType> const &RgResource::getWritePasses() const {
         return writePasses;
     }

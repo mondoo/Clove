@@ -4,7 +4,6 @@
 
 #include <Clove/Graphics/GhaImage.hpp>
 #include <Clove/Graphics/GhaImageView.hpp>
-#include <memory>
 
 namespace clove {
     class RgFrameCache;
@@ -25,8 +24,8 @@ namespace clove {
         //FUNCTIONS
     public:
         RgImage() = delete;
-        RgImage(RgResourceIdType const id, GhaImage::Type const imageType, GhaImage::Format const format, vec2ui const dimensions, uint32_t const arrayCount);
-        RgImage(RgResourceIdType const id, GhaImage *ghaImage);
+        RgImage(GhaImage::Type const imageType, GhaImage::Format const format, vec2ui const dimensions, uint32_t const arrayCount);
+        RgImage(GhaImage *ghaImage);
 
         RgImage(RgImage const &other) = delete;
         RgImage(RgImage &&other) noexcept;

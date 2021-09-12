@@ -26,28 +26,28 @@ namespace clove {
 
     RgResourceIdType RenderGraph::createBuffer(size_t const bufferSize) {
         RgResourceIdType const bufferId{ nextResourceId++ };
-        buffers[bufferId] = std::make_unique<RgBuffer>(bufferId, bufferSize);
+        buffers[bufferId] = std::make_unique<RgBuffer>(bufferSize);
 
         return bufferId;
     }
 
     RgResourceIdType RenderGraph::createBuffer(GhaBuffer *buffer, size_t const offset, size_t const size) {
         RgResourceIdType const bufferId{ nextResourceId++ };
-        buffers[bufferId] = std::make_unique<RgBuffer>(bufferId, buffer, offset, size);
+        buffers[bufferId] = std::make_unique<RgBuffer>(buffer, offset, size);
 
         return bufferId;
     }
 
     RgResourceIdType RenderGraph::createImage(GhaImage::Type imageType, GhaImage::Format format, vec2ui dimensions, uint32_t const arrayCount) {
         RgResourceIdType const imageId{ nextResourceId++ };
-        images[imageId] = std::make_unique<RgImage>(imageId, imageType, format, dimensions, arrayCount);
+        images[imageId] = std::make_unique<RgImage>(imageType, format, dimensions, arrayCount);
 
         return imageId;
     }
 
     RgResourceIdType RenderGraph::createImage(GhaImage *ghaImage) {
         RgResourceIdType const imageId{ nextResourceId++ };
-        images[imageId] = std::make_unique<RgImage>(imageId, ghaImage);
+        images[imageId] = std::make_unique<RgImage>(ghaImage);
 
         return imageId;
     }

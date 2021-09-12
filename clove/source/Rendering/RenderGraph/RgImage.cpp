@@ -18,8 +18,7 @@ namespace clove {
         }
     }
 
-    RgImage::RgImage(RgResourceIdType const id, GhaImage::Type const imageType, GhaImage::Format const format, vec2ui const dimensions, uint32_t const arrayCount)
-        : RgResource{ id } {
+    RgImage::RgImage(GhaImage::Type const imageType, GhaImage::Format const format, vec2ui const dimensions, uint32_t const arrayCount) {
         ghaImageDescriptor = GhaImage::Descriptor{
             .type        = imageType,
             .usageFlags  = static_cast<GhaImage::UsageMode>(0),//Will be built when executing the graph
@@ -30,9 +29,8 @@ namespace clove {
         };
     }
 
-    RgImage::RgImage(RgResourceIdType const id, GhaImage *ghaImage)
-        : RgResource{ id }
-        , ghaImage{ ghaImage }
+    RgImage::RgImage(GhaImage *ghaImage)
+        : ghaImage{ ghaImage }
         , ghaImageDescriptor{ ghaImage->getDescriptor() } {
         externalImage = true;
     }

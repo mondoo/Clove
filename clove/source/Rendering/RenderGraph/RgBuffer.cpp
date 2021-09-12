@@ -5,9 +5,8 @@
 #include <Clove/Log/Log.hpp>
 
 namespace clove {
-    RgBuffer::RgBuffer(RgResourceIdType id, size_t size)
-        : RgResource{ id }
-        , size{ size } {
+    RgBuffer::RgBuffer(size_t size)
+        : size{ size } {
         ghaBufferDescriptor = GhaBuffer::Descriptor{
             .size        = size,
             .usageFlags  = static_cast<GhaBuffer::UsageMode>(0),//Will be built when executing the graph
@@ -16,9 +15,8 @@ namespace clove {
         };
     }
 
-    RgBuffer::RgBuffer(RgResourceIdType id, GhaBuffer *ghaBuffer, size_t offset, size_t size)
-        : RgResource{ id }
-        , ghaBuffer{ ghaBuffer }
+    RgBuffer::RgBuffer(GhaBuffer *ghaBuffer, size_t offset, size_t size)
+        : ghaBuffer{ ghaBuffer }
         , offset{ offset }
         , size{ size } {
         externalBuffer = true;

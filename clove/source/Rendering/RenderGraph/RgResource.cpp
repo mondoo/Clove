@@ -1,9 +1,7 @@
 #include "Clove/Rendering/RenderGraph/RgResource.hpp"
 
 namespace clove {
-    RgResource::RgResource(RgResourceIdType id)
-        : id{ id } {
-    }
+    RgResource::RgResource() = default;
 
     RgResource::RgResource(RgResource &&other) noexcept = default;
 
