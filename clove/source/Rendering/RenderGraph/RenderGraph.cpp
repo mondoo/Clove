@@ -874,7 +874,7 @@ namespace clove {
 
         std::vector<ClearValue> clearValues{};
         for(auto &target : passDescriptor.renderTargets) {
-            clearValues.push_back(target.clearColour);
+            clearValues.push_back(target.clearValue);
         }
         clearValues.push_back(passDescriptor.depthStencil.clearValue);
 

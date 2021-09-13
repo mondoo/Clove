@@ -30,7 +30,7 @@ namespace clove {
     struct RgRenderTargetBinding {
         LoadOperation loadOp{};
         StoreOperation storeOp{};
-        ColourValue clearColour{};
+        ClearValue clearValue{};
         RgImageViewId target{};
     };
 
