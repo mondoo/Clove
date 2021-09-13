@@ -1,7 +1,7 @@
 #include "Clove/Rendering/RenderGraph/RgPass.hpp"
 
 namespace clove {
-    RgPass::RgPass(RgPassIdType id)
+    RgPass::RgPass(RgPassId id)
         : id{ id } {
     }
 

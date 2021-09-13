@@ -3,10 +3,14 @@
 #include <cinttypes>
 #include <cstddef>
 
-namespace clove{
-    using RgResourceIdType = uint32_t;
-    using RgPassIdType     = uint32_t;
+namespace clove {
+    using RgResourceId = uint32_t;
+    using RgPassId     = uint32_t;
 
-    static RgResourceIdType constexpr INVALID_RESOURCE_ID{ 0 };
-    static RgPassIdType constexpr INVALID_PASS_ID{ 0 };
+    using RgBufferId    = RgResourceId;
+    using RgImageId     = RgResourceId;
+    using RgImageViewId = RgResourceId;
+
+    static RgResourceId constexpr INVALID_RESOURCE_ID{ 0 };
+    static RgPassId constexpr INVALID_PASS_ID{ 0 };
 }

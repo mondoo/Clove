@@ -1,7 +1,7 @@
 #include "Clove/Rendering/RenderGraph/RgComputePass.hpp"
 
 namespace clove {
-    RgComputePass::RgComputePass(RgPassIdType id, Descriptor descriptor)
+    RgComputePass::RgComputePass(RgPassId id, Descriptor descriptor)
         : RgPass{ id }
         , descriptor{ std::move(descriptor) } {
     }
@@ -12,8 +12,8 @@ namespace clove {
 
     RgComputePass::~RgComputePass() = default;
 
-    std::unordered_set<RgResourceIdType> RgComputePass::getInputResources() const {
-        std::unordered_set<RgResourceIdType> inputs{};
+    std::unordered_set<RgResourceId> RgComputePass::getInputResources() const {
+        std::unordered_set<RgResourceId> inputs{};
         for(auto const &submission : submissions) {
             for(auto const &binding : submission.readUniformBuffers) {
                 inputs.emplace(binding.buffer);
@@ -25,8 +25,8 @@ namespace clove {
         return inputs;
     }
 
-    std::unordered_set<RgResourceIdType> RgComputePass::getOutputResources() const {
-        std::unordered_set<RgResourceIdType> outputs{};
+    std::unordered_set<RgResourceId> RgComputePass::getOutputResources() const {
+        std::unordered_set<RgResourceId> outputs{};
         for(auto const &submission : submissions) {
             for(auto const &binding : submission.writeBuffers) {
                 outputs.emplace(binding.buffer);

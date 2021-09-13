@@ -9,7 +9,7 @@ namespace clove {
         //TYPES
     public:
         struct BufferWrite {
-            RgResourceIdType bufferId{};
+            RgResourceId bufferId{};
             std::vector<std::byte> data;
             size_t offset{};
             size_t size;
@@ -22,7 +22,7 @@ namespace clove {
         //FUNCTIONS
     public:
         RgTransferPass() = delete;
-        RgTransferPass(RgPassIdType id, BufferWrite writePass);
+        RgTransferPass(RgPassId id, BufferWrite writePass);
 
         RgTransferPass(RgTransferPass const &other) = delete;
         RgTransferPass(RgTransferPass &&other) noexcept;
@@ -32,8 +32,8 @@ namespace clove {
 
         ~RgTransferPass();
 
-        std::unordered_set<RgResourceIdType> getInputResources() const override;
-        std::unordered_set<RgResourceIdType> getOutputResources() const override;
+        std::unordered_set<RgResourceId> getInputResources() const override;
+        std::unordered_set<RgResourceId> getOutputResources() const override;
 
         inline BufferWrite const &getWriteOperation() const;
     };

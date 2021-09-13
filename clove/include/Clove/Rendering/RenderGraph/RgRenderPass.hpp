@@ -36,8 +36,8 @@ namespace clove {
          * @brief Represents a unit of work, single draw indexed call.
          */
         struct Submission {
-            RgResourceIdType vertexBuffer{};
-            RgResourceIdType indexBuffer{};
+            RgResourceId vertexBuffer{};
+            RgResourceId indexBuffer{};
 
             std::vector<RgBufferBinding> shaderUbos{};
             std::vector<RgImageBinding> shaderImages{};
@@ -54,7 +54,7 @@ namespace clove {
         //FUNCTIONS
     public:
         RgRenderPass() = delete;
-        RgRenderPass(RgPassIdType id, Descriptor descriptor);
+        RgRenderPass(RgPassId id, Descriptor descriptor);
 
         RgRenderPass(RgRenderPass const &other) = delete;
         RgRenderPass(RgRenderPass &&other) noexcept;
@@ -64,8 +64,8 @@ namespace clove {
 
         ~RgRenderPass();
 
-        std::unordered_set<RgResourceIdType> getInputResources() const override;
-        std::unordered_set<RgResourceIdType> getOutputResources() const override;
+        std::unordered_set<RgResourceId> getInputResources() const override;
+        std::unordered_set<RgResourceId> getOutputResources() const override;
 
         inline void addSubmission(Submission submission);
 

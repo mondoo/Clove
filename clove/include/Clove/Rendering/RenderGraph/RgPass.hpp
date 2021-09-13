@@ -11,12 +11,12 @@ namespace clove {
     class RgPass {
         //VARIABLES
     private:
-        RgPassIdType id{ INVALID_PASS_ID };
+        RgPassId id{ INVALID_PASS_ID };
 
         //FUNCTIONS
     public:
         RgPass() = delete;
-        RgPass(RgPassIdType id);
+        RgPass(RgPassId id);
 
         RgPass(RgPass const &other) = delete;
         RgPass(RgPass &&other) noexcept;
@@ -26,10 +26,10 @@ namespace clove {
 
         ~RgPass();
 
-        inline RgPassIdType getId() const;
+        inline RgPassId getId() const;
 
-        virtual std::unordered_set<RgResourceIdType> getInputResources() const = 0;
-        virtual std::unordered_set<RgResourceIdType> getOutputResources() const = 0;
+        virtual std::unordered_set<RgResourceId> getInputResources() const = 0;
+        virtual std::unordered_set<RgResourceId> getOutputResources() const = 0;
     };
 }
 

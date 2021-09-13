@@ -11,8 +11,8 @@ namespace clove {
     class RgResource {
         //VARIABLES
     private:
-        std::unordered_set<RgPassIdType> writePasses{};
-        std::unordered_set<RgPassIdType> readPasses{};
+        std::unordered_set<RgPassId> writePasses{};
+        std::unordered_set<RgPassId> readPasses{};
 
         //FUNCTIONS
     public:
@@ -26,11 +26,11 @@ namespace clove {
 
         ~RgResource();
 
-        inline void addWritePass(RgPassIdType pass);
-        inline void addReadPass(RgPassIdType pass);
+        inline void addWritePass(RgPassId pass);
+        inline void addReadPass(RgPassId pass);
 
-        inline std::unordered_set<RgPassIdType> const &getWritePasses() const;
-        inline std::unordered_set<RgPassIdType> const &getReadPasses() const;
+        inline std::unordered_set<RgPassId> const &getWritePasses() const;
+        inline std::unordered_set<RgPassId> const &getReadPasses() const;
     };
 }
 

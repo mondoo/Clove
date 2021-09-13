@@ -206,8 +206,12 @@ namespace clove {
         //Build the render graph
         RenderGraph renderGraph{ frameCaches[imageIndex], globalCache };
 
-        RgResourceIdType renderTargetImage{ renderGraph.createImage(renderTarget->getImages()[imageIndex]) };
-        renderGraph.registerGraphOutput(renderTargetImage);
+        RgImageId renderTargetImage{ renderGraph.createImage(renderTarget->getImages()[imageIndex]) };
+        RgImageViewId renderTargetView{ renderGraph.createImageView(renderTargetImage, 0, 1) };
+        renderGraph.registerGraphOutput(renderTargetView);
+
+        RgImageId depthTargetImage{ renderGraph.createImage(GhaImage::Type::_2D, GhaImage::Format::D32_SFLOAT, renderTarget->getSize()) };// TODO: This will probably be a manually created image.
+        RgImageViewId depthView{ renderGraph.createImageView(depthTargetImage, 0, 1) };
 
         //View uniform buffer
         size_t const viewDataSize{ sizeof(currentFrameData.viewData) };
@@ -216,7 +220,7 @@ namespace clove {
         size_t const viewDataOffset{ 0 };
         size_t const viewPositionOffset{ viewDataOffset + viewDataSize + (minUboOffsetAlignment - ((viewDataOffset + viewDataSize) % minUboOffsetAlignment)) };
 
-        RgResourceIdType viewUniformBuffer{ renderGraph.createBuffer(viewPositionOffset + viewPositionSize) };
+        RgBufferId viewUniformBuffer{ renderGraph.createBuffer(viewPositionOffset + viewPositionSize) };
 
         renderGraph.writeToBuffer(viewUniformBuffer, &currentFrameData.viewData, viewDataOffset, viewDataSize);
         renderGraph.writeToBuffer(viewUniformBuffer, &currentFrameData.viewPosition, viewPositionOffset, viewPositionSize);
@@ -230,15 +234,15 @@ namespace clove {
         size_t const dirShadowTransformsOffset{ numLightsOffset + numLightsSize + (minUboOffsetAlignment - ((numLightsOffset + numLightsSize) % minUboOffsetAlignment)) };
         size_t const lightsOffset{ dirShadowTransformsOffset + dirShadowTransformsSize + (minUboOffsetAlignment - ((dirShadowTransformsOffset + dirShadowTransformsSize) % minUboOffsetAlignment)) };
 
-        RgResourceIdType lightsUnfiromBuffer{ renderGraph.createBuffer(lightsOffset + lightsSize) };
+        RgBufferId lightsUnfiromBuffer{ renderGraph.createBuffer(lightsOffset + lightsSize) };
 
         renderGraph.writeToBuffer(lightsUnfiromBuffer, &currentFrameData.numLights, numLightsOffset, numLightsSize);
         renderGraph.writeToBuffer(lightsUnfiromBuffer, &currentFrameData.directionalShadowTransforms, dirShadowTransformsOffset, dirShadowTransformsSize);
         renderGraph.writeToBuffer(lightsUnfiromBuffer, &currentFrameData.lights, lightsOffset, lightsSize);
 
         //TEMP: Shadow maps
-        RgResourceIdType directionalShadowMap{ renderGraph.createImage(GhaImage::Type::_2D, GhaImage::Format::D32_SFLOAT, { shadowMapSize, shadowMapSize }, MAX_LIGHTS) };
-        RgResourceIdType pointShadowMap{ renderGraph.createImage(GhaImage::Type::Cube, GhaImage::Format::D32_SFLOAT, { shadowMapSize, shadowMapSize }, MAX_LIGHTS) };
+        RgImageId directionalShadowMap{ renderGraph.createImage(GhaImage::Type::_2D, GhaImage::Format::D32_SFLOAT, { shadowMapSize, shadowMapSize }, MAX_LIGHTS) };
+        RgImageId pointShadowMap{ renderGraph.createImage(GhaImage::Type::Cube, GhaImage::Format::D32_SFLOAT, { shadowMapSize, shadowMapSize }, MAX_LIGHTS) };
         RgSampler shadowMaplSampler{ renderGraph.createSampler(GhaSampler::Descriptor{
             .minFilter        = GhaSampler::Filter::Linear,
             .magFilter        = GhaSampler::Filter::Linear,
@@ -249,7 +253,7 @@ namespace clove {
         }) };
 
         //FINAL COLOUR
-        RgPassIdType colourPass{ renderGraph.createRenderPass(RgRenderPass::Descriptor{
+        RgPassId colourPass{ renderGraph.createRenderPass(RgRenderPass::Descriptor{
             .vertexShader  = renderGraph.createShader({ mesh_v, mesh_vLength }, shaderIncludes, "Mesh (vertex)", GhaShader::Stage::Vertex),
             .pixelShader   = renderGraph.createShader({ mesh_p, mesh_pLength }, shaderIncludes, "Mesh (pixel)", GhaShader::Stage::Pixel),
             .viewportSize  = renderTarget->getSize(),
@@ -258,14 +262,14 @@ namespace clove {
                     .loadOp      = LoadOperation::Clear,
                     .storeOp     = StoreOperation::Store,
                     .clearColour = vec4f{ 0.0f, 0.0, 0.0f, 1.0f },
-                    .target      = renderTargetImage,
+                    .target      = renderTargetView,
                 },
             },
             .depthStencil = {
                 .loadOp     = LoadOperation::Clear,
                 .storeOp    = StoreOperation::DontCare,
                 .clearValue = DepthStencilValue{ .depth = 1.0f },
-                .target     = renderGraph.createImage(GhaImage::Type::_2D, GhaImage::Format::D32_SFLOAT, renderTarget->getSize()),// TODO: This will probably be a manually created image.
+                .target     = depthView,
             },
         }) };
 
@@ -274,12 +278,12 @@ namespace clove {
             float constexpr anisotropy{ 16.0f };
 
             //Mesh data
-            RgResourceIdType vertexBuffer{ renderGraph.createBuffer(mesh->getCombinedBuffer(), mesh->getVertexOffset(), mesh->getVertexBufferSize()) };
-            RgResourceIdType indexBuffer{ renderGraph.createBuffer(mesh->getCombinedBuffer(), mesh->getIndexOffset(), mesh->getIndexBufferSize()) };
+            RgBufferId vertexBuffer{ renderGraph.createBuffer(mesh->getCombinedBuffer(), mesh->getVertexOffset(), mesh->getVertexBufferSize()) };
+            RgBufferId indexBuffer{ renderGraph.createBuffer(mesh->getCombinedBuffer(), mesh->getIndexOffset(), mesh->getIndexBufferSize()) };
 
             //Uniform buffer
-            RgResourceIdType modelBuffer{ renderGraph.createBuffer(sizeof(ModelData)) };
-            RgResourceIdType colourBuffer{ renderGraph.createBuffer(sizeof(vec4f)) };
+            RgBufferId modelBuffer{ renderGraph.createBuffer(sizeof(ModelData)) };
+            RgBufferId colourBuffer{ renderGraph.createBuffer(sizeof(vec4f)) };
 
             ModelData const modelData{
                 .model                 = meshInfo.transform,
@@ -291,8 +295,8 @@ namespace clove {
             renderGraph.writeToBuffer(colourBuffer, &colourData, 0, sizeof(colourData));
 
             //Textures
-            RgResourceIdType diffuseTexture{ renderGraph.createImage(meshInfo.material->getDiffuseImage()) };
-            RgResourceIdType specularTexture{ renderGraph.createImage(meshInfo.material->getSpecularImage()) };
+            RgImageId diffuseTexture{ renderGraph.createImage(meshInfo.material->getDiffuseImage()) };
+            RgImageId specularTexture{ renderGraph.createImage(meshInfo.material->getSpecularImage()) };
             RgSampler materialSampler{ renderGraph.createSampler(GhaSampler::Descriptor{
                 .minFilter        = GhaSampler::Filter::Linear,
                 .magFilter        = GhaSampler::Filter::Linear,
@@ -302,6 +306,9 @@ namespace clove {
                 .enableAnisotropy = true,
                 .maxAnisotropy    = anisotropy,
             }) };
+
+            RgImageViewId diffuseView{ renderGraph.createImageView(diffuseTexture, 0, 1) };
+            RgImageViewId specularView{ renderGraph.createImageView(specularTexture, 0, 1) };
 
             renderGraph.addRenderSubmission(colourPass, RgRenderPass::Submission{
                                                             .vertexBuffer = vertexBuffer,
@@ -360,23 +367,19 @@ namespace clove {
                                                             .shaderImages = {
                                                                 RgImageBinding{
                                                                     .slot  = 4,
-                                                                    .image = diffuseTexture,
+                                                                    .image = diffuseView,
                                                                 },
                                                                 RgImageBinding{
                                                                     .slot  = 5,
-                                                                    .image = specularTexture,
+                                                                    .image = specularView,
                                                                 },
                                                                 RgImageBinding{
-                                                                    .slot       = 7,
-                                                                    .image      = directionalShadowMap,
-                                                                    .arrayIndex = 0,
-                                                                    .arrayCount = MAX_LIGHTS,
+                                                                    .slot  = 7,
+                                                                    .image = renderGraph.createImageView(directionalShadowMap, 0, MAX_LIGHTS),
                                                                 },
                                                                 RgImageBinding{
-                                                                    .slot       = 8,
-                                                                    .image      = pointShadowMap,
-                                                                    .arrayIndex = 0,
-                                                                    .arrayCount = MAX_LIGHTS * cubeMapLayerCount,
+                                                                    .slot  = 8,
+                                                                    .image = renderGraph.createImageView(pointShadowMap, 0, MAX_LIGHTS * cubeMapLayerCount),
                                                                 },
                                                             },
                                                             .shaderSamplers = {

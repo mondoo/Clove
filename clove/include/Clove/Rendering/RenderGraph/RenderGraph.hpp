@@ -49,9 +49,9 @@ namespace clove {
 
     private:
         struct PassDependency {
-            RgPassIdType signalPass{};
+            RgPassId signalPass{};
 
-            RgPassIdType waitPass{};
+            RgPassId waitPass{};
             PipelineStage waitStage{};
 
             GhaSemaphore const *semaphore{};
@@ -62,22 +62,22 @@ namespace clove {
         RgFrameCache &frameCache;
         RgGlobalCache &globalCache;
 
-        RgResourceIdType nextResourceId{ 1 };
-        RgPassIdType nextPassId{ 1 };
+        RgResourceId nextResourceId{ 1 };
+        RgPassId nextPassId{ 1 };
 
-        RgResourceIdType outputResource{ INVALID_RESOURCE_ID }; /**< The final output of the graph. */
+        RgResourceId outputResource{ INVALID_RESOURCE_ID }; /**< The final output of the graph. */
 
         //Resources
-        std::unordered_map<RgResourceIdType, std::unique_ptr<RgBuffer>> buffers{};
-        std::unordered_map<RgResourceIdType, std::unique_ptr<RgImage>> images{};         /**< Images are only used externally. */
-        std::unordered_map<RgResourceIdType, std::unique_ptr<RgImageView>> imageViews{}; /**< Used within the graph itself. We need to track each view so we know what array element needs what layout.*/
-        std::unordered_map<RgResourceIdType, GhaSampler *> samplers{};
-        std::unordered_map<RgResourceIdType, GhaShader *> shaders{};
+        std::unordered_map<RgResourceId, std::unique_ptr<RgBuffer>> buffers{};
+        std::unordered_map<RgResourceId, std::unique_ptr<RgImage>> images{};         /**< Images are only used externally. */
+        std::unordered_map<RgResourceId, std::unique_ptr<RgImageView>> imageViews{}; /**< Used within the graph itself. We need to track each view so we know what array element needs what layout.*/
+        std::unordered_map<RgResourceId, GhaSampler *> samplers{};
+        std::unordered_map<RgResourceId, GhaShader *> shaders{};
 
         //Passes
-        std::unordered_map<RgPassIdType, std::unique_ptr<RgRenderPass>> renderPasses{};
-        std::unordered_map<RgPassIdType, std::unique_ptr<RgComputePass>> computePasses{};
-        std::unordered_map<RgPassIdType, std::unique_ptr<RgTransferPass>> transferPasses{};
+        std::unordered_map<RgPassId, std::unique_ptr<RgRenderPass>> renderPasses{};
+        std::unordered_map<RgPassId, std::unique_ptr<RgComputePass>> computePasses{};
+        std::unordered_map<RgPassId, std::unique_ptr<RgTransferPass>> transferPasses{};
 
         //FUNCTIONS
     public:
@@ -98,7 +98,7 @@ namespace clove {
          * @param bufferSize 
          * @return 
          */
-        RgResourceIdType createBuffer(size_t const bufferSize);
+        RgResourceId createBuffer(size_t const bufferSize);
         /**
          * @brief Constructs a buffer from an existing GhaBuffer. Useful if wanting to use
          * pre set up buffers (such as vertex / index buffers).
@@ -107,7 +107,7 @@ namespace clove {
          * @param size The size of the GhaBuffer that this RgBuffer will view.
          * @return
          */
-        RgResourceIdType createBuffer(GhaBuffer *buffer, size_t const offset, size_t const size);
+        RgBufferId createBuffer(GhaBuffer *buffer, size_t const offset, size_t const size);
 
         /**
          * @brief Constructs an image with the specified type and dimensions.
@@ -117,14 +117,24 @@ namespace clove {
          * @param arrayCount How many elements in the image array to create. If type is GhaImage::Type::Cube then it will create an image with arrayCount * 6.
          * @return 
          */
-        RgResourceIdType createImage(GhaImage::Type imageType, GhaImage::Format format, vec2ui dimensions, uint32_t const arrayCount = 1);
+        RgImageId createImage(GhaImage::Type imageType, GhaImage::Format format, vec2ui dimensions, uint32_t const arrayCount = 1);
         /**
          * @brief Creates an image from an existing image. Useful if wanting to use
          * pre made images (such as backbuffers) in the render graph.
          * @param ghaImage GhaImage to construct from. Note that the render graph will not own the image.
          * @return 
          */
-        RgResourceIdType createImage(GhaImage *ghaImage);
+        RgImageId createImage(GhaImage *ghaImage);
+
+        /**
+         * @brief Creates an RgResourceId for a span over an image array. This allows the graph to track
+         * the usage of each element within an image array.
+         * @param image 
+         * @param arrayIndex 
+         * @param arrayCount 
+         * @return 
+         */
+        RgImageViewId createImageView(RgImageId image, uint32_t const arrayIndex, uint32_t const arrayCount);
 
         /**
          * @brief Creates a new RgSampler
@@ -154,14 +164,14 @@ namespace clove {
          * @brief Creates a render pass.
          * @param passDescriptor Descriptor of the pass itself. Contains any output resources and what shaders to run.
          */
-        RgPassIdType createRenderPass(RgRenderPass::Descriptor passDescriptor);
+        RgPassId createRenderPass(RgRenderPass::Descriptor passDescriptor);
 
         /**
          * @brief Create a compute pass.
          * @param passDescriptor Descriptor of the pass itself. Contains what shader to run.
          * @return 
          */
-        RgPassIdType createComputePass(RgComputePass::Descriptor passDescriptor);
+        RgPassId createComputePass(RgComputePass::Descriptor passDescriptor);
 
         /**
          * @brief Registers a resource as the final output of the graph.
@@ -169,7 +179,7 @@ namespace clove {
          * the list of passes it will execute bassed on this output's dependencies.
          * @param resource 
          */
-        void registerGraphOutput(RgResourceIdType resource);
+        void registerGraphOutput(RgResourceId resource);
 
         /**
          * @brief Write data into this buffer.
@@ -178,21 +188,21 @@ namespace clove {
          * @param offset Offset into the buffer to write to. If the RgBuffer views an offset into a GhaBuffer then it'll be view offset + offset
          * @param size Size of the region in the buffer to write to.
          */
-        void writeToBuffer(RgResourceIdType buffer, void const *data, size_t const offset, size_t const size);
+        void writeToBuffer(RgResourceId buffer, void const *data, size_t const offset, size_t const size);
 
         /**
          * @brief Adds a submission to a render pass. Defining a piece of geometry it needs to render.
          * @param renderPass Pass to add the submission to.
          * @param submission Submission for the pass. Encapsulates any input resources required for a single unit of work.
          */
-        void addRenderSubmission(RgPassIdType const renderPass, RgRenderPass::Submission submission);
+        void addRenderSubmission(RgPassId const renderPass, RgRenderPass::Submission submission);
 
         /**
          * @brief Adds a submission to the compute pass. Defining a dispatch call.
          * @param computePass Pass to add the submission to.
          * @param submission Submission for the pass. Encapsulates any input/output resources required for a single unit of work.
          */
-        void addComputeSubmission(RgPassIdType const computePass, RgComputePass::Submission submission);
+        void addComputeSubmission(RgPassId const computePass, RgComputePass::Submission submission);
 
         /**
          * @brief Executes the RenderGraph. Creating any objects required and submitting commands to the relevant queues.
@@ -201,22 +211,20 @@ namespace clove {
         void execute(ExecutionInfo const &info);
 
     private:
-        RgResourceIdType createImageView(RgImage *image, uint32_t const arrayIndex, uint32_t const arrayCount);
+        void buildExecutionPasses(std::vector<RgPassId> &outPasses, RgResourceId resourceId);
+        GhaImage::Layout getPreviousLayout(std::vector<RgPassId> const &passes, int32_t const currentPassIndex, RgResourceId const imageId);
 
-        void buildExecutionPasses(std::vector<RgPassIdType> &outPasses, RgResourceIdType resourceId);
-        GhaImage::Layout getPreviousLayout(std::vector<RgPassIdType> const &passes, int32_t const currentPassIndex, RgResourceIdType const imageId);
+        std::vector<PassDependency> buildDependencies(std::vector<RgPassId> const &passes);
 
-        std::vector<PassDependency> buildDependencies(std::vector<RgPassIdType> const &passes);
+        RgResource *getResourceFromId(RgResourceId resourceId);
+        RgPass *getPassFromId(RgPassId passId);
 
-        RgResource *getResourceFromId(RgResourceIdType resourceId);
-        RgPass *getPassFromId(RgPassIdType passId);
+        void generateRenderPassObjects(std::vector<RgPassId> const &passes, std::unordered_map<RgPassId, GhaRenderPass *> &outRenderPasses, std::unordered_map<RgPassId, GhaFramebuffer *> &outFramebuffers, std::unordered_map<RgPassId, GhaGraphicsPipelineObject *> &outGraphicsPipelines, std::unordered_map<RgResourceId, GhaSampler *> &outSamplers, std::unordered_map<RgPassId, GhaDescriptorSetLayout *> &outDescriptorSetLayouts, std::unordered_map<DescriptorType, uint32_t> &totalDescriptorBindingCount, uint32_t &totalDescriptorSets);
+        void generateComputePassObjects(std::vector<RgPassId> const &passes, std::unordered_map<RgPassId, GhaComputePipelineObject *> &outComputePipelines, std::unordered_map<RgPassId, GhaDescriptorSetLayout *> &outDescriptorSetLayouts, std::unordered_map<DescriptorType, uint32_t> &totalDescriptorBindingCount, uint32_t &totalDescriptorSets);
 
-        void generateRenderPassObjects(std::vector<RgPassIdType> const &passes, std::unordered_map<RgPassIdType, GhaRenderPass *> &outRenderPasses, std::unordered_map<RgPassIdType, GhaFramebuffer *> &outFramebuffers, std::unordered_map<RgPassIdType, GhaGraphicsPipelineObject *> &outGraphicsPipelines, std::unordered_map<RgResourceIdType, GhaSampler *> &outSamplers, std::unordered_map<RgPassIdType, GhaDescriptorSetLayout *> &outDescriptorSetLayouts, std::unordered_map<DescriptorType, uint32_t> &totalDescriptorBindingCount, uint32_t &totalDescriptorSets);
-        void generateComputePassObjects(std::vector<RgPassIdType> const &passes, std::unordered_map<RgPassIdType, GhaComputePipelineObject *> &outComputePipelines, std::unordered_map<RgPassIdType, GhaDescriptorSetLayout *> &outDescriptorSetLayouts, std::unordered_map<DescriptorType, uint32_t> &totalDescriptorBindingCount, uint32_t &totalDescriptorSets);
+        std::unordered_map<RgPassId, std::vector<std::unique_ptr<GhaDescriptorSet>>> createDescriptorSets(std::unordered_map<DescriptorType, uint32_t> const &totalDescriptorBindingCount, uint32_t const totalDescriptorSets, std::unordered_map<RgPassId, GhaGraphicsPipelineObject *> const &graphicsPipelines, std::unordered_map<RgPassId, GhaComputePipelineObject *> &computePipelines);
 
-        std::unordered_map<RgPassIdType, std::vector<std::unique_ptr<GhaDescriptorSet>>> createDescriptorSets(std::unordered_map<DescriptorType, uint32_t> const &totalDescriptorBindingCount, uint32_t const totalDescriptorSets, std::unordered_map<RgPassIdType, GhaGraphicsPipelineObject *> const &graphicsPipelines, std::unordered_map<RgPassIdType, GhaComputePipelineObject *> &computePipelines);
-
-        void executeGraphicsPass(RgPassIdType passId, GhaGraphicsCommandBuffer &graphicsCommandBufffer, std::unordered_map<RgPassIdType, GhaRenderPass *> const &allocatedRenderPasses, std::unordered_map<RgPassIdType, GhaFramebuffer *> const &allocatedFramebuffers, std::unordered_map<RgPassIdType, GhaGraphicsPipelineObject *> const &allocatedGraphicsPipelines, std::unordered_map<RgResourceIdType, GhaSampler *> const &allocatedSamplers, std::unordered_map<RgPassIdType, std::vector<std::unique_ptr<GhaDescriptorSet>>> const &allocatedDescriptorSets);
-        void executeComputePass(RgPassIdType passId, GhaComputeCommandBuffer &computeCommandBufffer, std::unordered_map<RgPassIdType, GhaComputePipelineObject *> const &allocatedComputePipelines, std::unordered_map<RgPassIdType, std::vector<std::unique_ptr<GhaDescriptorSet>>> const &allocatedDescriptorSets);
+        void executeGraphicsPass(RgPassId passId, GhaGraphicsCommandBuffer &graphicsCommandBufffer, std::unordered_map<RgPassId, GhaRenderPass *> const &allocatedRenderPasses, std::unordered_map<RgPassId, GhaFramebuffer *> const &allocatedFramebuffers, std::unordered_map<RgPassId, GhaGraphicsPipelineObject *> const &allocatedGraphicsPipelines, std::unordered_map<RgResourceId, GhaSampler *> const &allocatedSamplers, std::unordered_map<RgPassId, std::vector<std::unique_ptr<GhaDescriptorSet>>> const &allocatedDescriptorSets);
+        void executeComputePass(RgPassId passId, GhaComputeCommandBuffer &computeCommandBufffer, std::unordered_map<RgPassId, GhaComputePipelineObject *> const &allocatedComputePipelines, std::unordered_map<RgPassId, std::vector<std::unique_ptr<GhaDescriptorSet>>> const &allocatedDescriptorSets);
     };
 }

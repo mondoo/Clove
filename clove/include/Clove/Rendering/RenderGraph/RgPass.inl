@@ -1,5 +1,5 @@
 namespace clove {
-    RgPassIdType RgPass::getId() const {
+    RgPassId RgPass::getId() const {
         return id;
     }
 }

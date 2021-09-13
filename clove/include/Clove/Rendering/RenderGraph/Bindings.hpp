@@ -10,39 +10,34 @@
 namespace clove {
     struct RgBufferBinding {
         uint32_t slot{};
-        RgResourceIdType buffer{};
-        size_t offset{};               /**< Offset into the buffer to start binding from. */
-        size_t size{};                 /**< Size of the binding within the buffer. */
+        RgBufferId buffer{};
+        size_t offset{}; /**< Offset into the buffer to start binding from. */
+        size_t size{};   /**< Size of the binding within the buffer. */
+
         GhaShader::Stage shaderStage{};//TEMP: Manually set shader stage in place of shader reflection.
     };
 
     struct RgImageBinding {
         uint32_t slot{};
-        RgResourceIdType image{};
-        uint32_t arrayIndex{ 0 }; /**< If image is an image array, which index to bind from.*/
-        uint32_t arrayCount{ 1 }; /**< If image is an image array, how many images to bind. */
+        RgImageViewId image{};
     };
 
     struct RgSamplerBinding {
         uint32_t slot{};
-        RgResourceIdType sampler{};
+        RgResourceId sampler{};
     };
 
     struct RgRenderTargetBinding {
         LoadOperation loadOp{};
         StoreOperation storeOp{};
         ColourValue clearColour{};
-        RgResourceIdType target{};
-        uint32_t imageArrayIndex{ 0 }; /**< If image is an image array, which index to bind from. */
-        uint32_t imageArrayCount{ 1 }; /**< If image is an image array, how many images to bind. */
+        RgImageViewId target{};
     };
 
     struct RgDepthStencilBinding {
         LoadOperation loadOp{};
         StoreOperation storeOp{};
         DepthStencilValue clearValue{};
-        RgResourceIdType target{};
-        uint32_t imageArrayIndex{ 0 }; /**< If image is an image array, which index to bind from.*/
-        uint32_t imageArrayCount{ 1 }; /**< If image is an image array, how many images to bind. */
+        RgImageViewId target{};
     };
 }

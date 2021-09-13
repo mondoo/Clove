@@ -24,36 +24,44 @@ namespace clove {
 
     RenderGraph::~RenderGraph() = default;
 
-    RgResourceIdType RenderGraph::createBuffer(size_t const bufferSize) {
-        RgResourceIdType const bufferId{ nextResourceId++ };
+    RgBufferId RenderGraph::createBuffer(size_t const bufferSize) {
+        RgBufferId const bufferId{ nextResourceId++ };
         buffers[bufferId] = std::make_unique<RgBuffer>(bufferSize);
 
         return bufferId;
     }
 
-    RgResourceIdType RenderGraph::createBuffer(GhaBuffer *buffer, size_t const offset, size_t const size) {
-        RgResourceIdType const bufferId{ nextResourceId++ };
+    RgBufferId RenderGraph::createBuffer(GhaBuffer *buffer, size_t const offset, size_t const size) {
+        RgBufferId const bufferId{ nextResourceId++ };
         buffers[bufferId] = std::make_unique<RgBuffer>(buffer, offset, size);
 
         return bufferId;
     }
 
-    RgResourceIdType RenderGraph::createImage(GhaImage::Type imageType, GhaImage::Format format, vec2ui dimensions, uint32_t const arrayCount) {
-        RgResourceIdType const imageId{ nextResourceId++ };
+    RgImageId RenderGraph::createImage(GhaImage::Type imageType, GhaImage::Format format, vec2ui dimensions, uint32_t const arrayCount) {
+        RgImageId const imageId{ nextResourceId++ };
         images[imageId] = std::make_unique<RgImage>(imageType, format, dimensions, arrayCount);
 
         return imageId;
     }
 
-    RgResourceIdType RenderGraph::createImage(GhaImage *ghaImage) {
-        RgResourceIdType const imageId{ nextResourceId++ };
+    RgImageId RenderGraph::createImage(GhaImage *ghaImage) {
+        RgImageId const imageId{ nextResourceId++ };
         images[imageId] = std::make_unique<RgImage>(ghaImage);
 
         return imageId;
     }
 
+    RgImageViewId RenderGraph::createImageView(RgImageId image, uint32_t const arrayIndex, uint32_t const arrayCount) {
+        RgImageViewId const viewId{ nextResourceId++ };
+
+        imageViews[viewId] = std::make_unique<RgImageView>(images.at(image).get(), arrayIndex, arrayCount);
+
+        return viewId;
+    }
+
     RgSampler RenderGraph::createSampler(GhaSampler::Descriptor descriptor) {
-        RgResourceIdType const samplerId{ nextResourceId++ };
+        RgResourceId const samplerId{ nextResourceId++ };
         samplers[samplerId] = globalCache.createSampler(std::move(descriptor));
 
         return samplerId;
@@ -73,17 +81,11 @@ namespace clove {
         return shaderId;
     }
 
-    RgPassIdType RenderGraph::createRenderPass(RgRenderPass::Descriptor passDescriptor) {
-        RgPassIdType const renderPassId{ nextPassId++ };
+    RgPassId RenderGraph::createRenderPass(RgRenderPass::Descriptor passDescriptor) {
+        RgPassId const renderPassId{ nextPassId++ };
 
         for(auto &renderTarget : passDescriptor.renderTargets) {
-            RgResourceIdType const imageId{ renderTarget.target };
-            auto &image{ images.at(imageId) };
-
-            //Remap the target to the view so we can track the usage of each individual view rather than the whole image itself.
-            //This allows the graph to transition elements of an image array to the correct layout.
-            RgResourceIdType const viewId{ createImageView(image.get(), renderTarget.imageArrayIndex, renderTarget.imageArrayCount) };
-            renderTarget.target = viewId;
+            RgImageViewId const viewId{ renderTarget.target };
             auto &view{ imageViews.at(viewId) };
 
             if(!view->isExternalImage()) {
@@ -93,13 +95,7 @@ namespace clove {
         }
 
         {
-            RgResourceIdType const imageId{ passDescriptor.depthStencil.target };
-            auto &image{ images.at(imageId) };
-
-            //Remap the target to the view so we can track the usage of each individual view rather than the whole image itself.
-            //This allows the graph to transition elements of an image array to the correct layout.
-            RgResourceIdType const viewId{ createImageView(image.get(), passDescriptor.depthStencil.imageArrayIndex, passDescriptor.depthStencil.imageArrayCount) };
-            passDescriptor.depthStencil.target = viewId;
+            RgImageViewId const viewId{ passDescriptor.depthStencil.target };
             auto &view{ imageViews.at(viewId) };
 
             if(!view->isExternalImage()) {
@@ -113,20 +109,21 @@ namespace clove {
         return renderPassId;
     }
 
-    RgPassIdType RenderGraph::createComputePass(RgComputePass::Descriptor passDescriptor) {
-        RgPassIdType const computePassId{ nextPassId++ };
+    RgPassId RenderGraph::createComputePass(RgComputePass::Descriptor passDescriptor) {
+        RgPassId const computePassId{ nextPassId++ };
 
         computePasses[computePassId] = std::make_unique<RgComputePass>(computePassId, std::move(passDescriptor));
 
         return computePassId;
     }
 
-    void RenderGraph::registerGraphOutput(RgResourceIdType resource) {
+    void RenderGraph::registerGraphOutput(RgResourceId resource) {
+        CLOVE_ASSERT_MSG(!images.contains(resource), "An output resource cannot be an image iteself. Please provide one of it's views");
         outputResource = resource;
     }
 
-    void RenderGraph::writeToBuffer(RgResourceIdType buffer, void const *data, size_t const offset, size_t const size) {
-        RgPassIdType const transferPassId{ nextPassId++ };
+    void RenderGraph::writeToBuffer(RgResourceId buffer, void const *data, size_t const offset, size_t const size) {
+        RgPassId const transferPassId{ nextPassId++ };
 
         auto &rgBuffer{ buffers.at(buffer) };
         rgBuffer->makeCpuAccessable();
@@ -143,11 +140,11 @@ namespace clove {
         transferPasses[transferPassId] = std::make_unique<RgTransferPass>(transferPassId, std::move(write));
     }
 
-    void RenderGraph::addRenderSubmission(RgPassIdType const renderPass, RgRenderPass::Submission submission) {
+    void RenderGraph::addRenderSubmission(RgPassId const renderPass, RgRenderPass::Submission submission) {
         auto &pass{ renderPasses.at(renderPass) };
 
         {
-            RgResourceIdType const bufferId{ submission.vertexBuffer };
+            RgResourceId const bufferId{ submission.vertexBuffer };
 
             auto &buffer{ buffers.at(bufferId) };
             if(!buffer->isExternalBuffer()) {
@@ -157,7 +154,7 @@ namespace clove {
         }
 
         {
-            RgResourceIdType const bufferId{ submission.indexBuffer };
+            RgResourceId const bufferId{ submission.indexBuffer };
 
             auto &buffer{ buffers.at(bufferId) };
             if(!buffer->isExternalBuffer()) {
@@ -167,7 +164,7 @@ namespace clove {
         }
 
         for(auto const &ubo : submission.shaderUbos) {
-            RgResourceIdType const bufferId{ ubo.buffer };
+            RgResourceId const bufferId{ ubo.buffer };
 
             auto &buffer{ buffers.at(bufferId) };
             if(!buffer->isExternalBuffer()) {
@@ -177,13 +174,7 @@ namespace clove {
         }
 
         for(auto &shaderImage : submission.shaderImages) {
-            RgResourceIdType const imageId{ shaderImage.image };
-            auto &image{ images.at(imageId) };
-
-            //Remap the image to the view so we can track the usage of each individual view rather than the whole image itself.
-            //This allows the graph to transition elements of an image array to the correct layout.
-            RgResourceIdType const viewId{ createImageView(image.get(), shaderImage.arrayIndex, shaderImage.arrayCount) };
-            shaderImage.image = viewId;
+            RgImageViewId const viewId{ shaderImage.image };
             auto &view{ imageViews.at(viewId) };
 
             if(!view->isExternalImage()) {
@@ -195,11 +186,11 @@ namespace clove {
         pass->addSubmission(std::move(submission));
     }
 
-    void RenderGraph::addComputeSubmission(RgPassIdType const computePass, RgComputePass::Submission submission) {
+    void RenderGraph::addComputeSubmission(RgPassId const computePass, RgComputePass::Submission submission) {
         auto &pass{ computePasses.at(computePass) };
 
         for(auto const &ubo : submission.readUniformBuffers) {
-            RgResourceIdType const bufferId{ ubo.buffer };
+            RgResourceId const bufferId{ ubo.buffer };
 
             auto &buffer{ buffers.at(bufferId) };
             if(!buffer->isExternalBuffer()) {
@@ -209,7 +200,7 @@ namespace clove {
         }
 
         for(auto const &sbo : submission.readStorageBuffers) {
-            RgResourceIdType const bufferId{ sbo.buffer };
+            RgResourceId const bufferId{ sbo.buffer };
 
             auto &buffer{ buffers.at(bufferId) };
             if(!buffer->isExternalBuffer()) {
@@ -219,7 +210,7 @@ namespace clove {
         }
 
         for(auto const &wb : submission.writeBuffers) {
-            RgResourceIdType const bufferId{ wb.buffer };
+            RgResourceId const bufferId{ wb.buffer };
 
             auto &buffer{ buffers.at(bufferId) };
             if(!buffer->isExternalBuffer()) {
@@ -235,12 +226,12 @@ namespace clove {
         CLOVE_ASSERT_MSG(outputResource != INVALID_RESOURCE_ID, "No output resource has been specified");
 
         //Build the array of passes to execute. Only adding passes which will ultimately effect the output resource.
-        std::vector<RgPassIdType> executionPasses{};
+        std::vector<RgPassId> executionPasses{};
         buildExecutionPasses(executionPasses, outputResource);
 
         //Filter out any duplicates and then reverse order so the output pass is at the end.
         {
-            std::unordered_set<RgPassIdType> seenPasses{};
+            std::unordered_set<RgPassId> seenPasses{};
             for(auto iter{ executionPasses.begin() }; iter != executionPasses.end();) {
                 if(!seenPasses.contains(*iter)) {
                     seenPasses.emplace(*iter);
@@ -256,17 +247,17 @@ namespace clove {
         std::vector<PassDependency> const passDependencies{ buildDependencies(executionPasses) };
 
         //Graphics GHA objects.
-        std::unordered_map<RgPassIdType, GhaRenderPass *> allocatedRenderPasses{};
-        std::unordered_map<RgPassIdType, GhaFramebuffer *> allocatedFramebuffers{};
-        std::unordered_map<RgPassIdType, GhaGraphicsPipelineObject *> allocatedGraphicsPipelines{};
-        std::unordered_map<RgResourceIdType, GhaSampler *> allocatedSamplers{};
+        std::unordered_map<RgPassId, GhaRenderPass *> allocatedRenderPasses{};
+        std::unordered_map<RgPassId, GhaFramebuffer *> allocatedFramebuffers{};
+        std::unordered_map<RgPassId, GhaGraphicsPipelineObject *> allocatedGraphicsPipelines{};
+        std::unordered_map<RgResourceId, GhaSampler *> allocatedSamplers{};
 
         //Compute GHA objects.
-        std::unordered_map<RgPassIdType, GhaComputePipelineObject *> allocatedComputePipelines{};
+        std::unordered_map<RgPassId, GhaComputePipelineObject *> allocatedComputePipelines{};
 
         //Shared GHA objects.
-        std::unordered_map<RgPassIdType, GhaDescriptorSetLayout *> descriptorSetLayouts{};
-        std::unordered_map<RgPassIdType, std::vector<std::unique_ptr<GhaDescriptorSet>>> allocatedDescriptorSets{};
+        std::unordered_map<RgPassId, GhaDescriptorSetLayout *> descriptorSetLayouts{};
+        std::unordered_map<RgPassId, std::vector<std::unique_ptr<GhaDescriptorSet>>> allocatedDescriptorSets{};
 
         std::unordered_map<DescriptorType, uint32_t> totalDescriptorBindingCount{};
         uint32_t totalDescriptorSets{ 0 };
@@ -285,7 +276,7 @@ namespace clove {
             bool isInGraphics{ false };
             bool isInCompute{ false };
 
-            for(RgPassIdType passId : buffer->getReadPasses()) {
+            for(RgPassId passId : buffer->getReadPasses()) {
                 if(renderPasses.contains(passId)) {
                     isInGraphics = true;
                 }
@@ -294,7 +285,7 @@ namespace clove {
                 }
             }
 
-            for(RgPassIdType passId : buffer->getWritePasses()) {
+            for(RgPassId passId : buffer->getWritePasses()) {
                 if(renderPasses.contains(passId)) {
                     isInGraphics = true;
                 }
@@ -324,7 +315,7 @@ namespace clove {
         }
         graphicsCommandBufffer->endRecording();
 
-        for(RgPassIdType passId : executionPasses) {
+        for(RgPassId passId : executionPasses) {
             //Construct any synchronisation objects the pass will need
             std::vector<std::pair<GhaSemaphore const *, PipelineStage>> waitSemaphores{};
             std::vector<GhaSemaphore const *> signalSemaphores{};
@@ -389,37 +380,29 @@ namespace clove {
         }
     }
 
-    RgResourceIdType RenderGraph::createImageView(RgImage *image, uint32_t const arrayIndex, uint32_t const arrayCount) {
-        RgResourceIdType const viewId{ nextResourceId++ };
-
-        imageViews[viewId] = std::make_unique<RgImageView>(image, arrayIndex, arrayCount);
-
-        return viewId;
-    }
-
-    void RenderGraph::buildExecutionPasses(std::vector<RgPassIdType> &outPasses, RgResourceIdType resourceId) {
+    void RenderGraph::buildExecutionPasses(std::vector<RgPassId> &outPasses, RgResourceId resourceId) {
         RgResource *resource{ getResourceFromId(resourceId) };
         CLOVE_ASSERT(resource != nullptr);
 
-        std::vector<RgPassIdType> resourceWritePasses{};
-        for(RgPassIdType passId : resource->getWritePasses()) {
+        std::vector<RgPassId> resourceWritePasses{};
+        for(RgPassId passId : resource->getWritePasses()) {
             resourceWritePasses.push_back(passId);
         }
 
         outPasses.insert(outPasses.end(), resourceWritePasses.begin(), resourceWritePasses.end());
 
-        for(RgPassIdType passId : resourceWritePasses) {
+        for(RgPassId passId : resourceWritePasses) {
             RgPass *pass{ getPassFromId(passId) };
-            for(RgResourceIdType resource : pass->getInputResources()) {
+            for(RgResourceId resource : pass->getInputResources()) {
                 buildExecutionPasses(outPasses, resource);
             }
         }
     }
 
-    std::vector<RenderGraph::PassDependency> RenderGraph::buildDependencies(std::vector<RgPassIdType> const &passes) {
+    std::vector<RenderGraph::PassDependency> RenderGraph::buildDependencies(std::vector<RgPassId> const &passes) {
         std::vector<RenderGraph::PassDependency> dependencies{};
 
-        auto const indexOf = [&passes](RgPassIdType passId) -> size_t {
+        auto const indexOf = [&passes](RgPassId passId) -> size_t {
             for(size_t i{ 0 }; i < passes.size(); ++i) {
                 if(passes[i] == passId) {
                     return i;
@@ -431,16 +414,16 @@ namespace clove {
         //Dependecies are built for the closest pass that has an output of the current passes inputs. All queue operations complete in order so we only need to wait on the last one
         //First pass - Create dependecies for render pass inputs
         for(size_t passIndex{ 0 }; passIndex < passes.size(); ++passIndex) {
-            RgPassIdType const passId{ passes[passIndex] };
+            RgPassId const passId{ passes[passIndex] };
             if(renderPasses.contains(passId)) {
                 RgRenderPass const *const dependantPass{ renderPasses.at(passId).get() };
-                for(RgResourceIdType const resourceId : dependantPass->getInputResources()) {
+                for(RgResourceId const resourceId : dependantPass->getInputResources()) {
                     RgResource const *const resource{ getResourceFromId(resourceId) };
-                    RgPassIdType dependencyId{ 0 };
+                    RgPassId dependencyId{ 0 };
                     size_t currentDistance{ -1u };
                     bool hasDependency{ false };
 
-                    for(RgPassIdType const dependencyPassId : resource->getWritePasses()) {
+                    for(RgPassId const dependencyPassId : resource->getWritePasses()) {
                         //Only check compute passes for dependencies as all render passes will execute on the same queue.
                         if(computePasses.contains(dependencyPassId)) {
                             size_t const dependencyIndex{ indexOf(dependencyPassId) };
@@ -520,15 +503,15 @@ namespace clove {
 
         //Second pass - create compute pass dependencies.
         for(size_t passIndex{ 0 }; passIndex < passes.size(); ++passIndex) {
-            RgPassIdType const passId{ passes[passIndex] };
+            RgPassId const passId{ passes[passIndex] };
             if(computePasses.contains(passId)) {
-                for(RgResourceIdType const resourceId : computePasses.at(passId)->getInputResources()) {
+                for(RgResourceId const resourceId : computePasses.at(passId)->getInputResources()) {
                     RgResource const *const resource{ getResourceFromId(resourceId) };
-                    RgPassIdType dependencyId{ 0 };
+                    RgPassId dependencyId{ 0 };
                     size_t currentDistance{ -1u };
                     bool hasDependency{ false };
 
-                    for(RgPassIdType const dependencyPassId : resource->getWritePasses()) {
+                    for(RgPassId const dependencyPassId : resource->getWritePasses()) {
                         //Only check render passes for dependencies as all render passes will execute on the same queue.
                         if(renderPasses.contains(dependencyPassId)) {
                             size_t const dependencyIndex{ indexOf(dependencyPassId) };
@@ -574,7 +557,7 @@ namespace clove {
         return dependencies;
     }
 
-    GhaImage::Layout RenderGraph::getPreviousLayout(std::vector<RgPassIdType> const &passes, int32_t const currentPassIndex, RgResourceIdType const imageId) {
+    GhaImage::Layout RenderGraph::getPreviousLayout(std::vector<RgPassId> const &passes, int32_t const currentPassIndex, RgResourceId const imageId) {
         for(int32_t i{ currentPassIndex - 1 }; i >= 0; --i) {
             if(!renderPasses.contains(passes[i])) {
                 continue;//Only evaluate renderpasses for now. Images are not supported in compute yet
@@ -608,7 +591,7 @@ namespace clove {
         return GhaImage::Layout::Undefined;
     }
 
-    RgResource *RenderGraph::getResourceFromId(RgResourceIdType resourceId) {
+    RgResource *RenderGraph::getResourceFromId(RgResourceId resourceId) {
         if(imageViews.contains(resourceId)) {
             return imageViews.at(resourceId).get();
         } else if(buffers.contains(resourceId)) {
@@ -618,7 +601,7 @@ namespace clove {
         }
     }
 
-    RgPass *RenderGraph::getPassFromId(RgPassIdType passId) {
+    RgPass *RenderGraph::getPassFromId(RgPassId passId) {
         if(renderPasses.contains(passId)) {
             return renderPasses.at(passId).get();
         } else if(computePasses.contains(passId)) {
@@ -631,9 +614,9 @@ namespace clove {
         }
     }
 
-    void RenderGraph::generateRenderPassObjects(std::vector<RgPassIdType> const &passes, std::unordered_map<RgPassIdType, GhaRenderPass *> &outRenderPasses, std::unordered_map<RgPassIdType, GhaFramebuffer *> &outFramebuffers, std::unordered_map<RgPassIdType, GhaGraphicsPipelineObject *> &outGraphicsPipelines, std::unordered_map<RgResourceIdType, GhaSampler *> &outSamplers, std::unordered_map<RgPassIdType, GhaDescriptorSetLayout *> &outDescriptorSetLayouts, std::unordered_map<DescriptorType, uint32_t> &totalDescriptorBindingCount, uint32_t &totalDescriptorSets) {
+    void RenderGraph::generateRenderPassObjects(std::vector<RgPassId> const &passes, std::unordered_map<RgPassId, GhaRenderPass *> &outRenderPasses, std::unordered_map<RgPassId, GhaFramebuffer *> &outFramebuffers, std::unordered_map<RgPassId, GhaGraphicsPipelineObject *> &outGraphicsPipelines, std::unordered_map<RgResourceId, GhaSampler *> &outSamplers, std::unordered_map<RgPassId, GhaDescriptorSetLayout *> &outDescriptorSetLayouts, std::unordered_map<DescriptorType, uint32_t> &totalDescriptorBindingCount, uint32_t &totalDescriptorSets) {
         for(int32_t i{ 0 }; i < passes.size(); ++i) {
-            RgPassIdType const passId{ passes[i] };
+            RgPassId const passId{ passes[i] };
             if(!renderPasses.contains(passId)) {
                 continue;
             }
@@ -775,9 +758,9 @@ namespace clove {
         }
     }
 
-    void RenderGraph::generateComputePassObjects(std::vector<RgPassIdType> const &passes, std::unordered_map<RgPassIdType, GhaComputePipelineObject *> &outComputePipelines, std::unordered_map<RgPassIdType, GhaDescriptorSetLayout *> &outDescriptorSetLayouts, std::unordered_map<DescriptorType, uint32_t> &totalDescriptorBindingCount, uint32_t &totalDescriptorSets) {
+    void RenderGraph::generateComputePassObjects(std::vector<RgPassId> const &passes, std::unordered_map<RgPassId, GhaComputePipelineObject *> &outComputePipelines, std::unordered_map<RgPassId, GhaDescriptorSetLayout *> &outDescriptorSetLayouts, std::unordered_map<DescriptorType, uint32_t> &totalDescriptorBindingCount, uint32_t &totalDescriptorSets) {
         for(int32_t i{ 0 }; i < passes.size(); ++i) {
-            RgPassIdType const passId{ passes[i] };
+            RgPassId const passId{ passes[i] };
             if(!computePasses.contains(passId)) {
                 continue;
             }
@@ -845,8 +828,8 @@ namespace clove {
         }
     }
 
-    std::unordered_map<RgPassIdType, std::vector<std::unique_ptr<GhaDescriptorSet>>> RenderGraph::createDescriptorSets(std::unordered_map<DescriptorType, uint32_t> const &totalDescriptorBindingCount, uint32_t const totalDescriptorSets, std::unordered_map<RgPassIdType, GhaGraphicsPipelineObject *> const &graphicsPipelines, std::unordered_map<RgPassIdType, GhaComputePipelineObject *> &computePipelines) {
-        std::unordered_map<RgPassIdType, std::vector<std::unique_ptr<GhaDescriptorSet>>> descriptorSets{};
+    std::unordered_map<RgPassId, std::vector<std::unique_ptr<GhaDescriptorSet>>> RenderGraph::createDescriptorSets(std::unordered_map<DescriptorType, uint32_t> const &totalDescriptorBindingCount, uint32_t const totalDescriptorSets, std::unordered_map<RgPassId, GhaGraphicsPipelineObject *> const &graphicsPipelines, std::unordered_map<RgPassId, GhaComputePipelineObject *> &computePipelines) {
+        std::unordered_map<RgPassId, std::vector<std::unique_ptr<GhaDescriptorSet>>> descriptorSets{};
 
         //Create a single pool to allocate from
         std::vector<DescriptorInfo> descriptorTypes{};
@@ -879,7 +862,7 @@ namespace clove {
         return descriptorSets;
     }
 
-    void RenderGraph::executeGraphicsPass(RgPassIdType passId, GhaGraphicsCommandBuffer &graphicsCommandBufffer, std::unordered_map<RgPassIdType, GhaRenderPass *> const &allocatedRenderPasses, std::unordered_map<RgPassIdType, GhaFramebuffer *> const &allocatedFramebuffers, std::unordered_map<RgPassIdType, GhaGraphicsPipelineObject *> const &allocatedGraphicsPipelines, std::unordered_map<RgResourceIdType, GhaSampler *> const &allocatedSamplers, std::unordered_map<RgPassIdType, std::vector<std::unique_ptr<GhaDescriptorSet>>> const &allocatedDescriptorSets) {
+    void RenderGraph::executeGraphicsPass(RgPassId passId, GhaGraphicsCommandBuffer &graphicsCommandBufffer, std::unordered_map<RgPassId, GhaRenderPass *> const &allocatedRenderPasses, std::unordered_map<RgPassId, GhaFramebuffer *> const &allocatedFramebuffers, std::unordered_map<RgPassId, GhaGraphicsPipelineObject *> const &allocatedGraphicsPipelines, std::unordered_map<RgResourceId, GhaSampler *> const &allocatedSamplers, std::unordered_map<RgPassId, std::vector<std::unique_ptr<GhaDescriptorSet>>> const &allocatedDescriptorSets) {
         RgRenderPass::Descriptor const &passDescriptor{ renderPasses.at(passId)->getDescriptor() };
         std::vector<RgRenderPass::Submission> const &passSubmissions{ renderPasses.at(passId)->getSubmissions() };
 
@@ -932,7 +915,7 @@ namespace clove {
         graphicsCommandBufffer.endRenderPass();
     }
 
-    void RenderGraph::executeComputePass(RgPassIdType passId, GhaComputeCommandBuffer &computeCommandBufffer, std::unordered_map<RgPassIdType, GhaComputePipelineObject *> const &allocatedComputePipelines, std::unordered_map<RgPassIdType, std::vector<std::unique_ptr<GhaDescriptorSet>>> const &allocatedDescriptorSets) {
+    void RenderGraph::executeComputePass(RgPassId passId, GhaComputeCommandBuffer &computeCommandBufffer, std::unordered_map<RgPassId, GhaComputePipelineObject *> const &allocatedComputePipelines, std::unordered_map<RgPassId, std::vector<std::unique_ptr<GhaDescriptorSet>>> const &allocatedDescriptorSets) {
         RgComputePass::Descriptor const &passDescriptor{ computePasses.at(passId)->getDescriptor() };
         std::vector<RgComputePass::Submission> const &passSubmissions{ computePasses.at(passId)->getSubmissions() };
 

@@ -3,7 +3,7 @@
 #include "Clove/Rendering/RenderGraph/RgGlobalCache.hpp"
 
 namespace clove {
-    RgRenderPass::RgRenderPass(RgPassIdType id, Descriptor descriptor)
+    RgRenderPass::RgRenderPass(RgPassId id, Descriptor descriptor)
         : RgPass{ id }
         , descriptor{ std::move(descriptor) } {
     }
@@ -14,8 +14,8 @@ namespace clove {
 
     RgRenderPass::~RgRenderPass() = default;
 
-    std::unordered_set<RgResourceIdType> RgRenderPass::getInputResources() const {
-        std::unordered_set<RgResourceIdType> inputResources{};
+    std::unordered_set<RgResourceId> RgRenderPass::getInputResources() const {
+        std::unordered_set<RgResourceId> inputResources{};
         for(auto const &submission : submissions) {
             inputResources.emplace(submission.vertexBuffer);
             inputResources.emplace(submission.indexBuffer);
@@ -29,8 +29,8 @@ namespace clove {
         return inputResources;
     }
 
-    std::unordered_set<RgResourceIdType> RgRenderPass::getOutputResources() const {
-        std::unordered_set<RgResourceIdType> outputResources{};
+    std::unordered_set<RgResourceId> RgRenderPass::getOutputResources() const {
+        std::unordered_set<RgResourceId> outputResources{};
         for(auto const &renderTarget : descriptor.renderTargets){
             outputResources.emplace(renderTarget.target);
         }

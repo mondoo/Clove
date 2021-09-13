@@ -1,7 +1,7 @@
 #include "Clove/Rendering/RenderGraph/RgTransferPass.hpp"
 
 namespace clove {
-    RgTransferPass::RgTransferPass(RgPassIdType id, BufferWrite writePass)
+    RgTransferPass::RgTransferPass(RgPassId id, BufferWrite writePass)
         : RgPass{ id }
         , writePass{ std::move(writePass) } {
     }
@@ -12,11 +12,11 @@ namespace clove {
 
     RgTransferPass::~RgTransferPass() = default;
 
-    std::unordered_set<RgResourceIdType> RgTransferPass::getInputResources() const {
+    std::unordered_set<RgResourceId> RgTransferPass::getInputResources() const {
         return {};
     }
 
-    std::unordered_set<RgResourceIdType> RgTransferPass::getOutputResources() const {
+    std::unordered_set<RgResourceId> RgTransferPass::getOutputResources() const {
         return { writePass.bufferId };
     }
 }

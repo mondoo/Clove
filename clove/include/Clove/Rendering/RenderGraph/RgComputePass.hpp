@@ -35,7 +35,7 @@ namespace clove {
         //FUNCTIONS
     public:
         RgComputePass() = delete;
-        RgComputePass(RgPassIdType id, Descriptor descriptor);
+        RgComputePass(RgPassId id, Descriptor descriptor);
 
         RgComputePass(RgComputePass const &other) = delete;
         RgComputePass(RgComputePass &&other) noexcept;
@@ -45,8 +45,8 @@ namespace clove {
 
         ~RgComputePass();
 
-        std::unordered_set<RgResourceIdType> getInputResources() const override;
-        std::unordered_set<RgResourceIdType> getOutputResources() const override;
+        std::unordered_set<RgResourceId> getInputResources() const override;
+        std::unordered_set<RgResourceId> getOutputResources() const override;
 
         inline void addSubmission(Submission submission);
 
