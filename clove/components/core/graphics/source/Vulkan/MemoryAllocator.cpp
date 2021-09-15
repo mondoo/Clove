@@ -192,7 +192,9 @@ namespace clove {
             };
             vkGetPhysicalDeviceMemoryProperties2(device.getPhysical(), &properties);
 
-            CLOVE_LOG(CloveGhaVulkan, LogLevel::Debug, "Allocated block of {0} bytes. Current heap usage: {1} / {2}", size, memoryBudgetProperties.heapUsage[0], memoryBudgetProperties.heapBudget[0]);
+            uint32_t const heapIndex{ properties.memoryProperties.memoryTypes[memoryTypeIndex].heapIndex };
+
+            CLOVE_LOG(CloveGhaVulkan, LogLevel::Trace, "Allocated block of {0} bytes from heap {1}. Current heap usage: {2} / {3}", size, heapIndex, memoryBudgetProperties.heapUsage[heapIndex], memoryBudgetProperties.heapBudget[heapIndex]);
 #endif
 
             memoryBlocks.emplace_back(device.get(), memory, size, memoryTypeIndex);
@@ -210,18 +212,5 @@ namespace clove {
                 break;
             }
         }
-
-#if CLOVE_GHA_VALIDATION
-        VkPhysicalDeviceMemoryBudgetPropertiesEXT memoryBudgetProperties{
-            .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_BUDGET_PROPERTIES_EXT,
-        };
-        VkPhysicalDeviceMemoryProperties2 properties{
-            .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PROPERTIES_2,
-            .pNext = &memoryBudgetProperties,
-        };
-        vkGetPhysicalDeviceMemoryProperties2(device.getPhysical(), &properties);
-
-        CLOVE_LOG(CloveGhaVulkan, LogLevel::Debug, "Device memory freed. Current heap usage: {0} / {1}", memoryBudgetProperties.heapUsage[0], memoryBudgetProperties.heapBudget[0]);
-#endif
     }
 }
