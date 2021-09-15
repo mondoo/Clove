@@ -1,7 +1,6 @@
 #include "Clove/Graphics/Vulkan/MemoryAllocator.hpp"
 
-#include <Clove/Definitions.hpp>
-#include <Clove/Log/Log.hpp>
+#include "Clove/Graphics/Vulkan/VulkanLog.hpp"
 
 namespace clove {
     namespace {
@@ -20,27 +19,20 @@ namespace clove {
         }
     }
 
-    MemoryAllocator::Block::Block(VkDevice device, VkDeviceSize size, uint32_t memoryTypeIndex)
-        : device(device)
-        , size(size)
-        , memoryTypeIndex(memoryTypeIndex) {
-        VkMemoryAllocateInfo info{};
-        info.sType           = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-        info.pNext           = nullptr;
-        info.allocationSize  = size;
-        info.memoryTypeIndex = memoryTypeIndex;
-
-        vkAllocateMemory(device, &info, nullptr, &memory);
-
+    MemoryAllocator::Block::Block(VkDevice device, VkDeviceMemory memory, VkDeviceSize size, uint32_t memoryTypeIndex)
+        : device{ device }
+        , memory{ memory }
+        , size{ size }
+        , memoryTypeIndex{ memoryTypeIndex } {
         chunks.emplace_back(0, size, memory);
     }
 
     MemoryAllocator::Block::Block(Block &&other) noexcept
-        : device(other.device)
-        , memory(other.memory)
-        , size(other.size)
-        , memoryTypeIndex(other.memoryTypeIndex)
-        , chunks(std::move(other.chunks)) {
+        : device{ other.device }
+        , memory{ other.memory }
+        , size{ other.size }
+        , memoryTypeIndex{ other.memoryTypeIndex }
+        , chunks{ std::move(other.chunks) } {
         other.memory = VK_NULL_HANDLE;//Make sure the moved block no longer points to our memory
     }
 
@@ -133,12 +125,12 @@ namespace clove {
     }
 
     MemoryAllocator::MemoryAllocator(DevicePointer device)
-        : device(std::move(device)) {
+        : device{ std::move(device) } {
     }
 
     MemoryAllocator::MemoryAllocator(MemoryAllocator &&other) noexcept = default;
 
-    MemoryAllocator &MemoryAllocator::operator=(MemoryAllocator &&other)  noexcept = default;
+    MemoryAllocator &MemoryAllocator::operator=(MemoryAllocator &&other) noexcept = default;
 
     MemoryAllocator::~MemoryAllocator() = default;
 
@@ -159,8 +151,55 @@ namespace clove {
         if(freeChunk == nullptr) {
             //Make sure if allocate a new block that's big enough
             VkDeviceSize const size{ std::max(memoryRequirements.size, blockSize) };
-            memoryBlocks.emplace_back(device.get(), size, memoryTypeIndex);
+
+            VkMemoryAllocateInfo const info{
+                .sType           = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
+                .pNext           = nullptr,
+                .allocationSize  = size,
+                .memoryTypeIndex = memoryTypeIndex,
+            };
+
+            VkDeviceMemory memory{ VK_NULL_HANDLE };
+            if(VkResult const result{ vkAllocateMemory(device.get(), &info, nullptr, &memory) }; result != VK_SUCCESS) {
+                switch(result) {
+                    case VK_ERROR_OUT_OF_HOST_MEMORY:
+                        CLOVE_LOG(CloveGhaVulkan, LogLevel::Error, "Could not allocate memory. Out of host memory.");
+                        break;
+                    case VK_ERROR_OUT_OF_DEVICE_MEMORY:
+                        CLOVE_LOG(CloveGhaVulkan, LogLevel::Error, "Could not allocate memory. Out of device memory.");
+                        break;
+                    case VK_ERROR_INVALID_EXTERNAL_HANDLE:
+                        CLOVE_LOG(CloveGhaVulkan, LogLevel::Error, "Could not allocate memory. Invalid External handle.");
+                        break;
+                    case VK_ERROR_INVALID_OPAQUE_CAPTURE_ADDRESS_KHR:
+                        CLOVE_LOG(CloveGhaVulkan, LogLevel::Error, "Could not allocate memory. Invalid opaque capture address.");
+                        break;
+                    default:
+                        CLOVE_LOG(CloveGhaVulkan, LogLevel::Error, "Could not allocate memory. Reason Unknown.");
+                        break;
+                }
+
+                return nullptr;
+            }
+
+#if CLOVE_GHA_VALIDATION
+            VkPhysicalDeviceMemoryBudgetPropertiesEXT memoryBudgetProperties{
+                .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_BUDGET_PROPERTIES_EXT,
+            };
+            VkPhysicalDeviceMemoryProperties2 properties{
+                .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PROPERTIES_2,
+                .pNext = &memoryBudgetProperties,
+            };
+            vkGetPhysicalDeviceMemoryProperties2(device.getPhysical(), &properties);
+
+            uint32_t const heapIndex{ properties.memoryProperties.memoryTypes[memoryTypeIndex].heapIndex };
+
+            CLOVE_LOG(CloveGhaVulkan, LogLevel::Trace, "Allocated block of {0} bytes from heap {1}. Current heap usage: {2} / {3}", size, heapIndex, memoryBudgetProperties.heapUsage[heapIndex], memoryBudgetProperties.heapBudget[heapIndex]);
+#endif
+
+            memoryBlocks.emplace_back(device.get(), memory, size, memoryTypeIndex);
             freeChunk = memoryBlocks.back().allocate(memoryRequirements.size, memoryRequirements.alignment);
+
             CLOVE_ASSERT_MSG(freeChunk != nullptr, "{0}: Newly allocated Block does not have enough room", CLOVE_FUNCTION_NAME_PRETTY);
         }
 

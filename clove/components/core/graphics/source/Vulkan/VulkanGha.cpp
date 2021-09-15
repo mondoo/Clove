@@ -212,20 +212,30 @@ namespace clove {
     }
 
     Expected<std::unique_ptr<VulkanDevice>, std::runtime_error> createVulkanDevice(std::any nativeWindow) noexcept {
-        std::vector<char const *> deviceExtensions{
-            VK_KHR_SWAPCHAIN_EXTENSION_NAME,
-        };
+        {
+            uint32_t extensionCount{ 0 };
+            vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
+            std::vector<VkExtensionProperties> extensions(extensionCount);
+            vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensions.data());
 
-        std::vector<char const *> requiredExtensions {
+            CLOVE_LOG(CloveGhaVulkan, LogLevel::Trace, "Available instance extensions:");
+            for(auto const &extension : extensions) {
+                CLOVE_LOG(CloveGhaVulkan, LogLevel::Trace, "\t{0}", extension.extensionName);
+            }
+        }
+
+        std::vector<char const *> instaceExtensions {
             VK_KHR_SURFACE_EXTENSION_NAME,
+
 #if CLOVE_PLATFORM_WINDOWS
-                VK_KHR_WIN32_SURFACE_EXTENSION_NAME,
+            VK_KHR_WIN32_SURFACE_EXTENSION_NAME,
 #elif CLOVE_PLATFORM_MACOS
 #elif CLOVE_PLATFORM_LINUX
-                VK_KHR_XLIB_SURFACE_EXTENSION_NAME,
+            VK_KHR_XLIB_SURFACE_EXTENSION_NAME,
 #endif
+
 #if CLOVE_GHA_VALIDATION
-                VK_EXT_DEBUG_UTILS_EXTENSION_NAME,
+            VK_EXT_DEBUG_UTILS_EXTENSION_NAME,
 #endif
         };
 
@@ -275,8 +285,8 @@ namespace clove {
                 .enabledLayerCount   = 0,
                 .ppEnabledLayerNames = nullptr,
 #endif
-                .enabledExtensionCount   = static_cast<uint32_t>(std::size(requiredExtensions)),
-                .ppEnabledExtensionNames = std::data(requiredExtensions),
+                .enabledExtensionCount   = static_cast<uint32_t>(std::size(instaceExtensions)),
+                .ppEnabledExtensionNames = std::data(instaceExtensions),
             };
 
             if(VkResult const result{ vkCreateInstance(&createInfo, nullptr, &instance) }; result != VK_SUCCESS) {
@@ -349,6 +359,14 @@ namespace clove {
 #endif
         }
 
+        std::vector<char const *> deviceExtensions {
+            VK_KHR_SWAPCHAIN_EXTENSION_NAME,
+
+#if CLOVE_GHA_VALIDATION
+            VK_EXT_MEMORY_BUDGET_EXTENSION_NAME,
+#endif
+        };
+
         //Pick physical device
         VkPhysicalDevice physicalDevice{ VK_NULL_HANDLE };
         {
@@ -378,6 +396,19 @@ namespace clove {
 
             if(physicalDevice == VK_NULL_HANDLE) {
                 return Unexpected{ std::runtime_error{ "Failed to create VulkanDevice. Could not find a suitable GPU." } };
+            }
+
+            CLOVE_LOG(CloveGhaVulkan, LogLevel::Trace, "Device selected.");
+            {
+                uint32_t extensionCount{ 0 };
+                vkEnumerateDeviceExtensionProperties(physicalDevice, nullptr, &extensionCount, nullptr);
+                std::vector<VkExtensionProperties> extensions(extensionCount);
+                vkEnumerateDeviceExtensionProperties(physicalDevice, nullptr, &extensionCount, extensions.data());
+
+                CLOVE_LOG(CloveGhaVulkan, LogLevel::Trace, "Available device extensions:");
+                for(auto const &extension : extensions) {
+                    CLOVE_LOG(CloveGhaVulkan, LogLevel::Trace, "\t{0}", extension.extensionName);
+                }
             }
         }
 

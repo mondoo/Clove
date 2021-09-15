@@ -60,7 +60,7 @@ namespace clove {
             //FUNCTIONS
         public:
             Block() = delete;
-            Block(VkDevice device, VkDeviceSize size, uint32_t memoryTypeIndex);
+            Block(VkDevice device, VkDeviceMemory memory, VkDeviceSize size, uint32_t memoryTypeIndex);
 
             Block(Block const &other) = delete;
             Block(Block &&other) noexcept;
@@ -80,7 +80,7 @@ namespace clove {
 
         //VARIABLES
     private:
-        static VkDeviceSize constexpr blockSize = 256 * 1024 * 1024;//256MB
+        static VkDeviceSize constexpr blockSize{ 256 * 1024 * 1024 };//256MB
 
         DevicePointer device;
 

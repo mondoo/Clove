@@ -22,18 +22,18 @@ namespace clove {
         Descriptor descriptor{};
 
         std::shared_ptr<MemoryAllocator> memoryAllocator;
-        const MemoryAllocator::Chunk* allocatedBlock{ nullptr };
+        MemoryAllocator::Chunk const *allocatedBlock{ nullptr };
 
         //FUNCTIONS
     public:
         VulkanImage() = delete;
-        VulkanImage(DevicePointer device, VkImage image, Descriptor descriptor, std::shared_ptr<MemoryAllocator> memoryAllocator);
+        VulkanImage(DevicePointer device, VkImage image, Descriptor descriptor, MemoryAllocator::Chunk const *allocatedBlock, std::shared_ptr<MemoryAllocator> memoryAllocator);
 
-        VulkanImage(VulkanImage const& other) = delete;
-        VulkanImage(VulkanImage&& other) noexcept;
+        VulkanImage(VulkanImage const &other) = delete;
+        VulkanImage(VulkanImage &&other) noexcept;
 
-        VulkanImage& operator=(VulkanImage const& other) = delete;
-        VulkanImage& operator=(VulkanImage&& other) noexcept;
+        VulkanImage &operator=(VulkanImage const &other) = delete;
+        VulkanImage &operator=(VulkanImage &&other) noexcept;
 
         ~VulkanImage();
 
