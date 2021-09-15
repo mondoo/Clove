@@ -182,6 +182,19 @@ namespace clove {
                 return nullptr;
             }
 
+#if CLOVE_GHA_VALIDATION
+            VkPhysicalDeviceMemoryBudgetPropertiesEXT memoryBudgetProperties{
+                .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_BUDGET_PROPERTIES_EXT,
+            };
+            VkPhysicalDeviceMemoryProperties2 properties{
+                .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PROPERTIES_2,
+                .pNext = &memoryBudgetProperties,
+            };
+            vkGetPhysicalDeviceMemoryProperties2(device.getPhysical(), &properties);
+
+            CLOVE_LOG(CloveGhaVulkan, LogLevel::Debug, "Allocated block of {0} bytes. Current heap usage: {1} / {2}", size, memoryBudgetProperties.heapUsage[0], memoryBudgetProperties.heapBudget[0]);
+#endif
+
             memoryBlocks.emplace_back(device.get(), memory, size, memoryTypeIndex);
             freeChunk = memoryBlocks.back().allocate(memoryRequirements.size, memoryRequirements.alignment);
 
@@ -197,5 +210,18 @@ namespace clove {
                 break;
             }
         }
+
+#if CLOVE_GHA_VALIDATION
+        VkPhysicalDeviceMemoryBudgetPropertiesEXT memoryBudgetProperties{
+            .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_BUDGET_PROPERTIES_EXT,
+        };
+        VkPhysicalDeviceMemoryProperties2 properties{
+            .sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MEMORY_PROPERTIES_2,
+            .pNext = &memoryBudgetProperties,
+        };
+        vkGetPhysicalDeviceMemoryProperties2(device.getPhysical(), &properties);
+
+        CLOVE_LOG(CloveGhaVulkan, LogLevel::Debug, "Device memory freed. Current heap usage: {0} / {1}", memoryBudgetProperties.heapUsage[0], memoryBudgetProperties.heapBudget[0]);
+#endif
     }
 }
