@@ -508,6 +508,8 @@ namespace clove {
             graphicsQueue->freeCommandBuffer(imageData.cubeShadowMapCommandBuffer);
             computeQueue->freeCommandBuffer(imageData.skinningCommandBuffer);
         }
+
+        inFlightImageData.clear();
     }
 
     void ForwardRenderer3D::createRenderTargetResources() {
