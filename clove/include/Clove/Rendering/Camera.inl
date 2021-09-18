@@ -1,9 +1,23 @@
 namespace clove {
-    float Camera::getNearPlane() const {
-        return nearPlane;
+    Camera::Camera(Camera &&other) noexcept = default;
+
+    Camera &Camera::operator=(Camera &&other) noexcept = default;
+
+    Camera::~Camera() = default;
+
+    void Camera::setProjectionMode(ProjectionMode const mode) {
+        currentProjectionMode = mode;
     }
 
-    float Camera::getFarPlane() const {
-        return farPlane;
+    void Camera::setZoomLevel(float zoom) {
+        zoomLevel = zoom;
+    }
+
+    void Camera::setViewport(Viewport viewport) {
+        this->viewport = viewport;
+    }
+
+    Camera::Viewport const &Camera::getViewport() const {
+        return viewport;
     }
 }

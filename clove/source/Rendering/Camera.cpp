@@ -1,7 +1,6 @@
 #include "Clove/Rendering/Camera.hpp"
 
-#include "Clove/Application.hpp"
-#include "Clove/Surface.hpp"
+#include "Clove/Rendering/RenderingLog.hpp"
 
 #include <Clove/Maths/MathsHelpers.hpp>
 
@@ -14,98 +13,27 @@ namespace clove {
 
     Camera::Camera(ProjectionMode const projection)
         : currentProjectionMode{ projection } {
-        auto *window{ Application::get().getSurface() };
-
-        surfaceResizeHandle = window->onSurfaceResize().bind([this](vec2ui const &size) {
-            setViewport({ 0, 0, static_cast<int32_t>(size.x), static_cast<int32_t>(size.y) });
-        });
-
-        viewport = { 0, 0, window->getSize().x, window->getSize().y };
+        viewport = { 0.0f, 0.0f, 1.0f, 1.0f };
         setProjectionMode(projection);
     }
 
-    Camera::Camera(Camera &&other) noexcept
-        : currentProjectionMode{ other.currentProjectionMode }
-        , view{ other.view }
-        , projection{ other.projection }
-        , viewport{ other.viewport }
-        , zoomLevel{ other.zoomLevel } {
-        if(other.surfaceResizeHandle.isValid()) {
-            surfaceResizeHandle = Application::get().getSurface()->onSurfaceResize().bind([this](vec2ui const &size) {
-                setViewport({ 0, 0, static_cast<int32_t>(size.x), static_cast<int32_t>(size.y) });
-            });
-        }
-    }
-
-    Camera &Camera::operator=(Camera &&other) noexcept {
-        currentProjectionMode = other.currentProjectionMode;
-        view                  = other.view;
-        projection            = other.projection;
-        viewport              = other.viewport;
-        zoomLevel             = other.zoomLevel;
-        if(other.surfaceResizeHandle.isValid()) {
-            surfaceResizeHandle = Application::get().getSurface()->onSurfaceResize().bind([this](vec2ui const &size) {
-                setViewport({ 0, 0, static_cast<int32_t>(size.x), static_cast<int32_t>(size.y) });
-            });
-        }
-
-        return *this;
-    }
-
-    Camera::~Camera() = default;
-
-    void Camera::setView(mat4f view) {
-        this->view = view;
-    }
-
-    void Camera::setProjectionMode(ProjectionMode const mode) {
+    mat4f Camera::getProjection(vec2ui const screenSize) const {
         float constexpr orthographicSize{ 15.0f };
         float constexpr fov{ 45.0f };
         float const othoZoom{ orthographicSize * zoomLevel };
 
-        float const width{ static_cast<float>(viewport.width) };
-        float const height{ static_cast<float>(viewport.height) };
+        float const width{ screenSize.x * viewport.width };
+        float const height{ screenSize.y * viewport.height };
         float const aspect{ height > 0.0f ? width / height : 0.0f };
-
-        currentProjectionMode = mode;
 
         switch(currentProjectionMode) {
             case ProjectionMode::Orthographic:
-                projection = createOrthographicMatrix(-othoZoom * aspect, othoZoom * aspect, -othoZoom, othoZoom, nearPlane, farPlane);
-                break;
-
+                return createOrthographicMatrix(-othoZoom * aspect, othoZoom * aspect, -othoZoom, othoZoom, nearPlane, farPlane);
             case ProjectionMode::Perspective:
-                projection = createPerspectiveMatrix(fov * zoomLevel, aspect, nearPlane, farPlane);
-                break;
-
+                return createPerspectiveMatrix(fov * zoomLevel, aspect, nearPlane, farPlane);
             default:
-                break;
+                CLOVE_ASSERT_MSG(false, "{0}: Case not handled", CLOVE_FUNCTION_NAME_PRETTY);
+                return mat4f{ 1.0f };
         }
-    }
-
-    void Camera::setZoomLevel(float zoom) {
-        zoomLevel = zoom;
-        setProjectionMode(currentProjectionMode);
-    }
-
-    void Camera::setViewport(Viewport viewport) {
-        this->viewport = viewport;
-        setProjectionMode(currentProjectionMode);
-    }
-
-    mat4f const &Camera::getView() const {
-        return view;
-    }
-
-    mat4f const &Camera::getProjection() const {
-        return projection;
-    }
-
-    Camera::ProjectionMode Camera::getProjectionMode() const {
-        return currentProjectionMode;
-    }
-
-    Viewport const &Camera::getViewport() const {
-        return viewport;
     }
 }
