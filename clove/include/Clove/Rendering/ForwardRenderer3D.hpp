@@ -176,7 +176,7 @@ namespace clove {
         /**
          * @brief Submit the active camera the renderer will use.
          */
-        void submitCamera(Camera const &camera, vec3f position);
+        void submitCamera(mat4f const view, mat4f const projection, vec3f const position);
 
         void submitLight(DirectionalLight const &light);
         void submitLight(PointLight const &light);
@@ -185,6 +185,8 @@ namespace clove {
         void submitText(std::shared_ptr<GhaImageView> const &text, mat4f const modelProjection);
 
         void end();
+
+        vec2ui getRenderTargetSize() const;
 
     private:
         void cleanupRenderTargetResources();

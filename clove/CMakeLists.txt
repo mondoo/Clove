@@ -193,10 +193,6 @@ add_library(
 		${INCLUDE}/TextureLoader.hpp
 		${SOURCE}/TextureLoader.cpp
 
-		${INCLUDE}/Surface.hpp
-		${INCLUDE}/WindowSurface.hpp
-		${SOURCE}/WindowSurface.cpp
-
 		${ShaderFiles}
 
 		${ResourceBinaries}

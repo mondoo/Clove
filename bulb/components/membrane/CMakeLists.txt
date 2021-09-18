@@ -25,8 +25,8 @@ add_library(
         ${INCLUDE}/RuntimeSubSystem.hpp
         ${SOURCE}/RuntimeSubSystem.cpp
         
-        ${INCLUDE}/ViewportSurface.hpp
-        ${SOURCE}/ViewportSurface.cpp
+        ${INCLUDE}/EditorViewport.hpp
+        ${SOURCE}/EditorViewport.cpp
 
         ${INCLUDE}/Scene.hpp
 		${INCLUDE}/Scene.inl

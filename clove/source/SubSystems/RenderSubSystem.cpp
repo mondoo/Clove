@@ -39,9 +39,10 @@ namespace clove {
             vec3f const camFront{ transform.getForward() };
             vec3f const camUp{ transform.getUp() };
 
-            camera.camera.setView(lookAt(position, position + camFront, camUp));
+            mat4f const view{ lookAt(position, position + camFront, camUp) };
+            mat4f const projection{ camera.camera.getProjection(renderer->getRenderTargetSize()) };
 
-            renderer->submitCamera(camera.camera, position);
+            renderer->submitCamera(view, projection, position);
 
             activeCamera = entity;
         });

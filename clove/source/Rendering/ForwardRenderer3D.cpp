@@ -165,9 +165,9 @@ namespace clove {
         }
     }
 
-    void ForwardRenderer3D::submitCamera(Camera const &camera, vec3f position) {
-        currentFrameData.bufferData.viewData.view       = camera.getView();
-        currentFrameData.bufferData.viewData.projection = camera.getProjection();
+    void ForwardRenderer3D::submitCamera(mat4f const view, mat4f const projection, vec3f const position) {
+        currentFrameData.bufferData.viewData.view       = view;
+        currentFrameData.bufferData.viewData.projection = projection;
 
         currentFrameData.bufferData.viewPosition = position;
     }
@@ -495,6 +495,10 @@ namespace clove {
         renderTarget->submit(imageIndex, currentFrame, std::move(submitInfo));
 
         currentFrame = (currentFrame + 1) % maxFramesInFlight;
+    }
+
+    vec2ui ForwardRenderer3D::getRenderTargetSize() const {
+        return renderTarget->getSize();
     }
 
     void ForwardRenderer3D::cleanupRenderTargetResources() {

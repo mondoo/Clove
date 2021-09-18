@@ -16,7 +16,6 @@
 #include <Clove/Maths/MathsHelpers.hpp>
 #include <Clove/ModelLoader.hpp>
 #include <Clove/SubSystems/PhysicsSubSystem.hpp>
-#include <Clove/Surface.hpp>
 #include <msclr/marshal_cppstd.h>
 
 namespace membrane {
@@ -197,8 +196,8 @@ namespace membrane {
     }
 
     void EditorSubSystem::onUpdate(clove::DeltaTime const deltaTime) {
-        auto &keyBoard{ clove::Application::get().getSurface()->getKeyboard() };
-        auto &mouse{ clove::Application::get().getSurface()->getMouse() };
+        auto &keyBoard{ *clove::Application::get().getKeyboard() };
+        auto &mouse{ *clove::Application::get().getMouse() };
         auto *const entityManager{ clove::Application::get().getEntityManager() };
 
         clove::vec3f pos{};

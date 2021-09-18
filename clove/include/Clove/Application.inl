@@ -62,8 +62,16 @@ namespace clove {
         return currentState;
     }
 
-    Surface *Application::getSurface() const {
-        return surface.get();
+    Window *Application::getWindow() const {
+        return window.get();
+    }
+
+    Keyboard *Application::getKeyboard() const{
+        return keyboard;
+    }
+
+    Mouse *Application::getMouse() const {
+        return mouse;
     }
 
     GhaDevice *Application::getGraphicsDevice() const {
