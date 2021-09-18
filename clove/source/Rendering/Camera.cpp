@@ -22,8 +22,8 @@ namespace clove {
         float constexpr fov{ 45.0f };
         float const othoZoom{ orthographicSize * zoomLevel };
 
-        float const width{ screenSize.x * viewport.width };
-        float const height{ screenSize.y * viewport.height };
+        float const width{ static_cast<float>(screenSize.x) * viewport.width };
+        float const height{ static_cast<float>(screenSize.y) * viewport.height };
         float const aspect{ height > 0.0f ? width / height : 0.0f };
 
         switch(currentProjectionMode) {
