@@ -10,7 +10,7 @@ namespace clove {
 namespace membrane {
     class EditorSubSystem;
     class RuntimeSubSystem;
-    class ViewportSurface;
+    ref class EditorViewport;
     ref class Editor_Stop;
     ref class Editor_Play;
 }
@@ -24,7 +24,7 @@ public ref class Application {
     private:
         clove::Application *app;
         clove::GraphicsImageRenderTarget *renderTarget;
-        ViewportSurface *surface;
+        EditorViewport ^viewport;
 
         int width;
         int height;

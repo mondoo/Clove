@@ -4,7 +4,7 @@
 #include "Membrane/MessageHandler.hpp"
 #include "Membrane/Messages.hpp"
 #include "Membrane/RuntimeSubSystem.hpp"
-#include "Membrane/ViewportSurface.hpp"
+#include "Membrane/EditorViewport.hpp"
 
 #include <Clove/Application.hpp>
 #include <Clove/Components/StaticModelComponent.hpp>
@@ -35,10 +35,10 @@ namespace membrane {
         renderTargetImageDescriptor.format      = GhaImage::Format::B8G8R8A8_SRGB;//Hard coding format to B8G8R8A8_SRGB as that is what the WriteableBitmap is set to
         renderTargetImageDescriptor.sharingMode = SharingMode::Concurrent;
 
+        viewport = gcnew EditorViewport{};
+        
         //Use pair as there seems to be an issue when using structured bindings
-        auto vpSurface{ std::make_unique<ViewportSurface>() };
-        surface = vpSurface.get();
-        auto pair{ clove::Application::createHeadless(GraphicsApi::Vulkan, AudioApi::OpenAl, std::move(renderTargetImageDescriptor), std::move(vpSurface)) };
+        auto pair{ clove::Application::createHeadless(GraphicsApi::Vulkan, AudioApi::OpenAl, std::move(renderTargetImageDescriptor), viewport->getKeyboard(), viewport->getMouse()) };
         app          = pair.first.release();
         renderTarget = pair.second;
     }
@@ -82,6 +82,7 @@ namespace membrane {
     }
 
     void Application::tick() {
+        viewport->processInput();
         app->tick();
     }
 
@@ -99,9 +100,7 @@ namespace membrane {
     }
 
     void Application::resize(int width, int height) {
-        clove::vec2i const size{ width, height };
-        renderTarget->resize(size);
-        surface->setSize(std::move(size));
+        renderTarget->resize({ width, height });
 
         this->width  = width;
         this->height = height;
