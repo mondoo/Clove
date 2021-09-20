@@ -44,8 +44,15 @@ namespace Bulb {
             projectSelector.Show();
         }
 
-        private void OnProjectSelected(string filePath) {
-            engineApp.openProject(filePath);
+        private void OnProjectSelected(ProjectSelectedArgs args) {
+            if (args.IsNewProject) {
+                ProjectCreator creator = new ProjectCreator();
+                creator.ProjectName = args.ProjectName;
+                creator.ProjectPath = args.ProjectPath;
+                creator.Create();
+            }
+
+            engineApp.openProject(args.FullPath);
 
             projectSelector.Close();
 

@@ -52,7 +52,7 @@ namespace membrane {
     }
 
     bool Application::hasDefaultProject() {
-        if(std::filesystem::exists(cachedProjectsPath)) {
+        if(std::filesystem::exists(cachedProjectsPath) && !std::filesystem::is_empty(cachedProjectsPath)) {
             auto loadResult{ clove::loadYaml(cachedProjectsPath) };
             clove::serialiser::Node rootNode{ loadResult.getValue() };
 
