@@ -69,8 +69,7 @@ namespace clove {
 
         //Resources
         std::unordered_map<RgResourceId, std::unique_ptr<RgBuffer>> buffers{};
-        std::unordered_map<RgResourceId, std::unique_ptr<RgImage>> images{};         /**< Images are only used externally. */
-        std::unordered_map<RgResourceId, std::unique_ptr<RgImageView>> imageViews{}; /**< Used within the graph itself. We need to track each view so we know what array element needs what layout.*/
+        std::unordered_map<RgResourceId, std::unique_ptr<RgImage>> images{};
         std::unordered_map<RgResourceId, GhaSampler *> samplers{};
         std::unordered_map<RgResourceId, GhaShader *> shaders{};
 
@@ -114,10 +113,11 @@ namespace clove {
          * @param imageType 
          * @param format
          * @param dimensions 
+         * @param initialLayout
          * @param arrayCount How many elements in the image array to create. If type is GhaImage::Type::Cube then it will create an image with arrayCount * 6.
          * @return 
          */
-        RgImageId createImage(GhaImage::Type imageType, GhaImage::Format format, vec2ui dimensions, uint32_t const arrayCount = 1);
+        RgImageId createImage(GhaImage::Type const imageType, GhaImage::Format const format, vec2ui const dimensions, GhaImage::Layout const initialLayout, uint32_t const arrayCount = 1);
         /**
          * @brief Creates an image from an existing image. Useful if wanting to use
          * pre made images (such as backbuffers) in the render graph.
@@ -125,16 +125,6 @@ namespace clove {
          * @return 
          */
         RgImageId createImage(GhaImage *ghaImage);
-
-        /**
-         * @brief Creates an RgResourceId for a span over an image array. This allows the graph to track
-         * the usage of each element within an image array.
-         * @param image 
-         * @param arrayIndex 
-         * @param arrayCount 
-         * @return 
-         */
-        RgImageViewId createImageView(RgImageId image, uint32_t const arrayIndex, uint32_t const arrayCount);
 
         /**
          * @brief Creates a new RgSampler

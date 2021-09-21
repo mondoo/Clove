@@ -212,11 +212,9 @@ namespace clove {
         RenderGraph renderGraph{ frameCaches[imageIndex], globalCache };
 
         RgImageId renderTargetImage{ renderGraph.createImage(renderTarget->getImages()[imageIndex]) };
-        RgImageViewId renderTargetView{ renderGraph.createImageView(renderTargetImage, 0, 1) };
-        renderGraph.registerGraphOutput(renderTargetView);
+        renderGraph.registerGraphOutput(renderTargetImage);
 
-        RgImageId depthTargetImage{ renderGraph.createImage(GhaImage::Type::_2D, GhaImage::Format::D32_SFLOAT, renderTarget->getSize()) };// TODO: This will probably be a manually created image.
-        RgImageViewId depthView{ renderGraph.createImageView(depthTargetImage, 0, 1) };
+        RgImageId depthTargetImage{ renderGraph.createImage(GhaImage::Type::_2D, GhaImage::Format::D32_SFLOAT, renderTarget->getSize(), GhaImage::Layout::DepthStencilAttachmentOptimal) };// TODO: This will probably be a manually created image.
 
         //View uniform buffer
         size_t const viewDataSize{ sizeof(currentFrameData.viewData) };
@@ -286,13 +284,12 @@ namespace clove {
             meshBuffers.push_back(std::move(bufferData));
         }
 
-        RgImageId directionalShadowMap{ renderGraph.createImage(GhaImage::Type::_2D, GhaImage::Format::D32_SFLOAT, { shadowMapSize, shadowMapSize }, MAX_LIGHTS) };
-        RgImageId pointShadowMap{ renderGraph.createImage(GhaImage::Type::Cube, GhaImage::Format::D32_SFLOAT, { shadowMapSize, shadowMapSize }, MAX_LIGHTS) };
+        //Images might not going into the shadow pass but will always going into the lighting pass so we initialise them as ShaderReadOnlyOptimal
+        RgImageId directionalShadowMap{ renderGraph.createImage(GhaImage::Type::_2D, GhaImage::Format::D32_SFLOAT, { shadowMapSize, shadowMapSize }, GhaImage::Layout::ShaderReadOnlyOptimal, MAX_LIGHTS) };
+        RgImageId pointShadowMap{ renderGraph.createImage(GhaImage::Type::Cube, GhaImage::Format::D32_SFLOAT, { shadowMapSize, shadowMapSize }, GhaImage::Layout::ShaderReadOnlyOptimal, MAX_LIGHTS) };
 
         //DIRECTIONAL SHADOWS
         for(size_t i{ 0 }; i < currentFrameData.numLights.numDirectional; ++i) {
-            RgImageViewId directionalShadowMapView{ renderGraph.createImageView(directionalShadowMap, i, 1) };
-
             //NOTE: Need this as a separate thing otherwise there is an internal compiler error. I think it's because of the clearValue variant
             RgRenderPass::Descriptor passDescriptor{
                 .vertexShader  = renderGraph.createShader({ meshshadowmap_v, meshshadowmap_vLength }, shaderIncludes, "Mesh (vertex)", GhaShader::Stage::Vertex),
@@ -300,10 +297,12 @@ namespace clove {
                 .viewportSize  = renderTarget->getSize(),
                 .renderTargets = {
                     RgRenderTargetBinding{
-                        .loadOp     = LoadOperation::Clear,
-                        .storeOp    = StoreOperation::Store,
-                        .clearValue = DepthStencilValue{ .depth = 1.0f },
-                        .target     = directionalShadowMapView,
+                        .loadOp           = LoadOperation::Clear,
+                        .storeOp          = StoreOperation::Store,
+                        .clearValue       = DepthStencilValue{ .depth = 1.0f },
+                        .target           = directionalShadowMap,
+                        .targetArrayIndex = static_cast<uint32_t>(i),
+                        .targetArrayCount = 1,
                     },
                 },
             };
@@ -352,14 +351,14 @@ namespace clove {
                     .loadOp     = LoadOperation::Clear,
                     .storeOp    = StoreOperation::Store,
                     .clearValue = ColourValue{ 0.0f, 0.0, 0.0f, 1.0f },
-                    .target     = renderTargetView,
+                    .target     = renderTargetImage,
                 },
             },
             .depthStencil = {
                 .loadOp     = LoadOperation::Clear,
                 .storeOp    = StoreOperation::DontCare,
                 .clearValue = DepthStencilValue{ .depth = 1.0f },
-                .target     = depthView,
+                .target     = depthTargetImage,
             },
         };
         RgPassId colourPass{ renderGraph.createRenderPass(passDescriptor) };
@@ -389,9 +388,6 @@ namespace clove {
                 .enableAnisotropy = true,
                 .maxAnisotropy    = anisotropy,
             }) };
-
-            RgImageViewId diffuseView{ renderGraph.createImageView(diffuseTexture, 0, 1) };
-            RgImageViewId specularView{ renderGraph.createImageView(specularTexture, 0, 1) };
 
             renderGraph.addRenderSubmission(colourPass, RgRenderPass::Submission{
                                                             .vertexBuffer = meshBuffers[meshIndex].vertexBuffer,
@@ -449,20 +445,28 @@ namespace clove {
                                                             },
                                                             .shaderImages = {
                                                                 RgImageBinding{
-                                                                    .slot  = 4,
-                                                                    .image = diffuseView,
+                                                                    .slot       = 4,
+                                                                    .image      = diffuseTexture,
+                                                                    .arrayIndex = 0,
+                                                                    .arrayCount = 1,
                                                                 },
                                                                 RgImageBinding{
-                                                                    .slot  = 5,
-                                                                    .image = specularView,
+                                                                    .slot       = 5,
+                                                                    .image      = specularTexture,
+                                                                    .arrayIndex = 0,
+                                                                    .arrayCount = 1,
                                                                 },
                                                                 RgImageBinding{
-                                                                    .slot  = 7,
-                                                                    .image = renderGraph.createImageView(directionalShadowMap, 0, MAX_LIGHTS),
+                                                                    .slot       = 7,
+                                                                    .image      = directionalShadowMap,
+                                                                    .arrayIndex = 0,
+                                                                    .arrayCount = MAX_LIGHTS,
                                                                 },
                                                                 RgImageBinding{
-                                                                    .slot  = 8,
-                                                                    .image = renderGraph.createImageView(pointShadowMap, 0, MAX_LIGHTS * cubeMapLayerCount),
+                                                                    .slot       = 8,
+                                                                    .image      = pointShadowMap,
+                                                                    .arrayIndex = 0,
+                                                                    .arrayCount = MAX_LIGHTS * cubeMapLayerCount,
                                                                 },
                                                             },
                                                             .shaderSamplers = {

@@ -9,7 +9,6 @@ namespace clove {
 
     using RgBufferId    = RgResourceId;
     using RgImageId     = RgResourceId;
-    using RgImageViewId = RgResourceId;
 
     static RgResourceId constexpr INVALID_RESOURCE_ID{ 0 };
     static RgPassId constexpr INVALID_PASS_ID{ 0 };

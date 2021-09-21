@@ -10,9 +10,7 @@ namespace clove {
 }
 
 namespace clove {
-    class RgImage {
-        friend class RgImageView;
-
+    class RgImage : public RgResource {
         //VARIABLES
     private:
         GhaImage *ghaImage{ nullptr }; /**< The GHA image this object views. */
@@ -22,7 +20,7 @@ namespace clove {
         //FUNCTIONS
     public:
         RgImage() = delete;
-        RgImage(GhaImage::Type const imageType, GhaImage::Format const format, vec2ui const dimensions, uint32_t const arrayCount);
+        RgImage(GhaImage::Type const imageType, GhaImage::Format const format, vec2ui const dimensions, GhaImage::Layout const initialLayout, uint32_t const arrayCount);
         RgImage(GhaImage *ghaImage);
 
         RgImage(RgImage const &other) = delete;
@@ -32,33 +30,6 @@ namespace clove {
         RgImage &operator=(RgImage &&other) noexcept;
 
         ~RgImage();
-    };
-
-    /**
-     * @brief Tracks the usage and dependencies of an image view in the RenderGraph.
-     * @details Can be used to later create a GhaImage when executing the graph.
-     */
-    class RgImageView : public RgResource {
-        //VARIABLES
-    private:
-        RgImage *image{ nullptr };
-        GhaImageView *ghaImageView{ nullptr };
-
-        uint32_t arrayIndex{ 0 }; /**< The base index of the view. */
-        uint32_t arrayCount{ 1 }; /**< how many elements in the array this views. */
-
-        //FUNCTIONS
-    public:
-        RgImageView() = delete;
-        RgImageView(RgImage *image, uint32_t const arrayIndex, uint32_t const arrayCount);
-
-        RgImageView(RgImageView const &other) = delete;
-        RgImageView(RgImageView &&other) noexcept;
-
-        RgImageView &operator=(RgImageView const &other) = delete;
-        RgImageView &operator=(RgImageView &&other) noexcept;
-
-        ~RgImageView();
 
         /**
          * @brief Gets the underlying GHA image. Creates a new one if neccessary.
@@ -73,14 +44,13 @@ namespace clove {
          * @param arrayCount 
          * @return 
          */
-        GhaImageView *getGhaImageView(RgFrameCache &cache);
+        GhaImageView *getGhaImageView(RgFrameCache &cache, uint32_t const arrayIndex, uint32_t const arrayCount);
 
         inline GhaImage::Format getFormat() const;
         inline vec2ui const &getDimensions() const;
-        inline bool isExternalImage() const;
+        inline GhaImage::Layout getInitialLayout() const;
 
-        inline uint32_t getArrayIndex() const;
-        inline uint32_t getArrayCount() const;
+        inline bool isExternalImage() const;
 
         void addImageUsage(GhaImage::UsageMode const usage);
     };

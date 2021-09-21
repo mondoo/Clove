@@ -19,7 +19,9 @@ namespace clove {
 
     struct RgImageBinding {
         uint32_t slot{};
-        RgImageViewId image{};
+        RgImageId image{};
+        uint32_t arrayIndex{ 0 };
+        uint32_t arrayCount{ 1 };
     };
 
     struct RgSamplerBinding {
@@ -31,13 +33,17 @@ namespace clove {
         LoadOperation loadOp{};
         StoreOperation storeOp{};
         ClearValue clearValue{};
-        RgImageViewId target{};
+        RgImageId target{};
+        uint32_t targetArrayIndex{ 0 };
+        uint32_t targetArrayCount{ 1 };
     };
 
     struct RgDepthStencilBinding {
         LoadOperation loadOp{};
         StoreOperation storeOp{};
         DepthStencilValue clearValue{};
-        RgImageViewId target{};
+        RgImageId target{};
+        uint32_t targetArrayIndex{ 0 };
+        uint32_t targetArrayCount{ 1 };
     };
 }
