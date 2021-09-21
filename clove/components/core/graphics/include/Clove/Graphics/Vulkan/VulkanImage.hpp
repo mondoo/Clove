@@ -34,7 +34,7 @@ namespace clove {
         VulkanImage(VulkanImage &&other) noexcept;
 
         VulkanImage &operator=(VulkanImage const &other) = delete;
-        VulkanImage &operator                            =(VulkanImage &&other) noexcept;
+        VulkanImage &operator=(VulkanImage &&other) noexcept;
 
         ~VulkanImage();
 
