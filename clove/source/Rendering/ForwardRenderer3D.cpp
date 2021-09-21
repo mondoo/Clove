@@ -282,6 +282,8 @@ namespace clove {
 
             renderGraph.writeToBuffer(bufferData.modelBuffer, &modelData, 0, sizeof(modelData));
             renderGraph.writeToBuffer(bufferData.colourBuffer, &colourData, 0, sizeof(colourData));
+
+            meshBuffers.push_back(std::move(bufferData));
         }
 
         RgImageId directionalShadowMap{ renderGraph.createImage(GhaImage::Type::_2D, GhaImage::Format::D32_SFLOAT, { shadowMapSize, shadowMapSize }, MAX_LIGHTS) };
