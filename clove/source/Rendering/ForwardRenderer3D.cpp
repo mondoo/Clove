@@ -291,7 +291,8 @@ namespace clove {
         for(size_t i{ 0 }; i < currentFrameData.numLights.numDirectional; ++i) {
             RgImageViewId directionalShadowMapView{ renderGraph.createImageView(directionalShadowMap, i, 1) };
 
-            RgPassId directionalShadowPass{ renderGraph.createRenderPass(RgRenderPass::Descriptor{
+            //NOTE: Need this as a separate thing otherwise there is an internal compiler error. I think it's because of the clearValue variant
+            RgRenderPass::Descriptor passDescriptor{
                 .vertexShader  = renderGraph.createShader({ meshshadowmap_v, meshshadowmap_vLength }, shaderIncludes, "Mesh (vertex)", GhaShader::Stage::Vertex),
                 .pixelShader   = renderGraph.createShader({ meshshadowmap_p, meshshadowmap_pLength }, shaderIncludes, "Mesh (pixel)", GhaShader::Stage::Pixel),
                 .viewportSize  = renderTarget->getSize(),
@@ -303,7 +304,8 @@ namespace clove {
                         .target     = directionalShadowMapView,
                     },
                 },
-            }) };
+            };
+            RgPassId directionalShadowPass{ renderGraph.createRenderPass(passDescriptor) };
 
             for(size_t meshIndex{ 0 }; auto const &meshInfo : currentFrameData.meshes) {
                 auto const &mesh{ meshInfo.mesh };
@@ -338,7 +340,8 @@ namespace clove {
         }
 
         //FINAL COLOUR
-        RgPassId colourPass{ renderGraph.createRenderPass(RgRenderPass::Descriptor{
+        //NOTE: Need this as a separate thing otherwise there is an internal compiler error. I think it's because of the clearValue variant
+        RgRenderPass::Descriptor passDescriptor{
             .vertexShader  = renderGraph.createShader({ mesh_v, mesh_vLength }, shaderIncludes, "Mesh (vertex)", GhaShader::Stage::Vertex),
             .pixelShader   = renderGraph.createShader({ mesh_p, mesh_pLength }, shaderIncludes, "Mesh (pixel)", GhaShader::Stage::Pixel),
             .viewportSize  = renderTarget->getSize(),
@@ -356,7 +359,8 @@ namespace clove {
                 .clearValue = DepthStencilValue{ .depth = 1.0f },
                 .target     = depthView,
             },
-        }) };
+        };
+        RgPassId colourPass{ renderGraph.createRenderPass(passDescriptor) };
 
         RgSampler shadowMaplSampler{ renderGraph.createSampler(GhaSampler::Descriptor{
             .minFilter        = GhaSampler::Filter::Linear,
