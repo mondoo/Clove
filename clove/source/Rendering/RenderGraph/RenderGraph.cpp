@@ -94,7 +94,7 @@ namespace clove {
             view->addWritePass(renderPassId);
         }
 
-        {
+        if(RgImageViewId const viewId{ passDescriptor.depthStencil.target }; viewId != INVALID_RESOURCE_ID) {
             RgImageViewId const viewId{ passDescriptor.depthStencil.target };
             auto &view{ imageViews.at(viewId) };
 
