@@ -612,17 +612,22 @@ namespace clove {
                 });
             }
 
-            RgDepthStencilBinding const &depthStencil{ passDescriptor.depthStencil };
-            AttachmentDescriptor depthStencilAttachment{
-                .format         = images.at(depthStencil.target)->getFormat(),
-                .loadOperation  = depthStencil.loadOp,
-                .storeOperation = depthStencil.storeOp,
-                .initialLayout  = getPreviousLayout(passes, i, depthStencil.target),
-                .usedLayout     = GhaImage::Layout::DepthStencilAttachmentOptimal,
-                .finalLayout    = GhaImage::Layout::DepthStencilAttachmentOptimal,
-            };
+            std::optional<AttachmentDescriptor> depthStencilAttachment{};
+            if(RgDepthStencilBinding const &depthStencil{ passDescriptor.depthStencil }; depthStencil.target != INVALID_RESOURCE_ID) {
+                depthStencilAttachment = AttachmentDescriptor{
+                    .format         = images.at(depthStencil.target)->getFormat(),
+                    .loadOperation  = depthStencil.loadOp,
+                    .storeOperation = depthStencil.storeOp,
+                    .initialLayout  = getPreviousLayout(passes, i, depthStencil.target),
+                    .usedLayout     = GhaImage::Layout::DepthStencilAttachmentOptimal,
+                    .finalLayout    = GhaImage::Layout::DepthStencilAttachmentOptimal,
+                };
+            }
 
-            outRenderPasses[passId] = globalCache.createRenderPass(GhaRenderPass::Descriptor{ .colourAttachments = std::move(colourAttachments), .depthAttachment = std::move(depthStencilAttachment) });
+            outRenderPasses[passId] = globalCache.createRenderPass(GhaRenderPass::Descriptor{
+                .colourAttachments = std::move(colourAttachments),
+                .depthAttachment   = std::move(depthStencilAttachment.value_or(AttachmentDescriptor{})),
+            });
 
             //Build descriptor layouts using the first pass.
             //TODO: Get this infomation from shader reflection
@@ -701,7 +706,9 @@ namespace clove {
             for(auto &renderTarget : passDescriptor.renderTargets) {
                 attachments.push_back(images.at(renderTarget.target)->getGhaImageView(frameCache, renderTarget.targetArrayIndex, renderTarget.targetArrayCount));
             }
-            attachments.push_back(images.at(passDescriptor.depthStencil.target)->getGhaImageView(frameCache, passDescriptor.depthStencil.targetArrayIndex, passDescriptor.depthStencil.targetArrayCount));
+            if(passDescriptor.depthStencil.target != INVALID_RESOURCE_ID){
+                attachments.push_back(images.at(passDescriptor.depthStencil.target)->getGhaImageView(frameCache, passDescriptor.depthStencil.targetArrayIndex, passDescriptor.depthStencil.targetArrayCount));
+            }
 
             outFramebuffers[passId] = frameCache.allocateFramebuffer(GhaFramebuffer::Descriptor{
                 .renderPass  = outRenderPasses.at(passId),
