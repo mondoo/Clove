@@ -61,6 +61,7 @@ namespace clove {
         AssetManager assetManager;
 
         std::unordered_map<std::type_index, std::pair<SubSystemGroup, size_t>> subSystemToIndex; /**< Contains the index for each subsystem in the subSystems array. */
+    public://TEMP
         std::map<SubSystemGroup, std::vector<std::unique_ptr<SubSystem>>> subSystems;
 
         std::chrono::steady_clock::time_point prevFrameTime;

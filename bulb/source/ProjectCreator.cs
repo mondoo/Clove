@@ -40,6 +40,14 @@ namespace Bulb {
                 WriteLine(cmakeStream, "\tPRIVATE");
                 WriteLine(cmakeStream, "\t\tClove");
                 WriteLine(cmakeStream, ")");
+
+                //Definitions
+                WriteLine(cmakeStream, "target_compile_definitions(");
+                WriteLine(cmakeStream, "\t" + "BulbMembrane");
+                WriteLine(cmakeStream, "");
+                WriteLine(cmakeStream, "\tPRIVATE");
+                WriteLine(cmakeStream, $"\t\tGAME_MODULE=\"{editorName}.dll\"");
+                WriteLine(cmakeStream, ")");
             }
         }
 

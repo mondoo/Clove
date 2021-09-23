@@ -1,10 +1,10 @@
 #include "Membrane/Application.hpp"
 
 #include "Membrane/EditorSubSystem.hpp"
+#include "Membrane/EditorViewport.hpp"
 #include "Membrane/MessageHandler.hpp"
 #include "Membrane/Messages.hpp"
 #include "Membrane/RuntimeSubSystem.hpp"
-#include "Membrane/EditorViewport.hpp"
 
 #include <Clove/Application.hpp>
 #include <Clove/Components/StaticModelComponent.hpp>
@@ -19,6 +19,8 @@
 #include <Clove/Serialisation/Yaml.hpp>
 #include <filesystem>
 #include <msclr/marshal_cppstd.h>
+
+CLOVE_DECLARE_LOG_CATEGORY(LogMembrane)
 
 namespace membrane {
     static std::filesystem::path const cachedProjectsPath{ "projects.yaml" };
@@ -36,7 +38,7 @@ namespace membrane {
         renderTargetImageDescriptor.sharingMode = SharingMode::Concurrent;
 
         viewport = gcnew EditorViewport{};
-        
+
         //Use pair as there seems to be an issue when using structured bindings
         auto pair{ clove::Application::createHeadless(GraphicsApi::Vulkan, AudioApi::OpenAl, std::move(renderTargetImageDescriptor), viewport->getKeyboard(), viewport->getMouse()) };
         app          = pair.first.release();
@@ -112,6 +114,8 @@ namespace membrane {
         return gcnew System::String(app->getFileSystem()->resolve(unManagedPath).c_str());
     }
 
+    typedef clove::SubSystem* (*subSystemProc)();
+
     void Application::openProjectInternal(std::filesystem::path const projectPath) {
         clove::serialiser::Node rootNode{};
         rootNode["projects"]["version"] = 1;
@@ -135,6 +139,24 @@ namespace membrane {
         //Bind to editor messages
         MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_Stop ^>(this, &Application::setEditorMode));
         MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_Play ^>(this, &Application::setRuntimeMode));
+
+#ifdef GAME_MODULE
+        HINSTANCE library{ LoadLibrary(GAME_MODULE) };
+        if(library != nullptr) {
+            subSystemProc procAddress = (subSystemProc) GetProcAddress(library, "getSubSystem");
+
+            if(procAddress != nullptr) {
+                app->subSystems[clove::Application::SubSystemGroup::Core].push_back(std::unique_ptr<clove::SubSystem>{ (procAddress)() });
+            } else {
+                CLOVE_LOG(LogMembrane, clove::LogLevel::Error, "Could not find the function");
+            }
+        } else {
+            CLOVE_LOG(LogMembrane, clove::LogLevel::Error, "Could not find the library");
+        }
+#else
+        //TODO: Throw or assert
+        CLOVE_LOG(LogMembrane, clove::LogLevel::Error, "Game module not specified");
+#endif
     }
 
     void Application::setEditorMode(Editor_Stop ^ message) {
@@ -145,7 +167,7 @@ namespace membrane {
 
     void Application::setRuntimeMode(Editor_Play ^ message) {
         app->getSubSystem<EditorSubSystem>().saveScene();
-        
+
         app->popSubSystem<EditorSubSystem>();
         app->pushSubSystem<RuntimeSubSystem>();
         isInEditorMode = false;
