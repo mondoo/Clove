@@ -61,7 +61,6 @@ namespace clove {
         AssetManager assetManager;
 
         std::unordered_map<std::type_index, std::pair<SubSystemGroup, size_t>> subSystemToIndex; /**< Contains the index for each subsystem in the subSystems array. */
-    public://TEMP
         std::map<SubSystemGroup, std::vector<std::unique_ptr<SubSystem>>> subSystems;
 
         std::chrono::steady_clock::time_point prevFrameTime;
@@ -97,6 +96,11 @@ namespace clove {
          * @return A pair with the created application instance and a pointer to the render target of the application.
          */
         static std::pair<std::unique_ptr<Application>, GraphicsImageRenderTarget *> createHeadless(GraphicsApi graphicsApi, AudioApi audioApi, GhaImage::Descriptor renderTargetDescriptor, Keyboard *keyboard, Mouse *mouse);
+
+        //TEMP?
+        static void set(Application *app) {
+            instance = app;
+        }
 
         static Application &get();
 

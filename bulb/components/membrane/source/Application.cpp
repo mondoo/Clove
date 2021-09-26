@@ -20,7 +20,7 @@
 #include <filesystem>
 #include <msclr/marshal_cppstd.h>
 
-CLOVE_DECLARE_LOG_CATEGORY(LogMembrane)
+CLOVE_DECLARE_LOG_CATEGORY(Membrane)
 
 namespace membrane {
     static std::filesystem::path const cachedProjectsPath{ "projects.yaml" };
@@ -54,13 +54,14 @@ namespace membrane {
     }
 
     bool Application::hasDefaultProject() {
+#if 0
         if(std::filesystem::exists(cachedProjectsPath) && !std::filesystem::is_empty(cachedProjectsPath)) {
             auto loadResult{ clove::loadYaml(cachedProjectsPath) };
             clove::serialiser::Node rootNode{ loadResult.getValue() };
 
             return std::filesystem::exists(rootNode["projects"]["default"].as<std::string>());
         }
-
+#endif
         return false;
     }
 
@@ -114,7 +115,7 @@ namespace membrane {
         return gcnew System::String(app->getFileSystem()->resolve(unManagedPath).c_str());
     }
 
-    typedef clove::SubSystem* (*subSystemProc)();
+    typedef void (*initProc)(clove::Application *app);
 
     void Application::openProjectInternal(std::filesystem::path const projectPath) {
         clove::serialiser::Node rootNode{};
@@ -126,6 +127,30 @@ namespace membrane {
 
         //Currently project files are empty but they are used to mark a project's location
         std::filesystem::path const rootProjectPath{ projectPath.parent_path() };
+
+        //TODO: Make sure the project has been built by this point
+
+#ifdef GAME_MODULE //TODO: write location to project yaml instead of using the GAME_MODULE macro
+        HINSTANCE library{ LoadLibrary(GAME_MODULE) };
+        if(library != nullptr) {
+            initProc procAddress{ (initProc)GetProcAddress(library, "setUpEditorApplication") };
+
+            if(procAddress != nullptr) {
+                (procAddress)(app);
+
+                //CLOVE_LOG(Membrane, clove::LogLevel::Info, "Attached sub system: {0}", subSystem->getName());
+                CLOVE_LOG(Membrane, clove::LogLevel::Info, "Log from membrane");
+
+            } else {
+                CLOVE_LOG(Membrane, clove::LogLevel::Error, "Could not find the function");
+            }
+        } else {
+            CLOVE_LOG(Membrane, clove::LogLevel::Error, "Could not find the library");
+        }
+#else
+        //TODO: Throw or assert
+        CLOVE_LOG(LogMembrane, clove::LogLevel::Error, "Game module not specified");
+#endif
 
         //Mount editor paths
         auto *vfs{ app->getFileSystem() };
@@ -139,24 +164,6 @@ namespace membrane {
         //Bind to editor messages
         MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_Stop ^>(this, &Application::setEditorMode));
         MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_Play ^>(this, &Application::setRuntimeMode));
-
-#ifdef GAME_MODULE
-        HINSTANCE library{ LoadLibrary(GAME_MODULE) };
-        if(library != nullptr) {
-            subSystemProc procAddress = (subSystemProc) GetProcAddress(library, "getSubSystem");
-
-            if(procAddress != nullptr) {
-                app->subSystems[clove::Application::SubSystemGroup::Core].push_back(std::unique_ptr<clove::SubSystem>{ (procAddress)() });
-            } else {
-                CLOVE_LOG(LogMembrane, clove::LogLevel::Error, "Could not find the function");
-            }
-        } else {
-            CLOVE_LOG(LogMembrane, clove::LogLevel::Error, "Could not find the library");
-        }
-#else
-        //TODO: Throw or assert
-        CLOVE_LOG(LogMembrane, clove::LogLevel::Error, "Game module not specified");
-#endif
     }
 
     void Application::setEditorMode(Editor_Stop ^ message) {
