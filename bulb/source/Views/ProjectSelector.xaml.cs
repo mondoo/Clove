@@ -22,12 +22,9 @@ namespace Bulb {
             var dialog = new SaveFileDialog();
             dialog.Filter = "Clove project files (*.clvproj)|*.clvproj";
             if (dialog.ShowDialog() == true) {
-                File.Create(dialog.FileName);
-                FileInfo info = new FileInfo(dialog.FileName);
-
                 OnProjectSelected?.Invoke(new ProjectSelectedArgs() {
-                    ProjectPath = info.DirectoryName,
-                    ProjectName = Path.GetFileNameWithoutExtension(info.Name),
+                    ProjectPath = Path.GetDirectoryName(dialog.FileName),
+                    ProjectName = Path.GetFileNameWithoutExtension(dialog.SafeFileName),
                     FullPath = dialog.FileName,
                     IsNewProject = true
                 });
@@ -38,11 +35,9 @@ namespace Bulb {
             var dialog = new OpenFileDialog();
             dialog.Filter = "Clove project files (*.clvproj)|*.clvproj";
             if (dialog.ShowDialog() == true) {
-                FileInfo info = new FileInfo(dialog.FileName);
-
                 OnProjectSelected?.Invoke(new ProjectSelectedArgs() {
-                    ProjectPath = info.DirectoryName,
-                    ProjectName = Path.GetFileNameWithoutExtension(info.Name),
+                    ProjectPath = Path.GetDirectoryName(dialog.FileName),
+                    ProjectName = Path.GetFileNameWithoutExtension(dialog.SafeFileName),
                     FullPath = dialog.FileName,
                     IsNewProject = false
                 });

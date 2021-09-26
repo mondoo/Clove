@@ -3,6 +3,8 @@ using System.Windows;
 using System.ComponentModel;
 
 using Membrane = membrane;
+using System;
+using System.Diagnostics;
 
 namespace Bulb {
     /// <summary>
@@ -52,7 +54,16 @@ namespace Bulb {
                 creator.Create();
             }
 
-            engineApp.openProject(args.FullPath);
+            try {
+                engineApp.openProject(args.FullPath);
+            } catch (Exception e) {
+                Membrane.Log.write(Membrane.LogLevel.Critical, $"Could not open project: {e.Message}");
+#if DEBUG
+                Debugger.Break();
+#endif
+                Shutdown();
+                return;
+            }
 
             projectSelector.Close();
 

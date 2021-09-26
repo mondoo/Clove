@@ -18,6 +18,14 @@ namespace Bulb {
 
             //TODO: Create *.clvproj file
 
+            //Project file
+            using (FileStream projectStream = File.Create(ProjectPath + $"/{ProjectName}.clvproj")) {
+                WriteLine(projectStream, "type: yaml");
+                WriteLine(projectStream, "version: 1");
+                WriteLine(projectStream, $"name: {editorName}");
+                WriteLine(projectStream, $"library: {ProjectPath}/lib/Debug/{editorName}.dll");
+            }
+
             //Cmake lists
             using (FileStream cmakeStream = File.Create(ProjectPath + "/CMakeLists.txt")) {
                 //Project Source 
@@ -40,7 +48,6 @@ namespace Bulb {
                 WriteLine(cmakeStream, ")");
                 WriteLine(cmakeStream, "");
 
-                //Link Libraries
                 WriteLine(cmakeStream, "target_link_libraries(");
                 WriteLine(cmakeStream, "\t" + editorName);
                 WriteLine(cmakeStream, "");
@@ -49,12 +56,20 @@ namespace Bulb {
                 WriteLine(cmakeStream, ")");
                 WriteLine(cmakeStream, "");
 
-                //Definitions
+                WriteLine(cmakeStream, "set_target_properties(");
+                WriteLine(cmakeStream, "\t" + editorName);
+                WriteLine(cmakeStream, "\tPROPERTIES");
+                WriteLine(cmakeStream, "\t\tARCHIVE_OUTPUT_DIRECTORY \"${CMAKE_CURRENT_SOURCE_DIR}/lib\"");
+                WriteLine(cmakeStream, "\t\tLIBRARY_OUTPUT_DIRECTORY \"${CMAKE_CURRENT_SOURCE_DIR}/lib\"");
+                WriteLine(cmakeStream, "\t\tRUNTIME_OUTPUT_DIRECTORY \"${CMAKE_CURRENT_SOURCE_DIR}/bin\"");
+                WriteLine(cmakeStream, ")");
+
+                //TEMP: Provide membrane with the binary dit - this needs to be removed. Membrane should be able to build and load any valid game dll. Look into installing through cmake and having this cmake list completely standalone
                 WriteLine(cmakeStream, "target_compile_definitions(");
                 WriteLine(cmakeStream, "\t" + "BulbMembrane");
                 WriteLine(cmakeStream, "");
                 WriteLine(cmakeStream, "\tPRIVATE");
-                WriteLine(cmakeStream, $"\t\tGAME_MODULE=\"${{CMAKE_CURRENT_BINARY_DIR}}/Debug/{editorName}.dll\""); //TODO: Remove 'debug'
+                WriteLine(cmakeStream, $"\t\tBINARY_DIR=\"${{CMAKE_BINARY_DIR}}\"");
                 WriteLine(cmakeStream, ")");
             }
 

@@ -31,6 +31,8 @@ public ref class Application {
 
         bool isInEditorMode{ true };
 
+        HINSTANCE gameLibrary{ nullptr };
+
         //FUNCTIONS
     public:
         Application(int const width, int const height);
