@@ -1064,7 +1064,7 @@ namespace clove {
             .sharingMode           = isExclusive ? VK_SHARING_MODE_EXCLUSIVE : VK_SHARING_MODE_CONCURRENT,
             .queueFamilyIndexCount = isExclusive ? 0 : static_cast<uint32_t>(std::size(sharedQueueIndices)),
             .pQueueFamilyIndices   = isExclusive ? nullptr : std::data(sharedQueueIndices),
-            .initialLayout         = VulkanImage::convertLayout(descriptor.initialLayout),
+            .initialLayout         = VK_IMAGE_LAYOUT_UNDEFINED,
         };
 
         VkImage image{ nullptr };

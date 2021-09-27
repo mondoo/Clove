@@ -117,7 +117,7 @@ namespace clove {
          * @param arrayCount How many elements in the image array to create. If type is GhaImage::Type::Cube then it will create an image with arrayCount * 6.
          * @return 
          */
-        RgImageId createImage(GhaImage::Type const imageType, GhaImage::Format const format, vec2ui const dimensions, GhaImage::Layout const initialLayout, uint32_t const arrayCount = 1);
+        RgImageId createImage(GhaImage::Type const imageType, GhaImage::Format const format, vec2ui const dimensions, uint32_t const arrayCount = 1);
         /**
          * @brief Creates an image from an existing image. Useful if wanting to use
          * pre made images (such as backbuffers) in the render graph.

@@ -214,7 +214,7 @@ namespace clove {
         RgImageId renderTargetImage{ renderGraph.createImage(renderTarget->getImages()[imageIndex]) };
         renderGraph.registerGraphOutput(renderTargetImage);
 
-        RgImageId depthTargetImage{ renderGraph.createImage(GhaImage::Type::_2D, GhaImage::Format::D32_SFLOAT, renderTarget->getSize(), GhaImage::Layout::DepthStencilAttachmentOptimal) };// TODO: This will probably be a manually created image.
+        RgImageId depthTargetImage{ renderGraph.createImage(GhaImage::Type::_2D, GhaImage::Format::D32_SFLOAT, renderTarget->getSize()) };// TODO: This will probably be a manually created image.
 
         //View uniform buffer
         size_t const viewDataSize{ sizeof(currentFrameData.viewData) };
@@ -285,8 +285,8 @@ namespace clove {
         }
 
         //Images might not going into the shadow pass but will always going into the lighting pass so we initialise them as ShaderReadOnlyOptimal
-        RgImageId directionalShadowMap{ renderGraph.createImage(GhaImage::Type::_2D, GhaImage::Format::D32_SFLOAT, { shadowMapSize, shadowMapSize }, GhaImage::Layout::ShaderReadOnlyOptimal, MAX_LIGHTS) };
-        RgImageId pointShadowMap{ renderGraph.createImage(GhaImage::Type::Cube, GhaImage::Format::D32_SFLOAT, { shadowMapSize, shadowMapSize }, GhaImage::Layout::ShaderReadOnlyOptimal, MAX_LIGHTS) };
+        RgImageId directionalShadowMap{ renderGraph.createImage(GhaImage::Type::_2D, GhaImage::Format::D32_SFLOAT, { shadowMapSize, shadowMapSize }, MAX_LIGHTS) };
+        RgImageId pointShadowMap{ renderGraph.createImage(GhaImage::Type::Cube, GhaImage::Format::D32_SFLOAT, { shadowMapSize, shadowMapSize }, MAX_LIGHTS) };
 
         //DIRECTIONAL SHADOWS
         for(size_t i{ 0 }; i < currentFrameData.numLights.numDirectional; ++i) {

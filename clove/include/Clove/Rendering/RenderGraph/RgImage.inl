@@ -7,10 +7,6 @@ namespace clove {
         return ghaImageDescriptor.dimensions;
     }
 
-    GhaImage::Layout RgImage::getInitialLayout() const {
-        return ghaImageDescriptor.initialLayout;
-    }
-
     bool RgImage::isExternalImage() const {
         return externalImage;
     }

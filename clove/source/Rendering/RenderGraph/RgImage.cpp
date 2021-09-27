@@ -18,7 +18,7 @@ namespace clove {
         }
     }
 
-    RgImage::RgImage(GhaImage::Type const imageType, GhaImage::Format const format, vec2ui const dimensions, GhaImage::Layout const initialLayout, uint32_t const arrayCount) {
+    RgImage::RgImage(GhaImage::Type const imageType, GhaImage::Format const format, vec2ui const dimensions, uint32_t const arrayCount) {
         ghaImageDescriptor = GhaImage::Descriptor{
             .type          = imageType,
             .usageFlags    = static_cast<GhaImage::UsageMode>(0),//Will be built when executing the graph
@@ -26,7 +26,6 @@ namespace clove {
             .arrayCount    = arrayCount,
             .format        = format,
             .sharingMode   = SharingMode::Exclusive,//Images are always exclusive.
-            .initialLayout = initialLayout,
         };
     }
 

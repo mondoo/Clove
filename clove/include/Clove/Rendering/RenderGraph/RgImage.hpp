@@ -20,7 +20,7 @@ namespace clove {
         //FUNCTIONS
     public:
         RgImage() = delete;
-        RgImage(GhaImage::Type const imageType, GhaImage::Format const format, vec2ui const dimensions, GhaImage::Layout const initialLayout, uint32_t const arrayCount);
+        RgImage(GhaImage::Type const imageType, GhaImage::Format const format, vec2ui const dimensions, uint32_t const arrayCount);
         RgImage(GhaImage *ghaImage);
 
         RgImage(RgImage const &other) = delete;
@@ -48,7 +48,6 @@ namespace clove {
 
         inline GhaImage::Format getFormat() const;
         inline vec2ui const &getDimensions() const;
-        inline GhaImage::Layout getInitialLayout() const;
 
         inline bool isExternalImage() const;
 

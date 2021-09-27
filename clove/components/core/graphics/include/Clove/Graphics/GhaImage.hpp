@@ -60,7 +60,6 @@ namespace clove {
             uint32_t arrayCount{ 1u }; /**< How many elements to create for an image array. */
             Format format;
             SharingMode sharingMode;
-            Layout initialLayout{ Layout::Undefined };
         };
 
         //FUNCTIONS

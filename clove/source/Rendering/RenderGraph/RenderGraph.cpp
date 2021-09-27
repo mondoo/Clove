@@ -38,9 +38,9 @@ namespace clove {
         return bufferId;
     }
 
-    RgImageId RenderGraph::createImage(GhaImage::Type const imageType, GhaImage::Format const format, vec2ui const dimensions, GhaImage::Layout const initialLayout, uint32_t const arrayCount) {
+    RgImageId RenderGraph::createImage(GhaImage::Type const imageType, GhaImage::Format const format, vec2ui const dimensions, uint32_t const arrayCount) {
         RgImageId const imageId{ nextResourceId++ };
-        images[imageId] = std::make_unique<RgImage>(imageType, format, dimensions, initialLayout, arrayCount);
+        images[imageId] = std::make_unique<RgImage>(imageType, format, dimensions, arrayCount);
 
         return imageId;
     }
@@ -562,8 +562,8 @@ namespace clove {
             }
         }
 
-        //Has not been used in a pass before the current one so just return it's initial layout
-        return images.at(imageId)->getInitialLayout();
+        //Has not been used in a pass before the current one so just return the layout images are created in
+        return GhaImage::Layout::Undefined;
     }
 
     RgResource *RenderGraph::getResourceFromId(RgResourceId resourceId) {
