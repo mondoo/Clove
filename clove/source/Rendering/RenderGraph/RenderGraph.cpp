@@ -702,19 +702,28 @@ namespace clove {
             });
 
             //Allocate the frame buffer
+            std::optional<vec2ui> framebufferSize{};//Use the first valid attachment as the frame buffer size
             std::vector<GhaImageView const *> attachments{};
             for(auto &renderTarget : passDescriptor.renderTargets) {
                 attachments.push_back(images.at(renderTarget.target)->getGhaImageView(frameCache, renderTarget.targetArrayIndex, renderTarget.targetArrayCount));
+
+                if(!framebufferSize.has_value()) {
+                    framebufferSize = images.at(renderTarget.target)->getDimensions();
+                }
             }
             if(passDescriptor.depthStencil.target != INVALID_RESOURCE_ID){
                 attachments.push_back(images.at(passDescriptor.depthStencil.target)->getGhaImageView(frameCache, passDescriptor.depthStencil.targetArrayIndex, passDescriptor.depthStencil.targetArrayCount));
+
+                if(!framebufferSize.has_value()) {
+                    framebufferSize = images.at(passDescriptor.depthStencil.target)->getDimensions();
+                }
             }
 
             outFramebuffers[passId] = frameCache.allocateFramebuffer(GhaFramebuffer::Descriptor{
                 .renderPass  = outRenderPasses.at(passId),
                 .attachments = std::move(attachments),
-                .width       = images.at(passDescriptor.renderTargets[0].target)->getDimensions().x,//TEMP: Just using the first target as the size. This will need to be validated
-                .height      = images.at(passDescriptor.renderTargets[0].target)->getDimensions().y,
+                .width       = framebufferSize->x,
+                .height      = framebufferSize->y,
             });
 
             //Count descriptor sets required for the entire pass
