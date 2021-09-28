@@ -117,6 +117,10 @@ namespace membrane {
         return gcnew System::String(app->getFileSystem()->resolve(unManagedPath).c_str());
     }
 
+    System::String ^ Application::getProjectVersion() {
+        return gcnew System::String{ CLOVE_VERSION };
+    }
+
     void Application::openProjectInternal(std::filesystem::path const projectPath) {
         clove::serialiser::Node editorData{};
         editorData["projects"]["version"] = 1;
