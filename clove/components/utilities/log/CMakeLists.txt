@@ -38,3 +38,5 @@ target_compile_definitions(
 		CLOVE_ENABLE_ASSERTIONS=$<BOOL:${CLOVE_ENABLE_ASSERTIONS}>
 		SPDLOG_FMT_EXTERNAL #Using external fmt to easily grab includes (see CMakeLists if Clove)
 )
+
+copy_target_includes_to_out_dir(CloveLog)

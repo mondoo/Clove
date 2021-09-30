@@ -25,3 +25,5 @@ target_compile_definitions(
     PUBLIC
 		CLOVE_ENABLE_PROFILING=$<BOOL:${CLOVE_ENABLE_PROFILING}>
 )
+
+copy_target_includes_to_out_dir(CloveTimer)

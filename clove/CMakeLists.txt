@@ -1,3 +1,7 @@
+set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+
+include(CopyIncludes)
+
 set(SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/source)
 set(INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/include/Clove)
 set(ASSETS ${CMAKE_CURRENT_SOURCE_DIR}/assets)
@@ -246,6 +250,7 @@ target_link_libraries(
 		stb
 )
 
+#Preprocessor
 target_compile_definitions(
 	Clove
 
@@ -256,3 +261,19 @@ target_compile_definitions(
 if(CLOVE_BUILD_TESTS)
 	add_subdirectory(tests)
 endif()
+
+copy_target_includes_to_out_dir(Clove)
+
+#Manually copy any third party or interface library includes needed by clove or of it's dependecies
+#Ideally we wouldn't have to do this, especially for third party libs, as they should all be private
+#but this would require a big refactor of the build system
+copy_target_includes_to_out_dir_for_target(CloveCast Clove)
+copy_target_includes_to_out_dir_for_target(CloveDefinitions Clove)
+copy_target_includes_to_out_dir_for_target(CloveExpected Clove)
+copy_target_includes_to_out_dir_for_target(CloveMaths Clove)
+copy_target_includes_to_out_dir_for_target(CloveStateMachine Clove)
+
+copy_target_includes_to_out_dir_for_target(CONAN_PKG::spdlog Clove)
+copy_target_includes_to_out_dir_for_target(CONAN_PKG::fmt Clove)
+copy_target_includes_to_out_dir_for_target(CONAN_PKG::glm Clove)
+#copy_target_includes_to_out_dir_for_target(CloveDefinitions Clove)

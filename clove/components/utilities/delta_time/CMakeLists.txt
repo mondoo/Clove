@@ -15,3 +15,5 @@ target_include_directories(
 	PUBLIC
 		include
 )
+
+copy_target_includes_to_out_dir(CloveDeltaTime)

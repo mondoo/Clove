@@ -62,3 +62,5 @@ target_compile_definitions(
 	PUBLIC
 		CLOVE_AHA_VALIDATION=$<BOOL:${CLOVE_ENABLE_AHA_VALIDATION}>
 )
+
+copy_target_includes_to_out_dir(CloveAudio)

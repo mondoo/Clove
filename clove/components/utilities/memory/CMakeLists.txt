@@ -36,3 +36,5 @@ target_link_libraries(
 if(CLOVE_BUILD_TESTS)
 	add_subdirectory(tests)
 endif()
+
+copy_target_includes_to_out_dir(CloveMemory)
