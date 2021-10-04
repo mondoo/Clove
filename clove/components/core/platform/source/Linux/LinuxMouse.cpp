@@ -58,4 +58,8 @@ namespace clove {
             }
         }
     }
+
+    int32_t Mouse::getWheelDelta() {
+        return 1;
+    }
 }

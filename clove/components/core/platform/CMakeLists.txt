@@ -87,7 +87,7 @@ target_link_libraries(
 
 #Compiler
 target_compile_options(
-	CloveGraphics
+	ClovePlatform
 
 	#MacOS
 	PRIVATE

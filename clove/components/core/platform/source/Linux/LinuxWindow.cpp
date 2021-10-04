@@ -6,6 +6,25 @@
 CLOVE_DECLARE_LOG_CATEGORY(ClovePlatformLinux)
 
 namespace clove {
+    namespace {
+        MouseButton getButtonFromXbutton(unsigned int button) {
+            switch(button) {
+                case 1:
+                    return MouseButton::_1;
+                case 2:
+                    return MouseButton::_2;
+                case 3:
+                    return MouseButton::_3;
+                case 8:
+                    return MouseButton::_4;
+                case 9:
+                    return MouseButton::_5;
+            }
+
+            return MouseButton::Undefined;
+        }
+    }
+
     LinuxWindow::LinuxWindow(Descriptor const &descriptor)
         : Window(keyboardDispatcher, mouseDispatcher) {
         CLOVE_ASSERT_MSG(window == 0, "Window already exists! Currently only a single window on linux is supported");
@@ -185,12 +204,12 @@ namespace clove {
                     } else if(xevent.xbutton.button == Button5) {
                         mouseDispatcher.onWheelDelta(-CLV_WHEEL_DELTA, vec2i{ xevent.xbutton.x, xevent.xbutton.y });
                     } else {
-                        mouseDispatcher.onButtonPressed(static_cast<MouseButton>(xevent.xbutton.button), vec2i{ xevent.xbutton.x, xevent.xbutton.y });
+                        mouseDispatcher.onButtonPressed(getButtonFromXbutton(xevent.xbutton.button), vec2i{ xevent.xbutton.x, xevent.xbutton.y });
                     }
                     break;
 
                 case ButtonRelease:
-                    mouseDispatcher.onButtonReleased(static_cast<MouseButton>(xevent.xbutton.button), vec2i{ xevent.xbutton.x, xevent.xbutton.y });
+                    mouseDispatcher.onButtonReleased(getButtonFromXbutton(xevent.xbutton.button), vec2i{ xevent.xbutton.x, xevent.xbutton.y });
                     break;
 
                 //Window
