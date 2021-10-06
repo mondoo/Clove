@@ -295,16 +295,14 @@ namespace clove {
                 .vertexShader  = renderGraph.createShader({ meshshadowmap_v, meshshadowmap_vLength }, shaderIncludes, "Mesh (vertex)", GhaShader::Stage::Vertex),
                 .pixelShader   = renderGraph.createShader({ meshshadowmap_p, meshshadowmap_pLength }, shaderIncludes, "Mesh (pixel)", GhaShader::Stage::Pixel),
                 .viewportSize  = renderTarget->getSize(),
-                .renderTargets = {
-                    RgRenderTargetBinding{
-                        .loadOp           = LoadOperation::Clear,
-                        .storeOp          = StoreOperation::Store,
-                        .clearValue       = DepthStencilValue{ .depth = 1.0f },
-                        .target           = directionalShadowMap,
-                        .targetArrayIndex = static_cast<uint32_t>(i),
-                        .targetArrayCount = 1,
-                    },
-                },
+                .depthStencil = {
+                    .loadOp           = LoadOperation::Clear,
+                    .storeOp          = StoreOperation::Store,
+                    .clearValue       = DepthStencilValue{ .depth = 1.0f },
+                    .target           = directionalShadowMap,
+                    .targetArrayIndex = static_cast<uint32_t>(i),
+                    .targetArrayCount = 1,
+                }
             };
             RgPassId directionalShadowPass{ renderGraph.createRenderPass(passDescriptor) };
 
