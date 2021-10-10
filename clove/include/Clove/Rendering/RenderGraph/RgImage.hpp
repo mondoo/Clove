@@ -1,9 +1,11 @@
 #pragma once
 
 #include "Clove/Rendering/RenderGraph/RgResource.hpp"
+#include "Clove/Rendering/RenderGraph/RgId.hpp"
 
 #include <Clove/Graphics/GhaImage.hpp>
 #include <Clove/Graphics/GhaImageView.hpp>
+#include <vector>
 
 namespace clove {
     class RgFrameCache;
@@ -48,8 +50,15 @@ namespace clove {
 
         inline GhaImage::Format getFormat() const;
         inline vec2ui const &getDimensions() const;
+        /**
+         * @brief Returns how many individual images are in the array. Cube maps will be a multiple of 6.
+         * @return 
+         */
+        inline uint32_t getArrayTotalCount() const;
+        inline GhaImage::UsageMode getCurrentUsage() const;
 
-        inline bool isExternalImage() const;
+        inline bool
+        isExternalImage() const;
 
         void addImageUsage(GhaImage::UsageMode const usage);
     };

@@ -20,12 +20,12 @@ namespace clove {
 
     RgImage::RgImage(GhaImage::Type const imageType, GhaImage::Format const format, vec2ui const dimensions, uint32_t const arrayCount) {
         ghaImageDescriptor = GhaImage::Descriptor{
-            .type          = imageType,
-            .usageFlags    = static_cast<GhaImage::UsageMode>(0),//Will be built when executing the graph
-            .dimensions    = dimensions,
-            .arrayCount    = arrayCount,
-            .format        = format,
-            .sharingMode   = SharingMode::Exclusive,//Images are always exclusive.
+            .type        = imageType,
+            .usageFlags  = static_cast<GhaImage::UsageMode>(0),//Will be built when executing the graph
+            .dimensions  = dimensions,
+            .arrayCount  = arrayCount,
+            .format      = format,
+            .sharingMode = SharingMode::Exclusive,//Images are always exclusive.
         };
     }
 
@@ -44,6 +44,7 @@ namespace clove {
     GhaImage *RgImage::getGhaImage(RgFrameCache &cache) {
         if(ghaImage == nullptr) {
             CLOVE_ASSERT_MSG(!externalImage, "RgImage is registered as an external image but does not have a valid GhaImageView.");
+
             ghaImage = cache.allocateImage(ghaImageDescriptor);
         }
 
@@ -60,6 +61,8 @@ namespace clove {
 
     void RgImage::addImageUsage(GhaImage::UsageMode const usage) {
         CLOVE_ASSERT_MSG(!externalImage, "Cannot change usage mode. RgImage is registered as an external image.");
+        CLOVE_ASSERT_MSG(ghaImage == nullptr, "Image has already been created. Usage will not update");
+
         ghaImageDescriptor.usageFlags |= usage;
     }
 }

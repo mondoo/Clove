@@ -202,7 +202,9 @@ namespace clove {
 
     private:
         void buildExecutionPasses(std::vector<RgPassId> &outPasses, RgResourceId resourceId);
-        GhaImage::Layout getPreviousLayout(std::vector<RgPassId> const &passes, int32_t const currentPassIndex, RgResourceId const imageId);
+
+        GhaImage::Layout getPreviousLayout(RgImageId const imageId, std::vector<RgPassId> const &passes, int32_t const currentPassIndex);
+        GhaImage::Layout getNextLayout(RgImageId const imageId, std::vector<RgPassId> const &passes, int32_t const currentPassIndex);
 
         std::vector<PassDependency> buildDependencies(std::vector<RgPassId> const &passes);
 
