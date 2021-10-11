@@ -292,9 +292,9 @@ namespace clove {
         for(size_t i{ 0 }; i < currentFrameData.numLights.numDirectional; ++i) {
             //NOTE: Need this as a separate thing otherwise there is an internal compiler error. I think it's because of the clearValue variant
             RgRenderPass::Descriptor passDescriptor{
-                .vertexShader  = renderGraph.createShader({ meshshadowmap_v, meshshadowmap_vLength }, shaderIncludes, "Mesh (vertex)", GhaShader::Stage::Vertex),
-                .pixelShader   = renderGraph.createShader({ meshshadowmap_p, meshshadowmap_pLength }, shaderIncludes, "Mesh (pixel)", GhaShader::Stage::Pixel),
-                .viewportSize  = renderTarget->getSize(),
+                .vertexShader = renderGraph.createShader({ meshshadowmap_v, meshshadowmap_vLength }, shaderIncludes, "Mesh (vertex)", GhaShader::Stage::Vertex),
+                .pixelShader  = renderGraph.createShader({ meshshadowmap_p, meshshadowmap_pLength }, shaderIncludes, "Mesh (pixel)", GhaShader::Stage::Pixel),
+                .viewportSize = { shadowMapSize, shadowMapSize },
                 .depthStencil = {
                     .loadOp           = LoadOperation::Clear,
                     .storeOp          = StoreOperation::Store,
