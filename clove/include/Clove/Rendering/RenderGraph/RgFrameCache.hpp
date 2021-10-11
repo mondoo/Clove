@@ -67,6 +67,11 @@ namespace clove {
                 }
                 allocated.clear();
             }
+
+            void clear() {
+                free.clear();
+                allocated.clear();
+            }
         };
 
         //VARIABLES
@@ -102,9 +107,13 @@ namespace clove {
         ~RgFrameCache();
 
         /**
-         * @brief Marks all allocate objects as free to use.
+         * @brief Marks all allocated objects as free to use.
          */
         void reset();
+        /**
+         * @brief Deletes all stored objects in the cache.
+         */
+        void clear();
 
         GhaBuffer *allocateBuffer(GhaBuffer::Descriptor descriptor);
 

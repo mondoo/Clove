@@ -172,7 +172,7 @@ namespace clove {
         void registerGraphOutput(RgResourceId resource);
 
         /**
-         * @brief Write data into this buffer.
+         * @brief Writes data into the provided buffer.
          * @details Will transition this buffer from video memory to system memory if requierd.
          * @param data Pointer to data to write.
          * @param offset Offset into the buffer to write to. If the RgBuffer views an offset into a GhaBuffer then it'll be view offset + offset

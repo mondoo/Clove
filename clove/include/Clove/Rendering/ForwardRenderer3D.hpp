@@ -66,7 +66,6 @@ namespace clove {
 
         std::unique_ptr<RenderTarget> renderTarget;
         DelegateHandle renderTargetPropertyChangedBeginHandle;
-        DelegateHandle renderTargetPropertyChangedEndHandle;
 
         std::unique_ptr<GhaGraphicsQueue> graphicsQueue{};
         std::unique_ptr<GhaComputeQueue> computeQueue{};
@@ -123,5 +122,8 @@ namespace clove {
         void submitText(std::shared_ptr<GhaImageView> const &text, mat4f const modelProjection);
 
         void end();
+
+    private:
+        void resetGraphCaches();
     };
 }

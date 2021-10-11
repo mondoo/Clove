@@ -42,6 +42,17 @@ namespace clove {
         allocatedTransferCommandBuffers.clear();
     }
 
+    void RgFrameCache::clear() {
+        reset();
+
+        bufferPool.clear();
+        imagePool.clear();
+        imageViewPool.clear();
+        framebufferPool.clear();
+        descriptorPoolPool.clear();
+        semaphorePool.clear();
+    }
+
     GhaBuffer *RgFrameCache::allocateBuffer(GhaBuffer::Descriptor descriptor) {
         PoolId bufferId{ 0 };
         CacheUtils::hashCombine(bufferId, descriptor.size);

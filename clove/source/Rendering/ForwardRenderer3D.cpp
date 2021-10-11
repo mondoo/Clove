@@ -69,10 +69,7 @@ namespace clove {
             frameCaches.emplace_back(ghaFactory, graphicsQueue.get(), computeQueue.get(), transferQueue.get());
         }
 
-#if 0
-        renderTargetPropertyChangedBeginHandle = this->renderTarget->onPropertiesChangedBegin.bind(&ForwardRenderer3D::cleanupRenderTargetResources, this);
-        renderTargetPropertyChangedEndHandle   = this->renderTarget->onPropertiesChangedEnd.bind(&ForwardRenderer3D::createRenderTargetResources, this);
-#endif
+        renderTargetPropertyChangedBeginHandle = this->renderTarget->onPropertiesChangedBegin.bind(&ForwardRenderer3D::resetGraphCaches, this);
 
         //Create semaphores for frame synchronisation
         for(auto &skinningFinishedSemaphore : skinningFinishedSemaphores) {
@@ -494,5 +491,13 @@ namespace clove {
 
         //Advance to the next frame
         currentFrame = (currentFrame + 1) % maxFramesInFlight;
+    }
+
+    void ForwardRenderer3D::resetGraphCaches() {
+        ghaDevice->waitForIdleDevice();
+
+        for(auto &cache : frameCaches) {
+            cache.clear();
+        }
     }
 }
