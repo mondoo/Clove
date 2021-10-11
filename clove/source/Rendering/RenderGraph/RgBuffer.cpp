@@ -17,6 +17,7 @@ namespace clove {
 
     RgBuffer::RgBuffer(GhaBuffer *ghaBuffer, size_t offset, size_t size)
         : ghaBuffer{ ghaBuffer }
+        , ghaBufferDescriptor{ ghaBuffer->getDescriptor() }
         , offset{ offset }
         , size{ size } {
         externalBuffer = true;
