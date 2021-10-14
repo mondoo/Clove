@@ -39,10 +39,7 @@ public ref class Application {
         ~Application();
         !Application();
 
-        bool hasDefaultProject();
-        
-        void openProject(System::String ^projectPath);
-        void openDefaultProject();
+        void loadGameDll();
 
         bool isRunning();
         void tick();
@@ -56,8 +53,6 @@ public ref class Application {
         static System::String ^getProjectVersion();
 
     private:
-        void openProjectInternal(std::filesystem::path const projectPath);
-
         void setEditorMode(Editor_Stop ^message);
         void setRuntimeMode(Editor_Play ^message);
     };

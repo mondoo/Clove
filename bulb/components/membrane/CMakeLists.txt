@@ -49,6 +49,14 @@ target_link_libraries(
         Clove
 )
 
+#PreProcessor
+target_compile_definitions(
+    BulbMembrane
+
+    PRIVATE
+        ROOT_DIR="${CMAKE_SOURCE_DIR}"   
+)
+
 #Properties
 set_target_properties(
     BulbMembrane
