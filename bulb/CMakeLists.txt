@@ -23,7 +23,6 @@ add_executable(
         ${SOURCE}/EditorApp.xaml.cs
 
 		${SOURCE}/EditorPropertyHelper.cs
-		${SOURCE}/ProjectCreator.cs
 		${SOURCE}/SizePercentageConverter.cs
 
 	    ${SOURCE}/AssemblyInfo.cs

@@ -27,7 +27,6 @@ target_link_libraries(
 		CloveDefinitions
 		
 		CONAN_PKG::spdlog
-		CONAN_PKG::fmt
 )
 
 #Preprocessor
@@ -36,7 +35,4 @@ target_compile_definitions(
 
 	PUBLIC
 		CLOVE_ENABLE_ASSERTIONS=$<BOOL:${CLOVE_ENABLE_ASSERTIONS}>
-		SPDLOG_FMT_EXTERNAL #Using external fmt to easily grab includes (see CMakeLists if Clove)
 )
-
-copy_target_includes_to_out_dir(CloveLog)

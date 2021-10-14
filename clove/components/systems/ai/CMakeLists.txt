@@ -40,5 +40,3 @@ target_link_libraries(
         CloveLog
 		CloveMemory
 )
-
-copy_target_includes_to_out_dir(CloveAI)

@@ -47,13 +47,6 @@ namespace Bulb {
         }
 
         private void OnProjectSelected(ProjectSelectedArgs args) {
-            if (args.IsNewProject) {
-                ProjectCreator creator = new ProjectCreator();
-                creator.ProjectName = args.ProjectName;
-                creator.ProjectPath = args.ProjectPath;
-                creator.Create();
-            }
-
             try {
                 engineApp.openProject(args.FullPath);
             } catch (Exception e) {
