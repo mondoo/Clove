@@ -22,19 +22,6 @@
 
 CLOVE_DECLARE_LOG_CATEGORY(Membrane)
 
-#ifndef GAME_OUTPUT_DIR
-    #error "GAME_OUTPUT_DIR is not defined. Please define this for BulbMembrane and point it to build output location."
-#endif
-#ifndef GAME_NAME
-    #error "GAME_NAME is not defined. Please define this for BulbMembrane to provide the name of the target to build."
-#endif
-#ifndef GAME_MODULE_DIR
-    #error "GAME_MODULE_DIR is not defined. Please define this for BulbMembrane and point it to the game dll to load."
-#endif
-#ifndef GAME_DIR
-    #error "GAME_DIR is not defined. Please define this for BulbMembrane and point it to the root game folder."
-#endif
-
 typedef void (*setUpEditorApplicationFn)(clove::Application *app);
 typedef void (*tearDownEditorApplicationFn)(clove::Application *app);
 
@@ -83,9 +70,27 @@ namespace membrane {
     }
 
     void Application::loadGameDll() {
+        std::filesystem::path const gameOutputDir{ GAME_OUTPUT_DIR };
+        if(gameOutputDir.empty()) {
+            CLOVE_LOG(Membrane, clove::LogLevel::Error, "GAME_OUTPUT_DIR is not defined. Please define this for BulbMembrane and point it to build output location."); 
+            return;
+        }
+
+        std::string const gameName{ GAME_NAME };
+        if(gameName.empty()) {
+            CLOVE_LOG(Membrane, clove::LogLevel::Error, "GAME_NAME is not defined. Please define this for BulbMembrane to provide the name of the target to build.");
+            return;
+        }
+
+        std::filesystem::path const gameModuleDir{ GAME_MODULE_DIR };
+        if(gameModuleDir.empty()){
+            CLOVE_LOG(Membrane, clove::LogLevel::Error, "GAME_MODULE_DIR is not defined. Please define this for BulbMembrane and point it to the game dll to load.");
+            return;
+        }
+
         std::optional<std::filesystem::path> fallbackDll{};
         if(gameLibrary != nullptr) {
-            CLOVE_LOG(Membrane, clove::LogLevel::Trace, "Unloading {0} to prepare for compilation and reload", GAME_NAME);
+            CLOVE_LOG(Membrane, clove::LogLevel::Trace, "Unloading {0} to prepare for compilation and reload", gameName);
 
             if(tearDownEditorApplicationFn tearDownEditorApplication{ (tearDownEditorApplicationFn)GetProcAddress(gameLibrary, "tearDownEditorApplication") }; tearDownEditorApplication != nullptr) {
                 (tearDownEditorApplication)(app);
@@ -97,7 +102,7 @@ namespace membrane {
             FreeLibrary(gameLibrary);
 
             try {
-                fallbackDll = GAME_MODULE_DIR "/" GAME_NAME "_copy.dll";
+                fallbackDll = gameModuleDir / (gameName + "_copy.dll");
                 std::filesystem::copy_file(dllPath, fallbackDll.value(), std::filesystem::copy_options::overwrite_existing);
             } catch(std::exception e) {
                 CLOVE_LOG(Membrane, clove::LogLevel::Error, "{0}", e.what());
@@ -107,7 +112,7 @@ namespace membrane {
 
         std::filesystem::remove(dllPath);
 
-        CLOVE_LOG(Membrane, clove::LogLevel::Debug, "Configuring and compiling {0}", GAME_NAME);
+        CLOVE_LOG(Membrane, clove::LogLevel::Debug, "Configuring and compiling {0}", gameName);
 
         {
             std::stringstream configureStream{};
@@ -117,7 +122,7 @@ namespace membrane {
 
         {
             std::stringstream buildStream{};
-            buildStream << "cmake --build " << GAME_OUTPUT_DIR << " --target " << GAME_NAME << " --config Debug";
+            buildStream << "cmake --build " << gameOutputDir.string() << " --target " << gameName << " --config Debug";
             std::system(buildStream.str().c_str());
         }
 
@@ -135,7 +140,7 @@ namespace membrane {
             }
         }
 
-        CLOVE_LOG(Membrane, clove::LogLevel::Info, "Successfully loaded {0} dll", GAME_NAME);
+        CLOVE_LOG(Membrane, clove::LogLevel::Info, "Successfully loaded {0} dll", gameName);
     }
 
     bool Application::isRunning() {
