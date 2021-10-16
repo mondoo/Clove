@@ -152,5 +152,11 @@ namespace clove {
         bool isBufferEmpty() const;
 
         void flush();
+
+        /**
+         * @brief Returns how much the mouse wheel needs to move before it is considered to have scrolled.
+         * @return 
+         */
+        static int32_t getWheelDelta();
     };
 }

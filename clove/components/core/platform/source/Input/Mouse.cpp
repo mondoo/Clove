@@ -64,12 +64,12 @@ namespace clove {
         lastPos = pos;
 
         wheelDelta += delta;
-        while(wheelDelta >= CLV_WHEEL_DELTA) {
-            wheelDelta -= CLV_WHEEL_DELTA;
+        while(wheelDelta >= Mouse::getWheelDelta()) {
+            wheelDelta -= Mouse::getWheelDelta();
             onWheelUp(pos);
         }
-        while(wheelDelta <= -CLV_WHEEL_DELTA) {
-            wheelDelta += CLV_WHEEL_DELTA;
+        while(wheelDelta <= -Mouse::getWheelDelta()) {
+            wheelDelta += Mouse::getWheelDelta();
             onWheelDown(pos);
         }
     }

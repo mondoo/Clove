@@ -1,10 +1,10 @@
 #include "Membrane/Application.hpp"
 
 #include "Membrane/EditorSubSystem.hpp"
+#include "Membrane/EditorViewport.hpp"
 #include "Membrane/MessageHandler.hpp"
 #include "Membrane/Messages.hpp"
 #include "Membrane/RuntimeSubSystem.hpp"
-#include "Membrane/EditorViewport.hpp"
 
 #include <Clove/Application.hpp>
 #include <Clove/Components/StaticModelComponent.hpp>
@@ -19,6 +19,28 @@
 #include <Clove/Serialisation/Yaml.hpp>
 #include <filesystem>
 #include <msclr/marshal_cppstd.h>
+
+CLOVE_DECLARE_LOG_CATEGORY(Membrane)
+
+#ifndef GAME_OUTPUT_DIR
+    #define GAME_OUTPUT_DIR ""
+#endif
+#ifndef GAME_NAME
+    #define GAME_NAME ""
+#endif
+#ifndef GAME_MODULE_DIR
+    #define GAME_MODULE_DIR ""
+#endif
+#ifndef GAME_DIR
+    #define GAME_DIR ""
+#endif
+
+typedef void (*setUpEditorApplicationFn)(clove::Application *app);
+typedef void (*tearDownEditorApplicationFn)(clove::Application *app);
+
+namespace {
+    std::string_view constexpr dllPath{ GAME_MODULE_DIR "/" GAME_NAME ".dll" };
+}
 
 namespace membrane {
     static std::filesystem::path const cachedProjectsPath{ "projects.yaml" };
@@ -36,11 +58,20 @@ namespace membrane {
         renderTargetImageDescriptor.sharingMode = SharingMode::Concurrent;
 
         viewport = gcnew EditorViewport{};
-        
+
         //Use pair as there seems to be an issue when using structured bindings
         auto pair{ clove::Application::createHeadless(GraphicsApi::Vulkan, AudioApi::OpenAl, std::move(renderTargetImageDescriptor), viewport->getKeyboard(), viewport->getMouse()) };
         app          = pair.first.release();
         renderTarget = pair.second;
+
+        auto *vfs{ app->getFileSystem() };
+        vfs->mount(GAME_DIR "/content", ".");
+        std::filesystem::create_directories(vfs->resolve("."));
+
+        app->pushSubSystem<EditorSubSystem>();
+
+        MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_Stop ^>(this, &Application::setEditorMode));
+        MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_Play ^>(this, &Application::setRuntimeMode));
     }
 
     Application::~Application() {
@@ -51,30 +82,78 @@ namespace membrane {
         delete app;
     }
 
-    bool Application::hasDefaultProject() {
-        if(std::filesystem::exists(cachedProjectsPath)) {
-            auto loadResult{ clove::loadYaml(cachedProjectsPath) };
-            clove::serialiser::Node rootNode{ loadResult.getValue() };
-
-            return std::filesystem::exists(rootNode["projects"]["default"].as<std::string>());
+    void Application::loadGameDll() {
+        std::filesystem::path const gameOutputDir{ GAME_OUTPUT_DIR };
+        if(gameOutputDir.empty()) {
+            CLOVE_LOG(Membrane, clove::LogLevel::Error, "GAME_OUTPUT_DIR is not defined. Please define this for BulbMembrane and point it to build output location."); 
+            return;
         }
 
-        return false;
-    }
+        std::string const gameName{ GAME_NAME };
+        if(gameName.empty()) {
+            CLOVE_LOG(Membrane, clove::LogLevel::Error, "GAME_NAME is not defined. Please define this for BulbMembrane to provide the name of the target to build.");
+            return;
+        }
 
-    void Application::openProject(System::String ^ projectPath) {
-        std::string projectPathString{ msclr::interop::marshal_as<std::string>(projectPath) };
+        std::filesystem::path const gameModuleDir{ GAME_MODULE_DIR };
+        if(gameModuleDir.empty()){
+            CLOVE_LOG(Membrane, clove::LogLevel::Error, "GAME_MODULE_DIR is not defined. Please define this for BulbMembrane and point it to the game dll to load.");
+            return;
+        }
 
-        openProjectInternal(projectPathString);
-    }
+        std::optional<std::filesystem::path> fallbackDll{};
+        if(gameLibrary != nullptr) {
+            CLOVE_LOG(Membrane, clove::LogLevel::Trace, "Unloading {0} to prepare for compilation and reload", gameName);
 
-    void Application::openDefaultProject() {
-        CLOVE_ASSERT(std::filesystem::exists(cachedProjectsPath));
+            if(tearDownEditorApplicationFn tearDownEditorApplication{ (tearDownEditorApplicationFn)GetProcAddress(gameLibrary, "tearDownEditorApplication") }; tearDownEditorApplication != nullptr) {
+                (tearDownEditorApplication)(app);
+            } else {
+                CLOVE_LOG(Membrane, clove::LogLevel::Error, "Could not load game tear down function. Please provide 'tearDownEditorApplication' in client code.");
+                return;
+            }
 
-        auto loadResult{ clove::loadYaml(cachedProjectsPath) };
-        clove::serialiser::Node rootNode{ loadResult.getValue() };
+            FreeLibrary(gameLibrary);
 
-        openProjectInternal(rootNode["projects"]["default"].as<std::string>());
+            try {
+                fallbackDll = gameModuleDir / (gameName + "_copy.dll");
+                std::filesystem::copy_file(dllPath, fallbackDll.value(), std::filesystem::copy_options::overwrite_existing);
+            } catch(std::exception e) {
+                CLOVE_LOG(Membrane, clove::LogLevel::Error, "{0}", e.what());
+                return;
+            }
+        }
+
+        std::filesystem::remove(dllPath);
+
+        CLOVE_LOG(Membrane, clove::LogLevel::Debug, "Configuring and compiling {0}", gameName);
+
+        {
+            std::stringstream configureStream{};
+            configureStream << "cmake -G \"Visual Studio 16 2019\" " << ROOT_DIR;
+            std::system(configureStream.str().c_str());
+        }
+
+        {
+            std::stringstream buildStream{};
+            buildStream << "cmake --build " << gameOutputDir.string() << " --target " << gameName << " --config Debug";
+            std::system(buildStream.str().c_str());
+        }
+
+        bool const loadingSuccessful{ tryLoadGameDll(dllPath) };
+
+        if(!loadingSuccessful) {
+            if(fallbackDll.has_value()) {
+                CLOVE_LOG(Membrane, clove::LogLevel::Debug, "Attempting to load fallback Dll...");
+
+                if(!tryLoadGameDll(fallbackDll->string())) {
+                    throw gcnew System::Exception{ "Loading of backup game Dll failed." };
+                }
+            } else {
+                throw gcnew System::Exception{ "Loading of game Dll failed." };
+            }
+        }
+
+        CLOVE_LOG(Membrane, clove::LogLevel::Info, "Successfully loaded {0} dll", gameName);
     }
 
     bool Application::isRunning() {
@@ -116,31 +195,6 @@ namespace membrane {
         return gcnew System::String{ CLOVE_VERSION };
     }
 
-    void Application::openProjectInternal(std::filesystem::path const projectPath) {
-        clove::serialiser::Node rootNode{};
-        rootNode["projects"]["version"] = 1;
-        rootNode["projects"]["default"] = projectPath.string();
-
-        std::ofstream fileStream{ cachedProjectsPath, std::ios::out | std::ios::trunc };
-        fileStream << clove::emittYaml(rootNode);
-
-        //Currently project files are empty but they are used to mark a project's location
-        std::filesystem::path const rootProjectPath{ projectPath.parent_path() };
-
-        //Mount editor paths
-        auto *vfs{ app->getFileSystem() };
-        vfs->mount(rootProjectPath / "content", ".");
-
-        std::filesystem::create_directories(vfs->resolve("."));
-
-        //Push subSystems
-        app->pushSubSystem<EditorSubSystem>();
-
-        //Bind to editor messages
-        MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_Stop ^>(this, &Application::setEditorMode));
-        MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_Play ^>(this, &Application::setRuntimeMode));
-    }
-
     void Application::setEditorMode(Editor_Stop ^ message) {
         app->popSubSystem<RuntimeSubSystem>();
         app->pushSubSystem<EditorSubSystem>();
@@ -149,9 +203,25 @@ namespace membrane {
 
     void Application::setRuntimeMode(Editor_Play ^ message) {
         app->getSubSystem<EditorSubSystem>().saveScene();
-        
+
         app->popSubSystem<EditorSubSystem>();
         app->pushSubSystem<RuntimeSubSystem>();
         isInEditorMode = false;
+    }
+
+    bool Application::tryLoadGameDll(std::string_view path) {
+        if(gameLibrary = LoadLibrary(path.data()); gameLibrary != nullptr) {
+            if(setUpEditorApplicationFn setUpEditorApplication{ (setUpEditorApplicationFn)GetProcAddress(gameLibrary, "setUpEditorApplication") }; setUpEditorApplication != nullptr) {
+                (setUpEditorApplication)(app);
+            } else {
+                CLOVE_LOG(Membrane, clove::LogLevel::Error, "Could not load game initialise function. Please provide 'setUpEditorApplication' in client code.");
+                return false;
+            }
+        } else {
+            CLOVE_LOG(Membrane, clove::LogLevel::Error, "Could not load game dll. File does not exist");
+            return false;
+        }
+
+        return true;
     }
 }

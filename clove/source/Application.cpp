@@ -57,7 +57,12 @@ namespace clove {
         return { std::move(app), renderTargetPtr };
     }
 
+    void Application::set(Application *app) {
+        instance = app;
+    }
+
     Application &Application::get() {
+        CLOVE_ASSERT_MSG(instance != nullptr, "Attempted to get Application before it has been created.");
         return *instance;
     }
 
@@ -131,9 +136,9 @@ namespace clove {
         renderer = std::make_unique<ForwardRenderer3D>(this->graphicsDevice.get(), std::move(renderTarget));
 
         //SubSystems
-        pushSubSystem<TransformSubSystem>(SubSystemGroup::Initialisation, &entityManager);
-        pushSubSystem<PhysicsSubSystem>(SubSystemGroup::Initialisation, &entityManager);
-        pushSubSystem<AudioSubSystem>(SubSystemGroup::Render, &entityManager);
-        pushSubSystem<RenderSubSystem>(SubSystemGroup::Render, renderer.get(), &entityManager);
+        //pushSubSystem<TransformSubSystem>(SubSystemGroup::Initialisation, &entityManager);
+        //pushSubSystem<PhysicsSubSystem>(SubSystemGroup::Initialisation, &entityManager);
+        //pushSubSystem<AudioSubSystem>(SubSystemGroup::Render, &entityManager);
+        //pushSubSystem<RenderSubSystem>(SubSystemGroup::Render, renderer.get(), &entityManager);
     }
 }

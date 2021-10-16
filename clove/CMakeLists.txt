@@ -1,3 +1,5 @@
+set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+
 set(SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/source)
 set(INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/include/Clove)
 set(ASSETS ${CMAKE_CURRENT_SOURCE_DIR}/assets)
@@ -246,6 +248,7 @@ target_link_libraries(
 		stb
 )
 
+#Preprocessor
 target_compile_definitions(
 	Clove
 

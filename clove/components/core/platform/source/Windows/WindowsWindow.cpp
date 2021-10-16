@@ -8,6 +8,25 @@
 CLOVE_DECLARE_LOG_CATEGORY(ClovePlatformWindows)
 
 namespace clove {
+    namespace {
+        MouseButton getButtonFromWParam(WPARAM param) {
+            switch(GET_KEYSTATE_WPARAM(param)) {
+                case MK_LBUTTON:
+                    return MouseButton::_1;
+                case MK_RBUTTON:
+                    return MouseButton::_2;
+                case MK_MBUTTON:
+                    return MouseButton::_3;
+                case MK_XBUTTON1:
+                    return MouseButton::_4;
+                case MK_XBUTTON2:
+                    return MouseButton::_5;
+            }
+
+            return MouseButton::Undefined;
+        }
+    }
+
     WindowsWindow::WindowsWindow(Descriptor const &descriptor)
         : Window(keyboardDispatcher, mouseDispatcher) {
         instance = GetModuleHandle(nullptr);
@@ -215,11 +234,11 @@ namespace clove {
                 break;
 
             case WM_XBUTTONDOWN:
-                mouseDispatcher.onButtonPressed(static_cast<MouseButton>(GET_KEYSTATE_WPARAM(wParam)), pos);
+                mouseDispatcher.onButtonPressed(getButtonFromWParam(wParam), pos);
                 break;
 
             case WM_XBUTTONUP:
-                mouseDispatcher.onButtonReleased(static_cast<MouseButton>(GET_KEYSTATE_WPARAM(wParam)), pos);
+                mouseDispatcher.onButtonReleased(getButtonFromWParam(wParam), pos);
                 break;
 
             case WM_MOUSEWHEEL:

@@ -42,6 +42,9 @@
 					Content="Stop" 
 					Command="{Binding StopCommand}" 
 					IsEnabled="{Binding IsStopButtonEnabled}"/>
+			<Button FontSize="20"
+					Content="Compile"
+					Command="{Binding CompileCommand}"/>
 		</StackPanel>
 
 		<local:Viewport Grid.Column="0"
