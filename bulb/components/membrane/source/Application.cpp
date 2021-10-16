@@ -22,6 +22,19 @@
 
 CLOVE_DECLARE_LOG_CATEGORY(Membrane)
 
+#ifndef GAME_OUTPUT_DIR
+    #define GAME_OUTPUT_DIR ""
+#endif
+#ifndef GAME_NAME
+    #define GAME_NAME ""
+#endif
+#ifndef GAME_MODULE_DIR
+    #define GAME_MODULE_DIR ""
+#endif
+#ifndef GAME_DIR
+    #define GAME_DIR ""
+#endif
+
 typedef void (*setUpEditorApplicationFn)(clove::Application *app);
 typedef void (*tearDownEditorApplicationFn)(clove::Application *app);
 
