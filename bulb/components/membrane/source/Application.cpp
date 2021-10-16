@@ -79,9 +79,6 @@ namespace membrane {
     }
 
     Application::!Application() {
-        if(gameLibrary != nullptr) {
-            FreeLibrary(gameLibrary);
-        }
         delete app;
     }
 
