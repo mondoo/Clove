@@ -7,17 +7,23 @@ CLOVE_DECLARE_LOG_CATEGORY(ClovePlatformLinux)
 
 namespace clove {
     namespace {
+        unsigned int constexpr XlibMouse1{ 1 };
+        unsigned int constexpr XlibMouse2{ 2 };
+        unsigned int constexpr XlibMouse3{ 3 };
+        unsigned int constexpr XlibMouse4{ 8 };
+        unsigned int constexpr XlibMouse5{ 9 };
+        
         MouseButton getButtonFromXbutton(unsigned int button) {
             switch(button) {
-                case 1:
+                case XlibMouse1:
                     return MouseButton::_1;
-                case 2:
+                case XlibMouse2:
                     return MouseButton::_2;
-                case 3:
+                case XlibMouse3:
                     return MouseButton::_3;
-                case 8:
+                case XlibMouse4:
                     return MouseButton::_4;
-                case 9:
+                case XlibMouse5:
                     return MouseButton::_5;
             }
 

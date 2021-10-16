@@ -18,11 +18,11 @@ CLOVE_DECLARE_LOG_CATEGORY(ClovePlatformMacOS)
 
 namespace clove {
     namespace {
-        static NSUInteger constexpr MB_1{ 1 << 0 };
-        static NSUInteger constexpr MB_2{ 1 << 1 };
-        static NSUInteger constexpr MB_3{ 1 << 2 };
-        static NSUInteger constexpr MB_4{ 1 << 3 };
-        static NSUInteger constexpr MB_5{ 1 << 4 };
+        NSUInteger constexpr MB_1{ 1 << 0 };
+        NSUInteger constexpr MB_2{ 1 << 1 };
+        NSUInteger constexpr MB_3{ 1 << 2 };
+        NSUInteger constexpr MB_4{ 1 << 3 };
+        NSUInteger constexpr MB_5{ 1 << 4 };
     }
 
     MacWindow::MacWindow(Descriptor const &descriptor)
