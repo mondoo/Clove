@@ -55,5 +55,7 @@ public ref class Application {
     private:
         void setEditorMode(Editor_Stop ^message);
         void setRuntimeMode(Editor_Play ^message);
+
+        bool tryLoadGameDll(std::string_view path);
     };
 }

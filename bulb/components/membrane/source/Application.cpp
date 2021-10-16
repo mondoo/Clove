@@ -79,31 +79,33 @@ namespace membrane {
     }
 
     Application::!Application() {
+        if(gameLibrary != nullptr) {
+            FreeLibrary(gameLibrary);
+        }
         delete app;
     }
 
     void Application::loadGameDll() {
-        bool hasFallBackDll{ false };
-
+        std::optional<std::filesystem::path> fallbackDll{};
         if(gameLibrary != nullptr) {
             CLOVE_LOG(Membrane, clove::LogLevel::Trace, "Unloading {0} to prepare for compilation and reload", GAME_NAME);
 
             if(tearDownEditorApplicationFn tearDownEditorApplication{ (tearDownEditorApplicationFn)GetProcAddress(gameLibrary, "tearDownEditorApplication") }; tearDownEditorApplication != nullptr) {
                 (tearDownEditorApplication)(app);
             } else {
-                throw gcnew System::Exception("Could not load game initialise function. Please provide 'tearDownEditorApplication' in client code.");
+                CLOVE_LOG(Membrane, clove::LogLevel::Error, "Could not load game tear down function. Please provide 'tearDownEditorApplication' in client code.");
+                return;
             }
-            
+
             FreeLibrary(gameLibrary);
 
             try {
-                std::filesystem::copy_file(dllPath, GAME_MODULE_DIR "/" GAME_NAME "_copy.dll", std::filesystem::copy_options::overwrite_existing);
+                fallbackDll = GAME_MODULE_DIR "/" GAME_NAME "_copy.dll";
+                std::filesystem::copy_file(dllPath, fallbackDll.value(), std::filesystem::copy_options::overwrite_existing);
             } catch(std::exception e) {
                 CLOVE_LOG(Membrane, clove::LogLevel::Error, "{0}", e.what());
                 return;
             }
-
-            hasFallBackDll = true;
         }
 
         std::filesystem::remove(dllPath);
@@ -122,16 +124,18 @@ namespace membrane {
             std::system(buildStream.str().c_str());
         }
 
-        //TODO: Handle with fallback dll
+        bool const loadingSuccessful{ tryLoadGameDll(dllPath) };
 
-        if(gameLibrary = LoadLibrary(dllPath.data()); gameLibrary != nullptr) {
-            if(setUpEditorApplicationFn setUpEditorApplication{ (setUpEditorApplicationFn)GetProcAddress(gameLibrary, "setUpEditorApplication") }; setUpEditorApplication != nullptr) {
-                (setUpEditorApplication)(app);
+        if(!loadingSuccessful) {
+            if(fallbackDll.has_value()) {
+                CLOVE_LOG(Membrane, clove::LogLevel::Debug, "Attempting to load fallback Dll...");
+
+                if(!tryLoadGameDll(fallbackDll->string())) {
+                    throw gcnew System::Exception{ "Loading of backup game Dll failed." };
+                }
             } else {
-                throw gcnew System::Exception("Could not load game initialise function. Please provide 'setUpEditorApplication' in client code.");
+                throw gcnew System::Exception{ "Loading of game Dll failed." };
             }
-        } else {
-            throw gcnew System::Exception("Could not load game dll.");
         }
 
         CLOVE_LOG(Membrane, clove::LogLevel::Info, "Successfully loaded {0} dll", GAME_NAME);
@@ -188,5 +192,21 @@ namespace membrane {
         app->popSubSystem<EditorSubSystem>();
         app->pushSubSystem<RuntimeSubSystem>();
         isInEditorMode = false;
+    }
+
+    bool Application::tryLoadGameDll(std::string_view path) {
+        if(gameLibrary = LoadLibrary(path.data()); gameLibrary != nullptr) {
+            if(setUpEditorApplicationFn setUpEditorApplication{ (setUpEditorApplicationFn)GetProcAddress(gameLibrary, "setUpEditorApplication") }; setUpEditorApplication != nullptr) {
+                (setUpEditorApplication)(app);
+            } else {
+                CLOVE_LOG(Membrane, clove::LogLevel::Error, "Could not load game initialise function. Please provide 'setUpEditorApplication' in client code.");
+                return false;
+            }
+        } else {
+            CLOVE_LOG(Membrane, clove::LogLevel::Error, "Could not load game dll. File does not exist");
+            return false;
+        }
+
+        return true;
     }
 }
