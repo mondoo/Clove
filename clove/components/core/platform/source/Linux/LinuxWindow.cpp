@@ -200,9 +200,9 @@ namespace clove {
 
                 case ButtonPress:
                     if(xevent.xbutton.button == Button4) {
-                        mouseDispatcher.onWheelDelta(CLV_WHEEL_DELTA, vec2i{ xevent.xbutton.x, xevent.xbutton.y });
+                        mouseDispatcher.onWheelDelta(Mouse::getWheelDelta(), vec2i{ xevent.xbutton.x, xevent.xbutton.y });
                     } else if(xevent.xbutton.button == Button5) {
-                        mouseDispatcher.onWheelDelta(-CLV_WHEEL_DELTA, vec2i{ xevent.xbutton.x, xevent.xbutton.y });
+                        mouseDispatcher.onWheelDelta(-Mouse::getWheelDelta(), vec2i{ xevent.xbutton.x, xevent.xbutton.y });
                     } else {
                         mouseDispatcher.onButtonPressed(getButtonFromXbutton(xevent.xbutton.button), vec2i{ xevent.xbutton.x, xevent.xbutton.y });
                     }
