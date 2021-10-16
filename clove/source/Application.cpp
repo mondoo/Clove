@@ -57,8 +57,12 @@ namespace clove {
         return { std::move(app), renderTargetPtr };
     }
 
+    void Application::set(Application *app) {
+        instance = app;
+    }
+
     Application &Application::get() {
-        CLOVE_ASSERT(instance != nullptr);
+        CLOVE_ASSERT_MSG(instance != nullptr, "Attempted to get Application before it has been created.");
         return *instance;
     }
 

@@ -97,10 +97,11 @@ namespace clove {
          */
         static std::pair<std::unique_ptr<Application>, GraphicsImageRenderTarget *> createHeadless(GraphicsApi graphicsApi, AudioApi audioApi, GhaImage::Descriptor renderTargetDescriptor, Keyboard *keyboard, Mouse *mouse);
 
-        //TEMP?
-        static void set(Application *app) {
-            instance = app;
-        }
+        /**
+         * @brief Set the static application instance with an existing one.
+         * @param app 
+         */
+        static void set(Application *app);
 
         static Application &get();
 
