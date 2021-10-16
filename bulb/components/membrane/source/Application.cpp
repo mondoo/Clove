@@ -36,6 +36,11 @@ CLOVE_DECLARE_LOG_CATEGORY(Membrane)
 #endif
 
 typedef void (*setUpEditorApplicationFn)(clove::Application *app);
+typedef void (*tearDownEditorApplicationFn)(clove::Application *app);
+
+namespace {
+    std::string_view constexpr dllPath{ GAME_MODULE_DIR "/" GAME_NAME ".dll" };
+}
 
 namespace membrane {
     static std::filesystem::path const cachedProjectsPath{ "projects.yaml" };
@@ -78,6 +83,31 @@ namespace membrane {
     }
 
     void Application::loadGameDll() {
+        bool hasFallBackDll{ false };
+
+        if(gameLibrary != nullptr) {
+            CLOVE_LOG(Membrane, clove::LogLevel::Trace, "Unloading {0} to prepare for compilation and reload", GAME_NAME);
+
+            if(tearDownEditorApplicationFn tearDownEditorApplication{ (tearDownEditorApplicationFn)GetProcAddress(gameLibrary, "tearDownEditorApplication") }; tearDownEditorApplication != nullptr) {
+                (tearDownEditorApplication)(app);
+            } else {
+                throw gcnew System::Exception("Could not load game initialise function. Please provide 'tearDownEditorApplication' in client code.");
+            }
+            
+            FreeLibrary(gameLibrary);
+
+            try {
+                std::filesystem::copy_file(dllPath, GAME_MODULE_DIR "/" GAME_NAME "_copy.dll", std::filesystem::copy_options::overwrite_existing);
+            } catch(std::exception e) {
+                CLOVE_LOG(Membrane, clove::LogLevel::Error, "{0}", e.what());
+                return;
+            }
+
+            hasFallBackDll = true;
+        }
+
+        std::filesystem::remove(dllPath);
+
         CLOVE_LOG(Membrane, clove::LogLevel::Debug, "Configuring and compiling {0}", GAME_NAME);
 
         {
@@ -92,7 +122,9 @@ namespace membrane {
             std::system(buildStream.str().c_str());
         }
 
-        if(gameLibrary = LoadLibrary(GAME_MODULE_DIR "/" GAME_NAME ".dll"); gameLibrary != nullptr) {
+        //TODO: Handle with fallback dll
+
+        if(gameLibrary = LoadLibrary(dllPath.data()); gameLibrary != nullptr) {
             if(setUpEditorApplicationFn setUpEditorApplication{ (setUpEditorApplicationFn)GetProcAddress(gameLibrary, "setUpEditorApplication") }; setUpEditorApplication != nullptr) {
                 (setUpEditorApplication)(app);
             } else {

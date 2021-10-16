@@ -11,6 +11,7 @@ namespace Bulb {
         public ICommand SaveSceneCommand { get; }
         public ICommand PlayCommand { get; }
         public ICommand StopCommand { get; }
+        public ICommand CompileCommand { get; }
 
         public SceneViewModel Scene {
             get => scene;
@@ -44,6 +45,9 @@ namespace Bulb {
         }
         private bool isStopButtonEnabled = false;
 
+        public delegate void CompileDelegate();
+        public CompileDelegate OnCompileGame;
+
         public EditorSessionViewModel(string rootFilePath) {
             //Bind to messages
             Membrane.MessageHandler.bindToMessage<Membrane.Engine_OnSceneLoaded>(OnSceneLoaded);
@@ -57,6 +61,8 @@ namespace Bulb {
             });
             PlayCommand = new RelayCommand(Play);
             StopCommand = new RelayCommand(Stop);
+
+            CompileCommand = new RelayCommand(() => OnCompileGame?.Invoke());
 
             FileExplorer = new FileExplorerViewModel(rootFilePath);
 

@@ -33,6 +33,11 @@ namespace Bulb {
         private void StartEditorSession() {
             //Set up the engine session
             sessionViewModel = new EditorSessionViewModel(".");
+            sessionViewModel.OnCompileGame = () => {
+                lock (editorWindow.EditorViewport.ResizeMutex) { //TEMP: Using this lock to make sure we're not in mid loop
+                    engineApp.loadGameDll();
+                }
+            };
 
             Membrane.Log.addSink((string message) => sessionViewModel.Log.LogText += message, "%v");
 
