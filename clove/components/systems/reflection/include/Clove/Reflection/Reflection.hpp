@@ -35,7 +35,7 @@ namespace clove {
                                                                   \
     public:                                                       \
         MetaClass() {
-            
+
 #define CLOVE_REFLECT_PROPERTY(property)    \
     properties.push_back({                  \
         .name   = #property,                \
@@ -47,3 +47,9 @@ namespace clove {
     }                     \
     }                     \
     ;
+
+/**
+ * @brief Allows reflection of private members within a class.
+ */
+#define CLOVE_REFLECT_PRIVATE(classType) \
+    friend class clove::MetaClass<classType>;
