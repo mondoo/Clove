@@ -1,5 +1,6 @@
 #pragma once
 
+#include <string>
 #include <vector>
 
 namespace clove {
@@ -13,13 +14,18 @@ namespace clove {
      * @brief Provides information about a property for a class.
      */
     struct MetaProperty {
+        std::string name{}; /**< Name of the property. */
+        size_t offset{ 0 }; /**< Offset of the property within the class. */
+        size_t size{ 0 };   /**< Size of the property. */
     };
 }
 
-#define CLOVE_REFLECT_BEGIN(ClassType)                            \
+#define CLOVE_REFLECT_BEGIN(classType)                            \
     template<>                                                    \
-    class clove::MetaClass<ClassType> {                          \
+    class clove::MetaClass<classType> {                           \
     private:                                                      \
+        using Type = classType;                                   \
+                                                                  \
         std::vector<clove::MetaProperty> properties{};            \
                                                                   \
     public:                                                       \
@@ -29,8 +35,13 @@ namespace clove {
                                                                   \
     public:                                                       \
         MetaClass() {
-#define CLOVE_REFLECT_PROPERTY(Property) \
-    properties.push_back({});
+            
+#define CLOVE_REFLECT_PROPERTY(property)    \
+    properties.push_back({                  \
+        .name   = #property,                \
+        .offset = offsetof(Type, property), \
+        .size   = sizeof(Type::property),   \
+    });
 
 #define CLOVE_REFLECT_END \
     }                     \

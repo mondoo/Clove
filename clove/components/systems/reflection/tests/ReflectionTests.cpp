@@ -21,3 +21,17 @@ TEST(ReflectionTests, CanGetNumClassPublicMembers) {
 
     EXPECT_EQ(classInfo.getProperties().size(), memberCount);
 }
+
+TEST(ReflectionTests, CanGetBasicPropertyInfo){
+    clove::MetaClass<ReflectClass> classInfo{};
+
+    auto &props{ classInfo.getProperties() };
+
+    EXPECT_EQ(props[0].name, "x");
+    EXPECT_EQ(props[0].offset, offsetof(ReflectClass, x));
+    EXPECT_EQ(props[0].size, sizeof(ReflectClass::x));
+
+    EXPECT_EQ(props[1].name, "y");
+    EXPECT_EQ(props[1].offset, offsetof(ReflectClass, y));
+    EXPECT_EQ(props[1].size, sizeof(ReflectClass::y));
+}
