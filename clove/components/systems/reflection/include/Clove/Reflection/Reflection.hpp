@@ -17,6 +17,14 @@ namespace clove::reflection {
         struct HasType;
         template<typename T, typename... Us>
         struct HasType<T, std::tuple<Us...>> : std::disjunction<std::is_same<T, Us>...> {};
+
+        template<typename Type, size_t index, typename MemberTupleType, typename FunctorType>
+        void constexpr forEachMember(MemberTupleType const &members, FunctorType const &functor) {
+            if constexpr(index < MetaClass<Type>::memberCount){
+                functor(std::get<index>(members));
+                forEachMember<Type, index + 1>(members, functor);
+            }
+        }
     }
 
     /**
@@ -29,6 +37,17 @@ namespace clove::reflection {
     template<typename AttributeType, typename MemberType>
     bool constexpr hasAttribute(MemberType const &member) {
         return internal::HasType<AttributeType, std::decay_t<decltype(member.attributes)>>::value;
+    }
+
+    /**
+     * @brief Calls functor on each member inside a reflected Type.
+     * @tparam Type 
+     * @tparam FunctorType 
+     * @param functor 
+     */
+    template<typename Type, typename FunctorType>
+    void constexpr forEachMember(FunctorType &&functor){
+        internal::forEachMember<Type, 0>(MetaClass<Type>::getMembers(), std::forward<FunctorType>(functor));
     }
 }
 

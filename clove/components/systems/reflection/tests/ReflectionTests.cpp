@@ -86,3 +86,18 @@ TEST(ReflectionTests, CanGetPropertiesWithACertainAttribute) {
     EXPECT_TRUE(clove::reflection::hasAttribute<TestAttribute>(std::get<0>(members)));
     EXPECT_FALSE(clove::reflection::hasAttribute<TestAttribute>(std::get<1>(members)));
 }
+
+TEST(ReflectionTests, CanInterateOverClassMembers) {
+    int32_t totalMemberCount{ 0 };
+    int32_t attributeMemberCount{ 0 };
+
+    clove::reflection::forEachMember<PublicReflectClass>([&](auto &member) {
+        ++totalMemberCount;
+        if(clove::reflection::hasAttribute<TestAttribute>(member)){
+            ++attributeMemberCount;
+        }
+    });
+
+    EXPECT_EQ(totalMemberCount, 2);
+    EXPECT_EQ(attributeMemberCount, 1);
+}
