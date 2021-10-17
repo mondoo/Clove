@@ -3,23 +3,18 @@ set(SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/source)
 
 #Library
 add_library(
-    CloveReflection STATIC
+    CloveReflection INTERFACE
         ${INCLUDE}/Reflection.hpp
-        ${SOURCE}/Reflection.cpp
+        ${INCLUDE}/Reflection.inl
 )
 
 #Includes
 target_include_directories(
     CloveReflection
     
-	PUBLIC
+	INTERFACE
 		include
 )
-
-#Libraries
-# target_link_libraries(
-#     CloveReflection
-# )
 
 if(CLOVE_BUILD_TESTS)
 	add_subdirectory(tests)

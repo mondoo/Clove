@@ -1,9 +1,7 @@
 #pragma once
 
-#include <string>
+#include <string_view>
 #include <tuple>
-#include <type_traits>
-#include <vector>
 
 namespace clove::reflection {
     /**
@@ -11,21 +9,6 @@ namespace clove::reflection {
      */
     template<typename T>
     struct TypeInfo;
-
-    namespace internal {
-        template<typename T, typename Tuple>
-        struct HasType;
-        template<typename T, typename... Us>
-        struct HasType<T, std::tuple<Us...>> : std::disjunction<std::is_same<T, Us>...> {};
-
-        template<typename Type, size_t index, typename MemberTupleType, typename FunctorType>
-        void constexpr forEachMember(MemberTupleType const &members, FunctorType const &functor) {
-            if constexpr(index < TypeInfo<Type>::memberCount) {
-                functor(std::get<index>(members));
-                forEachMember<Type, index + 1>(members, functor);
-            }
-        }
-    }
 
     /**
      * @brief Returns true if member has attribute of type AttributeType.
@@ -35,9 +18,7 @@ namespace clove::reflection {
      * @return 
      */
     template<typename AttributeType, typename MemberType>
-    bool constexpr hasAttribute(MemberType const &member) {
-        return internal::HasType<AttributeType, std::decay_t<decltype(member.attributes)>>::value;
-    }
+    bool constexpr hasAttribute(MemberType const &member);
 
     /**
      * @brief Calls functor on each member inside a reflected Type.
@@ -46,9 +27,7 @@ namespace clove::reflection {
      * @param functor 
      */
     template<typename Type, typename FunctorType>
-    void constexpr forEachMember(FunctorType &&functor) {
-        internal::forEachMember<Type, 0>(TypeInfo<Type>::getMembers(), std::forward<FunctorType>(functor));
-    }
+    void constexpr forEachMember(FunctorType &&functor);
 }
 
 #define CLOVE_REFLECT_BEGIN(classType)              \
@@ -91,3 +70,5 @@ private:                                                                        
  */
 #define CLOVE_REFLECT_PRIVATE(classType) \
     friend struct clove::reflection::TypeInfo<classType>;
+
+#include "Reflection.inl"
