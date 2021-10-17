@@ -46,40 +46,34 @@ CLOVE_REFLECT_END
 TEST(ReflectionTests, CanGetNumClassPublicMembers) {
     size_t constexpr memberCount{ 2 };
 
-    clove::MetaClass<PublicReflectClass> classInfo{};
-
-    EXPECT_EQ(classInfo.getProperties().size(), memberCount);
+    EXPECT_EQ(clove::MetaClass<PublicReflectClass>::memberCount, memberCount);
 }
 
 TEST(ReflectionTests, CanGetNumClassPrivateMembers) {
     size_t constexpr memberCount{ 2 };
 
-    clove::MetaClass<PrivateReflectClass> classInfo{};
-
-    EXPECT_EQ(classInfo.getProperties().size(), memberCount);
+    EXPECT_EQ(clove::MetaClass<PublicReflectClass>::memberCount, memberCount);
 }
 
 TEST(ReflectionTests, CanGetBasicPropertyInfo) {
-    clove::MetaClass<PublicReflectClass> publicClassInfo{};
-    auto &publicProps{ publicClassInfo.getProperties() };
+    auto publicProps{ clove::MetaClass<PublicReflectClass>::getMembers() };
 
-    EXPECT_EQ(publicProps[0].name, "x");
-    EXPECT_EQ(publicProps[0].offset, offsetof(PublicReflectClass, x));
-    EXPECT_EQ(publicProps[0].size, sizeof(PublicReflectClass::x));
+    EXPECT_EQ(std::get<0>(publicProps).name, "x");
+    EXPECT_EQ(std::get<0>(publicProps).offset, offsetof(PublicReflectClass, x));
+    EXPECT_EQ(std::get<0>(publicProps).size, sizeof(PublicReflectClass::x));
 
-    EXPECT_EQ(publicProps[1].name, "y");
-    EXPECT_EQ(publicProps[1].offset, offsetof(PublicReflectClass, y));
-    EXPECT_EQ(publicProps[1].size, sizeof(PublicReflectClass::y));
+    EXPECT_EQ(std::get<1>(publicProps).name, "y");
+    EXPECT_EQ(std::get<1>(publicProps).offset, offsetof(PublicReflectClass, y));
+    EXPECT_EQ(std::get<1>(publicProps).size, sizeof(PublicReflectClass::y));
 
-    clove::MetaClass<PrivateReflectClass> privateClassInfo{};
-    auto &privateProps{ privateClassInfo.getProperties() };
+    auto privateProps{ clove::MetaClass<PrivateReflectClass>::getMembers() };
     PrivateReflectClass sizeHelper{};
 
-    EXPECT_EQ(privateProps[0].name, "a");
-    EXPECT_EQ(privateProps[0].offset, sizeHelper.offsetOfA());
-    EXPECT_EQ(privateProps[0].size, sizeHelper.sizeOfA());
+    EXPECT_EQ(std::get<0>(privateProps).name, "a");
+    EXPECT_EQ(std::get<0>(privateProps).offset, sizeHelper.offsetOfA());
+    EXPECT_EQ(std::get<0>(privateProps).size, sizeHelper.sizeOfA());
 
-    EXPECT_EQ(privateProps[1].name, "b");
-    EXPECT_EQ(privateProps[1].offset, sizeHelper.offsetOfB());
-    EXPECT_EQ(privateProps[1].size, sizeHelper.sizeOfB());
+    EXPECT_EQ(std::get<1>(privateProps).name, "b");
+    EXPECT_EQ(std::get<1>(privateProps).offset, sizeHelper.offsetOfB());
+    EXPECT_EQ(std::get<1>(privateProps).size, sizeHelper.sizeOfB());
 }

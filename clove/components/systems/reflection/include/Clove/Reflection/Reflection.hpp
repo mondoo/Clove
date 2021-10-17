@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <tuple>
 #include <vector>
 
 namespace clove {
@@ -8,7 +9,7 @@ namespace clove {
      * @brief Provides information about a specific class.
      */
     template<typename T>
-    class MetaClass;
+    struct MetaClass;
 
     /**
      * @brief Provides information about a property for a class.
@@ -20,36 +21,41 @@ namespace clove {
     };
 }
 
-#define CLOVE_REFLECT_BEGIN(classType)                            \
-    template<>                                                    \
-    class clove::MetaClass<classType> {                           \
-    private:                                                      \
-        using Type = classType;                                   \
-                                                                  \
-        std::vector<clove::MetaProperty> properties{};            \
-                                                                  \
-    public:                                                       \
-        std::vector<clove::MetaProperty> const &getProperties() { \
-            return properties;                                    \
-        }                                                         \
-                                                                  \
-    public:                                                       \
-        MetaClass() {
+#define CLOVE_REFLECT_BEGIN(classType)   \
+    template<>                           \
+    struct clove::MetaClass<classType> { \
+        using Type = classType;          \
+                                         \
+        template<size_t>                 \
+        struct Property;                 \
+                                         \
+        static size_t constexpr memberIndexOffset{ __COUNTER__ + 1 };
 
-#define CLOVE_REFLECT_PROPERTY(property)    \
-    properties.push_back({                  \
-        .name   = #property,                \
-        .offset = offsetof(Type, property), \
-        .size   = sizeof(Type::property),   \
-    });
+#define CLOVE_REFLECT_PROPERTY(property)               \
+    template<>                                         \
+    struct Property<__COUNTER__ - memberIndexOffset> { \
+        std::string name{ #property };                 \
+        size_t offset{ offsetof(Type, property) };     \
+        size_t size{ sizeof(Type::property) };         \
+    };
 
-#define CLOVE_REFLECT_END \
-    }                     \
-    }                     \
+#define CLOVE_REFLECT_END                                                       \
+    static size_t constexpr memberCount{ __COUNTER__ - memberIndexOffset };     \
+                                                                                \
+    static auto constexpr getMembers() {                                        \
+        return getMembersInternal(std::make_index_sequence<memberCount>{});     \
+    }                                                                           \
+                                                                                \
+private:                                                                        \
+    template<size_t... indices>                                                 \
+    static auto constexpr getMembersInternal(std::index_sequence<indices...>) { \
+        return std::tuple<Property<indices>...>{};                              \
+    }                                                                           \
+    }                                                                           \
     ;
 
 /**
  * @brief Allows reflection of private members within a class.
  */
 #define CLOVE_REFLECT_PRIVATE(classType) \
-    friend class clove::MetaClass<classType>;
+    friend struct clove::MetaClass<classType>;
