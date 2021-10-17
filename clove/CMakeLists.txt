@@ -225,6 +225,7 @@ target_link_libraries(
 		#Systems
 		CloveAI
 		CloveECS
+		CloveReflection
 		CloveSerialisation
 		CloveStateMachine
 		 
