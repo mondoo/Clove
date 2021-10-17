@@ -5,10 +5,20 @@
 
 namespace clove::reflection {
     /**
-     * @brief Provides information about a specific class.
+     * @brief Provides information about a specific type.
      */
     template<typename T>
     struct TypeInfo;
+
+    /**
+     * @brief Returns true if typeInfo has attribute of type AttributeType.
+     * @tparam AttributeType 
+     * @tparam ClassType 
+     * @param typeInfo 
+     * @return 
+     */
+    template<typename AttributeType, typename ClassType>
+    bool constexpr hasAttribute(TypeInfo<ClassType> const &typeInfo);
 
     /**
      * @brief Returns true if member has attribute of type AttributeType.
@@ -30,14 +40,15 @@ namespace clove::reflection {
     void constexpr forEachMember(FunctorType &&functor);
 }
 
-#define CLOVE_REFLECT_BEGIN(classType)              \
-    template<>                                      \
-    struct clove::reflection::TypeInfo<classType> { \
-        using Type = classType;                     \
-                                                    \
-        template<size_t>                            \
-        struct Member;                              \
-                                                    \
+#define CLOVE_REFLECT_BEGIN(classType, ...)                               \
+    template<>                                                            \
+    struct clove::reflection::TypeInfo<classType> {                       \
+        using Type = classType;                                           \
+                                                                          \
+        template<size_t>                                                  \
+        struct Member;                                                    \
+                                                                          \
+        static auto constexpr attributes{ std::make_tuple(__VA_ARGS__) }; \
         static size_t constexpr memberIndexOffset{ __COUNTER__ + 1 };
 
 #define CLOVE_REFLECT_PROPERTY(property, ...)                             \

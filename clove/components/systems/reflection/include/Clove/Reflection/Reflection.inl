@@ -16,6 +16,11 @@ namespace clove::reflection {
         }
     }
 
+    template<typename AttributeType, typename ClassType>
+    bool constexpr hasAttribute(TypeInfo<ClassType> const &typeInfo) {
+        return internal::HasType<AttributeType, std::decay_t<decltype(typeInfo.attributes)>>::value;
+    }
+
     template<typename AttributeType, typename MemberType>
     bool constexpr hasAttribute(MemberType const &member) {
         return internal::HasType<AttributeType, std::decay_t<decltype(member.attributes)>>::value;
