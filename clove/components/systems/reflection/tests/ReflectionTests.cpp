@@ -12,8 +12,8 @@ public:
 };
 
 CLOVE_REFLECT_BEGIN(PublicReflectClass)
-    CLOVE_REFLECT_PROPERTY(x, TestAttribute{})
-    CLOVE_REFLECT_PROPERTY(y)
+CLOVE_REFLECT_PROPERTY(x, TestAttribute{})
+CLOVE_REFLECT_PROPERTY(y)
 CLOVE_REFLECT_END
 
 class PrivateReflectClass {
@@ -48,17 +48,17 @@ CLOVE_REFLECT_END
 TEST(ReflectionTests, CanGetNumClassPublicMembers) {
     size_t constexpr memberCount{ 2 };
 
-    EXPECT_EQ(clove::reflection::MetaClass<PublicReflectClass>::memberCount, memberCount);
+    EXPECT_EQ(clove::reflection::TypeInfo<PublicReflectClass>::memberCount, memberCount);
 }
 
 TEST(ReflectionTests, CanGetNumClassPrivateMembers) {
     size_t constexpr memberCount{ 2 };
 
-    EXPECT_EQ(clove::reflection::MetaClass<PublicReflectClass>::memberCount, memberCount);
+    EXPECT_EQ(clove::reflection::TypeInfo<PublicReflectClass>::memberCount, memberCount);
 }
 
-TEST(ReflectionTests, CanGetBasicPropertyInfo) {
-    auto publicMembers{ clove::reflection::MetaClass<PublicReflectClass>::getMembers() };
+TEST(ReflectionTests, CanGetBasicMemberInfo) {
+    auto publicMembers{ clove::reflection::TypeInfo<PublicReflectClass>::getMembers() };
 
     EXPECT_EQ(std::get<0>(publicMembers).name, "x");
     EXPECT_EQ(std::get<0>(publicMembers).offset, offsetof(PublicReflectClass, x));
@@ -68,7 +68,7 @@ TEST(ReflectionTests, CanGetBasicPropertyInfo) {
     EXPECT_EQ(std::get<1>(publicMembers).offset, offsetof(PublicReflectClass, y));
     EXPECT_EQ(std::get<1>(publicMembers).size, sizeof(PublicReflectClass::y));
 
-    auto privateMembers{ clove::reflection::MetaClass<PrivateReflectClass>::getMembers() };
+    auto privateMembers{ clove::reflection::TypeInfo<PrivateReflectClass>::getMembers() };
     PrivateReflectClass sizeHelper{};
 
     EXPECT_EQ(std::get<0>(privateMembers).name, "a");
@@ -81,7 +81,7 @@ TEST(ReflectionTests, CanGetBasicPropertyInfo) {
 }
 
 TEST(ReflectionTests, CanGetPropertiesWithACertainAttribute) {
-    auto members{ clove::reflection::MetaClass<PublicReflectClass>::getMembers() };
+    auto members{ clove::reflection::TypeInfo<PublicReflectClass>::getMembers() };
 
     EXPECT_TRUE(clove::reflection::hasAttribute<TestAttribute>(std::get<0>(members)));
     EXPECT_FALSE(clove::reflection::hasAttribute<TestAttribute>(std::get<1>(members)));
@@ -93,7 +93,7 @@ TEST(ReflectionTests, CanInterateOverClassMembers) {
 
     clove::reflection::forEachMember<PublicReflectClass>([&](auto &member) {
         ++totalMemberCount;
-        if(clove::reflection::hasAttribute<TestAttribute>(member)){
+        if(clove::reflection::hasAttribute<TestAttribute>(member)) {
             ++attributeMemberCount;
         }
     });

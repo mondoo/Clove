@@ -10,7 +10,7 @@ namespace clove::reflection {
      * @brief Provides information about a specific class.
      */
     template<typename T>
-    struct MetaClass;
+    struct TypeInfo;
 
     namespace internal {
         template<typename T, typename Tuple>
@@ -20,7 +20,7 @@ namespace clove::reflection {
 
         template<typename Type, size_t index, typename MemberTupleType, typename FunctorType>
         void constexpr forEachMember(MemberTupleType const &members, FunctorType const &functor) {
-            if constexpr(index < MetaClass<Type>::memberCount){
+            if constexpr(index < TypeInfo<Type>::memberCount) {
                 functor(std::get<index>(members));
                 forEachMember<Type, index + 1>(members, functor);
             }
@@ -46,19 +46,19 @@ namespace clove::reflection {
      * @param functor 
      */
     template<typename Type, typename FunctorType>
-    void constexpr forEachMember(FunctorType &&functor){
-        internal::forEachMember<Type, 0>(MetaClass<Type>::getMembers(), std::forward<FunctorType>(functor));
+    void constexpr forEachMember(FunctorType &&functor) {
+        internal::forEachMember<Type, 0>(TypeInfo<Type>::getMembers(), std::forward<FunctorType>(functor));
     }
 }
 
-#define CLOVE_REFLECT_BEGIN(classType)               \
-    template<>                                       \
-    struct clove::reflection::MetaClass<classType> { \
-        using Type = classType;                      \
-                                                     \
-        template<size_t>                             \
-        struct Member;                               \
-                                                     \
+#define CLOVE_REFLECT_BEGIN(classType)              \
+    template<>                                      \
+    struct clove::reflection::TypeInfo<classType> { \
+        using Type = classType;                     \
+                                                    \
+        template<size_t>                            \
+        struct Member;                              \
+                                                    \
         static size_t constexpr memberIndexOffset{ __COUNTER__ + 1 };
 
 #define CLOVE_REFLECT_PROPERTY(property, ...)                             \
@@ -90,4 +90,4 @@ private:                                                                        
  * @brief Allows reflection of private members within a class.
  */
 #define CLOVE_REFLECT_PRIVATE(classType) \
-    friend struct clove::reflection::MetaClass<classType>;
+    friend struct clove::reflection::TypeInfo<classType>;
