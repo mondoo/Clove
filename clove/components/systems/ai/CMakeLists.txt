@@ -7,6 +7,9 @@ add_library(
 
     ${INCLUDE}/BehaviourTree.hpp
 	${SOURCE}/BehaviourTree.cpp
+	${INCLUDE}/BlackBoard.hpp
+	${INCLUDE}/BlackBoard.inl
+	${SOURCE}/BlackBoard.cpp
 	${INCLUDE}/Composite.hpp
 	${SOURCE}/Composite.cpp
 	${INCLUDE}/Decorator.hpp
@@ -32,7 +35,6 @@ target_link_libraries(
     CloveAI
 
     PUBLIC
-		CloveBlackboard
         CloveDefinitions
         CloveDeltaTime
         CloveLog
