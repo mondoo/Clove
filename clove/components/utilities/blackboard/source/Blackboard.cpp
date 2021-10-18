@@ -1,4 +1,4 @@
-#include "Clove/AI/BlackBoard.hpp"
+#include "Clove/Blackboard.hpp"
 
 namespace {
     size_t constexpr defaultMemorySize{ 1024 };
@@ -10,12 +10,12 @@ namespace clove {
     }
 
     BlackBoard::BlackBoard(size_t memorySize)
-        : memoryBlock(memorySize) {
+        : memoryBlock{ memorySize } {
     }
 
     BlackBoard::BlackBoard(BlackBoard &&other) noexcept
-        : memoryBlock(std::move(other.memoryBlock)) {
-        dataMap = std::move(other.dataMap);
+        : memoryBlock{ std::move(other.memoryBlock) }
+        , dataMap{ std::move(other.dataMap) } {
     }
 
     BlackBoard &BlackBoard::operator=(BlackBoard &&other) noexcept {
