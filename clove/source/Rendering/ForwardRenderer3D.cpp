@@ -329,6 +329,7 @@ namespace clove {
                                                                                    .shaderStage = GhaShader::Stage::Vertex,
                                                                                },
                                                                            },
+                                                                           .indexCount = mesh->getIndexCount(),
                                                                        });
 
                 ++meshIndex;
