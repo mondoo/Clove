@@ -1,3 +1,6 @@
+#include <type_traits>
+#include <typeinfo>
+
 namespace clove {
     template<typename GeometryPassType>
     GeometryPass::Id GeometryPass::getId() {

@@ -1,13 +1,8 @@
 #include "Clove/Rendering/RenderPasses/ForwardColourPass.hpp"
 
-#include "Clove/Rendering/Renderables/Mesh.hpp"
-#include "Clove/Rendering/RenderingHelpers.hpp"
-#include "Clove/Rendering/Vertex.hpp"
-
-#include <Clove/Graphics/GhaFactory.hpp>
-#include <Clove/Graphics/GhaGraphicsCommandBuffer.hpp>
-#include <Clove/Graphics/GhaGraphicsPipelineObject.hpp>
-#include <Clove/Graphics/GhaRenderPass.hpp>
+#include "Clove/Rendering/RenderGraph/RenderGraph.hpp"
+#include "Clove/Rendering/RenderGraph/RgPass.hpp"
+#include "Clove/Rendering/RenderingConstants.hpp"
 
 extern "C" const char constants[];
 extern "C" const size_t constantsLength;
@@ -18,58 +13,7 @@ extern "C" const char mesh_p[];
 extern "C" const size_t mesh_pLength;
 
 namespace clove {
-    ForwardColourPass::ForwardColourPass(GhaFactory &ghaFactory, GhaRenderPass *ghaRenderPass) {
-        //Build include map
-        std::unordered_map<std::string, std::string> shaderIncludes;
-        shaderIncludes["Constants.glsl"] = { constants, constantsLength };
-
-        //Create attributes for animated meshes
-        std::vector<VertexAttributeDescriptor> const vertexAttributes{
-            VertexAttributeDescriptor{
-                .format   = VertexAttributeFormat::R32G32B32_SFLOAT,
-                .offset   = offsetof(Vertex, position),
-            },
-            VertexAttributeDescriptor{
-                .format   = VertexAttributeFormat::R32G32B32_SFLOAT,
-                .offset   = offsetof(Vertex, normal),
-            },
-            VertexAttributeDescriptor{
-                .format   = VertexAttributeFormat::R32G32_SFLOAT,
-                .offset   = offsetof(Vertex, texCoord),
-            },
-            VertexAttributeDescriptor{
-                .format   = VertexAttributeFormat::R32G32B32_SFLOAT,
-                .offset   = offsetof(Vertex, colour),
-            },
-        };
-
-        AreaDescriptor const viewScissorArea{
-            .state = ElementState::Dynamic,
-        };
-
-        auto vertShader{ *ghaFactory.createShaderFromSource({ mesh_v, mesh_vLength }, shaderIncludes, "Animated Mesh (vertex)", GhaShader::Stage::Vertex) };
-        auto pixelShader{ *ghaFactory.createShaderFromSource({ mesh_p, mesh_pLength }, shaderIncludes, "Mesh (pixel)", GhaShader::Stage::Pixel) };
-
-        auto meshLayout{ createMeshDescriptorSetLayout(ghaFactory) };
-        auto viewLayout{ createViewDescriptorSetLayout(ghaFactory) };
-        auto lightLayout{ createLightingDescriptorSetLayout(ghaFactory) };
-
-        pipeline = *ghaFactory.createGraphicsPipelineObject(GhaGraphicsPipelineObject::Descriptor{
-            .vertexShader         = vertShader.get(),
-            .pixelShader          = pixelShader.get(),
-            .vertexInput          = Vertex::getInputBindingDescriptor(),
-            .vertexAttributes     = vertexAttributes,
-            .viewportDescriptor   = viewScissorArea,
-            .scissorDescriptor    = viewScissorArea,
-            .renderPass           = ghaRenderPass,
-            .descriptorSetLayouts = {
-                meshLayout.get(),
-                viewLayout.get(),
-                lightLayout.get(),
-            },
-            .pushConstants = {},
-        });
-    }
+    ForwardColourPass::ForwardColourPass() = default;
 
     ForwardColourPass::ForwardColourPass(ForwardColourPass &&other) noexcept = default;
 
@@ -77,19 +21,126 @@ namespace clove {
 
     ForwardColourPass::~ForwardColourPass() = default;
 
-    void ForwardColourPass::execute(GhaGraphicsCommandBuffer &commandBuffer, FrameData const &frameData) {
-        commandBuffer.bindPipelineObject(*pipeline);
+    void ForwardColourPass::execute(RenderGraph &renderGraph, PassData const &passData) {
+        //TODO: Cache instead of making every frame
+        std::unordered_map<std::string, std::string> shaderIncludes;
+        shaderIncludes["Constants.glsl"] = { constants, constantsLength };
 
-        commandBuffer.bindDescriptorSet(*frameData.viewDescriptorSet, 1);
-        commandBuffer.bindDescriptorSet(*frameData.lightingDescriptorSet, 2);
+        //NOTE: Need this as a separate thing otherwise there is an internal compiler error. I think it's because of the clearValue variant
+        RgRenderPass::Descriptor passDescriptor{
+            .vertexShader  = renderGraph.createShader({ mesh_v, mesh_vLength }, shaderIncludes, "Mesh (vertex)", GhaShader::Stage::Vertex),
+            .pixelShader   = renderGraph.createShader({ mesh_p, mesh_pLength }, shaderIncludes, "Mesh (pixel)", GhaShader::Stage::Pixel),
+            .viewportSize  = passData.renderTargetSize,
+            .renderTargets = {
+                RgRenderTargetBinding{
+                    .loadOp     = LoadOperation::Clear,
+                    .storeOp    = StoreOperation::Store,
+                    .clearValue = ColourValue{ 0.0f, 0.0, 0.0f, 1.0f },
+                    .target     = passData.renderTarget,
+                },
+            },
+            .depthStencil = {
+                .loadOp     = LoadOperation::Clear,
+                .storeOp    = StoreOperation::DontCare,
+                .clearValue = DepthStencilValue{ .depth = 1.0f },
+                .target     = passData.depthTarget,
+            },
+        };
+        RgPassId colourPass{ renderGraph.createRenderPass(passDescriptor) };
 
-        for(auto const &job : getJobs()) {
-            commandBuffer.bindDescriptorSet(*frameData.meshDescriptorSets[job.meshDescriptorIndex], 0);
-
-            commandBuffer.bindVertexBuffer(*job.mesh->getCombinedBuffer(), job.mesh->getVertexOffset());
-            commandBuffer.bindIndexBuffer(*job.mesh->getCombinedBuffer(), job.mesh->getIndexOffset(), IndexType::Uint16);
-
-            commandBuffer.drawIndexed(job.mesh->getIndexCount());
+        for(auto &job : getJobs()) {
+            renderGraph.addRenderSubmission(colourPass, RgRenderPass::Submission{
+                                                            .vertexBuffer = job.vertexBuffer,
+                                                            .indexBuffer  = job.indexBuffer,
+                                                            .shaderUbos   = {
+                                                            RgBufferBinding{
+                                                                .slot        = 0,
+                                                                    .buffer      = job.modelBuffer,
+                                                                    .offset      = 0,
+                                                                    .size        = job.modelBufferSize,
+                                                                    .shaderStage = GhaShader::Stage::Vertex,
+                                                                },
+                                                                RgBufferBinding{
+                                                                    .slot        = 1,
+                                                                    .buffer      = passData.viewUniformBuffer,
+                                                                    .offset      = passData.viewDataOffset,
+                                                                    .size        = passData.viewDataSize,
+                                                                    .shaderStage = GhaShader::Stage::Vertex,
+                                                                },
+                                                                RgBufferBinding{
+                                                                    .slot        = 2,
+                                                                    .buffer      = passData.lightsUnfiromBuffer,
+                                                                    .offset      = passData.numLightsOffset,
+                                                                    .size        = passData.numLightsSize,
+                                                                    .shaderStage = GhaShader::Stage::Vertex | GhaShader::Stage::Pixel,
+                                                                },
+                                                                RgBufferBinding{
+                                                                    .slot        = 3,
+                                                                    .buffer      = passData.lightsUnfiromBuffer,
+                                                                    .offset      = passData.dirShadowTransformsOffset,
+                                                                    .size        = passData.dirShadowTransformsSize,
+                                                                    .shaderStage = GhaShader::Stage::Vertex,
+                                                                },
+                                                                RgBufferBinding{
+                                                                    .slot        = 10,
+                                                                    .buffer      = passData.viewUniformBuffer,
+                                                                    .offset      = passData.viewPositionOffset,
+                                                                    .size        = passData.viewPositionSize,
+                                                                    .shaderStage = GhaShader::Stage::Pixel,
+                                                                },
+                                                                RgBufferBinding{
+                                                                    .slot        = 11,
+                                                                    .buffer      = passData.lightsUnfiromBuffer,
+                                                                    .offset      = passData.lightsOffset,
+                                                                    .size        = passData.lightsSize,
+                                                                    .shaderStage = GhaShader::Stage::Pixel,
+                                                                },
+                                                                RgBufferBinding{
+                                                                    .slot        = 12,
+                                                                    .buffer      = job.colourBuffer,
+                                                                    .offset      = 0,
+                                                                    .size        = job.colourBufferSize,
+                                                                    .shaderStage = GhaShader::Stage::Pixel,
+                                                                },
+                                                            },
+                                                            .shaderImages = {
+                                                                RgImageBinding{
+                                                                    .slot       = 4,
+                                                                    .image      = job.diffuseTexture,
+                                                                    .arrayIndex = 0,
+                                                                    .arrayCount = 1,
+                                                                },
+                                                                RgImageBinding{
+                                                                    .slot       = 5,
+                                                                    .image      = job.specularTexture,
+                                                                    .arrayIndex = 0,
+                                                                    .arrayCount = 1,
+                                                                },
+                                                                RgImageBinding{
+                                                                    .slot       = 7,
+                                                                    .image      = passData.directionalShadowMap,
+                                                                    .arrayIndex = 0,
+                                                                    .arrayCount = MAX_LIGHTS,
+                                                                },
+                                                                RgImageBinding{
+                                                                    .slot       = 8,
+                                                                    .image      = passData.pointShadowMap,
+                                                                    .arrayIndex = 0,
+                                                                    .arrayCount = MAX_LIGHTS * cubeMapLayerCount,
+                                                                },
+                                                            },
+                                                            .shaderSamplers = {
+                                                                RgSamplerBinding{
+                                                                    .slot    = 6,
+                                                                    .sampler = job.materialSampler,
+                                                                },
+                                                                RgSamplerBinding{
+                                                                    .slot    = 9,
+                                                                    .sampler = passData.shadowMaplSampler,
+                                                                },
+                                                            },
+                                                            .indexCount = job.indexCount,
+                                                        });
         }
     }
 }

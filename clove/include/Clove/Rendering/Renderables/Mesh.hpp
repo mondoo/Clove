@@ -62,7 +62,7 @@ namespace clove {
          */
         inline size_t getIndexOffset() const;
         inline size_t getIndexBufferSize() const;
-        inline size_t getIndexCount() const;
+        inline uint32_t getIndexCount() const;
     };
 }
 

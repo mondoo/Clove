@@ -12,14 +12,9 @@ namespace clove {
 
 namespace clove {
     class ForwardColourPass : public GeometryPass {
-        //VARIABLES
-    private:
-        std::unique_ptr<GhaGraphicsPipelineObject> pipeline{ nullptr };
-
         //FUNCTIONS
     public:
-        ForwardColourPass() = delete;
-        ForwardColourPass(GhaFactory &ghaFactory, GhaRenderPass* ghaRenderPass);//TEMP: Using an external render pass for now but these pass will need to create their own
+        ForwardColourPass();
 
         ForwardColourPass(ForwardColourPass const &other) = delete;
         ForwardColourPass(ForwardColourPass &&other) noexcept;
@@ -29,6 +24,6 @@ namespace clove {
 
         ~ForwardColourPass();
 
-        void execute(GhaGraphicsCommandBuffer &commandBuffer, FrameData const &frameData) override;
+        void execute(RenderGraph &renderGraph, PassData const &passData) override;
     };
 }

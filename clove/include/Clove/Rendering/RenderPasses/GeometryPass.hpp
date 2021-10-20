@@ -1,18 +1,14 @@
 #pragma once
 
-#include "Clove/Rendering/ShaderBufferTypes.hpp"
+#include "Clove/Rendering/RenderGraph/RgId.hpp"
+#include "Clove/Rendering/RenderGraph/RgSampler.hpp"
 
-#include <Clove/Maths/Matrix.hpp>
-#include <memory>
-#include <type_traits>
-#include <typeinfo>
 #include <vector>
+#include <Clove/Maths/Vector.hpp>
 
 namespace clove {
-    class GhaDescriptorSet;
-    class GhaGraphicsCommandBuffer;
-    class GhaComputeCommandBuffer;
-    class Mesh;
+    class RenderGraph;
+    class Blackboard;
 }
 
 namespace clove {
@@ -25,29 +21,67 @@ namespace clove {
         using Id = size_t;
 
         /**
-         * @brief Data a GeometryPass will need for a given frame.
+         * @brief A single unit of work for a GeometryPass.
+         * Contains all the information required for a single mesh.
          */
-        struct FrameData {
-            std::vector<GhaDescriptorSet *> meshDescriptorSets{}; /**< Descriptor set for each mesh submitted for the frame. */
-            std::vector<GhaDescriptorSet *> skinningMeshSets{};
+        struct Job {
+            RgBufferId vertexBuffer{};
+            RgBufferId indexBuffer{};
 
-            GhaDescriptorSet *viewDescriptorSet{ nullptr };     /**< Descriptor set for view specific data. */
-            GhaDescriptorSet *lightingDescriptorSet{ nullptr }; /**< Descriptor set for lighting specific data. */
+            uint32_t indexCount{};
 
-            //TODO: This is specific to the light passes. Should it be in here?
-            mat4f *currentDirLightTransform{ nullptr };
+            RgBufferId modelBuffer{};
+            RgBufferId colourBuffer{};
 
-            mat4f *currentPointLightTransform{ nullptr };
-            vec3f currentPointLightPosition{};
-            float currentPointLightFarPlane{};
+            size_t modelBufferSize{};
+            size_t colourBufferSize{};
+
+            RgImageId diffuseTexture{};
+            RgImageId specularTexture{};
+            RgSampler materialSampler{};
         };
 
         /**
-         * @brief A single unit of work for a GeometryPass.
+         * @brief Global pass data. Contains information on views / shadow maps etc.
          */
-        struct Job {
-            size_t meshDescriptorIndex{ 0 };      /**< Index into FrameData::meshDescriptorSets */
-            std::shared_ptr<Mesh> mesh{ nullptr };//TODO: Move into frame data
+        struct PassData {
+            //Render Target
+            RgImageId renderTarget{};
+            RgImageId depthTarget{};
+
+            vec2ui renderTargetSize{};
+
+            //Shadows
+            RgImageId directionalShadowMap{};
+            RgImageId pointShadowMap{};
+
+            RgSampler shadowMaplSampler{};
+
+            uint32_t directionalLightCount{};
+            uint32_t pointLightCount{};
+
+            std::vector<RgBufferId> directionalLightSpaceBuffers{};
+            std::vector<RgBufferId> pointLightSpaceBuffers{};
+
+            //Views
+            RgBufferId viewUniformBuffer{};
+
+            size_t viewDataSize{};
+            size_t viewPositionSize{};
+
+            size_t viewDataOffset{};
+            size_t viewPositionOffset{};
+
+            //Lights
+            RgBufferId lightsUnfiromBuffer{};
+
+            size_t numLightsSize{};
+            size_t dirShadowTransformsSize{};
+            size_t lightsSize{};
+
+            size_t numLightsOffset{};
+            size_t dirShadowTransformsOffset{};
+            size_t lightsOffset{};
         };
 
         //VARIABLES
@@ -74,20 +108,17 @@ namespace clove {
          */
         void addJob(Job job);
 
-        /**,
+        /**
          * @brief Clears the job queue
          */
         void flushJobs();
 
         /**
-         * @brief Submits all jobs into the commandBuffer.
-         * @param commandBuffer GhaGraphicsCommandBuffer to record commands into.
-         * @param frameData Data that describes the current frame.
+         * @brief 
+         * @param renderGraph 
+         * @param blackBoard Blackboard containing mesh information.
          */
-        virtual void execute(GhaGraphicsCommandBuffer &commandBuffer, FrameData const &frameData) {}/* = 0; */
-
-        //TEMP: GeometryPass should really allocate it's own command buffer
-        virtual void execute(GhaComputeCommandBuffer &commandBuffer, FrameData const &frameData) {}/* = 0; */
+        virtual void execute(RenderGraph &renderGraph, PassData const &passData) = 0;
 
     protected:
         inline std::vector<Job> const &getJobs() const;

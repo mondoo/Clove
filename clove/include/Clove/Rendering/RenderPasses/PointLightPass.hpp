@@ -12,14 +12,9 @@ namespace clove {
 
 namespace clove {
     class PointLightPass : public GeometryPass {
-        //VARIABLES
-    private:
-        std::unique_ptr<GhaGraphicsPipelineObject> pipeline{ nullptr };
-
         //FUNCTIONS
     public:
-        PointLightPass() = delete;
-        PointLightPass(GhaFactory &ghaFactory, GhaRenderPass *ghaRenderPass);//TEMP: Using an external render pass for now but these pass will need to create their own
+        PointLightPass();
 
         PointLightPass(PointLightPass const &other) = delete;
         PointLightPass(PointLightPass &&other) noexcept;
@@ -29,6 +24,6 @@ namespace clove {
 
         ~PointLightPass();
 
-        void execute(GhaGraphicsCommandBuffer &commandBuffer, FrameData const &frameData) override;
+        void execute(RenderGraph &renderGraph, PassData const &passData) override;
     };
 }

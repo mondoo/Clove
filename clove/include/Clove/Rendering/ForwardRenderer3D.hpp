@@ -28,6 +28,8 @@ namespace clove {
             std::shared_ptr<Material> material;
             mat4f transform;
             std::array<mat4f, MAX_JOINTS> matrixPalet;
+
+            std::set<GeometryPass::Id> geometryPassIds;
         };
 
     private:
@@ -62,8 +64,6 @@ namespace clove {
 
         GhaDevice *ghaDevice{ nullptr };
 
-        std::unordered_map<std::string, std::string> shaderIncludes;
-
         std::unique_ptr<RenderTarget> renderTarget;
         DelegateHandle renderTargetPropertyChangedBeginHandle;
 
@@ -81,10 +81,8 @@ namespace clove {
 
         FrameData currentFrameData;
 
-#if 0
         //Geometry passes. TODO: Use vector?
         std::unordered_map<GeometryPass::Id, std::unique_ptr<GeometryPass>> geometryPasses;
-#endif
 
         //Synchronisation obects
         std::vector<std::unique_ptr<GhaSemaphore>> skinningFinishedSemaphores;
@@ -108,7 +106,7 @@ namespace clove {
 
         void begin();
 
-        void submitMesh(MeshInfo meshInfo, std::set<GeometryPass::Id> const &geometryPassIds);
+        void submitMesh(MeshInfo meshInfo);
 
         /**
          * @brief Submit the active camera the renderer will use.

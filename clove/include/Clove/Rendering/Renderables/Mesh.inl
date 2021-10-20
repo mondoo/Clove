@@ -23,7 +23,7 @@ namespace clove {
         return indexBufferSize;
     }
 
-    size_t Mesh::getIndexCount() const {
+    uint32_t Mesh::getIndexCount() const {
         return indices.size();
     }
 }
