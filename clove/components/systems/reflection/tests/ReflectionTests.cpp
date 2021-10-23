@@ -47,6 +47,11 @@ CLOVE_REFLECT_PROPERTY(a)
 CLOVE_REFLECT_PROPERTY(b)
 CLOVE_REFLECT_END
 
+TEST(ReflectionTests, CanGetTypeName) {
+    EXPECT_EQ(reflection::TypeInfo<PublicReflectClass>::name, "PublicReflectClass");
+    EXPECT_EQ(reflection::TypeInfo<PrivateReflectClass>::name, "PrivateReflectClass");
+}
+
 TEST(ReflectionTests, CanGetNumClassPublicMembers) {
     size_t constexpr memberCount{ 2 };
 

@@ -70,6 +70,8 @@ namespace clove::reflection {
         struct Member;                                                       \
                                                                              \
         static inline auto const attributes{ std::make_tuple(__VA_ARGS__) }; \
+        static std::string_view constexpr name{ #classType };                \
+                                                                             \
         static size_t constexpr memberIndexOffset{ __COUNTER__ + 1 };
 
 #define CLOVE_REFLECT_PROPERTY(property, ...)                                \
