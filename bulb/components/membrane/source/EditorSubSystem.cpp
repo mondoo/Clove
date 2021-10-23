@@ -68,15 +68,15 @@ namespace membrane {
         }
 
         void addComponent(Editor_AddComponent ^ message){
-            if (subSystem){
+            /*if (subSystem){
                 subSystem->addComponent(message->entity, message->componentType);
-            }
+            }*/
         }
 
         void removeComponent(Editor_RemoveComponent ^ message){
-            if (subSystem){
+            /*if (subSystem){
                 subSystem->removeComponent(message->entity, message->componentType);
-            }
+            }*/
         }
 
         void updateTransform(Editor_UpdateTransform ^ message){
@@ -263,7 +263,7 @@ namespace membrane {
             editorEntity->components = gcnew System::Collections::Generic::List<Component ^>{};
 
             //Add all of the component types for an entity
-            if(currentScene.hasComponent<clove::TransformComponent>(entity)) {
+            /*if(currentScene.hasComponent<clove::TransformComponent>(entity)) {
                 auto const &transform{ currentScene.getComponent<clove::TransformComponent>(entity) };
 
                 auto const &pos{ transform.position };
@@ -326,7 +326,7 @@ namespace membrane {
                 componentData->initData   = initData;
 
                 editorEntity->components->Add(componentData);
-            }
+            }*/
 
             loadMessage->entities->Add(editorEntity);
         }
@@ -354,7 +354,7 @@ namespace membrane {
         MessageHandler::sendMessage(message);
     }
 
-    void EditorSubSystem::addComponent(clove::Entity entity, ComponentType componentType) {
+   /* void EditorSubSystem::addComponent(clove::Entity entity, ComponentType componentType) {
         bool added{ false };
         System::Object ^ initData;
 
@@ -435,7 +435,7 @@ namespace membrane {
         message->entity        = entity;
         message->componentType = componentType;
         MessageHandler::sendMessage(message);
-    }
+    }*/
 
     void EditorSubSystem::updateTransform(clove::Entity entity, clove::vec3f position, clove::vec3f rotation, clove::vec3f scale) {
         if(currentScene.hasComponent<clove::TransformComponent>(entity)) {

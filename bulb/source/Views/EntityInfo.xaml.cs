@@ -33,24 +33,24 @@ namespace Bulb {
         }
 
         private void TransformPropertyLostFocus(object sender, RoutedEventArgs e) {
-            var element = sender as FrameworkElement;
-            var viewmodel = element.DataContext as TransformComponentViewModel;
+            //var element = sender as FrameworkElement;
+            //var viewmodel = element.DataContext as TransformComponentViewModel;
 
-            viewmodel.RefreshValues();
+            //viewmodel.RefreshValues();
         }
 
         private void RigidBodyPropertyLostFocus(object sender, RoutedEventArgs e) {
-            var element = sender as FrameworkElement;
-            var viewmodel = element.DataContext as RigidBodyComponentViewModel;
+            //var element = sender as FrameworkElement;
+            //var viewmodel = element.DataContext as RigidBodyComponentViewModel;
 
-            viewmodel.RefreshValues();
+            //viewmodel.RefreshValues();
         }
 
         private void CollisionShapePropertyLostFocus(object sender, RoutedEventArgs e) {
-            var element = sender as FrameworkElement;
-            var viewmodel = element.DataContext as CollisionShapeComponentViewModel;
+            //var element = sender as FrameworkElement;
+            //var viewmodel = element.DataContext as CollisionShapeComponentViewModel;
 
-            viewmodel.RefreshValues();
+            //viewmodel.RefreshValues();
         }
     }
 }

@@ -1,8 +1,9 @@
 #pragma once
 
-#include "Clove/SerialisationCommon.hpp"
+#include "Clove/ReflectionAttributes.hpp"
 
 #include <Clove/Maths/MathsTypes.hpp>
+#include <Clove/Reflection/Reflection.hpp>
 
 namespace clove {
     /**
@@ -43,22 +44,8 @@ namespace clove {
     };
 }
 
-namespace clove {
-    template<>
-    inline serialiser::Node serialise(TransformComponent const &object) {
-        serialiser::Node node{};
-        node["position"] = object.position;
-        node["rotation"] = object.rotation;
-        node["scale"]    = object.scale;
-        return node;
-    }
-
-    template<>
-    inline TransformComponent deserialise(serialiser::Node const &node) {
-        TransformComponent component{};
-        component.position = node["position"].as<vec3f>();
-        component.rotation = node["rotation"].as<quatf>();
-        component.scale    = node["scale"].as<vec3f>();
-        return component;
-    }
-}
+CLOVE_REFLECT_BEGIN(clove::TransformComponent, clove::EditorVisible{ "Transform Component" })
+CLOVE_REFLECT_PROPERTY(position, clove::EditorVisible{})
+CLOVE_REFLECT_PROPERTY(rotation, clove::EditorVisible{})
+CLOVE_REFLECT_PROPERTY(scale, clove::EditorVisible{})
+CLOVE_REFLECT_END

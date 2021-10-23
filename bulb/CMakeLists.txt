@@ -47,11 +47,7 @@ add_executable(
 		${SOURCE}/Views/Viewport.xaml
 		${SOURCE}/Views/Viewport.xaml.cs
 		
-		${SOURCE}/ViewModels/Components/ComponentViewModel.cs
-		${SOURCE}/ViewModels/Components/CollisionShapeComponentViewModel.cs
-		${SOURCE}/ViewModels/Components/RigidBodyComponentViewModel.cs
-		${SOURCE}/ViewModels/Components/StaticModelComponentViewModel.cs
-		${SOURCE}/ViewModels/Components/TransformComponentViewModel.cs
+		${SOURCE}/ViewModels/ComponentViewModel.cs
 
 		${SOURCE}/ViewModels/FileExplorer/DirectoryItemViewModel.cs
 		${SOURCE}/ViewModels/FileExplorer/FileExplorerViewModel.cs

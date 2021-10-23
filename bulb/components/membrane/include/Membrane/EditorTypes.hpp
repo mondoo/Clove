@@ -2,14 +2,6 @@
 
 namespace membrane {
     // clang-format off
-    public enum class ComponentType {
-        Transform,
-        StaticModel,
-        PointLight,
-        RigidBody,
-        CollisionShape
-    };
-
     public enum class ShapeType {
         Sphere,
         Cube

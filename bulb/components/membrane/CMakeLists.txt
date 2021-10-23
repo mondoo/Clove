@@ -20,6 +20,9 @@ add_library(
 
         ${INCLUDE}/NameComponent.hpp
 
+        ${INCLUDE}/ReflectionHelper.hpp
+        ${SOURCE}/ReflectionHelper.cpp
+
         ${INCLUDE}/EditorSubSystem.hpp
         ${SOURCE}/EditorSubSystem.cpp
         ${INCLUDE}/RuntimeSubSystem.hpp

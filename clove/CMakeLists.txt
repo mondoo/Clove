@@ -187,6 +187,8 @@ add_library(
 		${INCLUDE}/ModelLoader.hpp
 		${SOURCE}/ModelLoader.cpp
 
+		${INCLUDE}/ReflectionAttributes.hpp
+
 		${INCLUDE}/SerialisationCommon.hpp
 
 		${INCLUDE}/SoundFile.hpp

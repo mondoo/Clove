@@ -7,7 +7,7 @@ namespace membrane {
     // clang-format off
     //Types
     public ref struct Component{
-        ComponentType type;
+        //ComponentType type;
         System::Object ^initData;
     };
     public ref struct Entity{
@@ -25,12 +25,12 @@ namespace membrane {
     public ref class Editor_AddComponent : public EditorMessage {
     public:
         System::UInt32 entity;
-        ComponentType componentType;
+        //ComponentType componentType;
     };
     public ref class Editor_RemoveComponent : public EditorMessage {
     public:
         System::UInt32 entity;
-        ComponentType componentType;
+        //ComponentType componentType;
     };
     public ref class Editor_UpdateTransform : public EditorMessage {
     public:
@@ -111,13 +111,13 @@ namespace membrane {
     public ref class Engine_OnComponentAdded : public EngineMessage {
     public:
         System::UInt32 entity;
-        ComponentType componentType;
+        //ComponentType componentType;
         System::Object ^data;
     };
     public ref class Engine_OnComponentRemoved : public EngineMessage {
     public:
         System::UInt32 entity;
-        ComponentType componentType;
+        //ComponentType componentType;
     };
     public ref class Engine_OnTransformChanged : public EngineMessage {
     public:
