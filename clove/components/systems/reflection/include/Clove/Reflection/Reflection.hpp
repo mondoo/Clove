@@ -1,69 +1,76 @@
 #pragma once
 
 #include <optional>
-#include <string_view>
+#include <string>
 #include <tuple>
+#include <vector>
 
 namespace clove::reflection {
-    /**
-     * @brief Provides information about a specific type.
-     */
-    template<typename T>
-    struct TypeInfo;
+    struct MemberInfo {
+        std::string name;
+        size_t offset;
+        size_t size;
+    };
 
-    /**
-     * @brief Returns true if typeInfo has attribute of type AttributeType.
-     * @tparam AttributeType 
-     * @tparam ClassType 
-     * @param typeInfo 
-     * @return 
-     */
-    template<typename AttributeType, typename ClassType>
-    bool constexpr hasAttribute(TypeInfo<ClassType> const &typeInfo);
+    struct TypeInfo {
+        std::string name;
+        std::vector<MemberInfo> members;
+    };
 
-    /**
-     * @brief Returns true if member has attribute of type AttributeType.
-     * @tparam AttributeType 
-     * @tparam MemberType 
-     * @param member 
-     * @return 
-     */
-    template<typename AttributeType, typename MemberType>
-    bool constexpr hasAttribute(MemberType const &member);
+    namespace internal {
+        /**
+         * @brief Provides information about a specific type.
+         */
+        template<typename T>
+        struct TypeInfo;
 
-    /**
-     * @brief Returns the attribute on the typeInfo if it exists.
-     * @tparam AttributeType 
-     * @tparam ClassType 
-     * @param typeInfo 
-     * @return 
-     */
-    template<typename AttributeType, typename ClassType>
-    std::optional<AttributeType> getAttribute(TypeInfo<ClassType> const &typeInfo);
+        class Registry {
+            //VARIABLES
+        private:
+            std::vector<reflection::TypeInfo> types{};
 
-    /**
-     * @brief Returns the attribute on the member if it exists.
-     * @tparam AttributeType 
-     * @tparam MemberType 
-     * @param member 
-     * @return 
-     */
-    template<typename AttributeType, typename MemberType>
-    std::optional<AttributeType> getAttribute(MemberType const &member);
+            //FUNCTIONS
+        public:
+            //TODO: Ctors
 
-    /**
-     * @brief Calls functor on each member inside a reflected Type.
-     * @tparam Type 
-     * @tparam FunctorType 
-     * @param functor 
-     */
-    template<typename Type, typename FunctorType>
-    void constexpr forEachMember(FunctorType &&functor);
+            static Registry &get() {
+                static Registry *instance{ nullptr };
+                if(instance == nullptr) {
+                    instance = new Registry{};
+                }
+
+                return *instance;
+            }
+
+            std::vector<reflection::TypeInfo> const &getRegisteredTypes() const {
+                return types;
+            }
+
+            void addTypeInfo(reflection::TypeInfo typeInfo) {
+                types.push_back(std::move(typeInfo));
+            }
+        };
+    }
+
+    template<typename Type>
+    TypeInfo getTypeInfo() {
+        return internal::TypeInfo<Type>::getTypeInfo();
+    }
+
+    std::optional<TypeInfo> getTypeInfo(std::string_view typeName) {
+        for(auto &typeInfo : internal::Registry::get().getRegisteredTypes()) {
+            if(typeInfo.name == typeName) {
+                return typeInfo;
+            }
+        }
+
+        return {};
+    }
 }
 
 #define CLOVE_REFLECT_BEGIN(classType, ...)                                  \
     template<>                                                               \
-    struct clove::reflection::TypeInfo<classType> {                          \
+    struct clove::reflection::internal::TypeInfo<classType> {                \
         using Type = classType;                                              \
                                                                              \
         template<size_t>                                                     \
@@ -84,25 +91,42 @@ namespace clove::reflection {
         static inline auto const attributes{ std::make_tuple(__VA_ARGS__) }; \
     };
 
-#define CLOVE_REFLECT_END                                                       \
-    static size_t constexpr memberCount{ __COUNTER__ - memberIndexOffset };     \
-                                                                                \
-    static auto constexpr getMembers() {                                        \
-        return getMembersInternal(std::make_index_sequence<memberCount>{});     \
-    }                                                                           \
-                                                                                \
-private:                                                                        \
-    template<size_t... indices>                                                 \
-    static auto constexpr getMembersInternal(std::index_sequence<indices...>) { \
-        return std::tuple<Member<indices>...>{};                                \
-    }                                                                           \
-    }                                                                           \
-    ;
+#define CLOVE_REFLECT_END(classType)                                        \
+    static size_t constexpr memberCount{ __COUNTER__ - memberIndexOffset }; \
+                                                                            \
+    TypeInfo() {                                                            \
+        internal::Registry::get().addTypeInfo(getTypeInfo());               \
+    }                                                                       \
+                                                                            \
+    static clove::reflection::TypeInfo getTypeInfo() {                      \
+        clove::reflection::TypeInfo info{};                                 \
+        info.name = name;                                                   \
+        populateMemberArray<0>(info.members);                               \
+                                                                            \
+        return info;                                                        \
+    };                                                                      \
+                                                                            \
+private:                                                                    \
+    template<size_t index>                                                  \
+    static void populateMemberArray(std::vector<MemberInfo> &memberArray) { \
+        if constexpr(index < memberCount) {                                 \
+            MemberInfo info{};                                              \
+            info.name   = Member<index>::name;                              \
+            info.offset = Member<index>::offset;                            \
+            info.size   = Member<index>::size;                              \
+            memberArray.push_back(std::move(info));                         \
+                                                                            \
+            populateMemberArray<index + 1>(memberArray);                    \
+        }                                                                   \
+    }                                                                       \
+    }                                                                       \
+    ;                                                                       \
+    static clove::reflection::internal::TypeInfo<classType> const creator__##classType{};
 
 /**
  * @brief Allows reflection of private members within a class.
  */
 #define CLOVE_REFLECT_PRIVATE(classType) \
-    friend struct clove::reflection::TypeInfo<classType>;
+    friend struct clove::reflection::internal::TypeInfo<classType>;
 
 #include "Reflection.inl"
