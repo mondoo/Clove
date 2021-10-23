@@ -3,7 +3,9 @@
 
 using namespace clove;
 
-struct TestAttribute {};
+struct TestAttribute {
+    std::string text{};
+};
 
 class PublicReflectClass {
 public:
@@ -11,8 +13,8 @@ public:
     float y;
 };
 
-CLOVE_REFLECT_BEGIN(PublicReflectClass, TestAttribute{})
-CLOVE_REFLECT_PROPERTY(x, TestAttribute{})
+CLOVE_REFLECT_BEGIN(PublicReflectClass, TestAttribute{ .text = "class" })
+CLOVE_REFLECT_PROPERTY(x, TestAttribute{ .text = "member" })
 CLOVE_REFLECT_PROPERTY(y)
 CLOVE_REFLECT_END
 
@@ -62,6 +64,18 @@ TEST(ReflectionTests, CanGetClassAttributes) {
     EXPECT_FALSE(reflection::hasAttribute<TestAttribute>(reflection::TypeInfo<PrivateReflectClass>{}));
 }
 
+TEST(ReflectionTests, CanGetValueOfClassAttributes) {
+    std::string_view constexpr attributeValue{ "class" };
+
+    std::optional<TestAttribute> publicAttribute{ reflection::getAttribute<TestAttribute>(reflection::TypeInfo<PublicReflectClass>{}) };
+    std::optional<TestAttribute> privateAttribute{ reflection::getAttribute<TestAttribute>(reflection::TypeInfo<PrivateReflectClass>{}) };
+
+    ASSERT_TRUE(publicAttribute.has_value());
+    EXPECT_FALSE(privateAttribute.has_value());
+
+    EXPECT_EQ(publicAttribute->text, attributeValue);
+}
+
 TEST(ReflectionTests, CanGetBasicMemberInfo) {
     auto publicMembers{ reflection::TypeInfo<PublicReflectClass>::getMembers() };
 
@@ -90,6 +104,20 @@ TEST(ReflectionTests, CanGetMemberAttributes) {
 
     EXPECT_TRUE(reflection::hasAttribute<TestAttribute>(std::get<0>(members)));
     EXPECT_FALSE(reflection::hasAttribute<TestAttribute>(std::get<1>(members)));
+}
+
+TEST(ReflectionTests, CanGetValueOfMemberAttributes) {
+    std::string_view constexpr attributeValue{ "member" };
+
+    auto publicClassMembers{ reflection::TypeInfo<PublicReflectClass>::getMembers() };
+
+    std::optional<TestAttribute> xAttribute{ reflection::getAttribute<TestAttribute>(std::get<0>(publicClassMembers)) };
+    std::optional<TestAttribute> yAttribute{ reflection::getAttribute<TestAttribute>(std::get<1>(publicClassMembers)) };
+
+    ASSERT_TRUE(xAttribute.has_value());
+    EXPECT_FALSE(yAttribute.has_value());
+
+    EXPECT_EQ(xAttribute->text, attributeValue);
 }
 
 TEST(ReflectionTests, CanInterateOverClassMembers) {

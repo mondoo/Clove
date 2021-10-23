@@ -1,5 +1,6 @@
 #pragma once
 
+#include <optional>
 #include <string_view>
 #include <tuple>
 
@@ -31,6 +32,26 @@ namespace clove::reflection {
     bool constexpr hasAttribute(MemberType const &member);
 
     /**
+     * @brief Returns the attribute on the typeInfo if it exists.
+     * @tparam AttributeType 
+     * @tparam ClassType 
+     * @param typeInfo 
+     * @return 
+     */
+    template<typename AttributeType, typename ClassType>
+    std::optional<AttributeType> getAttribute(TypeInfo<ClassType> const &typeInfo);
+
+    /**
+     * @brief Returns the attribute on the member if it exists.
+     * @tparam AttributeType 
+     * @tparam MemberType 
+     * @param member 
+     * @return 
+     */
+    template<typename AttributeType, typename MemberType>
+    std::optional<AttributeType> getAttribute(MemberType const &member);
+
+    /**
      * @brief Calls functor on each member inside a reflected Type.
      * @tparam Type 
      * @tparam FunctorType 
@@ -40,25 +61,25 @@ namespace clove::reflection {
     void constexpr forEachMember(FunctorType &&functor);
 }
 
-#define CLOVE_REFLECT_BEGIN(classType, ...)                               \
-    template<>                                                            \
-    struct clove::reflection::TypeInfo<classType> {                       \
-        using Type = classType;                                           \
-                                                                          \
-        template<size_t>                                                  \
-        struct Member;                                                    \
-                                                                          \
-        static auto constexpr attributes{ std::make_tuple(__VA_ARGS__) }; \
+#define CLOVE_REFLECT_BEGIN(classType, ...)                                  \
+    template<>                                                               \
+    struct clove::reflection::TypeInfo<classType> {                          \
+        using Type = classType;                                              \
+                                                                             \
+        template<size_t>                                                     \
+        struct Member;                                                       \
+                                                                             \
+        static inline auto const attributes{ std::make_tuple(__VA_ARGS__) }; \
         static size_t constexpr memberIndexOffset{ __COUNTER__ + 1 };
 
-#define CLOVE_REFLECT_PROPERTY(property, ...)                             \
-    template<>                                                            \
-    struct Member<__COUNTER__ - memberIndexOffset> {                      \
-        static std::string_view constexpr name{ #property };              \
-        static size_t constexpr offset{ offsetof(Type, property) };       \
-        static size_t constexpr size{ sizeof(Type::property) };           \
-                                                                          \
-        static auto constexpr attributes{ std::make_tuple(__VA_ARGS__) }; \
+#define CLOVE_REFLECT_PROPERTY(property, ...)                                \
+    template<>                                                               \
+    struct Member<__COUNTER__ - memberIndexOffset> {                         \
+        static std::string_view constexpr name{ #property };                 \
+        static size_t constexpr offset{ offsetof(Type, property) };          \
+        static size_t constexpr size{ sizeof(Type::property) };              \
+                                                                             \
+        static inline auto const attributes{ std::make_tuple(__VA_ARGS__) }; \
     };
 
 #define CLOVE_REFLECT_END                                                       \
