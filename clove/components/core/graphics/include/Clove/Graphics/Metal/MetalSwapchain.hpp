@@ -14,7 +14,6 @@ namespace clove {
 		//VARIABLES
 	private:
 		std::vector<std::unique_ptr<GhaImage>> images{};
-		std::vector<std::unique_ptr<GhaImageView>> imageViews{};
 		
 		GhaImage::Format imageFormat{};
 		vec2ui imageSize{};
@@ -26,7 +25,7 @@ namespace clove {
 		//FUNCTIONS
 	public:
 		MetalSwapchain() = delete;
-        MetalSwapchain(id<MTLCommandQueue> signalQueue, std::vector<std::unique_ptr<GhaImage>> images, std::vector<std::unique_ptr<GhaImageView>> imageViews, GhaImage::Format imageFormat, vec2ui imageSize);
+        MetalSwapchain(id<MTLCommandQueue> signalQueue, std::vector<std::unique_ptr<GhaImage>> images, GhaImage::Format imageFormat, vec2ui imageSize);
 
         MetalSwapchain(MetalSwapchain const &other) = delete;
 		MetalSwapchain(MetalSwapchain &&other) noexcept;

@@ -184,7 +184,6 @@ namespace clove {
         }
         
         std::vector<std::unique_ptr<GhaImage>> swapchainImages{};
-        std::vector<std::unique_ptr<GhaImageView>> swapchainImageViews{};
         GhaImage::Format const drawableFormat{ MetalImage::convertFormat([view.metalLayer pixelFormat]) }; //Needs to be the same as the target for when we blit in the present queue
         
         GhaImage::Descriptor const imageDescriptor{
@@ -214,17 +213,7 @@ namespace clove {
         
         id<MTLCommandQueue> signalQueue{ [device newCommandQueue] };
         
-        swapchainImageViews.reserve(swapchainImageCount);
-        for(size_t i{ 0 }; i < swapchainImageCount; ++i) {
-            Expected<std::unique_ptr<GhaImageView>, std::runtime_error> imageViewResult{ createImageView(*swapchainImages[i], imageViewDescriptor) };
-            if(imageViewResult.hasValue()) {
-                swapchainImageViews.emplace_back(std::move(imageViewResult.getValue()));
-            } else {
-                return Unexpected{ std::move(imageViewResult.getError()) };
-            }
-        }
-        
-        return std::unique_ptr<GhaSwapchain>{ std::make_unique<MetalSwapchain>(signalQueue, std::move(swapchainImages), std::move(swapchainImageViews), drawableFormat, descriptor.extent) };
+        return std::unique_ptr<GhaSwapchain>{ std::make_unique<MetalSwapchain>(signalQueue, std::move(swapchainImages), drawableFormat, descriptor.extent) };
     }
     
     Expected<std::unique_ptr<GhaShader>, std::runtime_error> MetalFactory::createShaderFromFile(std::filesystem::path const &file, GhaShader::Stage shaderStage) noexcept {

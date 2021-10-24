@@ -8,10 +8,9 @@
 #include <Clove/Cast.hpp>
 
 namespace clove {
-	MetalSwapchain::MetalSwapchain(id<MTLCommandQueue> signalQueue, std::vector<std::unique_ptr<GhaImage>> images, std::vector<std::unique_ptr<GhaImageView>> imageViews, GhaImage::Format imageFormat, vec2ui imageSize)
+	MetalSwapchain::MetalSwapchain(id<MTLCommandQueue> signalQueue, std::vector<std::unique_ptr<GhaImage>> images, GhaImage::Format imageFormat, vec2ui imageSize)
         : signalQueue{ signalQueue }
 		, images{ std::move(images) }
-		, imageViews{ std::move(imageViews) }
 		, imageFormat{ imageFormat }
 		, imageSize{ imageSize } {
         for(size_t i{ 0 }; i < this->images.size(); ++i) {
