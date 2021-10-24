@@ -1,6 +1,6 @@
 #include <Clove/Log/Log.hpp>
 
-CLOVE_DECLARE_LOG_CATEGORY(CloveApp)
+CLOVE_DECLARE_LOG_CATEGORY(CloveApplication)
 
 namespace clove {
     template<typename SubSystemType, typename... Args>
@@ -17,7 +17,7 @@ namespace clove {
 
         auto subSystem{ std::make_unique<SubSystemType>(std::forward<Args>(args)...) };
 
-        CLOVE_LOG(CloveApp, LogLevel::Trace, "Attached sub system: {0}", subSystem->getName());
+        CLOVE_LOG(CloveApplication, LogLevel::Trace, "Attached sub system: {0}", subSystem->getName());
 
         subSystem->onAttach();
         subSystems[group].push_back(std::move(subSystem));
@@ -40,7 +40,7 @@ namespace clove {
         std::type_index const subSystemIndex{ typeid(SubSystemType) };
 
         if(subSystemToIndex.find(subSystemIndex) == subSystemToIndex.end()) {
-            CLOVE_LOG(CloveApp, LogLevel::Warning, "{0}: No subsystem of type provided is currently attached.", CLOVE_FUNCTION_NAME_PRETTY);
+            CLOVE_LOG(CloveApplication, LogLevel::Warning, "{0}: No subsystem of type provided is currently attached.", CLOVE_FUNCTION_NAME_PRETTY);
             return;
         }
 
@@ -52,7 +52,7 @@ namespace clove {
         if(index < subSystemGroup.size() - 1) {
             subSystemGroup[index] = std::move(subSystemGroup.back());
 
-            std::type_index const movedSubSystemIndex{ typeid(subSystemGroup[index]) };
+            std::type_index const movedSubSystemIndex{ typeid(*subSystemGroup[index].get()) };
             subSystemToIndex.at(movedSubSystemIndex).second = index;
         }
         subSystemGroup.pop_back();
@@ -62,8 +62,16 @@ namespace clove {
         return currentState;
     }
 
-    Surface *Application::getSurface() const {
-        return surface.get();
+    Window *Application::getWindow() const {
+        return window.get();
+    }
+
+    Keyboard *Application::getKeyboard() const{
+        return keyboard;
+    }
+
+    Mouse *Application::getMouse() const {
+        return mouse;
     }
 
     GhaDevice *Application::getGraphicsDevice() const {

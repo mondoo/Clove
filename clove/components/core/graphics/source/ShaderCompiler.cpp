@@ -146,7 +146,7 @@ namespace clove::ShaderCompiler {
     }
 
     std::string spirvToHLSL(std::span<uint32_t> spirvSource) {
-        CLOVE_ASSERT(false, "HLSL not implemented!");
+        CLOVE_ASSERT_MSG(false, "HLSL not implemented!");
         return "";
     }
 

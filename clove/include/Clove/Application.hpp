@@ -4,7 +4,7 @@
 #include "Clove/FileSystem/VirtualFileSystem.hpp"
 #include "Clove/SubSystem.hpp"
 
-#include <Clove/Audio/Audio.hpp>
+#include <Clove/Audio/Aha.hpp>
 #include <Clove/ECS/EntityManager.hpp>
 #include <Clove/Graphics/GhaImage.hpp>
 #include <Clove/Graphics/GraphicsAPI.hpp>
@@ -15,7 +15,9 @@
 #include <vector>
 
 namespace clove {
-    class Surface;
+    class Window;
+    class Mouse;
+    class Keyboard;
     class GhaDevice;
     class ForwardRenderer3D;
     class GraphicsImageRenderTarget;
@@ -48,7 +50,9 @@ namespace clove {
         std::unique_ptr<GhaDevice> graphicsDevice;
         std::unique_ptr<AhaDevice> audioDevice;
 
-        std::unique_ptr<Surface> surface;
+        std::unique_ptr<Window> window{ nullptr };
+        Keyboard *keyboard{ nullptr };
+        Mouse *mouse{ nullptr };
 
         std::unique_ptr<ForwardRenderer3D> renderer;
         EntityManager entityManager;
@@ -59,7 +63,7 @@ namespace clove {
         std::unordered_map<std::type_index, std::pair<SubSystemGroup, size_t>> subSystemToIndex; /**< Contains the index for each subsystem in the subSystems array. */
         std::map<SubSystemGroup, std::vector<std::unique_ptr<SubSystem>>> subSystems;
 
-        std::chrono::system_clock::time_point prevFrameTime;
+        std::chrono::steady_clock::time_point prevFrameTime;
 
         //FUNCTIONS
     public:
@@ -87,10 +91,17 @@ namespace clove {
          * @param graphicsApi Which graphics api to use.
          * @param audioApi Which audio api to use.
          * @param renderTargetDescriptor A descriptor describing the format of the target that'll be rendered to.
-         * @param surface A surface to provide input functionality to the application.
+         * @param keyboard A keyboard object the application will quiery for input every frame.
+         * @param mouse A mouse object the application will quiery for input every frame.
          * @return A pair with the created application instance and a pointer to the render target of the application.
          */
-        static std::pair<std::unique_ptr<Application>, GraphicsImageRenderTarget *> createHeadless(GraphicsApi graphicsApi, AudioApi audioApi, GhaImage::Descriptor renderTargetDescriptor, std::unique_ptr<Surface> surface);
+        static std::pair<std::unique_ptr<Application>, GraphicsImageRenderTarget *> createHeadless(GraphicsApi graphicsApi, AudioApi audioApi, GhaImage::Descriptor renderTargetDescriptor, Keyboard *keyboard, Mouse *mouse);
+
+        /**
+         * @brief Set the static application instance with an existing one.
+         * @param app 
+         */
+        static void set(Application *app);
 
         static Application &get();
 
@@ -119,7 +130,13 @@ namespace clove {
          */
         void shutdown();
 
-        inline Surface *getSurface() const;
+        /**
+         * @brief Returns the current application window. Can be nullptr if the application is headless.
+         * @return 
+         */
+        inline Window *getWindow() const;
+        inline Keyboard *getKeyboard() const;
+        inline Mouse *getMouse() const;
 
         //Devices
         inline GhaDevice *getGraphicsDevice() const;
@@ -133,7 +150,8 @@ namespace clove {
         inline VirtualFileSystem *getFileSystem();
 
     private:
-        Application(std::unique_ptr<GhaDevice> graphicsDevice, std::unique_ptr<AhaDevice> audioDevice, std::unique_ptr<Surface> surface, std::unique_ptr<RenderTarget> renderTarget);
+        Application(std::unique_ptr<GhaDevice> graphicsDevice, std::unique_ptr<AhaDevice> audioDevice, std::unique_ptr<Window> window, std::unique_ptr<RenderTarget> renderTarget);
+        Application(std::unique_ptr<GhaDevice> graphicsDevice, std::unique_ptr<AhaDevice> audioDevice, Keyboard *keyboard, Mouse *mouse, std::unique_ptr<RenderTarget> renderTarget);
     };
 }
 

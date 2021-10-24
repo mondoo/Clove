@@ -10,14 +10,14 @@ namespace clove {
         void copyFullBuffer(GhaBuffer &source, GhaBuffer &dest, size_t const size) {
             GhaFactory &factory{ *Application::get().getGraphicsDevice()->getGraphicsFactory() };
 
-            auto transferQueue{ *factory.createTransferQueue({ QueueFlags::Transient }) };
+            auto transferQueue{ factory.createTransferQueue({ QueueFlags::Transient }).getValue() };
             auto transferCommandBuffer{ transferQueue->allocateCommandBuffer() };
 
             transferCommandBuffer->beginRecording(CommandBufferUsage::OneTimeSubmit);
             transferCommandBuffer->copyBufferToBuffer(source, 0, dest, 0, size);
             transferCommandBuffer->endRecording();
 
-            auto transferQueueFinishedFence{ *factory.createFence({ false }) };
+            auto transferQueueFinishedFence{ factory.createFence({ false }).getValue() };
 
             transferQueue->submit({ TransferSubmitInfo{ .commandBuffers = { transferCommandBuffer.get() } } }, transferQueueFinishedFence.get());
 
@@ -38,24 +38,25 @@ namespace clove {
         vertexOffset = 0;
         indexOffset  = vertexBufferSize;
 
-        std::unique_ptr<GhaTransferQueue> transferQueue{ *factory.createTransferQueue({ QueueFlags::Transient }) };
+        std::unique_ptr<GhaTransferQueue> transferQueue{ factory.createTransferQueue({ QueueFlags::Transient }).getValue() };
         std::unique_ptr<GhaTransferCommandBuffer> transferCommandBuffer{ transferQueue->allocateCommandBuffer() };
 
         //Staging buffer
-        auto stagingBuffer{ *factory.createBuffer(GhaBuffer::Descriptor{
-            .size        = totalSize,
-            .usageFlags  = GhaBuffer::UsageMode::TransferSource,
-            .sharingMode = SharingMode::Exclusive,
-            .memoryType  = MemoryType::SystemMemory,
-        }) };
+        auto stagingBuffer{ factory.createBuffer(GhaBuffer::Descriptor{
+                                                     .size        = totalSize,
+                                                     .usageFlags  = GhaBuffer::UsageMode::TransferSource,
+                                                     .sharingMode = SharingMode::Exclusive,
+                                                     .memoryType  = MemoryType::SystemMemory,
+                                                 })
+                                .getValue() };
 
         //Combined Buffer
-        combinedBuffer = *factory.createBuffer(GhaBuffer::Descriptor{
+        combinedBuffer = factory.createBuffer(GhaBuffer::Descriptor{
             .size        = totalSize,
             .usageFlags  = GhaBuffer::UsageMode::TransferDestination | GhaBuffer::UsageMode::StorageBuffer | GhaBuffer::UsageMode::VertexBuffer | GhaBuffer::UsageMode::IndexBuffer,
             .sharingMode = SharingMode::Concurrent,
             .memoryType  = MemoryType::VideoMemory,
-        });
+        }).getValue();
 
         //Map the data into system memory
         stagingBuffer->write(this->vertices.data(), vertexOffset, vertexBufferSize);
@@ -66,7 +67,7 @@ namespace clove {
         transferCommandBuffer->copyBufferToBuffer(*stagingBuffer, 0, *combinedBuffer, 0, totalSize);
         transferCommandBuffer->endRecording();
 
-        auto transferQueueFinishedFence{ *factory.createFence({ false }) };
+        auto transferQueueFinishedFence{ factory.createFence({ false }).getValue() };
 
         transferQueue->submit({ TransferSubmitInfo{ .commandBuffers = { transferCommandBuffer.get() } } }, transferQueueFinishedFence.get());
 

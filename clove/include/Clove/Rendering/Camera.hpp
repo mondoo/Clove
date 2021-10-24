@@ -2,22 +2,26 @@
 
 #include <Clove/Delegate/DelegateHandle.hpp>
 #include <Clove/Maths/Matrix.hpp>
+#include <Clove/Maths/Vector.hpp>
 
 namespace clove {
     class Window;
-
-    struct Viewport {
-        int32_t x{ 0 };
-        int32_t y{ 0 };
-        int32_t width{ 0 };
-        int32_t height{ 0 };
-    };
 }
 
 namespace clove {
     class Camera {
         //TYPES
     public:
+        /**
+         * @brief Describes a region within the screen that this camera renders to.
+         */
+        struct Viewport {
+            float x{ 0 };      /**< 0 - 1 value for the start of the horizontal value. */
+            float y{ 0 };      /**< 0 - 1 value for the start of the vertical value. */
+            float width{ 0 };  /**< 0 - 1 value for the end of the horizontal value. */
+            float height{ 0 }; /**< 0 - 1 value for the end of the vertical value. */
+        };
+
         enum class ProjectionMode {
             Orthographic,
             Perspective
@@ -28,15 +32,10 @@ namespace clove {
         static float constexpr nearPlane{ 0.5f };
         static float constexpr farPlane{ 10000.0f };
 
-        ProjectionMode currentProjectionMode;
-        mat4f view{ 1.0f };
-        mat4f projection{ 1.0f };
-
         Viewport viewport;
+        ProjectionMode currentProjectionMode;
 
         float zoomLevel{ 1.0f };
-
-        DelegateHandle surfaceResizeHandle;
 
         //FUNCTIONS
     public:
@@ -45,29 +44,20 @@ namespace clove {
         Camera(ProjectionMode const projection);
 
         Camera(Camera const &other) = delete;
-        Camera(Camera &&other) noexcept;
+        inline Camera(Camera &&other) noexcept;
 
         Camera &operator=(Camera const &other) = delete;
-        Camera &operator=(Camera &&other) noexcept;
+        inline Camera &operator=(Camera &&other) noexcept;
 
-        ~Camera();
+        inline ~Camera();
 
-        inline float getNearPlane() const;
-        inline float getFarPlane() const;
+        inline void setProjectionMode(ProjectionMode const mode);
+        inline void setZoomLevel(float zoom);
 
-        void setView(mat4f view);
-        void setProjectionMode(ProjectionMode const mode);
+        mat4f getProjection(vec2ui const screenSize) const;
 
-        void setZoomLevel(float zoom);
-
-        void setViewport(Viewport viewport);
-
-        mat4f const &getView() const;
-        mat4f const &getProjection() const;
-
-        ProjectionMode getProjectionMode() const;
-
-        Viewport const &getViewport() const;
+        inline void setViewport(Viewport viewport);
+        inline Viewport const &getViewport() const;
     };
 }
 

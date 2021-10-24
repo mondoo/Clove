@@ -3,10 +3,14 @@
 #include "Clove/Graphics/Metal/MetalImage.hpp"
 #include "Clove/Graphics/Metal/MetalImageView.hpp"
 #include "Clove/Graphics/Metal/MetalLog.hpp"
+#include "Clove/Graphics/Metal/MetalSemaphore.hpp"
+
+#include <Clove/Cast.hpp>
 
 namespace clove {
-	MetalSwapchain::MetalSwapchain(std::vector<std::unique_ptr<GhaImage>> images, std::vector<std::unique_ptr<GhaImageView>> imageViews, GhaImage::Format imageFormat, vec2ui imageSize)
-		: images{ std::move(images) }
+	MetalSwapchain::MetalSwapchain(id<MTLCommandQueue> signalQueue, std::vector<std::unique_ptr<GhaImage>> images, std::vector<std::unique_ptr<GhaImageView>> imageViews, GhaImage::Format imageFormat, vec2ui imageSize)
+        : signalQueue{ signalQueue }
+		, images{ std::move(images) }
 		, imageViews{ std::move(imageViews) }
 		, imageFormat{ imageFormat }
 		, imageSize{ imageSize } {
@@ -22,9 +26,8 @@ namespace clove {
 	MetalSwapchain::~MetalSwapchain() = default;
 	
 	std::pair<uint32_t, Result> MetalSwapchain::aquireNextImage(GhaSemaphore const *availableSemaphore) {
-		//TODO: will signal semaphore immediately semaphores
 		//TODO: Handle resizing;
-		
+        
 		if(imageQueue.empty()) {
 			CLOVE_LOG(CloveGhaMetal, LogLevel::Error, "{0} has no available images", CLOVE_FUNCTION_NAME_PRETTY);
 			return { -1, Result::Unkown };
@@ -32,6 +35,18 @@ namespace clove {
 		
 		uint32_t const availableIndex{ imageQueue.front() };
 		imageQueue.pop();
+        
+        //Because we're simulating the swapchain on the CPU side we need to signal the semaphores immediately.
+        //This is a hack solution as we wouldn't want to just make an empty commit that only signals a
+        //semaphore. But it'll do for now
+        id<MTLCommandBuffer> commandBuffer{ [signalQueue commandBuffer] };
+        id<MTLBlitCommandEncoder> encoder{ [commandBuffer blitCommandEncoder] };
+        
+        [encoder waitForFence:polyCast<MetalSemaphore const>(availableSemaphore)->getFence()];
+        
+        [encoder endEncoding];
+        [commandBuffer commit];
+        
 		
 		return { availableIndex, Result::Success };
 	}

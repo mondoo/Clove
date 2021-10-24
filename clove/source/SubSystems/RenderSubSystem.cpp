@@ -39,20 +39,21 @@ namespace clove {
             vec3f const camFront{ transform.getForward() };
             vec3f const camUp{ transform.getUp() };
 
-            camera.camera.setView(lookAt(position, position + camFront, camUp));
+            mat4f const view{ lookAt(position, position + camFront, camUp) };
+            mat4f const projection{ camera.camera.getProjection(renderer->getRenderTargetSize()) };
 
-            renderer->submitCamera(camera.camera, position);
+            renderer->submitCamera(view, projection, position);
 
             activeCamera = entity;
         });
 
         //Submit static meshes
         entityManager->forEach([this](TransformComponent const &transform, StaticModelComponent const &staticModel) {
-            mat4f const modelTransform{ transform.worldMatrix };
-            std::array<mat4f, MAX_JOINTS> matrixPalet{};
-            matrixPalet.fill(mat4f{ 1.0f });
-
             if(staticModel.model.isValid()) {
+                mat4f const modelTransform{ transform.worldMatrix };
+                std::array<mat4f, MAX_JOINTS> matrixPalet{};
+                matrixPalet.fill(mat4f{ 1.0f });
+
                 std::set<GeometryPass::Id> passIds;
                 for(auto const &technique : staticModel.model->getTechniques()) {
                     passIds.insert(technique.passIds.begin(), technique.passIds.end());
@@ -64,15 +65,17 @@ namespace clove {
         });
         //Submit animated meshes
         entityManager->forEach([this, &deltaTime](TransformComponent const &transform, AnimatedModelComponent &animatedModel) {
-            mat4f const modelTransform{ transform.worldMatrix };
-            auto const matrixPalet{ animatedModel.model.update(deltaTime) };
+            if(animatedModel.model.isValid()) {
+                mat4f const modelTransform{ transform.worldMatrix };
+                auto const matrixPalet{ animatedModel.animator.update(deltaTime) };
 
-            std::set<GeometryPass::Id> passIds;
-            for(auto const &technique : animatedModel.model.getTechniques()) {
-                passIds.insert(technique.passIds.begin(), technique.passIds.end());
-            }
-            for(auto const &mesh : animatedModel.model.getMeshes()) {
-                renderer->submitMesh(ForwardRenderer3D::MeshInfo{ mesh, animatedModel.material, modelTransform, matrixPalet, passIds });
+                std::set<GeometryPass::Id> passIds;
+                for(auto const &technique : animatedModel.model->getTechniques()) {
+                    passIds.insert(technique.passIds.begin(), technique.passIds.end());
+                }
+                for(auto const &mesh : animatedModel.model->getMeshes()) {
+                    renderer->submitMesh(ForwardRenderer3D::MeshInfo{ mesh, animatedModel.material, modelTransform, matrixPalet, passIds });
+                }
             }
         });
 

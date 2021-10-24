@@ -8,17 +8,12 @@
 #include <array>
 
 namespace clove {
-    VulkanImage::VulkanImage(DevicePointer device, VkImage image, Descriptor descriptor, std::shared_ptr<MemoryAllocator> memoryAllocator)
+    VulkanImage::VulkanImage(DevicePointer device, VkImage image, Descriptor descriptor, MemoryAllocator::Chunk const *allocatedBlock, std::shared_ptr<MemoryAllocator> memoryAllocator)
         : device{ std::move(device) }
         , image{ image }
         , descriptor{ descriptor }
+        , allocatedBlock{ allocatedBlock }
         , memoryAllocator{ std::move(memoryAllocator) } {
-        VkMemoryRequirements memoryRequirements{};
-        vkGetImageMemoryRequirements(this->device.get(), image, &memoryRequirements);
-
-        allocatedBlock = this->memoryAllocator->allocate(memoryRequirements, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
-
-        vkBindImageMemory(this->device.get(), image, allocatedBlock->memory, allocatedBlock->offset);
     }
 
     VulkanImage::VulkanImage(DevicePointer device, VkImage image, Descriptor descriptor)

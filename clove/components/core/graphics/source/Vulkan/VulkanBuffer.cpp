@@ -6,30 +6,12 @@
 #include <Clove/Log/Log.hpp>
 
 namespace clove {
-    namespace {
-        VkMemoryPropertyFlags getMemoryPropertyFlags(MemoryType garlicProperties) {
-            switch(garlicProperties) {
-                case MemoryType::VideoMemory:
-                    return VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
-                case MemoryType::SystemMemory:
-                    return VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;//Including HOST_COHERENT here as this makes mapping memory more simple
-                default:
-                    break;
-            }
-        }
-    }
-
-    VulkanBuffer::VulkanBuffer(DevicePointer device, VkBuffer buffer, Descriptor descriptor, std::shared_ptr<MemoryAllocator> memoryAllocator)
+    VulkanBuffer::VulkanBuffer(DevicePointer device, VkBuffer buffer, Descriptor descriptor, MemoryAllocator::Chunk const *allocatedBlock, std::shared_ptr<MemoryAllocator> memoryAllocator)
         : device{ std::move(device) }
         , buffer{ buffer }
         , descriptor{ descriptor }
+        , allocatedBlock{ allocatedBlock }
         , memoryAllocator{ std::move(memoryAllocator) } {
-        VkMemoryRequirements memoryRequirements{};
-        vkGetBufferMemoryRequirements(this->device.get(), buffer, &memoryRequirements);
-
-        allocatedBlock = this->memoryAllocator->allocate(memoryRequirements, getMemoryPropertyFlags(this->descriptor.memoryType));
-
-        vkBindBufferMemory(this->device.get(), buffer, allocatedBlock->memory, allocatedBlock->offset);
     }
 
     VulkanBuffer::VulkanBuffer(VulkanBuffer &&other) noexcept = default;

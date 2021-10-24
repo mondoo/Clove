@@ -26,7 +26,7 @@ namespace clove {
         //FUNCTIONS
     public:
         VulkanBuffer() = delete;
-        VulkanBuffer(DevicePointer device, VkBuffer buffer, Descriptor descriptor, std::shared_ptr<MemoryAllocator> memoryAllocator);
+        VulkanBuffer(DevicePointer device, VkBuffer buffer, Descriptor descriptor, MemoryAllocator::Chunk const *allocatedBlock, std::shared_ptr<MemoryAllocator> memoryAllocator);
 
         VulkanBuffer(VulkanBuffer const &other) = delete;
         VulkanBuffer(VulkanBuffer &&other) noexcept;

@@ -12,7 +12,7 @@ namespace clove {
     class GhaDevice;
     class GhaFactory;
     class GhaFence;
-    class Surface;
+    class Window;
 }
 
 namespace clove {
@@ -29,15 +29,15 @@ namespace clove {
         std::unique_ptr<GhaSwapchain> swapchain;
         std::unique_ptr<GhaPresentQueue> presentQueue;
 
-        vec2ui surfaceSize{};
-        DelegateHandle surfaceResizeHandle;
+        vec2ui windowSize{};
+        DelegateHandle windowResizeHandle;
 
         bool requiresNewSwapchain{ false };
 
         //FUNCTIONS
     public:
         SwapchainRenderTarget() = delete;
-        SwapchainRenderTarget(Surface &swapchainSurface, GhaDevice *graphicsDevice, uint32_t imageCount);
+        SwapchainRenderTarget(Window &swapchainWindow, GhaDevice *graphicsDevice, uint32_t imageCount);
 
         SwapchainRenderTarget(SwapchainRenderTarget const &other);
         SwapchainRenderTarget(SwapchainRenderTarget &&other) noexcept;

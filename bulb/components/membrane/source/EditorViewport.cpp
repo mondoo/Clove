@@ -1,4 +1,4 @@
-#include "Membrane/ViewportSurface.hpp"
+#include "Membrane/EditorViewport.hpp"
 
 #include "Membrane/MessageHandler.hpp"
 #include "Membrane/Messages.hpp"
@@ -237,88 +237,56 @@ namespace membrane {
             }
         }
     }
-
-    // clang-format off
-    /**
-     * @brief 
-     */
-    private ref class ViewportSurfaceMessageProxy {
-        //VARIABLES
-    private:
-        ViewportSurface *surface{ nullptr };
-
-        //FUNCTIONS
-    public:
-        ViewportSurfaceMessageProxy(ViewportSurface *surface)
-            : surface{ surface } {
-            MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_ViewportKeyEvent ^>(this, &ViewportSurfaceMessageProxy::onKeyEvent));
-            MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_ViewportMouseButtonEvent ^>(this, &ViewportSurfaceMessageProxy::onMouseButtonEvent));
-            MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_ViewportMouseMoveEvent ^>(this, &ViewportSurfaceMessageProxy::onMouseMoveEvent));
-        }
-
-    private:
-        void onKeyEvent(Editor_ViewportKeyEvent^ event){
-            ViewportSurface::GenericEvent genericEvent{};
-            genericEvent.type = ViewportSurface::GenericEvent::Type::Keyboard;
-            genericEvent.state = event->type == Editor_ViewportKeyEvent::Type::Pressed ? ViewportSurface::GenericEvent::State::Pressed : ViewportSurface::GenericEvent::State::Released;
-            genericEvent.key = convertKey(event->key);
-            
-            surface->events.push_back(std::move(genericEvent));
-        }
-
-        void onMouseButtonEvent(Editor_ViewportMouseButtonEvent ^event){
-            ViewportSurface::GenericEvent genericEvent{};
-            genericEvent.type = ViewportSurface::GenericEvent::Type::Mouse;
-            genericEvent.state = event->state == System::Windows::Input::MouseButtonState::Pressed ? ViewportSurface::GenericEvent::State::Pressed : ViewportSurface::GenericEvent::State::Released;
-            genericEvent.button = convertMouseButton(event->button);
-            genericEvent.pos = {event->position.X, event->position.Y};
-            
-            surface->events.push_back(std::move(genericEvent));
-        }
-
-        void onMouseMoveEvent(Editor_ViewportMouseMoveEvent ^event){
-            ViewportSurface::GenericEvent genericEvent{};
-            genericEvent.type = ViewportSurface::GenericEvent::Type::Mouse;
-            genericEvent.pos = {event->position.X, event->position.Y};
-            
-            surface->events.push_back(std::move(genericEvent));
-        }
-    };
-    // clang-format on
 }
 
 namespace membrane {
-    ViewportSurface::ViewportSurface()
-        : messageProxy{ gcnew ViewportSurfaceMessageProxy(this) }
-        , keyboard{ keyboardDispatcher }
-        , mouse{ mouseDispatcher } {
+    EditorViewport::EditorViewport() {
+        MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_ViewportKeyEvent ^>(this, &EditorViewport::onKeyEvent));
+        MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_ViewportMouseButtonEvent ^>(this, &EditorViewport::onMouseButtonEvent));
+        MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_ViewportMouseMoveEvent ^>(this, &EditorViewport::onMouseMoveEvent));
+
+        events = gcnew System::Collections::Generic::List<GenericEvent ^>;
+
+        keyboardDispatcher = new clove::Keyboard::Dispatcher{};
+        mouseDispatcher    = new clove::Mouse::Dispatcher{};
+
+        keyboard = new clove::Keyboard{ *keyboardDispatcher };
+        mouse    = new clove::Mouse{ *mouseDispatcher };
     }
 
-    MultiCastDelegate<void(vec2ui const &)> &ViewportSurface::onSurfaceResize() {
-        return resizeDelegate;
+    EditorViewport::~EditorViewport() {
+        this->!EditorViewport();
     }
 
-    void ViewportSurface::processInput(){
-        for(auto &event : events) {
-            switch(event.type) {
+    EditorViewport::!EditorViewport() {
+        delete keyboard;
+        delete mouse;
+
+        delete keyboardDispatcher;
+        delete mouseDispatcher;
+    }
+
+    void EditorViewport::processInput() {
+        for each(auto event in events) {
+            switch(event->type) {
                 case GenericEvent::Type::Keyboard:
-                    if(event.state == GenericEvent::State::Pressed) {
-                        if(!keyboard.isKeyPressed(event.key) || keyboard.isAutoRepeatEnabled()) {
-                            keyboardDispatcher.onKeyPressed(event.key);
+                    if(event->state == GenericEvent::State::Pressed) {
+                        if(!keyboard->isKeyPressed(*event->key) || keyboard->isAutoRepeatEnabled()) {
+                            keyboardDispatcher->onKeyPressed(*event->key);
                         }
-                    } else if(event.state == GenericEvent::State::Released) {
-                        keyboardDispatcher.onKeyReleased(event.key);
+                    } else if(event->state == GenericEvent::State::Released) {
+                        keyboardDispatcher->onKeyReleased(*event->key);
                     }
                     break;
                 case GenericEvent::Type::Mouse:
-                    if(event.button != clove::MouseButton::None) {
-                        if(event.state == GenericEvent::State::Pressed) {
-                            mouseDispatcher.onButtonPressed(event.button, event.pos);
-                        } else if(event.state == GenericEvent::State::Released) {
-                            mouseDispatcher.onButtonReleased(event.button, event.pos);
+                    if(event->button != nullptr) {
+                        if(event->state == GenericEvent::State::Pressed) {
+                            mouseDispatcher->onButtonPressed(*event->button, *event->pos);
+                        } else if(event->state == GenericEvent::State::Released) {
+                            mouseDispatcher->onButtonReleased(*event->button, *event->pos);
                         }
                     } else {
-                        mouseDispatcher.onMouseMove(event.pos);
+                        mouseDispatcher->onMouseMove(*event->pos);
                     }
                     break;
                 default:
@@ -326,23 +294,41 @@ namespace membrane {
             }
         }
 
-        events.clear();
+        events->Clear();
     };
 
-    void ViewportSurface::setSize(clove::vec2i size) {
-        this->size = size;
-        resizeDelegate.broadcast(this->size);
-    }
-
-    vec2i ViewportSurface::getSize() const {
-        return size;
-    }
-
-    Keyboard &ViewportSurface::getKeyboard() {
+    Keyboard *EditorViewport::getKeyboard() {
         return keyboard;
     }
 
-    Mouse &ViewportSurface::getMouse() {
+    Mouse *EditorViewport::getMouse() {
         return mouse;
+    }
+
+    void EditorViewport::onKeyEvent(Editor_ViewportKeyEvent ^ event) {
+        GenericEvent ^ genericEvent { gcnew GenericEvent };
+        genericEvent->type  = GenericEvent::Type::Keyboard;
+        genericEvent->state = event->type == Editor_ViewportKeyEvent::Type::Pressed ? EditorViewport::GenericEvent::State::Pressed : EditorViewport::GenericEvent::State::Released;
+        genericEvent->key   = new Key{ convertKey(event->key) };
+
+        events->Add(genericEvent);
+    }
+
+    void EditorViewport::onMouseButtonEvent(Editor_ViewportMouseButtonEvent ^ event) {
+        GenericEvent ^ genericEvent { gcnew GenericEvent };
+        genericEvent->type   = GenericEvent::Type::Mouse;
+        genericEvent->state  = event->state == System::Windows::Input::MouseButtonState::Pressed ? EditorViewport::GenericEvent::State::Pressed : EditorViewport::GenericEvent::State::Released;
+        genericEvent->button = new MouseButton{ convertMouseButton(event->button) };
+        genericEvent->pos    = new vec2i{ event->position.X, event->position.Y };
+
+        events->Add(genericEvent);
+    }
+
+    void EditorViewport::onMouseMoveEvent(Editor_ViewportMouseMoveEvent ^ event) {
+        GenericEvent ^ genericEvent { gcnew GenericEvent };
+        genericEvent->type = GenericEvent::Type::Mouse;
+        genericEvent->pos  = new vec2i{ event->position.X, event->position.Y };
+
+        events->Add(genericEvent);
     }
 }

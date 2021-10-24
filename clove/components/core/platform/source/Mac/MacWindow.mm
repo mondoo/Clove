@@ -16,11 +16,17 @@ CLOVE_DECLARE_LOG_CATEGORY(ClovePlatformMacOS)
 }
 @end
 
-namespace clove{
+namespace clove {
+    namespace {
+        NSUInteger constexpr MB_1{ 1 << 0 };
+        NSUInteger constexpr MB_2{ 1 << 1 };
+        NSUInteger constexpr MB_3{ 1 << 2 };
+        NSUInteger constexpr MB_4{ 1 << 3 };
+        NSUInteger constexpr MB_5{ 1 << 4 };
+    }
+
     MacWindow::MacWindow(Descriptor const &descriptor)
         : Window(keyboardDispatcher, mouseDispatcher) {
-        CLOVE_LOG(ClovePlatformMacOS, LogLevel::Trace, "Creating window: {0} ({1}, {2})", descriptor.title, descriptor.width, descriptor.height);
-
         //Application specific init
         [NSApplication sharedApplication];
         [NSApp finishLaunching];
@@ -53,8 +59,6 @@ namespace clove{
         windowProxy.cloveWindow = this;
         
         open = true;
-
-        CLOVE_LOG(ClovePlatformMacOS, LogLevel::Trace, "Window created");
     }
     
     MacWindow::~MacWindow() = default;
@@ -168,21 +172,21 @@ namespace clove{
                 break;
                 
             case NSEventTypeOtherMouseDown:
-                if(([NSEvent pressedMouseButtons] & static_cast<NSUInteger>(MouseButton::_3)) != 0){
+                if(([NSEvent pressedMouseButtons] & MB_3) != 0){
                     mouseDispatcher.onButtonPressed(MouseButton::_3, mouseLoc);
-                }else if(([NSEvent pressedMouseButtons] & static_cast<NSUInteger>(MouseButton::_4)) != 0){
+                }else if(([NSEvent pressedMouseButtons] & MB_4) != 0){
                     mouseDispatcher.onButtonPressed(MouseButton::_4, mouseLoc);
-                }else if(([NSEvent pressedMouseButtons] & static_cast<NSUInteger>(MouseButton::_5)) != 0){
+                }else if(([NSEvent pressedMouseButtons] & MB_5) != 0){
                     mouseDispatcher.onButtonPressed(MouseButton::_5, mouseLoc);
                 }
                 break;
                 
             case NSEventTypeOtherMouseUp:
-                if(([NSEvent pressedMouseButtons] & static_cast<NSUInteger>(MouseButton::_3)) != 0){
+                if(([NSEvent pressedMouseButtons] & MB_3) != 0){
                     mouseDispatcher.onButtonReleased(MouseButton::_3, mouseLoc);
-                }else if(([NSEvent pressedMouseButtons] & static_cast<NSUInteger>(MouseButton::_4)) != 0){
+                }else if(([NSEvent pressedMouseButtons] & MB_4) != 0){
                     mouseDispatcher.onButtonReleased(MouseButton::_4, mouseLoc);
-                }else if(([NSEvent pressedMouseButtons] & static_cast<NSUInteger>(MouseButton::_5)) != 0){
+                }else if(([NSEvent pressedMouseButtons] & MB_5) != 0){
                     mouseDispatcher.onButtonReleased(MouseButton::_5, mouseLoc);
                 }
                 break;

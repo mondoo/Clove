@@ -10,7 +10,7 @@ namespace clove {
 namespace membrane {
     class EditorSubSystem;
     class RuntimeSubSystem;
-    class ViewportSurface;
+    ref class EditorViewport;
     ref class Editor_Stop;
     ref class Editor_Play;
 }
@@ -24,12 +24,14 @@ public ref class Application {
     private:
         clove::Application *app;
         clove::GraphicsImageRenderTarget *renderTarget;
-        ViewportSurface *surface;
+        EditorViewport ^viewport;
 
         int width;
         int height;
 
         bool isInEditorMode{ true };
+
+        HINSTANCE gameLibrary{ nullptr };
 
         //FUNCTIONS
     public:
@@ -37,10 +39,7 @@ public ref class Application {
         ~Application();
         !Application();
 
-        bool hasDefaultProject();
-        
-        void openProject(System::String ^projectPath);
-        void openDefaultProject();
+        void loadGameDll();
 
         bool isRunning();
         void tick();
@@ -51,10 +50,12 @@ public ref class Application {
 
         System::String ^resolveVfsPath(System::String ^path);
 
-    private:
-        void openProjectInternal(std::filesystem::path const projectPath);
+        static System::String ^getProjectVersion();
 
+    private:
         void setEditorMode(Editor_Stop ^message);
         void setRuntimeMode(Editor_Play ^message);
+
+        bool tryLoadGameDll(std::string_view path);
     };
 }

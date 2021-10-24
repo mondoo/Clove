@@ -1,4 +1,5 @@
 #include "Clove/Platform/Input/Mouse.hpp"
+#include "Clove/Platform/Windows/CloveWindows.hpp"
 
 namespace clove {
     vec2i Mouse::getPosition() const {
@@ -14,5 +15,9 @@ namespace clove {
 
     void Mouse::show(bool shouldShow) {
         ShowCursor(shouldShow);
+    }
+
+    int32_t Mouse::getWheelDelta() {
+        return WHEEL_DELTA;
     }
 }

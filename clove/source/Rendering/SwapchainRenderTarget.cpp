@@ -1,7 +1,6 @@
 #include "Clove/Rendering/SwapchainRenderTarget.hpp"
 
 #include "Clove/Application.hpp"
-#include "Clove/Surface.hpp"
 
 #include <Clove/Graphics/GhaDevice.hpp>
 #include <Clove/Graphics/GhaFactory.hpp>
@@ -10,17 +9,18 @@
 #include <Clove/Graphics/GhaSemaphore.hpp>
 #include <Clove/Graphics/GhaSwapchain.hpp>
 #include <Clove/Log/Log.hpp>
+#include <Clove/Platform/Window.hpp>
 
 namespace clove {
-    SwapchainRenderTarget::SwapchainRenderTarget(Surface &swapchainSurface, GhaDevice *graphicsDevice, uint32_t imageCount)
+    SwapchainRenderTarget::SwapchainRenderTarget(Window &swapchainWindow, GhaDevice *graphicsDevice, uint32_t imageCount)
         : graphicsDevice{ graphicsDevice }
         , imageCount{ imageCount } {
         graphicsFactory = graphicsDevice->getGraphicsFactory();
 
-        surfaceSize         = swapchainSurface.getSize();
-        surfaceResizeHandle = swapchainSurface.onSurfaceResize().bind(&SwapchainRenderTarget::onSurfaceSizeChanged, this);
+        windowSize         = swapchainWindow.getSize(true);
+        windowResizeHandle = swapchainWindow.onWindowResize.bind(&SwapchainRenderTarget::onSurfaceSizeChanged, this);
 
-        presentQueue = *graphicsFactory->createPresentQueue();
+        presentQueue = graphicsFactory->createPresentQueue().getValue();
 
         createSwapchain();
     }
@@ -32,7 +32,7 @@ namespace clove {
     SwapchainRenderTarget::~SwapchainRenderTarget() = default;
 
     Expected<uint32_t, std::string> SwapchainRenderTarget::aquireNextImage(GhaSemaphore const *const signalSemaphore) {
-        if(surfaceSize.x == 0 || surfaceSize.y == 0) {
+        if(windowSize.x == 0 || windowSize.y == 0) {
             return Unexpected<std::string>{ "Cannot acquire image while Window is minimised." };
         }
 
@@ -75,14 +75,14 @@ namespace clove {
     }
 
     void SwapchainRenderTarget::onSurfaceSizeChanged(vec2ui const &size) {
-        surfaceSize          = size;
+        windowSize           = size;
         requiresNewSwapchain = true;
     }
 
     void SwapchainRenderTarget::createSwapchain() {
         requiresNewSwapchain = true;
 
-        if(surfaceSize.x == 0 || surfaceSize.y == 0) {
+        if(windowSize.x == 0 || windowSize.y == 0) {
             return;
         }
 
@@ -91,10 +91,11 @@ namespace clove {
         graphicsDevice->waitForIdleDevice();
 
         swapchain.reset();
-        swapchain = *graphicsFactory->createSwapChain(GhaSwapchain::Descriptor{
-            .extent     = surfaceSize,
-            .imageCount = imageCount,
-        });
+        swapchain = graphicsFactory->createSwapChain(GhaSwapchain::Descriptor{
+                                                         .extent     = windowSize,
+                                                         .imageCount = imageCount,
+                                                     })
+                        .getValue();
 
         onPropertiesChangedEnd.broadcast();
 

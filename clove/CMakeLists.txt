@@ -1,3 +1,5 @@
+set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+
 set(SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/source)
 set(INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/include/Clove)
 set(ASSETS ${CMAKE_CURRENT_SOURCE_DIR}/assets)
@@ -229,10 +231,6 @@ add_library(
 		${INCLUDE}/TextureLoader.hpp
 		${SOURCE}/TextureLoader.cpp
 
-		${INCLUDE}/Surface.hpp
-		${INCLUDE}/WindowSurface.hpp
-		${SOURCE}/WindowSurface.cpp
-
 		${ShaderFiles}
 
 		${ResourceBinaries}
@@ -285,6 +283,14 @@ target_link_libraries(
 		CONAN_PKG::freetype
 		CONAN_PKG::libsndfile
 		stb
+)
+
+#Preprocessor
+target_compile_definitions(
+	Clove
+
+	PUBLIC
+		CLOVE_VERSION="${CMAKE_PROJECT_VERSION}"
 )
 
 if(CLOVE_BUILD_TESTS)

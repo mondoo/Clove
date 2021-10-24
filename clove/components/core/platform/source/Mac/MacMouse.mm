@@ -21,4 +21,8 @@ namespace clove {
 			[NSCursor unhide];
 		}
 	}
+
+	int32_t Mouse::getWheelDelta() {
+        return 1;
+    }
 }

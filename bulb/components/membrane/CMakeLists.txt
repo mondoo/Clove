@@ -25,8 +25,8 @@ add_library(
         ${INCLUDE}/RuntimeSubSystem.hpp
         ${SOURCE}/RuntimeSubSystem.cpp
         
-        ${INCLUDE}/ViewportSurface.hpp
-        ${SOURCE}/ViewportSurface.cpp
+        ${INCLUDE}/EditorViewport.hpp
+        ${SOURCE}/EditorViewport.cpp
 
         ${INCLUDE}/Scene.hpp
 		${INCLUDE}/Scene.inl
@@ -38,7 +38,7 @@ target_include_directories(
     BulbMembrane
 
     PUBLIC
-        include   
+        include
 )
 
 #Libraries
@@ -47,6 +47,14 @@ target_link_libraries(
 
     PRIVATE
         Clove
+)
+
+#PreProcessor
+target_compile_definitions(
+    BulbMembrane
+
+    PRIVATE
+        ROOT_DIR="${CMAKE_SOURCE_DIR}"   
 )
 
 #Properties

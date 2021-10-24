@@ -221,6 +221,17 @@ namespace clove {
             }
         }
 
+        VkMemoryPropertyFlags getMemoryPropertyFlags(MemoryType garlicProperties) {
+            switch(garlicProperties) {
+                case MemoryType::VideoMemory:
+                    return VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
+                case MemoryType::SystemMemory:
+                    return VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;//Including HOST_COHERENT here as this makes mapping memory more simple
+                default:
+                    break;
+            }
+        }
+
         Expected<VkImageView, std::runtime_error> createVkImageView(VkDevice device, VkImage image, GhaImageView::Descriptor const &viewdescriptor, GhaImage::Format const imageFormat) {
             VkImageAspectFlags const aspectFlags{ static_cast<VkImageAspectFlags>(imageFormat == GhaImage::Format::D32_SFLOAT ? VK_IMAGE_ASPECT_DEPTH_BIT : VK_IMAGE_ASPECT_COLOR_BIT) };
 
@@ -1040,7 +1051,17 @@ namespace clove {
             }
         }
 
-        return std::unique_ptr<GhaBuffer>{ createGhaObject<VulkanBuffer>(devicePtr, buffer, descriptor, memoryAllocator) };
+        VkMemoryRequirements memoryRequirements{};
+        vkGetBufferMemoryRequirements(devicePtr.get(), buffer, &memoryRequirements);
+
+        MemoryAllocator::Chunk const *allocatedBlock{ this->memoryAllocator->allocate(memoryRequirements, getMemoryPropertyFlags(descriptor.memoryType)) };
+        if(allocatedBlock == nullptr) {
+            return Unexpected{ std::runtime_error{ "Failed to create GhaBuffer. Could not allocate memory." } };
+        }
+
+        vkBindBufferMemory(devicePtr.get(), buffer, allocatedBlock->memory, allocatedBlock->offset);
+
+        return std::unique_ptr<GhaBuffer>{ createGhaObject<VulkanBuffer>(devicePtr, buffer, descriptor, allocatedBlock, memoryAllocator) };
     }
 
     Expected<std::unique_ptr<GhaImage>, std::runtime_error> VulkanFactory::createImage(GhaImage::Descriptor descriptor) noexcept {
@@ -1079,7 +1100,17 @@ namespace clove {
             }
         }
 
-        return std::unique_ptr<GhaImage>{ createGhaObject<VulkanImage>(devicePtr, image, descriptor, memoryAllocator) };
+        VkMemoryRequirements memoryRequirements{};
+        vkGetImageMemoryRequirements(devicePtr.get(), image, &memoryRequirements);
+
+        MemoryAllocator::Chunk const *allocatedBlock{ memoryAllocator->allocate(memoryRequirements, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT) };
+        if(allocatedBlock == nullptr){
+            return Unexpected{ std::runtime_error{ "Failed to create GhaImage. Could not allocate memory." } };
+        }
+
+        vkBindImageMemory(devicePtr.get(), image, allocatedBlock->memory, allocatedBlock->offset);
+
+        return std::unique_ptr<GhaImage>{ createGhaObject<VulkanImage>(devicePtr, image, descriptor, allocatedBlock, memoryAllocator) };
     }
 
     Expected<std::unique_ptr<GhaImageView>, std::runtime_error> VulkanFactory::createImageView(GhaImage const &image, GhaImageView::Descriptor descriptor) noexcept {

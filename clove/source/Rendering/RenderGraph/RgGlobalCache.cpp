@@ -37,7 +37,7 @@ namespace clove {
         std::string const shaderSource{ buffer.begin(), buffer.end() };
 
         if(!shaders.contains(shaderSource)) {
-            shaders[shaderSource] = *factory->createShaderFromFile(file, shaderStage);
+            shaders[shaderSource] = factory->createShaderFromFile(file, shaderStage).getValue();
         }
         return shaders.at(shaderSource).get();
     }
@@ -46,7 +46,7 @@ namespace clove {
         std::string const shaderSource{ source };
 
         if(!shaders.contains(shaderSource)) {
-            shaders[shaderSource] = *factory->createShaderFromSource(source, std::move(includeSources), shaderName, shaderStage);
+            shaders[shaderSource] = factory->createShaderFromSource(source, std::move(includeSources), shaderName, shaderStage).getValue();
         }
         return shaders.at(shaderSource).get();
     }
@@ -86,7 +86,7 @@ namespace clove {
         hashAttachment(passId, descriptor.depthAttachment);
 
         if(!renderPasses.contains(passId)) {
-            renderPasses[passId] = *factory->createRenderPass(std::move(descriptor));
+            renderPasses[passId] = factory->createRenderPass(std::move(descriptor)).getValue();
         }
         return renderPasses.at(passId).get();
     }
@@ -165,7 +165,7 @@ namespace clove {
         }
 
         if(!graphicsPipelines.contains(pipelineId)) {
-            graphicsPipelines[pipelineId] = *factory->createGraphicsPipelineObject(std::move(descriptor));
+            graphicsPipelines[pipelineId] = factory->createGraphicsPipelineObject(std::move(descriptor)).getValue();
         }
         return graphicsPipelines.at(pipelineId).get();
     }
@@ -190,7 +190,7 @@ namespace clove {
         }
 
         if(!computePipelines.contains(pipelineId)) {
-            computePipelines[pipelineId] = *factory->createComputePipelineObject(std::move(descriptor));
+            computePipelines[pipelineId] = factory->createComputePipelineObject(std::move(descriptor)).getValue();
         }
         return computePipelines.at(pipelineId).get();
     }

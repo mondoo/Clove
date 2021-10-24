@@ -9,7 +9,7 @@ jobs:
   cpp_check:
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/agarlicmonkey/clove/linux_analysis:2.0
+      image: ghcr.io/agarlicmonkey/clove/linux_analysis:2.1
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
@@ -18,7 +18,7 @@ jobs:
         with:
           submodules: recursive
         #Suppress syntax errors as these are causing false positives
-      - run: cppcheck -iclove/components/core/graphics/external/shaderc -iclove/external/stb ./ --suppress=syntaxError --error-exitcode=1
+      - run: cppcheck -iclove/components/core/graphics/external/shaderc -iclove/external/stb ./ --suppress=syntaxError --suppress=unknownMacro --error-exitcode=1
   #macOS
   clang-tidy-macos:
     runs-on: macos-latest
@@ -29,7 +29,6 @@ jobs:
       - name: Setup environment
         run: |
           mkdir build
-          brew update
           brew install conan
           brew install llvm
           ln -s "/usr/local/opt/llvm/bin/clang-tidy" "/usr/local/bin/clang-tidy"
@@ -45,7 +44,7 @@ jobs:
   clang-tidy-linux:
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/agarlicmonkey/clove/linux_analysis:2.0
+      image: ghcr.io/agarlicmonkey/clove/linux_analysis:2.1
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}

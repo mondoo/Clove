@@ -28,21 +28,23 @@ namespace clove {
         };
 
         image     = createImageWithData(factory, imageDescriptor, &white, bytesPerTexel);
-        imageView = *factory.createImageView(*image, GhaImageView::Descriptor{
-                                                         .type       = GhaImageView::Type::_2D,
-                                                         .layer      = 0,
-                                                         .layerCount = 1,
-                                                     });
+        imageView = factory.createImageView(*image, GhaImageView::Descriptor{
+                                                        .type       = GhaImageView::Type::_2D,
+                                                        .layer      = 0,
+                                                        .layerCount = 1,
+                                                    })
+                        .getValue();
     }
 
     Image::Image(std::shared_ptr<GhaImage> graphicsImage)
         : image(std::move(graphicsImage)) {
         GhaFactory &factory{ *Application::get().getGraphicsDevice()->getGraphicsFactory() };
-        imageView = *factory.createImageView(*image, GhaImageView::Descriptor{
-                                                         .type       = GhaImageView::Type::_2D,
-                                                         .layer      = 0,
-                                                         .layerCount = 1,
-                                                     });
+        imageView = factory.createImageView(*image, GhaImageView::Descriptor{
+                                                        .type       = GhaImageView::Type::_2D,
+                                                        .layer      = 0,
+                                                        .layerCount = 1,
+                                                    })
+                        .getValue();
     }
 
     Image::Image(Image const &other) = default;

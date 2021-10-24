@@ -18,7 +18,6 @@
 #include <Clove/Graphics/GhaDevice.hpp>
 #include <Clove/Graphics/GhaFactory.hpp>
 #include <Clove/Graphics/GhaImageView.hpp>
-#include <Clove/Graphics/Graphics.hpp>
 #include <Clove/Platform/Window.hpp>
 #include <algorithm>
 
@@ -60,18 +59,18 @@ namespace clove {
 
         //Create semaphores for frame synchronisation
         for(auto &skinningFinishedSemaphore : skinningFinishedSemaphores) {
-            skinningFinishedSemaphore = *ghaFactory->createSemaphore();
+            skinningFinishedSemaphore = ghaFactory->createSemaphore().getValue();
         }
         for(auto &renderFinishedSemaphore : renderFinishedSemaphores) {
-            renderFinishedSemaphore = *ghaFactory->createSemaphore();
+            renderFinishedSemaphore = ghaFactory->createSemaphore().getValue();
         }
         for(auto &imageAvailableSemaphore : imageAvailableSemaphores) {
-            imageAvailableSemaphore = *ghaFactory->createSemaphore();
+            imageAvailableSemaphore = ghaFactory->createSemaphore().getValue();
         }
 
         //Create fences to wait for images in flight
         for(auto &fence : framesInFlight) {
-            fence = *ghaFactory->createFence({ true });
+            fence = ghaFactory->createFence({ true }).getValue();
         }
 
         //Create the geometry passes this renderer supports
@@ -138,9 +137,9 @@ namespace clove {
         currentFrameData.meshes.push_back(std::move(meshInfo));
     }
 
-    void ForwardRenderer3D::submitCamera(Camera const &camera, vec3f position) {
-        currentFrameData.viewData.view       = camera.getView();
-        currentFrameData.viewData.projection = camera.getProjection();
+    void ForwardRenderer3D::submitCamera(mat4f const view, mat4f const projection, vec3f const position) {
+        currentFrameData.viewData.view       = view;
+        currentFrameData.viewData.projection = projection;
 
         currentFrameData.viewPosition = position;
     }
@@ -353,6 +352,10 @@ namespace clove {
 
         //Advance to the next frame
         currentFrame = (currentFrame + 1) % maxFramesInFlight;
+    }
+
+    vec2ui ForwardRenderer3D::getRenderTargetSize() const {
+        return renderTarget->getSize();
     }
 
     void ForwardRenderer3D::resetGraphCaches() {

@@ -8,12 +8,11 @@
 #include "Clove/SubSystems/PhysicsSubSystem.hpp"
 #include "Clove/SubSystems/RenderSubSystem.hpp"
 #include "Clove/SubSystems/TransformSubSystem.hpp"
-#include "Clove/WindowSurface.hpp"
 
 #include <Clove/Audio/AhaDevice.hpp>
 #include <Clove/Definitions.hpp>
+#include <Clove/Graphics/Gha.hpp>
 #include <Clove/Graphics/GhaDevice.hpp>
-#include <Clove/Graphics/Graphics.hpp>
 
 namespace clove {
     Application *Application::instance{ nullptr };
@@ -27,55 +26,64 @@ namespace clove {
         }
     }
 
-    std::unique_ptr<Application> Application::create(GraphicsApi graphicsApi, AudioApi audioApi, Window::Descriptor const &windowDescriptor) {	
-		auto window{ Window::create(windowDescriptor) };
-		auto *windowPtr{ window.get() };
-		
-		auto graphicsDevice{ createGraphicsDevice(graphicsApi, window->getNativeWindow()) };
-		auto audioDevice{ createAudioDevice(audioApi) };
-		
-		auto surface{ std::make_unique<WindowSurface>(std::move(window)) };
+    std::unique_ptr<Application> Application::create(GraphicsApi graphicsApi, AudioApi audioApi, Window::Descriptor const &windowDescriptor) {
+        CLOVE_LOG(CloveApplication, LogLevel::Info, "Creating windowed application ({0}, {1}).", windowDescriptor.width, windowDescriptor.height);
+
+        auto window{ Window::create(windowDescriptor) };
+        auto *windowPtr{ window.get() };
+
+        auto graphicsDevice{ createGhaDevice(graphicsApi, window->getNativeWindow()).getValue() };
+        auto audioDevice{ createAhaDevice(audioApi).getValue() };
 
         uint32_t constexpr swapchainImageCount{ 3 };
-        auto renderTarget{ std::make_unique<SwapchainRenderTarget>(*surface, graphicsDevice.get(), swapchainImageCount) };
+        auto renderTarget{ std::make_unique<SwapchainRenderTarget>(*window, graphicsDevice.get(), swapchainImageCount) };
 
-        std::unique_ptr<Application> app{ new Application{ std::move(graphicsDevice), std::move(audioDevice), std::move(surface), std::move(renderTarget) } };
-		windowPtr->onWindowCloseDelegate.bind(&Application::shutdown, app.get());
-		
+        std::unique_ptr<Application> app{ new Application{ std::move(graphicsDevice), std::move(audioDevice), std::move(window), std::move(renderTarget) } };
+        windowPtr->onWindowCloseDelegate.bind(&Application::shutdown, app.get());
+
         return app;
     }
 
-    std::pair<std::unique_ptr<Application>, GraphicsImageRenderTarget *> Application::createHeadless(GraphicsApi graphicsApi, AudioApi audioApi, GhaImage::Descriptor renderTargetDescriptor, std::unique_ptr<Surface> surface) {
-        auto graphicsDevice{ createGraphicsDevice(graphicsApi, std::any{}) };
-        auto audioDevice{ createAudioDevice(audioApi) };
+    std::pair<std::unique_ptr<Application>, GraphicsImageRenderTarget *> Application::createHeadless(GraphicsApi graphicsApi, AudioApi audioApi, GhaImage::Descriptor renderTargetDescriptor, Keyboard *keyboard, Mouse *mouse) {
+        CLOVE_LOG(CloveApplication, LogLevel::Info, "Creating headless application.");
+
+        auto graphicsDevice{ createGhaDevice(graphicsApi, std::any{}).getValue() };
+        auto audioDevice{ createAhaDevice(audioApi).getValue() };
 
         auto renderTarget{ std::make_unique<GraphicsImageRenderTarget>(renderTargetDescriptor, graphicsDevice->getGraphicsFactory()) };
         auto *renderTargetPtr{ renderTarget.get() };
 
-        std::unique_ptr<Application> app{ new Application{ std::move(graphicsDevice), std::move(audioDevice), std::move(surface), std::move(renderTarget) } };
+        std::unique_ptr<Application> app{ new Application{ std::move(graphicsDevice), std::move(audioDevice), keyboard, mouse, std::move(renderTarget) } };
 
         return { std::move(app), renderTargetPtr };
     }
 
+    void Application::set(Application *app) {
+        instance = app;
+    }
+
     Application &Application::get() {
+        CLOVE_ASSERT_MSG(instance != nullptr, "Attempted to get Application before it has been created.");
         return *instance;
     }
 
     void Application::tick() {
-        surface->processInput();
+        if(window != nullptr){
+            window->processInput();
+        }
 
         //If the previous processInput call closed the window we don't want to run the rest of the function.
         if(currentState != State::Running) {
             return;
         }
 
-        auto const currFrameTime{ std::chrono::system_clock::now() };
+        auto const currFrameTime{ std::chrono::steady_clock::now() };
         std::chrono::duration<float> const deltaSeonds{ currFrameTime - prevFrameTime };
         prevFrameTime = currFrameTime;
 
         renderer->begin();
 
-        while(auto keyEvent = surface->getKeyboard().getKeyEvent()) {
+        while(auto keyEvent{ keyboard->getKeyEvent() }) {
             InputEvent const event{ *keyEvent };
             for(auto &&[key, group] : subSystems) {
                 for(auto &subSystem : group) {
@@ -85,7 +93,7 @@ namespace clove {
                 }
             }
         }
-        while(auto mouseEvent = surface->getMouse().getEvent()) {
+        while(auto mouseEvent{ mouse->getEvent() }) {
             InputEvent const event{ *mouseEvent };
             for(auto &&[key, group] : subSystems) {
                 for(auto &subSystem : group) {
@@ -109,23 +117,29 @@ namespace clove {
         currentState = State::Stopped;
     }
 
-    Application::Application(std::unique_ptr<GhaDevice> graphicsDevice, std::unique_ptr<AhaDevice> audioDevice, std::unique_ptr<Surface> surface, std::unique_ptr<RenderTarget> renderTarget)
+    Application::Application(std::unique_ptr<GhaDevice> graphicsDevice, std::unique_ptr<AhaDevice> audioDevice, std::unique_ptr<Window> window, std::unique_ptr<RenderTarget> renderTarget)
+        : Application{ std::move(graphicsDevice), std::move(audioDevice), &window->getKeyboard(), &window->getMouse(), std::move(renderTarget) } {
+        this->window = std::move(window);
+    }
+
+    Application::Application(std::unique_ptr<GhaDevice> graphicsDevice, std::unique_ptr<AhaDevice> audioDevice, Keyboard *keyboard, Mouse *mouse, std::unique_ptr<RenderTarget> renderTarget)
         : graphicsDevice{ std::move(graphicsDevice) }
         , audioDevice{ std::move(audioDevice) }
-        , surface{ std::move(surface) }
+        , keyboard{ keyboard }
+        , mouse{ mouse }
         , assetManager{ &fileSystem } {
         CLOVE_ASSERT_MSG(instance == nullptr, "Only one Application can be active");
         instance = this;
 
-        prevFrameTime = std::chrono::system_clock::now();
+        prevFrameTime = std::chrono::steady_clock::now();
 
         //Systems
         renderer = std::make_unique<ForwardRenderer3D>(this->graphicsDevice.get(), std::move(renderTarget));
 
         //SubSystems
-        pushSubSystem<TransformSubSystem>(SubSystemGroup::Initialisation, &entityManager);
-        pushSubSystem<PhysicsSubSystem>(SubSystemGroup::Initialisation, &entityManager);
-        pushSubSystem<AudioSubSystem>(SubSystemGroup::Render, &entityManager);
-        pushSubSystem<RenderSubSystem>(SubSystemGroup::Render, renderer.get(), &entityManager);
+        //pushSubSystem<TransformSubSystem>(SubSystemGroup::Initialisation, &entityManager);
+        //pushSubSystem<PhysicsSubSystem>(SubSystemGroup::Initialisation, &entityManager);
+        //pushSubSystem<AudioSubSystem>(SubSystemGroup::Render, &entityManager);
+        //pushSubSystem<RenderSubSystem>(SubSystemGroup::Render, renderer.get(), &entityManager);
     }
 }

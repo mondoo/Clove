@@ -46,6 +46,8 @@ set(
 		${SOURCE}/Vulkan/VulkanFence.cpp
 		${INCLUDE}/Vulkan/VulkanFramebuffer.hpp
 		${SOURCE}/Vulkan/VulkanFramebuffer.cpp
+		${INCLUDE}/Vulkan/VulkanGha.hpp
+		${SOURCE}/Vulkan/VulkanGha.cpp
 		${INCLUDE}/Vulkan/VulkanGraphicsCommandBuffer.hpp
 		${SOURCE}/Vulkan/VulkanGraphicsCommandBuffer.cpp
 		${INCLUDE}/Vulkan/VulkanGraphicsPipelineObject.hpp
@@ -94,6 +96,7 @@ set(
 #Metal Implementation
 set(
 	MetalFiles
+		${INCLUDE}/Metal/DeviceWrapper.hpp
 		${INCLUDE}/Metal/MetalBuffer.hpp
 		${SOURCE}/Metal/MetalBuffer.mm
 		${INCLUDE}/Metal/MetalComputeCommandBuffer.hpp
@@ -120,6 +123,8 @@ set(
 		${SOURCE}/Metal/MetalFence.mm
 		${INCLUDE}/Metal/MetalFramebuffer.hpp
 		${SOURCE}/Metal/MetalFramebuffer.mm
+		${INCLUDE}/Metal/MetalGha.hpp
+		${SOURCE}/Metal/MetalGha.mm
 		${INCLUDE}/Metal/MetalGlobals.hpp
 		${INCLUDE}/Metal/MetalGraphicsCommandBuffer.hpp
 		${INCLUDE}/Metal/MetalGraphicsCommandBuffer.inl
@@ -169,6 +174,8 @@ set(
 		${INCLUDE}/Validation/ValidationCommandBuffer.hpp
 		${INCLUDE}/Validation/ValidationCommandBuffer.inl
 		${SOURCE}/Validation/ValidationCommandBuffer.cpp
+		${INCLUDE}/Validation/ValidationDescriptorPool.hpp
+		${INCLUDE}/Validation/ValidationDescriptorPool.inl
 		${INCLUDE}/Validation/ValidationLog.hpp
 		${INCLUDE}/Validation/ValidationQueue.hpp
 		${INCLUDE}/Validation/ValidationQueue.inl
@@ -179,6 +186,8 @@ add_library(
 	CloveGraphics STATIC
 		${INCLUDE}/CommandBuffer.hpp
 		${INCLUDE}/Descriptor.hpp
+		${INCLUDE}/Gha.hpp		
+		${SOURCE}/Gha.cpp
 		${INCLUDE}/GhaBuffer.hpp
 		${INCLUDE}/GhaComputeCommandBuffer.hpp
 		${INCLUDE}/GhaComputePipelineObject.hpp
@@ -203,8 +212,6 @@ add_library(
 		${INCLUDE}/GhaSwapchain.hpp
 		${INCLUDE}/GhaTransferCommandBuffer.hpp
 		${INCLUDE}/GhaTransferQueue.hpp
-		${INCLUDE}/Graphics.hpp		
-		${SOURCE}/Graphics.cpp
 		${INCLUDE}/GraphicsAPI.hpp
 		${INCLUDE}/Helpers.hpp
 		${INCLUDE}/Helpers.inl

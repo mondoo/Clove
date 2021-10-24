@@ -12,10 +12,10 @@ namespace clove {
     GraphicsImageRenderTarget::GraphicsImageRenderTarget(GhaImage::Descriptor imageDescriptor, GhaFactory *factory)
         : imageDescriptor{ imageDescriptor }
         , factory{ factory } {
-        transferQueue         = *this->factory->createTransferQueue(CommandQueueDescriptor{ .flags = QueueFlags::ReuseBuffers });
+        transferQueue         = this->factory->createTransferQueue(CommandQueueDescriptor{ .flags = QueueFlags::ReuseBuffers }).getValue();
         transferCommandBuffer = transferQueue->allocateCommandBuffer();
 
-        frameInFlight = *this->factory->createFence({ true });
+        frameInFlight = this->factory->createFence({ true }).getValue();
 
         createImages();
     }
@@ -94,16 +94,17 @@ namespace clove {
 
         onPropertiesChangedBegin.broadcast();
 
-        renderTargetImage = *factory->createImage(imageDescriptor);
+        renderTargetImage = factory->createImage(imageDescriptor).getValue();
 
         size_t constexpr bytesPerPixel{ 4 };//Assuming image format is 4 bbp
         size_t const bufferSize{ imageDescriptor.dimensions.x * imageDescriptor.dimensions.y * bytesPerPixel };
-        renderTargetBuffer = *factory->createBuffer(GhaBuffer::Descriptor{
-            .size        = bufferSize,
-            .usageFlags  = GhaBuffer::UsageMode::TransferDestination,
-            .sharingMode = SharingMode::Exclusive,
-            .memoryType  = MemoryType::SystemMemory,
-        });
+        renderTargetBuffer = factory->createBuffer(GhaBuffer::Descriptor{
+                                                       .size        = bufferSize,
+                                                       .usageFlags  = GhaBuffer::UsageMode::TransferDestination,
+                                                       .sharingMode = SharingMode::Exclusive,
+                                                       .memoryType  = MemoryType::SystemMemory,
+                                                   })
+                                 .getValue();
 
         //Pre-record the transfer command
         ImageMemoryBarrierInfo constexpr layoutTransferInfo{
@@ -117,7 +118,7 @@ namespace clove {
 
         transferCommandBuffer->beginRecording(CommandBufferUsage::Default);
         transferCommandBuffer->imageMemoryBarrier(*renderTargetImage, layoutTransferInfo, PipelineStage::Top, PipelineStage::Transfer);
-        transferCommandBuffer->copyImageToBuffer(*renderTargetImage, { 0, 0, 0 }, { imageDescriptor.dimensions, 1 }, *renderTargetBuffer, 0);
+        transferCommandBuffer->copyImageToBuffer(*renderTargetImage, { 0, 0, 0 }, { imageDescriptor.dimensions, 1 }, 0, 1, *renderTargetBuffer, 0);
         transferCommandBuffer->endRecording();
 
         onPropertiesChangedEnd.broadcast();
