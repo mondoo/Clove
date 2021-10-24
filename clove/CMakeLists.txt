@@ -232,6 +232,7 @@ target_link_libraries(
 		CloveStateMachine
 		 
 		#Utilities
+		CloveBlackboard
 		CloveCast 
 		CloveDefinitions 
 		CloveDelegate 

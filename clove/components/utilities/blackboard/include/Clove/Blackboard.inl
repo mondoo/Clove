@@ -1,7 +1,6 @@
-#include <Clove/Definitions.hpp>
 #include <Clove/Log/Log.hpp>
 
-CLOVE_DECLARE_LOG_CATEGORY(CloveAi)
+CLOVE_DECLARE_LOG_CATEGORY(CloveBlackboard)
 
 namespace clove {
     template<typename DataType>
@@ -9,7 +8,7 @@ namespace clove {
         if(dataMap.find(key) == dataMap.end()) {
             void *block = memoryBlock.alloc<DataType>();
             if(block == nullptr) {
-                CLOVE_LOG(CloveAi, LogLevel::Error, "{0}: Could not allocate space for new item", CLOVE_FUNCTION_NAME);
+                CLOVE_LOG(CloveBlackboard, LogLevel::Error, "{0}: Could not allocate space for new item", CLOVE_FUNCTION_NAME);
                 return;
             }
 

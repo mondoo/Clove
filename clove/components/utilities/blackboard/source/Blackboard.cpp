@@ -1,4 +1,4 @@
-#include "Clove/AI/BlackBoard.hpp"
+#include "Clove/BlackBoard.hpp"
 
 namespace {
     size_t constexpr defaultMemorySize{ 1024 };

@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Clove/AI/BlackBoard.hpp"
 #include "Clove/AI/Task.hpp"
 
-#include <memory>
+#include <Clove/BlackBoard.hpp>
 #include <Clove/DeltaTime.hpp>
+#include <memory>
 
 namespace clove {
     class BehaviourTree {
