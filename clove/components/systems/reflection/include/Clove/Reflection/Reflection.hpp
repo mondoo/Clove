@@ -1,11 +1,36 @@
 #pragma once
 
+#include <Clove/Blackboard.hpp>
 #include <optional>
 #include <string>
 #include <tuple>
+#include <typeinfo>
 #include <vector>
 
 namespace clove::reflection {
+    class AttributeContainer {
+        //VARIABLES
+    private:
+        BlackBoard attributes{};
+
+        //FUNCTIONS
+    public:
+        template<typename AttributeType>
+        void add(AttributeType &&attribute) {
+            attributes.setValue(typeid(AttributeType).hash_code(), std::forward<AttributeType>(attribute));
+        }
+
+        template<typename AttributeType>
+        bool contains() const {
+            return attributes.hasValue(typeid(AttributeType).hash_code());
+        }
+
+        template<typename AttributeType>
+        std::optional<AttributeType> get() const {
+            return attributes.getValue<AttributeType>(typeid(AttributeType).hash_code());
+        }
+    };
+
     struct MemberInfo {
         std::string name;
         size_t offset;
@@ -15,6 +40,7 @@ namespace clove::reflection {
     struct TypeInfo {
         std::string name;
         std::vector<MemberInfo> members;
+        AttributeContainer attributes{};
     };
 
     namespace internal {
@@ -54,17 +80,23 @@ namespace clove::reflection {
 
     template<typename Type>
     TypeInfo getTypeInfo() {
+        //TODO: Use registry to remain consistent
         return internal::TypeInfo<Type>::getTypeInfo();
     }
 
-    std::optional<TypeInfo> getTypeInfo(std::string_view typeName) {
+    TypeInfo const *getTypeInfo(std::string_view typeName);
+
+    template<typename AttributeType>
+    std::vector<TypeInfo const *> getTypesWithAttribute(){
+        std::vector<TypeInfo const *> typeInfos{};
+       
         for(auto &typeInfo : internal::Registry::get().getRegisteredTypes()) {
-            if(typeInfo.name == typeName) {
-                return typeInfo;
+            if(typeInfo.attributes.contains<AttributeType>()) {
+                typeInfos.push_back(&typeInfo);
             }
         }
 
-        return {};
+        return typeInfos;
     }
 }
 
@@ -102,6 +134,7 @@ namespace clove::reflection {
         clove::reflection::TypeInfo info{};                                 \
         info.name = name;                                                   \
         populateMemberArray<0>(info.members);                               \
+        populateAttributes<0>(info.attributes);                             \
                                                                             \
         return info;                                                        \
     };                                                                      \
@@ -117,6 +150,15 @@ private:                                                                    \
             memberArray.push_back(std::move(info));                         \
                                                                             \
             populateMemberArray<index + 1>(memberArray);                    \
+        }                                                                   \
+    }                                                                       \
+                                                                            \
+    template<size_t index>                                                  \
+    static void populateAttributes(AttributeContainer &container) {         \
+        if constexpr(index < std::tuple_size_v<decltype(attributes)>) {     \
+            container.add(std::get<index>(attributes));                     \
+                                                                            \
+            populateAttributes<index + 1>(container);                       \
         }                                                                   \
     }                                                                       \
     }                                                                       \

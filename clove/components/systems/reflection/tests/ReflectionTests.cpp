@@ -63,21 +63,39 @@ TEST(ReflectionTests, CanGetTypeInfoByType) {
 }
 
 TEST(ReflectionTests, CanGetTypeInfoByName){
-    std::optional<reflection::TypeInfo> const publicClassInfo{ reflection::getTypeInfo("PublicReflectClass") };
-    std::optional<reflection::TypeInfo> const privateClassInfo{ reflection::getTypeInfo("PrivateReflectClass") };
-    std::optional<reflection::TypeInfo> const notReflectedClassInfo{ reflection::getTypeInfo("NotReflectedClass") };
+    reflection::TypeInfo const *publicClassInfo{ reflection::getTypeInfo("PublicReflectClass") };
+    reflection::TypeInfo const *privateClassInfo{ reflection::getTypeInfo("PrivateReflectClass") };
+    reflection::TypeInfo const *notReflectedClassInfo{ reflection::getTypeInfo("NotReflectedClass") };
 
-    EXPECT_TRUE(publicClassInfo.has_value());
-    EXPECT_TRUE(privateClassInfo.has_value());
-    EXPECT_FALSE(notReflectedClassInfo.has_value());
+    EXPECT_NE(publicClassInfo, nullptr);
+    EXPECT_NE(privateClassInfo, nullptr);
+    EXPECT_EQ(notReflectedClassInfo, nullptr);
 }
 
 TEST(ReflectionTests, CanGetTypeAttributes) {
-    //TODO
+    reflection::TypeInfo const publicClassInfo{ reflection::getTypeInfo<PublicReflectClass>() };
+    reflection::TypeInfo const privateClassInfo{ reflection::getTypeInfo<PrivateReflectClass>() };
+
+    std::optional<TestAttribute> publicClassAttribute{ publicClassInfo.attributes.get<TestAttribute>() };
+    std::optional<TestAttribute> privateClassAttribute{ privateClassInfo.attributes.get<TestAttribute>() };
+
+    EXPECT_TRUE(publicClassAttribute.has_value());
+    EXPECT_FALSE(privateClassAttribute.has_value());
 }
 
 TEST(ReflectionTests, CanGetValueOfTypeAttributes) {
-    //TODO
+    reflection::TypeInfo const publicClassInfo{ reflection::getTypeInfo<PublicReflectClass>() };
+    std::optional<TestAttribute> publicClassAttribute{ publicClassInfo.attributes.get<TestAttribute>() };
+
+    ASSERT_TRUE(publicClassAttribute.has_value());
+    EXPECT_EQ(publicClassAttribute->text, "class");
+}
+
+TEST(ReflectionTests, CanGetAllTypesWithAttribute){
+    std::vector<reflection::TypeInfo const *> typeInfos{ reflection::getTypesWithAttribute<TestAttribute>() };
+
+    ASSERT_EQ(typeInfos.size(), 1);
+    EXPECT_EQ(typeInfos[0]->name, "PublicReflectClass");
 }
 
 TEST(ReflectionTests, CanGetNumTypePublicMembers) {
