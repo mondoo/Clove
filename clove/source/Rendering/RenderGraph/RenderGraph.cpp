@@ -677,6 +677,8 @@ namespace clove {
                 .depthAttachment   = std::move(depthStencilAttachment.value_or(AttachmentDescriptor{})),
             });
 
+            CLOVE_ASSERT_MSG(!passSubmissions.empty(), "Cannot build a pass with 0 submissions!");
+
             //Build descriptor layouts using the first pass.
             //TODO: Get this infomation from shader reflection
             std::vector<DescriptorSetBindingInfo> descriptorBindings{};
