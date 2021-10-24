@@ -31,6 +31,7 @@ namespace clove {
 
         template<typename DataType>
         void setValue(Key key, DataType value);
+        bool hasValue(Key key) const;
         template<typename DataType>
         std::optional<DataType> getValue(Key key) const;
     };

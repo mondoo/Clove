@@ -26,4 +26,8 @@ namespace clove {
     }
 
     BlackBoard::~BlackBoard() = default;
+
+    bool BlackBoard::hasValue(Key key) const {
+        return dataMap.find(key) != dataMap.end();
+    }
 }
