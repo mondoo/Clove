@@ -792,7 +792,7 @@ namespace clove {
                     totalDescriptorBindingCount[DescriptorType::Sampler] += submission.shaderSamplers.size();
                 }
 
-                if(hasUbo || hasImageSampler) {
+                if(hasUbo || hasImage || hasImageSampler) {
                     ++totalDescriptorSets;//Allocating a single set per submission
                 }
             }
