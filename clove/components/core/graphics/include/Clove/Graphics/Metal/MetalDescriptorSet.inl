@@ -1,13 +1,13 @@
 namespace clove {
 	id<MTLBuffer> MetalDescriptorSet::getVertexBuffer() const {
-		return vertexEncoderBuffer;
+		return vertexEncoder.backingBuffer;
 	}
 	
 	id<MTLBuffer> MetalDescriptorSet::getPixelBuffer() const {
-		return pixelEncoderBuffer;
+		return pixelEncoder.backingBuffer;
 	}
 	
 	id<MTLBuffer> MetalDescriptorSet::getComputeBuffer() const {
-		return computeEncoderBuffer;
+		return computeEncoder.backingBuffer;
 	}
 }

@@ -129,7 +129,7 @@ namespace clove {
     void MetalGraphicsCommandBuffer::bindDescriptorSet(GhaDescriptorSet &descriptorSet, uint32_t const setNum) {
         currentPass->commands.emplace_back([descriptorSet = &descriptorSet, setNum](id<MTLRenderCommandEncoder> encoder){
             auto const *const metalDescriptorSet{ polyCast<MetalDescriptorSet>(descriptorSet) };
-            if(metalDescriptorSet == nullptr){
+            if(metalDescriptorSet == nullptr) {
                 CLOVE_LOG(CloveGhaMetal, LogLevel::Error, "{0}: DescriptorSet is nullptr", CLOVE_FUNCTION_NAME);
                 return;
             }
@@ -159,15 +159,15 @@ namespace clove {
         public:
             Functor() = delete;
             Functor(GhaShader::Stage stage, size_t size, void const *data)
-            : stage{ stage }
-            , size{ size }
-            , data{ reinterpret_cast<std::byte*>(malloc(size)) } {
+                : stage{ stage }
+                , size{ size }
+                , data{ reinterpret_cast<std::byte*>(malloc(size)) } {
                 memcpy(this->data.get(), data, size);
             }
             
             Functor(Functor const &other)
-            : stage{ other.stage }
-            , size{ other.size } {
+                : stage{ other.stage }
+                , size{ other.size } {
                 data = std::unique_ptr<std::byte>{ reinterpret_cast<std::byte*>(malloc(size)) };
                 memcpy(data.get(), other.data.get(), size);
             }

@@ -260,20 +260,22 @@ namespace clove {
         NSMutableArray<MTLArgumentDescriptor *> *pixelDescriptors{ [[NSMutableArray<MTLArgumentDescriptor *> alloc] init] };
         NSMutableArray<MTLArgumentDescriptor *> *computeDescriptors{ [[NSMutableArray<MTLArgumentDescriptor *> alloc] init]  };
         
+        auto const getDataType = [](DescriptorType descriptorType) {
+            switch(descriptorType) {
+                case DescriptorType::SampledImage:
+                    return MTLDataTypeTexture;
+                case DescriptorType::Sampler:
+                    return MTLDataTypeSampler;
+                default:
+                    return MTLDataTypePointer;
+            }
+        };
+        
         for(auto const &binding : descriptor.bindings) {
             MTLArgumentDescriptor *bindingDescriptor{ [[MTLArgumentDescriptor alloc] init] };
+            
             [bindingDescriptor setIndex:binding.binding];
-            switch(binding.type) {
-                case DescriptorType::SampledImage:
-                    [bindingDescriptor setDataType:MTLDataTypeTexture];
-                    break;
-                case DescriptorType::Sampler:
-                    [bindingDescriptor setDataType:MTLDataTypeSampler];
-                    break;
-                default:
-                    [bindingDescriptor setDataType:MTLDataTypePointer];
-                    break;
-            }
+            [bindingDescriptor setDataType:getDataType(binding.type)];
             [bindingDescriptor setArrayLength:binding.arraySize];
             
             if((binding.stage & GhaShader::Stage::Vertex) != 0){

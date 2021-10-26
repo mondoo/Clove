@@ -8,13 +8,10 @@
 #include <Clove/Cast.hpp>
 
 namespace clove {
-    MetalDescriptorSet::MetalDescriptorSet(id<MTLArgumentEncoder> vertexEncoder, id<MTLBuffer> vertexEncoderBuffer, id<MTLArgumentEncoder> pixelEncoder, id<MTLBuffer> pixelEncoderBuffer, id<MTLArgumentEncoder> computeEncoder, id<MTLBuffer> computeEncoderBuffer, GhaDescriptorSetLayout const *layout)
-        : vertexEncoder{ vertexEncoder }
-        , vertexEncoderBuffer{ vertexEncoderBuffer }
-        , pixelEncoder{ pixelEncoder }
-        , pixelEncoderBuffer{ pixelEncoderBuffer }
-        , computeEncoder{ computeEncoder }
-        , computeEncoderBuffer{ computeEncoderBuffer }
+    MetalDescriptorSet::MetalDescriptorSet(ArgumentEncoder vertexEncoder, ArgumentEncoder pixelEncoder, ArgumentEncoder computeEncoder, GhaDescriptorSetLayout const *layout)
+        : vertexEncoder{ std::move(vertexEncoder) }
+        , pixelEncoder{ std::move(pixelEncoder) }
+        , computeEncoder{ std::move(computeEncoder) }
         , layout{ layout } {
     }
     
@@ -28,31 +25,31 @@ namespace clove {
         GhaShader::Stage const shaderStage{ getStageFromBindingSlot(bindingSlot) };
         id<MTLBuffer> mtlBuffer{ polyCast<MetalBuffer const>(&buffer)->getBuffer() };
         
-        if((shaderStage & GhaShader::Stage::Vertex) != 0){
-            [vertexEncoder setBuffer:mtlBuffer
-                              offset:offset
-                             atIndex:bindingSlot];
+        if((shaderStage & GhaShader::Stage::Vertex) != 0) {
+            [vertexEncoder.encoder setBuffer:mtlBuffer
+                                      offset:offset
+                                     atIndex:bindingSlot];
         }
-        if((shaderStage & GhaShader::Stage::Pixel) != 0){
-            [pixelEncoder setBuffer:mtlBuffer
-                             offset:offset
-                            atIndex:bindingSlot];
+        if((shaderStage & GhaShader::Stage::Pixel) != 0) {
+            [pixelEncoder.encoder setBuffer:mtlBuffer
+                                     offset:offset
+                                    atIndex:bindingSlot];
         }
-        if((shaderStage & GhaShader::Stage::Compute) != 0){
-            [computeEncoder setBuffer:mtlBuffer
-                               offset:offset
-                              atIndex:bindingSlot];
+        if((shaderStage & GhaShader::Stage::Compute) != 0) {
+            [computeEncoder.encoder setBuffer:mtlBuffer
+                                       offset:offset
+                                      atIndex:bindingSlot];
         }
     }
     
     void MetalDescriptorSet::map(GhaImageView const &imageView, GhaImage::Layout const layout, uint32_t const bindingSlot) {
-        [pixelEncoder setTexture:polyCast<MetalImageView const>(&imageView)->getTexture()
-                         atIndex:bindingSlot];
+        [pixelEncoder.encoder setTexture:polyCast<MetalImageView const>(&imageView)->getTexture()
+                                 atIndex:bindingSlot];
     }
     
     void MetalDescriptorSet::map(GhaSampler const &sampler, uint32_t const bindingSlot) {
-        [pixelEncoder setSamplerState:polyCast<MetalSampler const>(&sampler)->getSamplerState()
-                              atIndex:bindingSlot];
+        [pixelEncoder.encoder setSamplerState:polyCast<MetalSampler const>(&sampler)->getSamplerState()
+                                      atIndex:bindingSlot];
     }
     
     GhaShader::Stage MetalDescriptorSet::getStageFromBindingSlot(uint32_t const bindingSlot) {

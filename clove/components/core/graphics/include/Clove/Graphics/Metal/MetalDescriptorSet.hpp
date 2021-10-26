@@ -13,22 +13,25 @@ namespace clove {
 
 namespace clove {
 	class MetalDescriptorSet : public GhaDescriptorSet {
+        //TYPES
+    public:
+        struct ArgumentEncoder {
+            id<MTLArgumentEncoder> encoder{ nullptr };  /**< Encoder object to write commands into. */
+            id<MTLBuffer> backingBuffer{ nullptr };     /**< The buffer backing the encoder object. Where data gets written into. */
+        };
+        
 		//VARIABLES
 	private:
-		id<MTLArgumentEncoder> vertexEncoder{ nullptr };
-		id<MTLArgumentEncoder> pixelEncoder{ nullptr };
-		id<MTLArgumentEncoder> computeEncoder{ nullptr };
-		
-		id<MTLBuffer> vertexEncoderBuffer{ nullptr }; /**< The buffer backing the vertex encoder. */
-		id<MTLBuffer> pixelEncoderBuffer{ nullptr }; /**< The buffer backing the pixel encoder. */
-		id<MTLBuffer> computeEncoderBuffer{ nullptr }; /**< The buffer backing the compute encoder */
-		
+        ArgumentEncoder vertexEncoder{};
+        ArgumentEncoder pixelEncoder{};
+        ArgumentEncoder computeEncoder{};
+
 		GhaDescriptorSetLayout const *layout{ nullptr };
 		
 		//FUNCTIONS
 	public:
 		MetalDescriptorSet() = delete;
-		MetalDescriptorSet(id<MTLArgumentEncoder> vertexEncoder, id<MTLBuffer> vertexEncoderBuffer, id<MTLArgumentEncoder> pixelEncoder, id<MTLBuffer> pixelEncoderBuffer, id<MTLArgumentEncoder> computeEncoder, id<MTLBuffer> computeEncoderBuffer, GhaDescriptorSetLayout const *layout);
+		MetalDescriptorSet(ArgumentEncoder vertexEncoder, ArgumentEncoder pixelEncoder, ArgumentEncoder computeEncoder, GhaDescriptorSetLayout const *layout);
 		
 		MetalDescriptorSet(MetalDescriptorSet const &other) = delete;
 		MetalDescriptorSet(MetalDescriptorSet &&other) noexcept;
