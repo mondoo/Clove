@@ -1,5 +1,6 @@
 #include "Clove/Graphics/Metal/MetalDescriptorPool.hpp"
 
+#include "Clove/Graphics/Helpers.hpp"
 #include "Clove/Graphics/Metal/MetalDescriptorSet.hpp"
 #include "Clove/Graphics/Metal/MetalDescriptorSetLayout.hpp"
 #include "Clove/Graphics/Metal/MetalLog.hpp"
@@ -107,7 +108,7 @@ namespace clove {
                     [computeEncoder.encoder setArgumentBuffer:computeEncoder.backingBuffer offset:0];
                 }
                 
-                descriptorSets.emplace_back(std::make_unique<MetalDescriptorSet>(std::move(vertexEncoder), std::move(pixelEncoder), std::move(computeEncoder), layouts[i]));
+                descriptorSets.emplace_back(createGhaObject<MetalDescriptorSet>(std::move(vertexEncoder), std::move(pixelEncoder), std::move(computeEncoder), layouts[i]));
             }
             
             return descriptorSets;

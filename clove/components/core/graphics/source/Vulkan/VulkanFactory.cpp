@@ -463,10 +463,10 @@ namespace clove {
 
         vulkanImages.resize(images.size());
         for(size_t i{ 0 }; i < images.size(); ++i) {
-            vulkanImages[i] = std::make_unique<VulkanImage>(devicePtr, images[i], imageDescriptor);
+            vulkanImages[i] = createGhaObject<VulkanImage>(devicePtr, images[i], imageDescriptor);
         }
 
-        return std::unique_ptr<GhaSwapchain>{ std::make_unique<VulkanSwapchain>(devicePtr, swapchain, surfaceFormat.format, swapchainExtent, std::move(vulkanImages)) };
+        return std::unique_ptr<GhaSwapchain>{ createGhaObject<VulkanSwapchain>(devicePtr, swapchain, surfaceFormat.format, swapchainExtent, std::move(vulkanImages)) };
     }
 
     Expected<std::unique_ptr<GhaShader>, std::runtime_error> VulkanFactory::createShaderFromFile(std::filesystem::path const &file, GhaShader::Stage shaderStage) noexcept {
@@ -577,7 +577,7 @@ namespace clove {
             }
         }
 
-        return std::unique_ptr<GhaRenderPass>{ std::make_unique<VulkanRenderPass>(std::move(descriptor), devicePtr, renderPass) };
+        return std::unique_ptr<GhaRenderPass>{ createGhaObject<VulkanRenderPass>(std::move(descriptor), devicePtr, renderPass) };
     }
 
     Expected<std::unique_ptr<GhaDescriptorSetLayout>, std::runtime_error> VulkanFactory::createDescriptorSetLayout(GhaDescriptorSetLayout::Descriptor descriptor) noexcept {
@@ -839,7 +839,7 @@ namespace clove {
             }
         }
 
-        return std::unique_ptr<GhaGraphicsPipelineObject>{ std::make_unique<VulkanGraphicsPipelineObject>(std::move(descriptor), devicePtr, pipeline, pipelineLayout) };
+        return std::unique_ptr<GhaGraphicsPipelineObject>{ createGhaObject<VulkanGraphicsPipelineObject>(std::move(descriptor), devicePtr, pipeline, pipelineLayout) };
     }
 
     Expected<std::unique_ptr<GhaComputePipelineObject>, std::runtime_error> VulkanFactory::createComputePipelineObject(GhaComputePipelineObject::Descriptor descriptor) noexcept {
@@ -910,7 +910,7 @@ namespace clove {
             }
         }
 
-        return std::unique_ptr<GhaComputePipelineObject>{ std::make_unique<VulkanComputePipelineObject>(std::move(descriptor), devicePtr, pipeline, pipelineLayout) };
+        return std::unique_ptr<GhaComputePipelineObject>{ createGhaObject<VulkanComputePipelineObject>(std::move(descriptor), devicePtr, pipeline, pipelineLayout) };
     }
 
     Expected<std::unique_ptr<GhaFramebuffer>, std::runtime_error> VulkanFactory::createFramebuffer(GhaFramebuffer::Descriptor descriptor) noexcept {
@@ -1121,7 +1121,7 @@ namespace clove {
             return Unexpected{ result.getError() };
         }
 
-        return std::unique_ptr<GhaImageView>{ std::make_unique<VulkanImageView>(imageDescriptor.format, imageDescriptor.dimensions, devicePtr.get(), result.getValue()) };
+        return std::unique_ptr<GhaImageView>{ createGhaObject<VulkanImageView>(imageDescriptor.format, imageDescriptor.dimensions, devicePtr.get(), result.getValue()) };
     }
 
     Expected<std::unique_ptr<GhaSampler>, std::runtime_error> VulkanFactory::createSampler(GhaSampler::Descriptor descriptor) noexcept {

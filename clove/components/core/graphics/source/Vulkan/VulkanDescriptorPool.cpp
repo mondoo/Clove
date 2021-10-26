@@ -1,5 +1,6 @@
 #include "Clove/Graphics/Vulkan/VulkanDescriptorPool.hpp"
 
+#include "Clove/Graphics/Helpers.hpp"
 #include "Clove/Graphics/Vulkan/VulkanDescriptorSet.hpp"
 #include "Clove/Graphics/Vulkan/VulkanDescriptorSetLayout.hpp"
 #include "Clove/Graphics/Vulkan/VulkanLog.hpp"
@@ -50,7 +51,7 @@ namespace clove {
 
         std::vector<std::unique_ptr<GhaDescriptorSet>> descriptorSets(numSets);
         for(size_t i = 0; i < numSets; ++i) {
-            descriptorSets[i] = std::make_unique<VulkanDescriptorSet>(device.get(), vulkanSets[i]);
+            descriptorSets[i] = createGhaObject<VulkanDescriptorSet>(device.get(), vulkanSets[i]);
         }
 
         return descriptorSets;

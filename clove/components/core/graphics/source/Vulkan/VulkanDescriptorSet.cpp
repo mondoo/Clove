@@ -21,7 +21,7 @@ namespace clove {
     VulkanDescriptorSet::~VulkanDescriptorSet() = default;
 
     void VulkanDescriptorSet::map(GhaBuffer const &buffer, size_t const offset, size_t const range, DescriptorType const descriptorType, uint32_t const bindingSlot) {
-        auto const *vkBuffer = polyCast<VulkanBuffer const>(&buffer);
+        auto const *vkBuffer{ polyCast<VulkanBuffer const>(&buffer) };
 
         VkDescriptorBufferInfo bufferInfo{
             .buffer = vkBuffer->getBuffer(),
