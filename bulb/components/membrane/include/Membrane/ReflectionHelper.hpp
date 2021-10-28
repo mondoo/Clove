@@ -6,7 +6,8 @@ public
     ref class TypeInfo {
         //VARIABLES
     public:
-        System::String ^ name {};
+        System::String ^ typeName {};
+        System::String ^ displayName {};
     };
 
     /**

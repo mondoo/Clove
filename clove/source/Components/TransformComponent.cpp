@@ -1,9 +1,12 @@
 #include "Clove/Components/TransformComponent.hpp"
 
+#include "Clove/ReflectionAttributes.hpp"
+
 #include <Clove/Definitions.hpp>
 #include <Clove/Log/Log.hpp>
 #include <Clove/Maths/Maths.hpp>
 #include <Clove/Maths/MathsHelpers.hpp>
+#include <Clove/Reflection/Reflection.hpp>
 
 namespace clove {
     vec3f TransformComponent::getWorldPosition() const {
@@ -32,3 +35,9 @@ namespace clove {
         return normalise(cross(getLeft(), getForward()));
     }
 }
+
+CLOVE_REFLECT_BEGIN(clove::TransformComponent, clove::EditorVisible{ "Transform Component" })
+CLOVE_REFLECT_PROPERTY(position, clove::EditorVisible{})
+CLOVE_REFLECT_PROPERTY(rotation, clove::EditorVisible{})
+CLOVE_REFLECT_PROPERTY(scale, clove::EditorVisible{})
+CLOVE_REFLECT_END(clove::TransformComponent)

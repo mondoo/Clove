@@ -99,10 +99,7 @@ namespace Bulb {
             var types = Membrane.ReflectionHelper.getAvailableTypes();
 
             foreach (var type in types) {
-                ComponentMenuItems.Add(new ComponentMenuItemViewModel(
-                    type.name,
-                    new RelayCommand(() => Membrane.Log.write(Membrane.LogLevel.Debug, "Click!"))
-                ));
+                ComponentMenuItems.Add(new ComponentMenuItemViewModel(type.displayName, new RelayCommand(() => { /*TODO*/ })));
             }
         }
 

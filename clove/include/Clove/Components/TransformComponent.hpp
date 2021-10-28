@@ -1,9 +1,6 @@
 #pragma once
 
-#include "Clove/ReflectionAttributes.hpp"
-
 #include <Clove/Maths/MathsTypes.hpp>
-#include <Clove/Reflection/Reflection.hpp>
 
 namespace clove {
     /**
@@ -43,9 +40,3 @@ namespace clove {
         vec3f getUp() const;
     };
 }
-
-CLOVE_REFLECT_BEGIN(clove::TransformComponent, clove::EditorVisible{ "Transform Component" })
-CLOVE_REFLECT_PROPERTY(position, clove::EditorVisible{})
-CLOVE_REFLECT_PROPERTY(rotation, clove::EditorVisible{})
-CLOVE_REFLECT_PROPERTY(scale, clove::EditorVisible{})
-CLOVE_REFLECT_END
