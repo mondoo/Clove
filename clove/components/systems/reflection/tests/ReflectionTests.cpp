@@ -136,9 +136,16 @@ TEST(ReflectionTests, CanGetBasicMemberInfo) {
 }
 
 TEST(ReflectionTests, CanGetMemberAttributes) {
-    //TODO
+    auto members{ reflection::getTypeInfo<PublicReflectClass>().members };
+
+    EXPECT_TRUE(members[0].attributes.contains<TestAttribute>());
+    EXPECT_FALSE(members[1].attributes.contains<TestAttribute>());
 }
 
 TEST(ReflectionTests, CanGetValueOfMemberAttributes) {
-    //TODO
+    auto members{ reflection::getTypeInfo<PublicReflectClass>().members };
+    std::optional<TestAttribute> attribute{ members[0].attributes.get<TestAttribute>() };
+
+    ASSERT_TRUE(attribute.has_value());
+    EXPECT_EQ(attribute->text, "member");
 }
