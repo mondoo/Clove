@@ -101,6 +101,13 @@ namespace clove::reflection {
     }
 }
 
+#define CLOVE_REFLECT_CAT2(a, b) a##b
+
+/**
+ * @brief Concatenates to variables together
+ */
+#define CLOVE_REFLECT_CAT(a, b) CLOVE_REFLECT_CAT2(a, b)
+
 #define CLOVE_REFLECT_BEGIN(classType, ...)                                  \
     template<>                                                               \
     struct clove::reflection::internal::TypeInfo<classType> {                \
@@ -165,7 +172,7 @@ private:                                                                        
     }                                                                                                \
     }                                                                                                \
     ;                                                                                                \
-    static clove::reflection::internal::TypeInfo<classType> const creator__##classType{};
+    static clove::reflection::internal::TypeInfo<classType> const CLOVE_REFLECT_CAT(creator, __LINE__){};
 
 /**
  * @brief Allows reflection of private members within a class.

@@ -53,6 +53,19 @@ public:
     float y;
 };
 
+namespace test{
+    class NamespaceReflectedClass{
+        public:
+            int a;
+            int b;
+    };
+}
+
+CLOVE_REFLECT_BEGIN(test::NamespaceReflectedClass)
+CLOVE_REFLECT_PROPERTY(a)
+CLOVE_REFLECT_PROPERTY(b)
+CLOVE_REFLECT_END(test::NamespaceReflectedClass)
+
 TEST(ReflectionTests, CanGetTypeInfoByType) {
     reflection::TypeInfo const publicClassInfo{ reflection::getTypeInfo<PublicReflectClass>() };
     reflection::TypeInfo const privateClassInfo{ reflection::getTypeInfo<PrivateReflectClass>() };
