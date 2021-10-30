@@ -8,6 +8,12 @@
 #include <Clove/Graphics/GhaShader.hpp>
 
 namespace clove {
+    struct RgImageView {
+        RgImageId image{};
+        uint32_t arrayIndex{ 0 };
+        uint32_t arrayCount{ 1 };
+    };
+
     struct RgBufferBinding {
         uint32_t slot{};
         RgBufferId buffer{};
@@ -19,9 +25,7 @@ namespace clove {
 
     struct RgImageBinding {
         uint32_t slot{};
-        RgImageId image{};
-        uint32_t arrayIndex{ 0 };
-        uint32_t arrayCount{ 1 };
+        RgImageView imageView{};
     };
 
     struct RgSamplerBinding {
@@ -33,17 +37,13 @@ namespace clove {
         LoadOperation loadOp{};
         StoreOperation storeOp{};
         ClearValue clearValue{};
-        RgImageId target{};
-        uint32_t targetArrayIndex{ 0 };
-        uint32_t targetArrayCount{ 1 };
+        RgImageView imageView{};
     };
 
     struct RgDepthStencilBinding {
         LoadOperation loadOp{};
         StoreOperation storeOp{};
         DepthStencilValue clearValue{};
-        RgImageId target{};
-        uint32_t targetArrayIndex{ 0 };
-        uint32_t targetArrayCount{ 1 };
+        RgImageView imageView{};
     };
 }

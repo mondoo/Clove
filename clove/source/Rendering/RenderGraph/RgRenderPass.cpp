@@ -23,7 +23,7 @@ namespace clove {
                 inputResources.emplace(ubo.buffer);
             }
             for(auto const &image : submission.shaderImages){
-                inputResources.emplace(image.image);
+                inputResources.emplace(image.imageView.image);
             }
         }
         return inputResources;
@@ -32,9 +32,10 @@ namespace clove {
     std::unordered_set<RgResourceId> RgRenderPass::getOutputResources() const {
         std::unordered_set<RgResourceId> outputResources{};
         for(auto const &renderTarget : descriptor.renderTargets){
-            outputResources.emplace(renderTarget.target);
+            outputResources.emplace(renderTarget.imageView.image);
         }
-        outputResources.emplace(descriptor.depthStencil.target);
+        if(descriptor.depthStencil.imageView.image != INVALID_RESOURCE_ID)
+            outputResources.emplace(descriptor.depthStencil.imageView.image);
         return outputResources;
     }
 }

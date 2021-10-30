@@ -78,7 +78,7 @@ namespace clove {
         RgPassId const renderPassId{ nextPassId++ };
 
         for(auto &renderTarget : passDescriptor.renderTargets) {
-            RgImageId const imageId{ renderTarget.target };
+            RgImageId const imageId{ renderTarget.imageView.image };
             auto &image{ images.at(imageId) };
 
             if(!image->isExternalImage()) {
@@ -87,7 +87,7 @@ namespace clove {
             image->addWritePass(renderPassId);
         }
 
-        if(RgImageId const imageId{ passDescriptor.depthStencil.target }; imageId != INVALID_RESOURCE_ID) {
+        if(RgImageId const imageId{ passDescriptor.depthStencil.imageView.image }; imageId != INVALID_RESOURCE_ID) {
             auto &image{ images.at(imageId) };
 
             if(!image->isExternalImage()) {
@@ -165,7 +165,7 @@ namespace clove {
         }
 
         for(auto &shaderImage : submission.shaderImages) {
-            RgImageId const imageId{ shaderImage.image };
+            RgImageId const imageId{ shaderImage.imageView.image };
             auto &image{ images.at(imageId) };
 
             if(!image->isExternalImage()) {
@@ -572,15 +572,15 @@ namespace clove {
             std::unique_ptr<RgRenderPass> const &renderPass{ renderPasses.at(passes[i]) };
             if(renderPass->getOutputResources().contains(imageId)) {
                 for(auto const &renderTarget : renderPass->getDescriptor().renderTargets) {
-                    if(renderTarget.target == imageId) {
+                    if(renderTarget.imageView.image == imageId) {
                         return GhaImage::Layout::ColourAttachmentOptimal;
                     }
                 }
-                if(renderPass->getDescriptor().depthStencil.target == imageId) {
+                if(renderPass->getDescriptor().depthStencil.imageView.image == imageId) {
                     return GhaImage::Layout::DepthStencilAttachmentOptimal;
                 }
 
-                CLOVE_ASSERT_MSG(false, "ImageId is not in any render target's output even though it's marked as an output resource");
+                CLOVE_ASSERT_MSG(false, "ImageId {0} is not in any render target's output even though it's marked as an output resource", imageId);
             }
         }
 
@@ -644,11 +644,13 @@ namespace clove {
             //Build and allocate the render pass
             std::vector<AttachmentDescriptor> colourAttachments{};
             for(auto &renderTarget : passDescriptor.renderTargets) {
-                GhaImage::Layout const initialLayout{ getPreviousLayout(renderTarget.target, passes, i) };
-                GhaImage::Layout const finalLayout{ getNextLayout(renderTarget.target, passes, i) };
+                RgImageView const &renderTargetView{ renderTarget.imageView };
+
+                GhaImage::Layout const initialLayout{ getPreviousLayout(renderTargetView.image, passes, i) };
+                GhaImage::Layout const finalLayout{ getNextLayout(renderTargetView.image, passes, i) };
 
                 colourAttachments.emplace_back(AttachmentDescriptor{
-                    .format         = images.at(renderTarget.target)->getFormat(),
+                    .format         = images.at(renderTargetView.image)->getFormat(),
                     .loadOperation  = renderTarget.loadOp,
                     .storeOperation = renderTarget.storeOp,
                     .initialLayout  = initialLayout,
@@ -658,15 +660,17 @@ namespace clove {
             }
 
             std::optional<AttachmentDescriptor> depthStencilAttachment{};
-            if(RgDepthStencilBinding const &depthStencil{ passDescriptor.depthStencil }; depthStencil.target != INVALID_RESOURCE_ID) {
-                GhaImage::Layout const initialLayout{ getPreviousLayout(depthStencil.target, passes, i) };
-                GhaImage::Layout const finalLayout{ getNextLayout(depthStencil.target, passes, i) };
+            if(RgDepthStencilBinding const &depthStencil{ passDescriptor.depthStencil }; depthStencil.imageView.image != INVALID_RESOURCE_ID) {
+                RgImageView const &depthStencilView{ depthStencil.imageView };
+
+                GhaImage::Layout const initialLayout{ getPreviousLayout(depthStencilView.image, passes, i) };
+                GhaImage::Layout const finalLayout{ getNextLayout(depthStencilView.image, passes, i) };
 
                 depthStencilAttachment = AttachmentDescriptor{
-                    .format         = images.at(depthStencil.target)->getFormat(),
+                    .format         = images.at(depthStencilView.image)->getFormat(),
                     .loadOperation  = depthStencil.loadOp,
                     .storeOperation = depthStencil.storeOp,
-                    .initialLayout  = getPreviousLayout(depthStencil.target, passes, i),
+                    .initialLayout  = getPreviousLayout(depthStencilView.image, passes, i),
                     .usedLayout     = GhaImage::Layout::DepthStencilAttachmentOptimal,
                     .finalLayout    = finalLayout != GhaImage::Layout::Undefined ? finalLayout : GhaImage::Layout::DepthStencilAttachmentOptimal,
                 };
@@ -755,17 +759,21 @@ namespace clove {
             std::optional<vec2ui> framebufferSize{};//Use the first valid attachment as the frame buffer size
             std::vector<GhaImageView const *> attachments{};
             for(auto &renderTarget : passDescriptor.renderTargets) {
-                attachments.push_back(images.at(renderTarget.target)->getGhaImageView(frameCache, renderTarget.targetArrayIndex, renderTarget.targetArrayCount));
+                RgImageView const &renderTargetView{ renderTarget.imageView };
+
+                attachments.push_back(images.at(renderTargetView.image)->getGhaImageView(frameCache, renderTargetView.arrayIndex, renderTargetView.arrayCount));
 
                 if(!framebufferSize.has_value()) {
-                    framebufferSize = images.at(renderTarget.target)->getDimensions();
+                    framebufferSize = images.at(renderTargetView.image)->getDimensions();
                 }
             }
-            if(passDescriptor.depthStencil.target != INVALID_RESOURCE_ID) {
-                attachments.push_back(images.at(passDescriptor.depthStencil.target)->getGhaImageView(frameCache, passDescriptor.depthStencil.targetArrayIndex, passDescriptor.depthStencil.targetArrayCount));
+            if(passDescriptor.depthStencil.imageView.image != INVALID_RESOURCE_ID) {
+                RgImageView const &depthStenculView{ passDescriptor.depthStencil.imageView };
+
+                attachments.push_back(images.at(depthStenculView.image)->getGhaImageView(frameCache, depthStenculView.arrayIndex, depthStenculView.arrayCount));
 
                 if(!framebufferSize.has_value()) {
-                    framebufferSize = images.at(passDescriptor.depthStencil.target)->getDimensions();
+                    framebufferSize = images.at(depthStenculView.image)->getDimensions();
                 }
             }
 
@@ -935,7 +943,7 @@ namespace clove {
                 descriptorSet->map(*buffer->getGhaBuffer(frameCache), buffer->getBufferOffset() + ubo.offset, ubo.size, DescriptorType::UniformBuffer, ubo.slot);
             }
             for(auto const &image : submission.shaderImages) {
-                descriptorSet->map(*images.at(image.image)->getGhaImageView(frameCache, image.arrayIndex, image.arrayCount), GhaImage::Layout::ShaderReadOnlyOptimal, image.slot);
+                descriptorSet->map(*images.at(image.imageView.image)->getGhaImageView(frameCache, image.imageView.arrayIndex, image.imageView.arrayCount), GhaImage::Layout::ShaderReadOnlyOptimal, image.slot);
             }
             for(auto const &sampler : submission.shaderSamplers) {
                 descriptorSet->map(*samplers.at(sampler.sampler), sampler.slot);

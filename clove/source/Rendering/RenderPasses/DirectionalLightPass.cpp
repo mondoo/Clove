@@ -33,12 +33,14 @@ namespace clove {
                 .pixelShader  = renderGraph.createShader({ meshshadowmap_p, meshshadowmap_pLength }, shaderIncludes, "Mesh (pixel)", GhaShader::Stage::Pixel),
                 .viewportSize = { shadowMapSize, shadowMapSize },
                 .depthStencil = {
-                    .loadOp           = LoadOperation::Clear,
-                    .storeOp          = StoreOperation::Store,
-                    .clearValue       = DepthStencilValue{ .depth = 1.0f },
-                    .target           = passData.directionalShadowMap,
-                    .targetArrayIndex = static_cast<uint32_t>(i),
-                    .targetArrayCount = 1,
+                    .loadOp     = LoadOperation::Clear,
+                    .storeOp    = StoreOperation::Store,
+                    .clearValue = DepthStencilValue{ .depth = 1.0f },
+                    .imageView  = {
+                        .image      = passData.directionalShadowMap,
+                        .arrayIndex = static_cast<uint32_t>(i),
+                        .arrayCount = 1,
+                    },
                 }
             };
             RgPassId directionalShadowPass{ renderGraph.createRenderPass(passDescriptor) };

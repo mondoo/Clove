@@ -36,14 +36,18 @@ namespace clove {
                     .loadOp     = LoadOperation::Clear,
                     .storeOp    = StoreOperation::Store,
                     .clearValue = ColourValue{ 0.0f, 0.0, 0.0f, 1.0f },
-                    .target     = passData.renderTarget,
+                    .imageView  = {
+                        .image = passData.renderTarget,
+                    },
                 },
             },
             .depthStencil = {
                 .loadOp     = LoadOperation::Clear,
                 .storeOp    = StoreOperation::DontCare,
                 .clearValue = DepthStencilValue{ .depth = 1.0f },
-                .target     = passData.depthTarget,
+                .imageView  = {
+                    .image = passData.depthTarget,
+                },
             },
         };
         RgPassId colourPass{ renderGraph.createRenderPass(passDescriptor) };
@@ -53,8 +57,8 @@ namespace clove {
                                                             .vertexBuffer = job.vertexBuffer,
                                                             .indexBuffer  = job.indexBuffer,
                                                             .shaderUbos   = {
-                                                            RgBufferBinding{
-                                                                .slot        = 0,
+                                                                RgBufferBinding{
+                                                                    .slot        = 0,
                                                                     .buffer      = job.modelBuffer,
                                                                     .offset      = 0,
                                                                     .size        = job.modelBufferSize,
@@ -105,28 +109,32 @@ namespace clove {
                                                             },
                                                             .shaderImages = {
                                                                 RgImageBinding{
-                                                                    .slot       = 4,
-                                                                    .image      = job.diffuseTexture,
-                                                                    .arrayIndex = 0,
-                                                                    .arrayCount = 1,
+                                                                    .slot      = 4,
+                                                                    .imageView = {
+                                                                        .image = job.diffuseTexture,
+                                                                    },
                                                                 },
                                                                 RgImageBinding{
-                                                                    .slot       = 5,
-                                                                    .image      = job.specularTexture,
-                                                                    .arrayIndex = 0,
-                                                                    .arrayCount = 1,
+                                                                    .slot      = 5,
+                                                                    .imageView = {
+                                                                        .image = job.specularTexture,
+                                                                    },
                                                                 },
                                                                 RgImageBinding{
-                                                                    .slot       = 7,
-                                                                    .image      = passData.directionalShadowMap,
-                                                                    .arrayIndex = 0,
-                                                                    .arrayCount = MAX_LIGHTS,
+                                                                    .slot      = 7,
+                                                                    .imageView = {
+                                                                        .image      = passData.directionalShadowMap,
+                                                                        .arrayIndex = 0,
+                                                                        .arrayCount = MAX_LIGHTS,
+                                                                    },
                                                                 },
                                                                 RgImageBinding{
-                                                                    .slot       = 8,
-                                                                    .image      = passData.pointShadowMap,
-                                                                    .arrayIndex = 0,
-                                                                    .arrayCount = MAX_LIGHTS * cubeMapLayerCount,
+                                                                    .slot      = 8,
+                                                                    .imageView = {
+                                                                        .image      = passData.pointShadowMap,
+                                                                        .arrayIndex = 0,
+                                                                        .arrayCount = MAX_LIGHTS * cubeMapLayerCount,
+                                                                    },
                                                                 },
                                                             },
                                                             .shaderSamplers = {
