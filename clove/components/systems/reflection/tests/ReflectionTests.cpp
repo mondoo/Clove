@@ -158,6 +158,17 @@ TEST(ReflectionTests, CanGetBasicMemberInfo) {
     EXPECT_EQ(publicClassMembers[1].offset, offsetof(PublicReflectClass, y));
     EXPECT_EQ(publicClassMembers[1].size, sizeof(PublicReflectClass::y));
 
+    PublicReflectClass pubClassInstance{};
+    pubClassInstance.x = 100;
+    pubClassInstance.y = 32.5f;
+
+    auto *const pubClassPtr{ reinterpret_cast<std::byte *>(&pubClassInstance) };
+    auto *const x{ reinterpret_cast<int *>(pubClassPtr + publicClassMembers[0].offset) };
+    auto *const y{ reinterpret_cast<float *>(pubClassPtr + publicClassMembers[1].offset) };
+
+    EXPECT_EQ(*x, pubClassInstance.x);
+    EXPECT_EQ(*y, pubClassInstance.y);
+
     std::vector<reflection::MemberInfo> const &privateClassMembers{ reflection::getTypeInfo<PrivateReflectClass>().members };
     PrivateReflectClass sizeHelper{};
 
