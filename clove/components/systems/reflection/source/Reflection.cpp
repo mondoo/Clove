@@ -8,6 +8,16 @@ namespace clove::reflection {
             }
         }
 
-        return {};
+        return nullptr;
+    }
+
+    TypeInfo const *getTypeInfo(TypeId typeId) {
+        for(auto &typeInfo : internal::Registry::get().getRegisteredTypes()) {
+            if(typeInfo.id == typeId) {
+                return &typeInfo;
+            }
+        }
+
+        return nullptr;
     }
 }

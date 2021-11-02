@@ -53,11 +53,11 @@ public:
     float y;
 };
 
-namespace test{
-    class NamespaceReflectedClass{
-        public:
-            int a;
-            int b;
+namespace test {
+    class NamespaceReflectedClass {
+    public:
+        int a;
+        int b;
     };
 }
 
@@ -75,7 +75,7 @@ TEST(ReflectionTests, CanGetTypeInfoByType) {
     EXPECT_TRUE(true);
 }
 
-TEST(ReflectionTests, CanGetTypeInfoByName){
+TEST(ReflectionTests, CanGetTypeInfoByName) {
     reflection::TypeInfo const *publicClassInfo{ reflection::getTypeInfo("PublicReflectClass") };
     reflection::TypeInfo const *privateClassInfo{ reflection::getTypeInfo("PrivateReflectClass") };
     reflection::TypeInfo const *notReflectedClassInfo{ reflection::getTypeInfo("NotReflectedClass") };
@@ -83,6 +83,28 @@ TEST(ReflectionTests, CanGetTypeInfoByName){
     EXPECT_NE(publicClassInfo, nullptr);
     EXPECT_NE(privateClassInfo, nullptr);
     EXPECT_EQ(notReflectedClassInfo, nullptr);
+}
+
+TEST(ReflectionTests, CanGetTypeInfoById) {
+    reflection::TypeInfo const *publicClassInfo{ reflection::getTypeInfo(typeid(PublicReflectClass).hash_code()) };
+    reflection::TypeInfo const *privateClassInfo{ reflection::getTypeInfo(typeid(PrivateReflectClass).hash_code()) };
+    reflection::TypeInfo const *notReflectedClassInfo{ reflection::getTypeInfo(typeid(NotReflectedClass).hash_code()) };
+
+    EXPECT_NE(publicClassInfo, nullptr);
+    EXPECT_NE(privateClassInfo, nullptr);
+    EXPECT_EQ(notReflectedClassInfo, nullptr);
+}
+
+TEST(ReflectionTests, TypeInfoIdIsCorrect) {
+    reflection::TypeInfo const typeInfo{ reflection::getTypeInfo<PublicReflectClass>() };
+
+    EXPECT_EQ(typeInfo.id, typeid(PublicReflectClass).hash_code());
+}
+
+TEST(ReflectionTests, TypeInfoSizeIsCorrect) {
+    reflection::TypeInfo const typeInfo{ reflection::getTypeInfo<PublicReflectClass>() };
+
+    EXPECT_EQ(typeInfo.size, sizeof(PublicReflectClass));
 }
 
 TEST(ReflectionTests, CanGetTypeAttributes) {
@@ -104,7 +126,7 @@ TEST(ReflectionTests, CanGetValueOfTypeAttributes) {
     EXPECT_EQ(publicClassAttribute->text, "class");
 }
 
-TEST(ReflectionTests, CanGetAllTypesWithAttribute){
+TEST(ReflectionTests, CanGetAllTypesWithAttribute) {
     std::vector<reflection::TypeInfo const *> typeInfos{ reflection::getTypesWithAttribute<TestAttribute>() };
 
     ASSERT_EQ(typeInfos.size(), 1);
