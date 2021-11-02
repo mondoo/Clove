@@ -70,10 +70,10 @@ namespace Bulb {
         }
 
         private void OnComponentCreated(Membrane.Engine_OnComponentAdded message) {
-            //if (EntityId == message.entity) {
-            //    Components.Add(CreateComponentViewModel(message.componentType, message.data));
-            //    RefreshAvailableComponents();
-            //}
+            if (EntityId == message.entity) {
+                Components.Add(new ComponentViewModel(message.componentName));
+                RefreshAvailableComponents();
+            }
         }
 
         private void OnComponentRemoved(Membrane.Engine_OnComponentRemoved message) {
@@ -89,17 +89,26 @@ namespace Bulb {
             //}
         }
 
-        private ComponentViewModel CreateComponentViewModel(/*Membrane.ComponentType type, */object initData) {
-            return null;
-        }
-
         private void RefreshAvailableComponents() {
+            List<string> entitiesComponents = new List<string>();
+            foreach (ComponentViewModel component in Components) {
+                entitiesComponents.Add(component.Name);
+            }
+
             ComponentMenuItems.Clear();
 
-            var types = Membrane.ReflectionHelper.getAvailableTypes();
+            //TODO: Filter based on what the entity already has.
+            List<Membrane.EditorTypeInfo> types = Membrane.ReflectionHelper.getAvailableTypes();
 
-            foreach (var type in types) {
-                ComponentMenuItems.Add(new ComponentMenuItemViewModel(type.displayName, new RelayCommand(() => { /*TODO*/ })));
+            foreach (Membrane.EditorTypeInfo type in types) {
+                if (!entitiesComponents.Contains(type.displayName)) {
+                    ComponentMenuItems.Add(new ComponentMenuItemViewModel(type.displayName, new RelayCommand(() => {
+                        Membrane.MessageHandler.sendMessage(new Membrane.Editor_AddComponent {
+                            entity = EntityId,
+                            typeName = type.typeName,
+                        });
+                    })));
+                }
             }
         }
 

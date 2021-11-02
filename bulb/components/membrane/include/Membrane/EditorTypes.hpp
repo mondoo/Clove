@@ -19,31 +19,11 @@ namespace membrane {
         }
     };
 
-    public ref class TransformComponentInitData{
+    public ref class EditorTypeInfo {
+        //VARIABLES
     public:
-        Vector3 position;
-        Vector3 rotation;
-        Vector3 scale;
-    };
-
-    public ref class StaticModelComponentInitData{
-    public:
-        System::String ^meshPath;
-        System::String ^diffusePath;
-        System::String ^specularPath;
-    };
-
-    public ref class RigidBodyComponentInitData{
-    public:
-        float mass;
-    };
-
-    public ref class CollisionShapeComponentInitData{
-    public:
-        ShapeType shapeType;
-
-        float radius;
-        Vector3 halfExtents;
+        System::String ^typeName {};
+        System::String ^displayName {};
     };
     // clang-format on
 }

@@ -25,7 +25,7 @@ namespace membrane {
     public ref class Editor_AddComponent : public EditorMessage {
     public:
         System::UInt32 entity;
-        //ComponentType componentType;
+        System::String ^typeName;
     };
     public ref class Editor_RemoveComponent : public EditorMessage {
     public:
@@ -111,8 +111,7 @@ namespace membrane {
     public ref class Engine_OnComponentAdded : public EngineMessage {
     public:
         System::UInt32 entity;
-        //ComponentType componentType;
-        System::Object ^data;
+        System::String ^componentName;
     };
     public ref class Engine_OnComponentRemoved : public EngineMessage {
     public:

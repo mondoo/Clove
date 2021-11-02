@@ -17,6 +17,7 @@
 #include <Clove/ModelLoader.hpp>
 #include <Clove/SubSystems/PhysicsSubSystem.hpp>
 #include <msclr/marshal_cppstd.h>
+#include <Clove/Reflection/Reflection.hpp>
 
 namespace membrane {
     // clang-format off
@@ -68,9 +69,10 @@ namespace membrane {
         }
 
         void addComponent(Editor_AddComponent ^ message){
-            /*if (subSystem){
-                subSystem->addComponent(message->entity, message->componentType);
-            }*/
+            if (subSystem){
+                System::String ^typeName{ message->typeName };
+                subSystem->addComponent(message->entity, msclr::interop::marshal_as<std::string>(typeName));
+            }
         }
 
         void removeComponent(Editor_RemoveComponent ^ message){
@@ -354,88 +356,37 @@ namespace membrane {
         MessageHandler::sendMessage(message);
     }
 
-   /* void EditorSubSystem::addComponent(clove::Entity entity, ComponentType componentType) {
-        bool added{ false };
-        System::Object ^ initData;
+    void EditorSubSystem::addComponent(clove::Entity entity, std::string_view typeName) {
+        clove::reflection::TypeInfo const *typeInfo{ clove::reflection::getTypeInfo(typeName) };
+        CLOVE_ASSERT(typeInfo != nullptr);
 
-        switch(componentType) {
-            case ComponentType::Transform:
-                if(!currentScene.hasComponent<clove::TransformComponent>(entity)) {
-                    currentScene.addComponent<clove::TransformComponent>(entity);
-                    added = true;
-                }
-                break;
-            case ComponentType::StaticModel:
-                if(!currentScene.hasComponent<clove::StaticModelComponent>(entity)) {
-                    currentScene.addComponent<clove::StaticModelComponent>(entity);
-                    added    = true;
-                }
-                break;
-            case ComponentType::PointLight:
-                if(!currentScene.hasComponent<clove::PointLightComponent>(entity)) {
-                    currentScene.addComponent<clove::PointLightComponent>(entity);
-                    added = true;
-                }
-                break;
-            case ComponentType::RigidBody:
-                if(!currentScene.hasComponent<clove::RigidBodyComponent>(entity)) {
-                    currentScene.addComponent<clove::RigidBodyComponent>(entity);
+        static size_t const transId{ typeid(clove::TransformComponent).hash_code() };
+        //static size_t const modelId{ typeid(clove::StaticModelComponent).hash_code() };
 
-                    RigidBodyComponentInitData ^ bodyData { gcnew RigidBodyComponentInitData{} };
-                    bodyData->mass = currentScene.getComponent<clove::RigidBodyComponent>(entity).mass;
+        //TODO: Use switch statements
 
-                    added    = true;
-                    initData = bodyData;
-                }
-                break;
-            case ComponentType::CollisionShape:
-                if(!currentScene.hasComponent<clove::CollisionShapeComponent>(entity)) {
-                    float constexpr initRadius{ 1.0f };
-                    currentScene.addComponent<clove::CollisionShapeComponent>(entity, clove::CollisionShapeComponent::Sphere{ initRadius });
+        if(typeInfo->id == transId) {
+            if(!currentScene.hasComponent<clove::TransformComponent>(entity)) {
+                currentScene.addComponent<clove::TransformComponent>(entity);
 
-                    CollisionShapeComponentInitData ^ shapeData { gcnew CollisionShapeComponentInitData{} };
-                    shapeData->shapeType = ShapeType::Sphere;
-                    shapeData->radius    = initRadius;
+                Engine_OnComponentAdded ^ message { gcnew Engine_OnComponentAdded };
+                message->entity        = entity;
+                message->componentName = gcnew System::String{ typeName.data() }; //TODO: Use display name
+                MessageHandler::sendMessage(message);
 
-                    added    = true;
-                    initData = shapeData;
-                }
-                break;
+                return;
+            }
         }
 
-        if(added) {
-            Engine_OnComponentAdded ^ message { gcnew Engine_OnComponentAdded };
-            message->entity        = entity;
-            message->componentType = componentType;
-            message->data          = initData;
-            MessageHandler::sendMessage(message);
-        }
+        //TEMP: Asserting for now but if Clove/Membrane is not aware of the type then we need to pass off to user code
+        //This can be a dynamically loaded function pointer
+        CLOVE_ASSERT(false);
     }
 
-    void EditorSubSystem::removeComponent(clove::Entity entity, ComponentType componentType) {
-        switch(componentType) {
-            case ComponentType::Transform:
-                currentScene.removeComponent<clove::TransformComponent>(entity);
-                break;
-            case ComponentType::StaticModel:
-                currentScene.removeComponent<clove::StaticModelComponent>(entity);
-                break;
-            case ComponentType::PointLight:
-                currentScene.removeComponent<clove::PointLightComponent>(entity);
-                break;
-            case ComponentType::RigidBody:
-                currentScene.removeComponent<clove::RigidBodyComponent>(entity);
-                break;
-            case ComponentType::CollisionShape:
-                currentScene.removeComponent<clove::CollisionShapeComponent>(entity);
-                break;
-        }
-
-        Engine_OnComponentRemoved ^ message { gcnew Engine_OnComponentRemoved };
-        message->entity        = entity;
-        message->componentType = componentType;
-        MessageHandler::sendMessage(message);
-    }*/
+    void EditorSubSystem::removeComponent(clove::Entity entity, std::string_view typeNamee) {
+        //TODO
+        CLOVE_ASSERT(false);
+    }
 
     void EditorSubSystem::updateTransform(clove::Entity entity, clove::vec3f position, clove::vec3f rotation, clove::vec3f scale) {
         if(currentScene.hasComponent<clove::TransformComponent>(entity)) {

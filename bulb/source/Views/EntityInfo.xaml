@@ -34,16 +34,33 @@
 								Value="Bold"/>
 					</Style>
 
+
 					<Style TargetType="{x:Type Button}"
 						   x:Key="RemoveButton"
 						   BasedOn="{StaticResource {x:Type Button}}">
 						<Setter Property="Background"
 								Value="{StaticResource Error}"/>
 					</Style>
-
-					<!-- TODO: show components -->
-					
 				</ListBox.Resources>
+				
+				<ListBox.ItemTemplate>
+					<DataTemplate>
+						<Grid Background="{StaticResource Background3}">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="1*"/>
+								<ColumnDefinition Width="Auto"/>
+							</Grid.ColumnDefinitions>
+
+							<TextBlock Text="{Binding Name}"
+									   Style="{StaticResource Header}"
+									   Grid.Column="0"/>
+							<Button Content="X"
+									Command="{Binding RemoveComponentCommand}"
+									Style="{StaticResource RemoveButton}"
+									Grid.Column="1"/>
+						</Grid>
+					</DataTemplate>
+				</ListBox.ItemTemplate>
 			</ListBox>
 
 			<Menu HorizontalAlignment="Center">
