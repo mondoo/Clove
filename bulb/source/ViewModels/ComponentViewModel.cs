@@ -1,7 +1,6 @@
 using System.Windows.Input;
 using System.Collections.ObjectModel;
-
-using Membrane = membrane;
+using System.Collections.Generic;
 
 namespace Bulb {
     /// <summary>
@@ -10,6 +9,9 @@ namespace Bulb {
     public class ComponentMemberViewModel : ViewModel {
         public string Name { get; }
 
+        public ComponentMemberViewModel(string name) {
+            Name = name;
+        }
     }
 
     /// <summary>
@@ -18,15 +20,16 @@ namespace Bulb {
     public class ComponentViewModel : ViewModel {
         public string Name { get; }
 
-        ObservableCollection<ComponentMemberViewModel> members = new ObservableCollection<ComponentMemberViewModel>();
+        public ObservableCollection<ComponentMemberViewModel> Members { get; }
 
         public ICommand RemoveComponentCommand { get; }
 
         public delegate void RemoveComponentHandler(/*Membrane.ComponentType Type*/);
         public RemoveComponentHandler OnRemoved;
 
-        public ComponentViewModel(string name) {
+        public ComponentViewModel(string name, List<ComponentMemberViewModel> members) {
             Name = name;
+            Members = new ObservableCollection<ComponentMemberViewModel>(members);
 
             RemoveComponentCommand = new RelayCommand(() => { }); //TODO
         }

@@ -11,5 +11,6 @@ public
         //FUNCTIONS
     public:
         static System::Collections::Generic::List<EditorTypeInfo ^> ^ getAvailableTypes();
+        static EditorTypeInfo ^ getInfoForType(System::String ^ typeName);
     };
 }

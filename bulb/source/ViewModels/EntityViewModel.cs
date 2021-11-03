@@ -37,11 +37,6 @@ namespace Bulb {
             Membrane.MessageHandler.bindToMessage<Membrane.Engine_OnComponentAdded>(OnComponentCreated);
             Membrane.MessageHandler.bindToMessage<Membrane.Engine_OnComponentRemoved>(OnComponentRemoved);
 
-            Membrane.MessageHandler.bindToMessage<Membrane.Engine_OnRigidBodyChanged>(OnRigidBodyChanged);
-            Membrane.MessageHandler.bindToMessage<Membrane.Engine_OnTransformChanged>(OnTransformChanged);
-            Membrane.MessageHandler.bindToMessage<Membrane.Engine_OnSphereShapeChanged>(OnSphereShapeChanged);
-            Membrane.MessageHandler.bindToMessage<Membrane.Engine_OnCubeShapeChanged>(OnCubeShapeChanged);
-
             //Set up commands
             SelectedCommand = new RelayCommand(() => OnSelected?.Invoke(this));
 
@@ -71,7 +66,14 @@ namespace Bulb {
 
         private void OnComponentCreated(Membrane.Engine_OnComponentAdded message) {
             if (EntityId == message.entity) {
-                Components.Add(new ComponentViewModel(message.componentName));
+                Membrane.EditorTypeInfo componentTypeInfo = Membrane.ReflectionHelper.getInfoForType(message.componentName);
+
+                List<ComponentMemberViewModel> members = new List<ComponentMemberViewModel>();
+                foreach(var memberInfo in componentTypeInfo.members) {
+                    members.Add(new ComponentMemberViewModel(memberInfo.displayName));
+                }
+                Components.Add(new ComponentViewModel(componentTypeInfo.displayName, members));
+
                 RefreshAvailableComponents();
             }
         }
@@ -97,7 +99,6 @@ namespace Bulb {
 
             ComponentMenuItems.Clear();
 
-            //TODO: Filter based on what the entity already has.
             List<Membrane.EditorTypeInfo> types = Membrane.ReflectionHelper.getAvailableTypes();
 
             foreach (Membrane.EditorTypeInfo type in types) {
@@ -110,93 +111,6 @@ namespace Bulb {
                     })));
                 }
             }
-        }
-
-        private void UpdateTransform(Membrane.Vector3 position, Membrane.Vector3 rotation, Membrane.Vector3 scale) {
-            Membrane.MessageHandler.sendMessage(new Membrane.Editor_UpdateTransform {
-                entity = EntityId,
-                position = position,
-                rotation = rotation,
-                scale = scale
-            });
-        }
-
-        private void UpdateStaticModel(string meshPath, string diffusePath, string specularPath) {
-            Membrane.MessageHandler.sendMessage(new Membrane.Editor_UpdateStaticModel {
-                entity = EntityId,
-                meshPath = meshPath,
-                diffusePath = diffusePath,
-                specularPath = specularPath
-            });
-        }
-
-        private void UpdateRigidBody(float mass) {
-            Membrane.MessageHandler.sendMessage(new Membrane.Editor_UpdateRigidBody {
-                entity = EntityId,
-                mass = mass
-            });
-        }
-
-        private void UpdateSphereShape(float radius) {
-            Membrane.MessageHandler.sendMessage(new Membrane.Editor_UpdateSphereShape {
-                entity = EntityId,
-                radius = radius
-            });
-        }
-
-        private void UpdateCubeShape(Membrane.Vector3 halfExtents) {
-            Membrane.MessageHandler.sendMessage(new Membrane.Editor_UpdateCubeShape {
-                entity = EntityId,
-                halfExtents = halfExtents
-            });
-        }
-
-        private void OnRigidBodyChanged(Membrane.Engine_OnRigidBodyChanged message) {
-            //if (EntityId == message.entity) {
-            //    foreach (ComponentViewModel comp in Components) {
-            //        if (comp.GetType() == typeof(RigidBodyComponentViewModel)) {
-            //            var rigidBody = comp as RigidBodyComponentViewModel;
-            //            rigidBody.Update(message.mass);
-            //            break;
-            //        }
-            //    }
-            //}
-        }
-
-        private void OnTransformChanged(Membrane.Engine_OnTransformChanged message) {
-            //if (EntityId == message.entity) {
-            //    foreach (ComponentViewModel comp in Components) {
-            //        if (comp.GetType() == typeof(TransformComponentViewModel)) {
-            //            var transform = comp as TransformComponentViewModel;
-            //            transform.Update(message.position, message.rotation, message.scale);
-            //            break;
-            //        }
-            //    }
-            //}
-        }
-
-        private void OnSphereShapeChanged(Membrane.Engine_OnSphereShapeChanged message) {
-            //if (EntityId == message.entity) {
-            //    foreach (ComponentViewModel comp in Components) {
-            //        if (comp.GetType() == typeof(CollisionShapeComponentViewModel)) {
-            //            var collisionShape = comp as CollisionShapeComponentViewModel;
-            //            collisionShape.UpdateSphereShape(message.radius);
-            //            break;
-            //        }
-            //    }
-            //}
-        }
-
-        private void OnCubeShapeChanged(Membrane.Engine_OnCubeShapeChanged message) {
-            //if (EntityId == message.entity) {
-            //    foreach (ComponentViewModel comp in Components) {
-            //        if (comp.GetType() == typeof(CollisionShapeComponentViewModel)) {
-            //            var collisionShape = comp as CollisionShapeComponentViewModel;
-            //            collisionShape.UpdateCubeShape(message.halfExtents);
-            //            break;
-            //        }
-            //    }
-            //}
         }
     }
 }

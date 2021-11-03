@@ -19,11 +19,19 @@ namespace membrane {
         }
     };
 
-    public ref class EditorTypeInfo {
+    public ref class TypeMemberInfo{
         //VARIABLES
     public:
         System::String ^typeName {};
         System::String ^displayName {};
+    };
+
+    public ref class EditorTypeInfo {
+        //VARIABLES
+    public:
+        System::String ^typeName{ nullptr };
+        System::String ^displayName{ nullptr };
+        System::Collections::Generic::List<TypeMemberInfo ^> ^members{ nullptr };
     };
     // clang-format on
 }

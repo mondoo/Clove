@@ -173,7 +173,7 @@ namespace membrane {
 
     void Application::shutdown() {
         if(isInEditorMode) {
-            app->getSubSystem<EditorSubSystem>().saveScene();
+            //app->getSubSystem<EditorSubSystem>().saveScene();
         }
         app->shutdown();
     }

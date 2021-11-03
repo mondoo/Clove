@@ -42,23 +42,34 @@
 								Value="{StaticResource Error}"/>
 					</Style>
 				</ListBox.Resources>
-				
+							
 				<ListBox.ItemTemplate>
 					<DataTemplate>
-						<Grid Background="{StaticResource Background3}">
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition Width="1*"/>
-								<ColumnDefinition Width="Auto"/>
-							</Grid.ColumnDefinitions>
+						<StackPanel>
+							<Grid Background="{StaticResource Background3}">
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition Width="1*"/>
+									<ColumnDefinition Width="Auto"/>
+								</Grid.ColumnDefinitions>
 
-							<TextBlock Text="{Binding Name}"
-									   Style="{StaticResource Header}"
-									   Grid.Column="0"/>
-							<Button Content="X"
-									Command="{Binding RemoveComponentCommand}"
-									Style="{StaticResource RemoveButton}"
-									Grid.Column="1"/>
-						</Grid>
+								<TextBlock Text="{Binding Name}"
+										   Style="{StaticResource Header}"
+										   Grid.Column="0"/>
+								<Button Content="X"
+										Command="{Binding RemoveComponentCommand}"
+										Style="{StaticResource RemoveButton}"
+										Grid.Column="1"/>
+							</Grid>
+							
+							<ListBox Margin="10 0 0 0"
+									 ItemsSource="{Binding Members}">
+								<ListBox.ItemTemplate>
+									<DataTemplate>
+										<TextBlock Text="{Binding Name}"/>
+									</DataTemplate>
+								</ListBox.ItemTemplate>
+							</ListBox>
+						</StackPanel>
 					</DataTemplate>
 				</ListBox.ItemTemplate>
 			</ListBox>

@@ -371,7 +371,7 @@ namespace membrane {
 
                 Engine_OnComponentAdded ^ message { gcnew Engine_OnComponentAdded };
                 message->entity        = entity;
-                message->componentName = gcnew System::String{ typeName.data() }; //TODO: Use display name
+                message->componentName = gcnew System::String{ typeName.data() };
                 MessageHandler::sendMessage(message);
 
                 return;
