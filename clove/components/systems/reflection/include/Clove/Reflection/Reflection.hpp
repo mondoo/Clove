@@ -38,6 +38,7 @@ namespace clove::reflection {
      */
     struct MemberInfo {
         std::string name{};
+        TypeId id{};     /**< Type id for this member. If the member is reflected then this ID can be used to retrieve the TypeInfo struct. */
         size_t offset{}; /**< Offset of this member within the type it is contained in.*/
         size_t size{};   /**< Total size of this member. */
         AttributeContainer attributes{};
@@ -140,8 +141,8 @@ namespace clove::reflection {
                                                                              \
         static inline auto const attributes{ std::make_tuple(__VA_ARGS__) }; \
         static std::string_view constexpr name{ #classType };                \
-        static inline TypeId id{ typeid(classType).hash_code() };            \
-        static inline size_t size{ sizeof(classType) };                      \
+        static inline TypeId const id{ typeid(classType).hash_code() };      \
+        static inline size_t const size{ sizeof(classType) };                \
                                                                              \
         static size_t constexpr memberIndexOffset{ __COUNTER__ + 1 };
 
@@ -151,6 +152,7 @@ namespace clove::reflection {
         static std::string_view constexpr name{ #property };                 \
         static size_t constexpr offset{ offsetof(Type, property) };          \
         static size_t constexpr size{ sizeof(Type::property) };              \
+        static inline TypeId const id{ typeid(Type::property).hash_code() }; \
                                                                              \
         static inline auto const attributes{ std::make_tuple(__VA_ARGS__) }; \
     };
@@ -179,6 +181,7 @@ private:                                                                        
         if constexpr(index < memberCount) {                                                          \
             MemberInfo info{};                                                                       \
             info.name   = Member<index>::name;                                                       \
+            info.id     = Member<index>::id;                                                         \
             info.offset = Member<index>::offset;                                                     \
             info.size   = Member<index>::size;                                                       \
             populateAttributes<0>(info.attributes, Member<index>::attributes);                       \

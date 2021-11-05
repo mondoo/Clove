@@ -66,6 +66,24 @@ CLOVE_REFLECT_PROPERTY(a)
 CLOVE_REFLECT_PROPERTY(b)
 CLOVE_REFLECT_END(test::NamespaceReflectedClass)
 
+struct Internal{
+    int a;
+};
+
+struct Nested{
+    Internal a;
+    int b;
+};
+
+CLOVE_REFLECT_BEGIN(Internal)
+CLOVE_REFLECT_PROPERTY(a)
+CLOVE_REFLECT_END(Internal)
+
+CLOVE_REFLECT_BEGIN(Nested)
+CLOVE_REFLECT_PROPERTY(a)
+CLOVE_REFLECT_PROPERTY(b)
+CLOVE_REFLECT_END(Nested)
+
 TEST(ReflectionTests, CanGetTypeInfoByType) {
     reflection::TypeInfo const publicClassInfo{ reflection::getTypeInfo<PublicReflectClass>() };
     reflection::TypeInfo const privateClassInfo{ reflection::getTypeInfo<PrivateReflectClass>() };
@@ -194,4 +212,11 @@ TEST(ReflectionTests, CanGetValueOfMemberAttributes) {
 
     ASSERT_TRUE(attribute.has_value());
     EXPECT_EQ(attribute->text, "member");
+}
+
+TEST(ReflectionTests, MembersHaveTypeInfoIds) {
+    auto nestedInfo{ reflection::getTypeInfo<Nested>() };
+    auto internalInfo{ reflection::getTypeInfo<Internal>() };
+
+    EXPECT_EQ(nestedInfo.members[0].id, internalInfo.id);
 }
