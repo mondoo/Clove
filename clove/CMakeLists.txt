@@ -187,6 +187,9 @@ add_library(
 		${INCLUDE}/ModelLoader.hpp
 		${SOURCE}/ModelLoader.cpp
 
+		#TODO: See Application.cpp
+		#${SOURCE}/ReflectionCommon.cpp
+
 		${INCLUDE}/ReflectionAttributes.hpp
 
 		${INCLUDE}/SerialisationCommon.hpp

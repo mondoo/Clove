@@ -219,4 +219,9 @@ TEST(ReflectionTests, MembersHaveTypeInfoIds) {
     auto internalInfo{ reflection::getTypeInfo<Internal>() };
 
     EXPECT_EQ(nestedInfo.members[0].id, internalInfo.id);
+
+    auto *internalTypeInfo{ reflection::getTypeInfo(nestedInfo.members[0].id) };
+
+    ASSERT_TRUE(internalTypeInfo != nullptr);
+    EXPECT_EQ(internalTypeInfo->id, internalInfo.id);
 }

@@ -14,6 +14,9 @@
 #include <Clove/Graphics/Gha.hpp>
 #include <Clove/Graphics/GhaDevice.hpp>
 
+//TODO: This file does not provide the reflection info unless included in another
+#include "ReflectionCommon.cpp"
+
 namespace clove {
     Application *Application::instance{ nullptr };
 

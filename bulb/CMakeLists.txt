@@ -42,12 +42,12 @@ add_executable(
 		${SOURCE}/Views/EntityInfo.xaml.cs
 		${SOURCE}/Views/MainWindow.xaml
 		${SOURCE}/Views/MainWindow.xaml.cs
+		${SOURCE}/Views/TypeView.xaml
+		${SOURCE}/Views/TypeView.xaml.cs
 		${SOURCE}/Views/Vector3Box.xaml
 		${SOURCE}/Views/Vector3Box.xaml.cs
 		${SOURCE}/Views/Viewport.xaml
 		${SOURCE}/Views/Viewport.xaml.cs
-		
-		${SOURCE}/ViewModels/ComponentViewModel.cs
 
 		${SOURCE}/ViewModels/FileExplorer/DirectoryItemViewModel.cs
 		${SOURCE}/ViewModels/FileExplorer/FileExplorerViewModel.cs
@@ -55,10 +55,12 @@ add_executable(
 		${SOURCE}/ViewModels/FileExplorer/FolderViewModel.cs
 
 		${SOURCE}/ViewModels/ComponentMenuItemViewModel.cs
+		${SOURCE}/ViewModels/ComponentViewModel.cs
 		${SOURCE}/ViewModels/EditorSessionViewModel.cs
 		${SOURCE}/ViewModels/SceneViewModel.cs
 		${SOURCE}/ViewModels/EntityViewModel.cs
 		${SOURCE}/ViewModels/LogViewModel.cs
+		${SOURCE}/ViewModels/TypeViewModel.cs
 		
 
 		${RESOURCES}
@@ -102,6 +104,9 @@ csharp_set_xaml_cs_properties(
 
 	${SOURCE}/Views/MainWindow.xaml
     ${SOURCE}/Views/MainWindow.xaml.cs
+
+	${SOURCE}/Views/TypeView.xaml
+    ${SOURCE}/Views/TypeView.xaml.cs
 
 	${SOURCE}/Views/ProjectSelector.xaml
 	${SOURCE}/Views/ProjectSelector.xaml.cs

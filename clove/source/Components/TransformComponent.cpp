@@ -36,8 +36,8 @@ namespace clove {
     }
 }
 
-CLOVE_REFLECT_BEGIN(clove::TransformComponent, clove::EditorVisible{ .name = "Transform Component" })
-CLOVE_REFLECT_PROPERTY(position, clove::EditorVisible{})
-CLOVE_REFLECT_PROPERTY(rotation, clove::EditorVisible{})
-CLOVE_REFLECT_PROPERTY(scale, clove::EditorVisible{})
+CLOVE_REFLECT_BEGIN(clove::TransformComponent, clove::EditorVisibleComponent{ .name = "Transform Component" })
+CLOVE_REFLECT_PROPERTY(position, clove::EditorEditableMember{})
+CLOVE_REFLECT_PROPERTY(rotation, clove::EditorEditableMember{})
+CLOVE_REFLECT_PROPERTY(scale, clove::EditorEditableMember{})
 CLOVE_REFLECT_END(clove::TransformComponent)

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Membrane/EditorTypes.hpp"
 #include "Membrane/MessageBase.hpp"
 
 namespace membrane {
@@ -36,9 +35,9 @@ namespace membrane {
     public:
         System::UInt32 entity;
 
-        Vector3 position;
+        /*Vector3 position;
         Vector3 rotation;
-        Vector3 scale;
+        Vector3 scale;*/
     };
     public ref class Editor_UpdateStaticModel : public EditorMessage {
     public:
@@ -64,7 +63,7 @@ namespace membrane {
     public:
         System::UInt32 entity;
 
-        Vector3 halfExtents{};
+       /* Vector3 halfExtents{};*/
     };
     public ref class Editor_UpdateName : public EditorMessage {
     public:
@@ -122,9 +121,9 @@ namespace membrane {
     public:
         System::UInt32 entity;
         
-        Vector3 position;
+        /*Vector3 position;
         Vector3 rotation;
-        Vector3 scale;
+        Vector3 scale;*/
     };
     public ref class Engine_OnRigidBodyChanged : public EngineMessage {
     public:
@@ -142,7 +141,7 @@ namespace membrane {
     public:
         System::UInt32 entity;
 
-        Vector3 halfExtents{};
+        //Vector3 halfExtents{};
     };
     public ref class Engine_OnSceneLoaded : public EngineMessage {
     public:

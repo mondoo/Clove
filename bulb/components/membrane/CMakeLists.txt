@@ -11,8 +11,6 @@ add_library(
         ${SOURCE}/Log.cpp
         ${INCLUDE}/MembraneLog.hpp
 
-        ${INCLUDE}/EditorTypes.hpp
-
         ${INCLUDE}/MessageBase.hpp
         ${INCLUDE}/MessageHandler.hpp
         ${SOURCE}/MessageHandler.cpp

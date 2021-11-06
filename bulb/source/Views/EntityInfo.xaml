@@ -45,31 +45,33 @@
 							
 				<ListBox.ItemTemplate>
 					<DataTemplate>
-						<StackPanel>
-							<Grid Background="{StaticResource Background3}">
-								<Grid.ColumnDefinitions>
-									<ColumnDefinition Width="1*"/>
-									<ColumnDefinition Width="Auto"/>
-								</Grid.ColumnDefinitions>
+						<UserControl x:Name="TypeView">
+							<StackPanel>
+								<Grid Background="{StaticResource Background3}">
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="1*"/>
+										<ColumnDefinition Width="Auto"/>
+									</Grid.ColumnDefinitions>
 
-								<TextBlock Text="{Binding Name}"
+									<TextBlock Text="{Binding Name}"
 										   Style="{StaticResource Header}"
 										   Grid.Column="0"/>
-								<Button Content="X"
+									<Button Content="X"
 										Command="{Binding RemoveComponentCommand}"
 										Style="{StaticResource RemoveButton}"
 										Grid.Column="1"/>
-							</Grid>
-							
-							<ListBox Margin="10 0 0 0"
+								</Grid>
+
+								<ListBox Margin="10 0 0 0"
 									 ItemsSource="{Binding Members}">
-								<ListBox.ItemTemplate>
-									<DataTemplate>
-										<TextBlock Text="{Binding Name}"/>
-									</DataTemplate>
-								</ListBox.ItemTemplate>
-							</ListBox>
-						</StackPanel>
+									<ListBox.ItemTemplate>
+										<DataTemplate>
+											<local:TypeView/>
+										</DataTemplate>
+									</ListBox.ItemTemplate>
+								</ListBox>
+							</StackPanel>
+						</UserControl>
 					</DataTemplate>
 				</ListBox.ItemTemplate>
 			</ListBox>

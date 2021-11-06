@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Membrane/EditorTypes.hpp"
 #include "Membrane/Scene.hpp"
 
 #include <Clove/ECS/Entity.hpp>

@@ -33,12 +33,12 @@ namespace membrane {
                 auto const &rot{ clove::quaternionToEuler(currentScene.getComponent<clove::TransformComponent>(entity).rotation) };
                 auto const &scale{ currentScene.getComponent<clove::TransformComponent>(entity).scale };
 
-                Engine_OnTransformChanged ^ message { gcnew Engine_OnTransformChanged };
+               /* Engine_OnTransformChanged ^ message { gcnew Engine_OnTransformChanged };
                 message->entity   = entity;
                 message->position = Vector3(pos.x, pos.y, pos.z);
                 message->rotation = Vector3(clove::asDegrees(rot.x), clove::asDegrees(rot.y), clove::asDegrees(rot.z));
                 message->scale    = Vector3(scale.x, scale.y, scale.z);
-                MessageHandler::sendMessage(message);
+                MessageHandler::sendMessage(message);*/
             }
         }
     }

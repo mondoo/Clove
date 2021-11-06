@@ -83,11 +83,11 @@ namespace membrane {
 
         void updateTransform(Editor_UpdateTransform ^ message){
             if (subSystem){
-                clove::vec3f const pos{message->position.x, message->position.y, message->position.z};
+               /* clove::vec3f const pos{message->position.x, message->position.y, message->position.z};
                 clove::vec3f const rot{clove::asRadians(message->rotation.x), clove::asRadians(message->rotation.y), clove::asRadians(message->rotation.z)};
                 clove::vec3f const scale{message->scale.x, message->scale.y, message->scale.z};
 
-                subSystem->updateTransform(message->entity, pos, rot, scale);
+                subSystem->updateTransform(message->entity, pos, rot, scale);*/
             }
         }
 
@@ -115,9 +115,9 @@ namespace membrane {
 
         void updateCubeShape(Editor_UpdateCubeShape ^message){
             if (subSystem){
-                clove::vec3f const halfExtents{message->halfExtents.x, message->halfExtents.y, message->halfExtents.z};
+                /*clove::vec3f const halfExtents{message->halfExtents.x, message->halfExtents.y, message->halfExtents.z};
 
-                subSystem->updateCubeShape(message->entity, halfExtents);
+                subSystem->updateCubeShape(message->entity, halfExtents);*/
             }
         }
 

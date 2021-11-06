@@ -64,13 +64,22 @@ namespace Bulb {
             //});
         }
 
+        private TypeViewModel BuildTypeViewModel(Membrane.EditorTypeInfo typeInfo) {
+            var members = new List<TypeViewModel>();
+            foreach (var memberInfo in typeInfo.members) {
+                members.Add(BuildTypeViewModel(memberInfo));
+            }
+
+            return new TypeViewModel(typeInfo.displayName, members);
+        }
+
         private void OnComponentCreated(Membrane.Engine_OnComponentAdded message) {
             if (EntityId == message.entity) {
                 Membrane.EditorTypeInfo componentTypeInfo = Membrane.ReflectionHelper.getInfoForType(message.componentName);
 
-                List<ComponentMemberViewModel> members = new List<ComponentMemberViewModel>();
+                List<TypeViewModel> members = new List<TypeViewModel>();
                 foreach(var memberInfo in componentTypeInfo.members) {
-                    members.Add(new ComponentMemberViewModel(memberInfo.displayName));
+                    members.Add(BuildTypeViewModel(memberInfo));
                 }
                 Components.Add(new ComponentViewModel(componentTypeInfo.displayName, members));
 
