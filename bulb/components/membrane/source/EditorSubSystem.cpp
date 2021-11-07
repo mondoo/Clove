@@ -321,11 +321,13 @@ namespace membrane {
         //TODO: Use switch statements
 
         uint8_t *componentMemory{ nullptr };
+        size_t memorySize;
         bool added{ false };
         if(typeInfo->id == transId) {
             if(!currentScene.hasComponent<clove::TransformComponent>(entity)) {
                 added           = true;
                 componentMemory = reinterpret_cast<uint8_t *>(&currentScene.addComponent<clove::TransformComponent>(entity));
+                memorySize      = sizeof(clove::TransformComponent);
             }
         } else if(typeInfo->id == modelId) {
             if(!currentScene.hasComponent<clove::StaticModelComponent>(entity)) {
@@ -339,6 +341,7 @@ namespace membrane {
             if(!currentScene.hasComponent<clove::PointLightComponent>(entity)) {
                 added           = true;
                 componentMemory = reinterpret_cast<uint8_t *>(&currentScene.addComponent<clove::PointLightComponent>(entity));
+                memorySize      = sizeof(clove::PointLightComponent);
             }
         }
 
@@ -350,9 +353,8 @@ namespace membrane {
         message->entity        = entity;
         message->componentName = gcnew System::String{ typeName.data() };
         if(componentMemory != nullptr) {
-            size_t constexpr bytes{ sizeof(clove::PointLightComponent) };
-            array<System::Byte> ^ componentData = gcnew array<System::Byte>(bytes);
-            for(size_t i{ 0 }; i < bytes; ++i) {
+            array<System::Byte> ^ componentData = gcnew array<System::Byte>(memorySize);
+            for(size_t i{ 0 }; i < memorySize; ++i) {
                 componentData[i] = componentMemory[i];
             }
             message->data = componentData;
