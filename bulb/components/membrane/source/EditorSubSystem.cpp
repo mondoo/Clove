@@ -38,13 +38,6 @@ namespace membrane {
             MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_AddComponent ^>(this, &EditorSubSystemMessageProxy::addComponent));
             MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_RemoveComponent ^>(this, &EditorSubSystemMessageProxy::removeComponent));
 
-            MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_UpdateTransform ^>(this, &EditorSubSystemMessageProxy::updateTransform));
-            MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_UpdateStaticModel ^>(this, &EditorSubSystemMessageProxy::updateStaticModel));
-            MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_UpdateRigidBody ^>(this, &EditorSubSystemMessageProxy::updateRigidBody));
-            MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_UpdateSphereShape ^>(this, &EditorSubSystemMessageProxy::updateSphereShape));
-            MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_UpdateCubeShape ^>(this, &EditorSubSystemMessageProxy::updateCubeShape));
-            MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_UpdateName ^>(this, &EditorSubSystemMessageProxy::updateName));
-
             MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_SaveScene ^>(this, &EditorSubSystemMessageProxy::saveScene));
             MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_LoadScene ^>(this, &EditorSubSystemMessageProxy::loadScene));
         }
@@ -70,7 +63,7 @@ namespace membrane {
 
         void addComponent(Editor_AddComponent ^ message){
             if (subSystem){
-                System::String ^typeName{ message->typeName };
+                System::String ^typeName{ message->componentName };
                 subSystem->addComponent(message->entity, msclr::interop::marshal_as<std::string>(typeName));
             }
         }
@@ -79,46 +72,6 @@ namespace membrane {
             /*if (subSystem){
                 subSystem->removeComponent(message->entity, message->componentType);
             }*/
-        }
-
-        void updateTransform(Editor_UpdateTransform ^ message){
-            if (subSystem){
-               /* clove::vec3f const pos{message->position.x, message->position.y, message->position.z};
-                clove::vec3f const rot{clove::asRadians(message->rotation.x), clove::asRadians(message->rotation.y), clove::asRadians(message->rotation.z)};
-                clove::vec3f const scale{message->scale.x, message->scale.y, message->scale.z};
-
-                subSystem->updateTransform(message->entity, pos, rot, scale);*/
-            }
-        }
-
-        void updateStaticModel(Editor_UpdateStaticModel ^ message){
-            if (subSystem){
-                System::String ^meshPath{ message->meshPath != nullptr ? message->meshPath : "" };
-                System::String ^diffusePath{ message->diffusePath != nullptr ? message->diffusePath : ""};
-                System::String ^specularPath{ message->specularPath != nullptr ? message->specularPath : ""};
-
-                subSystem->updateStaticModel(message->entity, msclr::interop::marshal_as<std::string>(meshPath), msclr::interop::marshal_as<std::string>(diffusePath), msclr::interop::marshal_as<std::string>(specularPath));
-            }
-        }
-
-        void updateRigidBody(Editor_UpdateRigidBody^ message){
-            if (subSystem){
-                subSystem->updateRigidBody(message->entity, message->mass);
-            }
-        }
-
-        void updateSphereShape(Editor_UpdateSphereShape ^message){
-            if (subSystem){
-                subSystem->updateSphereShape(message->entity, message->radius);
-            }
-        }
-
-        void updateCubeShape(Editor_UpdateCubeShape ^message){
-            if (subSystem){
-                /*clove::vec3f const halfExtents{message->halfExtents.x, message->halfExtents.y, message->halfExtents.z};
-
-                subSystem->updateCubeShape(message->entity, halfExtents);*/
-            }
         }
 
         void updateName(Editor_UpdateName ^ message){
@@ -367,11 +320,23 @@ namespace membrane {
 
         if(typeInfo->id == transId) {
             if(!currentScene.hasComponent<clove::TransformComponent>(entity)) {
-                currentScene.addComponent<clove::TransformComponent>(entity);
+                //TEMP: Setting position for debug purposes
+                auto &comp{ currentScene.addComponent<clove::TransformComponent>(entity) };
+                comp.position = clove::vec3f{ 100, 200, 300 };
+                comp.scale = clove::vec3f{ 2, 49, 8 };
+
+                auto const *componentMemory{ reinterpret_cast<uint8_t *>(&comp) };
+
+                size_t constexpr bytes{ sizeof(clove::TransformComponent) };
+                array<System::Byte> ^componentData = gcnew array<System::Byte>(bytes);
+                for(size_t i{ 0 }; i < bytes; ++i) {
+                    componentData[i] = componentMemory[i];
+                }
 
                 Engine_OnComponentAdded ^ message { gcnew Engine_OnComponentAdded };
                 message->entity        = entity;
                 message->componentName = gcnew System::String{ typeName.data() };
+                message->data          = componentData;
                 MessageHandler::sendMessage(message);
 
                 return;
@@ -386,47 +351,6 @@ namespace membrane {
     void EditorSubSystem::removeComponent(clove::Entity entity, std::string_view typeNamee) {
         //TODO
         CLOVE_ASSERT(false);
-    }
-
-    void EditorSubSystem::updateTransform(clove::Entity entity, clove::vec3f position, clove::vec3f rotation, clove::vec3f scale) {
-        if(currentScene.hasComponent<clove::TransformComponent>(entity)) {
-            auto &transform{ currentScene.getComponent<clove::TransformComponent>(entity) };
-            transform.position = position;
-            transform.rotation = rotation;
-            transform.scale    = scale;
-        }
-    }
-
-    void EditorSubSystem::updateStaticModel(clove::Entity entity, std::string meshPath, std::string diffusePath, std::string specularPath) {
-        if(currentScene.hasComponent<clove::StaticModelComponent>(entity)) {
-            auto &staticModel{ currentScene.getComponent<clove::StaticModelComponent>(entity) };
-            staticModel.model = clove::Application::get().getAssetManager()->getStaticModel(meshPath);
-            if(!diffusePath.empty()) {
-                staticModel.material->setDiffuseTexture(clove::Application::get().getAssetManager()->getTexture(diffusePath));
-            }
-            if(!specularPath.empty()) {
-                staticModel.material->setSpecularTexture(clove::Application::get().getAssetManager()->getTexture(specularPath));
-            }
-        }
-    }
-
-    void EditorSubSystem::updateRigidBody(clove::Entity entity, float mass) {
-        if(currentScene.hasComponent<clove::RigidBodyComponent>(entity)) {
-            auto &rigidBody{ currentScene.getComponent<clove::RigidBodyComponent>(entity) };
-            rigidBody.mass = mass;
-        }
-    }
-
-    void EditorSubSystem::updateSphereShape(clove::Entity entity, float radius) {
-        if(currentScene.hasComponent<clove::CollisionShapeComponent>(entity)) {
-            currentScene.getComponent<clove::CollisionShapeComponent>(entity).shape = clove::CollisionShapeComponent::Sphere{ radius };
-        }
-    }
-
-    void EditorSubSystem::updateCubeShape(clove::Entity entity, clove::vec3f halfExtents) {
-        if(currentScene.hasComponent<clove::CollisionShapeComponent>(entity)) {
-            currentScene.getComponent<clove::CollisionShapeComponent>(entity).shape = clove::CollisionShapeComponent::Cube{ halfExtents };
-        }
     }
 
     void EditorSubSystem::updateName(clove::Entity entity, std::string name) {

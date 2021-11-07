@@ -53,11 +53,6 @@ namespace membrane {
         void addComponent(clove::Entity entity, std::string_view typeName);
         void removeComponent(clove::Entity entity, std::string_view typeName); 
 
-        void updateTransform(clove::Entity entity, clove::vec3f position, clove::vec3f rotation, clove::vec3f scale);
-        void updateStaticModel(clove::Entity entity, std::string meshPath, std::string diffusePath, std::string specularPath);
-        void updateRigidBody(clove::Entity entity, float mass);
-        void updateSphereShape(clove::Entity entity, float radius);
-        void updateCubeShape(clove::Entity entity, clove::vec3f halfExtents);
         void updateName(clove::Entity entity, std::string name);
     };
 }

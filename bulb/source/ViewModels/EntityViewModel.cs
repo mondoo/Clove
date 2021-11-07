@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows.Input;
 
 using Membrane = membrane;
@@ -50,27 +52,41 @@ namespace Bulb {
             RefreshAvailableComponents();
         }
 
-        public void AddComponent(/*Membrane.ComponentType type*/) {
-            //Membrane.MessageHandler.sendMessage(new Membrane.Editor_AddComponent {
-            //    entity = EntityId,
-            //    componentType = type
-            //});
+        private void AddComponent(string typeName) {
+            Membrane.MessageHandler.sendMessage(new Membrane.Editor_AddComponent {
+                entity = EntityId,
+                componentName = typeName
+            });
         }
 
-        public void RemoveComponent(/*Membrane.ComponentType type*/) {
+        private void RemoveComponent(/*Membrane.ComponentType type*/) {
             //Membrane.MessageHandler.sendMessage(new Membrane.Editor_RemoveComponent {
             //    entity = EntityId,
             //    componentType = type
             //});
         }
 
-        private TypeViewModel BuildTypeViewModel(Membrane.EditorTypeInfo typeInfo) {
+        private TypeViewModel BuildTypeViewModel(Membrane.EditorTypeInfo typeInfo, byte[] typeMemory) {
             var members = new List<TypeViewModel>();
             foreach (var memberInfo in typeInfo.members) {
-                members.Add(BuildTypeViewModel(memberInfo));
+                members.Add(BuildTypeViewModel(memberInfo, typeMemory));
             }
 
-            return new TypeViewModel(typeInfo.displayName, members);
+            var vm = new TypeViewModel(typeInfo.displayName, members);
+            if (typeInfo.memberInfo != null && members.Count == 0) { //Count == 0 ensures we only do this for leaf members
+                Debug.Assert(typeInfo.memberInfo.size == sizeof(float)); //TEMP: Only supporting floats for now
+
+                unsafe {
+                    fixed (byte* memPtr = typeMemory) {
+                        //TODO: We know we're using numbers here but what about other types such as strings?
+                        float val;
+                        Buffer.MemoryCopy(memPtr + typeInfo.memberInfo.offset, &val, sizeof(float), typeInfo.memberInfo.size);
+                        vm.Value = val.ToString();
+                    }
+                }
+            }
+
+            return vm;
         }
 
         private void OnComponentCreated(Membrane.Engine_OnComponentAdded message) {
@@ -79,7 +95,7 @@ namespace Bulb {
 
                 List<TypeViewModel> members = new List<TypeViewModel>();
                 foreach(var memberInfo in componentTypeInfo.members) {
-                    members.Add(BuildTypeViewModel(memberInfo));
+                    members.Add(BuildTypeViewModel(memberInfo, message.data));
                 }
                 Components.Add(new ComponentViewModel(componentTypeInfo.displayName, members));
 
@@ -112,12 +128,7 @@ namespace Bulb {
 
             foreach (Membrane.EditorTypeInfo type in types) {
                 if (!entitiesComponents.Contains(type.displayName)) {
-                    ComponentMenuItems.Add(new ComponentMenuItemViewModel(type.displayName, new RelayCommand(() => {
-                        Membrane.MessageHandler.sendMessage(new Membrane.Editor_AddComponent {
-                            entity = EntityId,
-                            typeName = type.typeName,
-                        });
-                    })));
+                    ComponentMenuItems.Add(new ComponentMenuItemViewModel(type.displayName, new RelayCommand(() => AddComponent(type.typeName))));
                 }
             }
         }

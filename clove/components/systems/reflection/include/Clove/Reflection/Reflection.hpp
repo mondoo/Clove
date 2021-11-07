@@ -39,7 +39,7 @@ namespace clove::reflection {
     struct MemberInfo {
         std::string name{};
         TypeId id{};     /**< Type id for this member. If the member is reflected then this ID can be used to retrieve the TypeInfo struct. */
-        size_t offset{}; /**< Offset of this member within the type it is contained in.*/
+        size_t offset{}; /**< Offset of this member within the type it is contained in. */
         size_t size{};   /**< Total size of this member. */
         AttributeContainer attributes{};
     };

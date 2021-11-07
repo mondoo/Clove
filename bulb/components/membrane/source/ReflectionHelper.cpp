@@ -9,19 +9,22 @@ using namespace clove;
 
 namespace membrane {
     namespace {
-        System::Collections::Generic::List<EditorTypeInfo ^> ^ constructMembers(std::vector<reflection::MemberInfo> const &members) {
+        System::Collections::Generic::List<EditorTypeInfo ^> ^ constructMembers(std::vector<reflection::MemberInfo> const &members, size_t offsetIntoParent) {
             auto editorVisibleMemers{ gcnew System::Collections::Generic::List<EditorTypeInfo ^>{} };
 
             for(auto const &member : members) {
                 if(std::optional<EditorEditableMember> attribute{ member.attributes.get<EditorEditableMember>() }) {
+                    size_t const totalMemberOffset{ offsetIntoParent + member.offset };
+
                     auto memberInfo{ gcnew EditorTypeInfo{} };
                     memberInfo->typeName    = gcnew System::String{ member.name.c_str() };
                     memberInfo->displayName = gcnew System::String{ attribute->name.value_or(member.name).c_str() };
                     if(reflection::TypeInfo const *memberTypeInfo{ reflection::getTypeInfo(member.id) }) {
-                        memberInfo->members = constructMembers(memberTypeInfo->members);
+                        memberInfo->members = constructMembers(memberTypeInfo->members, totalMemberOffset);
                     } else {
                         memberInfo->members = gcnew System::Collections::Generic::List<EditorTypeInfo ^>{};
                     }
+                    memberInfo->memberInfo = gcnew MemberInfo{ totalMemberOffset, member.size };
 
                     editorVisibleMemers->Add(memberInfo);
                 }
@@ -36,7 +39,7 @@ namespace membrane {
             auto editorTypeInfo{ gcnew EditorTypeInfo{} };
             editorTypeInfo->typeName    = gcnew System::String{ typeInfo->name.c_str() };
             editorTypeInfo->displayName = gcnew System::String{ visibleAttribute.name.value_or(typeInfo->name).c_str() };
-            editorTypeInfo->members     = constructMembers(typeInfo->members);
+            editorTypeInfo->members     = constructMembers(typeInfo->members, 0);
 
             return editorTypeInfo;
         }
