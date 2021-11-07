@@ -14,7 +14,10 @@
 #include <Clove/Graphics/Gha.hpp>
 #include <Clove/Graphics/GhaDevice.hpp>
 
-//TODO: This file does not provide the reflection info unless included in another
+//TODO: These files do not provide the reflection info unless included in another
+//Looks like they need some sort of function declaration in there with the definition in an included header
+#include "Components/PointLightComponent.cpp"
+#include "Components/StaticModelComponent.cpp"
 #include "ReflectionCommon.cpp"
 
 namespace clove {

@@ -202,7 +202,7 @@ private:                                                                        
     }                                                                                                \
     }                                                                                                \
     ;                                                                                                \
-    static clove::reflection::internal::TypeInfo<classType> const CLOVE_REFLECT_CAT(creator, __LINE__){};
+    inline clove::reflection::internal::TypeInfo<classType> const CLOVE_REFLECT_CAT(creator, __LINE__){};
 
 /**
  * @brief Allows reflection of private members within a class.
