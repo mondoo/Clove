@@ -69,9 +69,10 @@ namespace membrane {
         }
 
         void removeComponent(Editor_RemoveComponent ^ message){
-            /*if (subSystem){
-                subSystem->removeComponent(message->entity, message->componentType);
-            }*/
+            if (subSystem){
+                System::String ^typeName{ message->componentName };
+                subSystem->removeComponent(message->entity, msclr::interop::marshal_as<std::string>(typeName));
+            }
         }
 
         void updateName(Editor_UpdateName ^ message){
@@ -333,7 +334,7 @@ namespace membrane {
                     componentData[i] = componentMemory[i];
                 }
 
-                Engine_OnComponentAdded ^ message { gcnew Engine_OnComponentAdded };
+                auto message { gcnew Engine_OnComponentAdded };
                 message->entity        = entity;
                 message->componentName = gcnew System::String{ typeName.data() };
                 message->data          = componentData;
@@ -348,7 +349,25 @@ namespace membrane {
         CLOVE_ASSERT(false);
     }
 
-    void EditorSubSystem::removeComponent(clove::Entity entity, std::string_view typeNamee) {
+    void EditorSubSystem::removeComponent(clove::Entity entity, std::string_view typeName) {
+        clove::reflection::TypeInfo const *typeInfo{ clove::reflection::getTypeInfo(typeName) };
+        CLOVE_ASSERT(typeInfo != nullptr);
+
+        static size_t const transId{ typeid(clove::TransformComponent).hash_code() };
+
+        if(typeInfo->id == transId) {
+            currentScene.removeComponent<clove::TransformComponent>(entity);
+
+            auto message { gcnew Engine_OnComponentRemoved };
+            message->entity        = entity;
+            message->componentName = gcnew System::String{ typeName.data() };
+            MessageHandler::sendMessage(message);
+
+            return;
+        }
+
+        //TODO: Use switch statements
+
         //TODO
         CLOVE_ASSERT(false);
     }

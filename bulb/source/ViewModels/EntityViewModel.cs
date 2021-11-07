@@ -59,61 +59,35 @@ namespace Bulb {
             });
         }
 
-        private void RemoveComponent(/*Membrane.ComponentType type*/) {
-            //Membrane.MessageHandler.sendMessage(new Membrane.Editor_RemoveComponent {
-            //    entity = EntityId,
-            //    componentType = type
-            //});
-        }
-
-        private TypeViewModel BuildTypeViewModel(Membrane.EditorTypeInfo typeInfo, byte[] typeMemory) {
-            var members = new List<TypeViewModel>();
-            foreach (var memberInfo in typeInfo.members) {
-                members.Add(BuildTypeViewModel(memberInfo, typeMemory));
-            }
-
-            var vm = new TypeViewModel(typeInfo.displayName, members);
-            if (typeInfo.memberInfo != null && members.Count == 0) { //Count == 0 ensures we only do this for leaf members
-                Debug.Assert(typeInfo.memberInfo.size == sizeof(float)); //TEMP: Only supporting floats for now
-
-                unsafe {
-                    fixed (byte* memPtr = typeMemory) {
-                        //TODO: We know we're using numbers here but what about other types such as strings?
-                        float val;
-                        Buffer.MemoryCopy(memPtr + typeInfo.memberInfo.offset, &val, sizeof(float), typeInfo.memberInfo.size);
-                        vm.Value = val.ToString();
-                    }
-                }
-            }
-
-            return vm;
+        private void RemoveComponent(string typeName) {
+            Membrane.MessageHandler.sendMessage(new Membrane.Editor_RemoveComponent {
+                entity = EntityId,
+                componentName = typeName
+            });
         }
 
         private void OnComponentCreated(Membrane.Engine_OnComponentAdded message) {
             if (EntityId == message.entity) {
-                Membrane.EditorTypeInfo componentTypeInfo = Membrane.ReflectionHelper.getInfoForType(message.componentName);
+                var vm = new ComponentViewModel(Membrane.ReflectionHelper.getInfoForType(message.componentName), message.data);
+                vm.OnRemoved = RemoveComponent;
 
-                List<TypeViewModel> members = new List<TypeViewModel>();
-                foreach(var memberInfo in componentTypeInfo.members) {
-                    members.Add(BuildTypeViewModel(memberInfo, message.data));
-                }
-                Components.Add(new ComponentViewModel(componentTypeInfo.displayName, members));
+                Components.Add(vm);
 
                 RefreshAvailableComponents();
             }
         }
 
         private void OnComponentRemoved(Membrane.Engine_OnComponentRemoved message) {
-            //if (EntityId == message.entity) {
-            //    foreach (ComponentViewModel component in Components) {
-            //        if (component.Type == message.componentType) {
-            //            Components.Remove(component);
-            //            break;
-            //        }
-            //    }
+            if (EntityId == message.entity) {
+                foreach (ComponentViewModel component in Components) {
+                    if (component.TypeName == message.componentName) {
+                        Components.Remove(component);
+                        break;
+                    }
+                }
 
-            //    RefreshAvailableComponents();
-            //}
+                RefreshAvailableComponents();
+            }
         }
 
         private void RefreshAvailableComponents() {

@@ -54,16 +54,16 @@
 									</Grid.ColumnDefinitions>
 
 									<TextBlock Text="{Binding Name}"
-										   Style="{StaticResource Header}"
-										   Grid.Column="0"/>
+											   Style="{StaticResource Header}"
+											   Grid.Column="0"/>
 									<Button Content="X"
-										Command="{Binding RemoveComponentCommand}"
-										Style="{StaticResource RemoveButton}"
-										Grid.Column="1"/>
+											Command="{Binding RemoveComponentCommand}"
+											Style="{StaticResource RemoveButton}"
+											Grid.Column="1"/>
 								</Grid>
 
 								<ListBox Margin="10 0 0 0"
-									 ItemsSource="{Binding Members}">
+										 ItemsSource="{Binding Members}">
 									<ListBox.ItemTemplate>
 										<DataTemplate>
 											<local:TypeView/>
