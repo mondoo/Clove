@@ -1,3 +1,6 @@
+set(INCLUDE ${CMAKE_CURRENT_SOURCE_DIR}/include/Clove/Maths)
+set(SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/source)
+
 #Library
 add_library(
     CloveMaths INTERFACE
@@ -9,22 +12,4 @@ target_include_directories(
 	
 	INTERFACE 
 		include
-)
-
-#Libraries
-target_link_libraries(
-	CloveMaths
-
-	INTERFACE
-		CONAN_PKG::glm
-)
-
-#Definitions
-target_compile_definitions( 
-	CloveMaths 
- 
-	INTERFACE 
-		GLM_FORCE_RADIANS 
-		GLM_FORCE_LEFT_HANDED 
-		GLM_FORCE_DEPTH_ZERO_TO_ONE 
 )
