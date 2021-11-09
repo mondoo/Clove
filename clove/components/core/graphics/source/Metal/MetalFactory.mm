@@ -271,6 +271,12 @@ namespace clove {
             }
         };
         
+        //Metal validates the bounds of argument buffer binding slots based off the order they are in the NSMutableArray
+        //so sort them here to make sure they are in the correct order.
+        std::sort(descriptor.bindings.begin(), descriptor.bindings.end(), [](DescriptorSetBindingInfo const &lhs, DescriptorSetBindingInfo const &rhs){
+            return rhs.binding > lhs.binding;
+        });
+        
         for(auto const &binding : descriptor.bindings) {
             MTLArgumentDescriptor *bindingDescriptor{ [[MTLArgumentDescriptor alloc] init] };
             
