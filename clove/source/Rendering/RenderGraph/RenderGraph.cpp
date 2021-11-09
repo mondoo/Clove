@@ -940,13 +940,13 @@ namespace clove {
 
             for(auto const &ubo : submission.shaderUbos) {
                 std::unique_ptr<RgBuffer> const &buffer{ buffers.at(ubo.buffer) };
-                descriptorSet->map(*buffer->getGhaBuffer(frameCache), buffer->getBufferOffset() + ubo.offset, ubo.size, DescriptorType::UniformBuffer, ubo.slot);
+                descriptorSet->write(*buffer->getGhaBuffer(frameCache), buffer->getBufferOffset() + ubo.offset, ubo.size, DescriptorType::UniformBuffer, ubo.slot);
             }
             for(auto const &image : submission.shaderImages) {
-                descriptorSet->map(*images.at(image.imageView.image)->getGhaImageView(frameCache, image.imageView.arrayIndex, image.imageView.arrayCount), GhaImage::Layout::ShaderReadOnlyOptimal, image.slot);
+                descriptorSet->write(*images.at(image.imageView.image)->getGhaImageView(frameCache, image.imageView.arrayIndex, image.imageView.arrayCount), GhaImage::Layout::ShaderReadOnlyOptimal, image.slot);
             }
             for(auto const &sampler : submission.shaderSamplers) {
-                descriptorSet->map(*samplers.at(sampler.sampler), sampler.slot);
+                descriptorSet->write(*samplers.at(sampler.sampler), sampler.slot);
             }
 
             graphicsCommandBufffer.bindDescriptorSet(*descriptorSet, 0);//TODO: Multiple sets / only set sets for a whole pass (i.e. view)
@@ -975,15 +975,15 @@ namespace clove {
 
             for(auto const &readUB : submission.readUniformBuffers) {
                 std::unique_ptr<RgBuffer> const &buffer{ buffers.at(readUB.buffer) };
-                descriptorSet->map(*buffer->getGhaBuffer(frameCache), 0, buffer->getBufferSize(), DescriptorType::UniformBuffer, readUB.slot);
+                descriptorSet->write(*buffer->getGhaBuffer(frameCache), 0, buffer->getBufferSize(), DescriptorType::UniformBuffer, readUB.slot);
             }
             for(auto const &readSB : submission.readStorageBuffers) {
                 std::unique_ptr<RgBuffer> const &buffer{ buffers.at(readSB.buffer) };
-                descriptorSet->map(*buffer->getGhaBuffer(frameCache), 0, buffer->getBufferSize(), DescriptorType::StorageBuffer, readSB.slot);
+                descriptorSet->write(*buffer->getGhaBuffer(frameCache), 0, buffer->getBufferSize(), DescriptorType::StorageBuffer, readSB.slot);
             }
             for(auto const &writeSB : submission.writeBuffers) {
                 std::unique_ptr<RgBuffer> const &buffer{ buffers.at(writeSB.buffer) };
-                descriptorSet->map(*buffer->getGhaBuffer(frameCache), 0, buffer->getBufferSize(), DescriptorType::StorageBuffer, writeSB.slot);
+                descriptorSet->write(*buffer->getGhaBuffer(frameCache), 0, buffer->getBufferSize(), DescriptorType::StorageBuffer, writeSB.slot);
             }
 
             computeCommandBufffer.bindDescriptorSet(*descriptorSet, 0);

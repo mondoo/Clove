@@ -21,7 +21,7 @@ namespace clove {
     
     MetalDescriptorSet::~MetalDescriptorSet() = default;
     
-    void MetalDescriptorSet::map(GhaBuffer const &buffer, size_t const offset, size_t const range, DescriptorType const descriptorType, uint32_t const bindingSlot) {
+    void MetalDescriptorSet::write(GhaBuffer const &buffer, size_t const offset, size_t const range, DescriptorType const descriptorType, uint32_t const bindingSlot) {
         GhaShader::Stage const shaderStage{ getStageFromBindingSlot(bindingSlot) };
         id<MTLBuffer> mtlBuffer{ polyCast<MetalBuffer const>(&buffer)->getBuffer() };
         
@@ -42,12 +42,12 @@ namespace clove {
         }
     }
     
-    void MetalDescriptorSet::map(GhaImageView const &imageView, GhaImage::Layout const layout, uint32_t const bindingSlot) {
+    void MetalDescriptorSet::write(GhaImageView const &imageView, GhaImage::Layout const layout, uint32_t const bindingSlot) {
         [pixelEncoder.encoder setTexture:polyCast<MetalImageView const>(&imageView)->getTexture()
                                  atIndex:bindingSlot];
     }
     
-    void MetalDescriptorSet::map(GhaSampler const &sampler, uint32_t const bindingSlot) {
+    void MetalDescriptorSet::write(GhaSampler const &sampler, uint32_t const bindingSlot) {
         [pixelEncoder.encoder setSamplerState:polyCast<MetalSampler const>(&sampler)->getSamplerState()
                                       atIndex:bindingSlot];
     }

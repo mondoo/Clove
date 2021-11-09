@@ -40,12 +40,12 @@ namespace clove {
 		MetalDescriptorSet &operator=(MetalDescriptorSet &&other) noexcept;
 		
 		~MetalDescriptorSet();
-		
-		void map(GhaBuffer const &buffer, size_t const offset, size_t const range, DescriptorType const descriptorType, uint32_t const bindingSlot) override;
-		
-		void map(GhaImageView const &imageView, GhaImage::Layout const layout, uint32_t const bindingSlot) override;
 
-        void map(GhaSampler const &sampler, uint32_t const bindingSlot) override;
+        void write(GhaBuffer const &buffer, size_t const offset, size_t const range, DescriptorType const descriptorType, uint32_t const bindingSlot) override;
+
+        void write(GhaImageView const &imageView, GhaImage::Layout const layout, uint32_t const bindingSlot) override;
+
+        void write(GhaSampler const &sampler, uint32_t const bindingSlot) override;
 
         inline id<MTLBuffer> getVertexBuffer() const;
 		inline id<MTLBuffer> getPixelBuffer() const;
