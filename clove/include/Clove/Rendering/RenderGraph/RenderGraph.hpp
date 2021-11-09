@@ -127,7 +127,7 @@ namespace clove {
         RgImageId createImage(GhaImage *ghaImage);
 
         /**
-         * @brief Creates a new RgSampler
+         * @brief Creates a new RgSampler.
          * @param descriptor 
          * @return 
          */
@@ -169,11 +169,11 @@ namespace clove {
          * the list of passes it will execute bassed on this output's dependencies.
          * @param resource 
          */
-        void registerGraphOutput(RgResourceId resource);
+        void registerGraphOutput(RgResourceId const resource);
 
         /**
          * @brief Writes data into the provided buffer.
-         * @details Will transition this buffer from video memory to system memory if requierd.
+         * @details Will transition this buffer from video memory to system memory if required.
          * @param data Pointer to data to write.
          * @param offset Offset into the buffer to write to. If the RgBuffer views an offset into a GhaBuffer then it'll be view offset + offset
          * @param size Size of the region in the buffer to write to.

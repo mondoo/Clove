@@ -77,7 +77,7 @@ namespace clove {
     RgPassId RenderGraph::createRenderPass(RgRenderPass::Descriptor passDescriptor) {
         RgPassId const renderPassId{ nextPassId++ };
 
-        for(auto &renderTarget : passDescriptor.renderTargets) {
+        for(auto const &renderTarget : passDescriptor.renderTargets) {
             RgImageId const imageId{ renderTarget.imageView.image };
             auto &image{ images.at(imageId) };
 
@@ -109,7 +109,9 @@ namespace clove {
         return computePassId;
     }
 
-    void RenderGraph::registerGraphOutput(RgResourceId resource) {
+    void RenderGraph::registerGraphOutput(RgResourceId const resource) {
+        CLOVE_ASSERT_MSG(buffers.contains(resource) || images.contains(resource), "RenderGraph output must be either a buffer or image registered to this graph.");
+
         outputResource = resource;
     }
 
@@ -438,6 +440,8 @@ namespace clove {
                                 continue;
                             }
 
+                            //Create a dependency for the closest compute pass to this render pass as the compute pass will
+                            //wait on any prior passes anyway.
                             size_t const distance{ passId - dependencyIndex };
                             if(!hasDependency || distance < currentDistance) {
                                 dependencyId    = dependencyPassId;
@@ -975,15 +979,15 @@ namespace clove {
 
             for(auto const &readUB : submission.readUniformBuffers) {
                 std::unique_ptr<RgBuffer> const &buffer{ buffers.at(readUB.buffer) };
-                descriptorSet->write(*buffer->getGhaBuffer(frameCache), 0, buffer->getBufferSize(), DescriptorType::UniformBuffer, readUB.slot);
+                descriptorSet->write(*buffer->getGhaBuffer(frameCache), buffer->getBufferOffset() + readUB.offset, readUB.size, DescriptorType::UniformBuffer, readUB.slot);
             }
             for(auto const &readSB : submission.readStorageBuffers) {
                 std::unique_ptr<RgBuffer> const &buffer{ buffers.at(readSB.buffer) };
-                descriptorSet->write(*buffer->getGhaBuffer(frameCache), 0, buffer->getBufferSize(), DescriptorType::StorageBuffer, readSB.slot);
+                descriptorSet->write(*buffer->getGhaBuffer(frameCache), buffer->getBufferOffset() + readSB.offset, readSB.size, DescriptorType::StorageBuffer, readSB.slot);
             }
             for(auto const &writeSB : submission.writeBuffers) {
                 std::unique_ptr<RgBuffer> const &buffer{ buffers.at(writeSB.buffer) };
-                descriptorSet->write(*buffer->getGhaBuffer(frameCache), 0, buffer->getBufferSize(), DescriptorType::StorageBuffer, writeSB.slot);
+                descriptorSet->write(*buffer->getGhaBuffer(frameCache), buffer->getBufferOffset() + writeSB.offset, writeSB.size, DescriptorType::StorageBuffer, writeSB.slot);
             }
 
             computeCommandBufffer.bindDescriptorSet(*descriptorSet, 0);
