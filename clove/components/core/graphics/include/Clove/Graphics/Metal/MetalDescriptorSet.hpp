@@ -6,6 +6,7 @@
 
 #include <unordered_map>
 #include <MetalKit/MetalKit.h>
+#include <optional>
 
 namespace clove {
 	class GhaDescriptorSetLayout;
@@ -17,21 +18,23 @@ namespace clove {
     public:
         struct ArgumentEncoder {
             id<MTLArgumentEncoder> encoder{ nullptr };  /**< Encoder object to write commands into. */
-            id<MTLBuffer> backingBuffer{ nullptr };     /**< The buffer backing the encoder object. Where data gets written into. */
+            size_t offset{ 0 };                         /**< Offset into the backing buffer. */
         };
         
 		//VARIABLES
 	private:
-        ArgumentEncoder vertexEncoder{};
-        ArgumentEncoder pixelEncoder{};
-        ArgumentEncoder computeEncoder{};
+        std::optional<ArgumentEncoder> vertexEncoder{};
+        std::optional<ArgumentEncoder> pixelEncoder{};
+        std::optional<ArgumentEncoder> computeEncoder{};
+        
+        id<MTLBuffer> backingBuffer{ nullptr }; /**< Backing buffer for all encoder objects. */
 
 		GhaDescriptorSetLayout const *layout{ nullptr };
 		
 		//FUNCTIONS
 	public:
 		MetalDescriptorSet() = delete;
-		MetalDescriptorSet(ArgumentEncoder vertexEncoder, ArgumentEncoder pixelEncoder, ArgumentEncoder computeEncoder, GhaDescriptorSetLayout const *layout);
+		MetalDescriptorSet(std::optional<ArgumentEncoder> vertexEncoder, std::optional<ArgumentEncoder> pixelEncoder, std::optional<ArgumentEncoder> computeEncoder, id<MTLBuffer> backingBuffer, GhaDescriptorSetLayout const *layout);
 		
 		MetalDescriptorSet(MetalDescriptorSet const &other) = delete;
 		MetalDescriptorSet(MetalDescriptorSet &&other) noexcept;
@@ -47,9 +50,11 @@ namespace clove {
 
         void write(GhaSampler const &sampler, uint32_t const bindingSlot) override;
 
-        inline id<MTLBuffer> getVertexBuffer() const;
-		inline id<MTLBuffer> getPixelBuffer() const;
-		inline id<MTLBuffer> getComputeBuffer() const;
+        inline std::optional<size_t> getVertexOffset() const;
+		inline std::optional<size_t> getPixelOffset() const;
+		inline std::optional<size_t> getComputeOffset() const;
+        
+        inline id<MTLBuffer> getBackingBuffer() const;
 		
 	private:
 		GhaShader::Stage getStageFromBindingSlot(uint32_t const bindingSlot);

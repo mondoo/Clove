@@ -69,6 +69,6 @@ namespace clove {
         void reset() override;
 
 	private:
-        void freeBuffers(MetalDescriptorSet &descriptorSet);
+        void freeBuffer(MetalDescriptorSet &descriptorSet);
     };
 }

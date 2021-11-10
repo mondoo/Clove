@@ -134,14 +134,19 @@ namespace clove {
                 return;
             }
             
-            if(metalDescriptorSet->getVertexBuffer() != nullptr) {
-                [encoder setVertexBuffer:metalDescriptorSet->getVertexBuffer()
-                                  offset:0
+            id<MTLBuffer> backingBuffer{ metalDescriptorSet->getBackingBuffer() };
+            
+            std::optional<size_t> vertexOffset{ metalDescriptorSet->getVertexOffset() };
+            std::optional<size_t> pixelOffset{ metalDescriptorSet->getPixelOffset() };
+            
+            if(vertexOffset.has_value()) {
+                [encoder setVertexBuffer:backingBuffer
+                                  offset:vertexOffset.value()
                                  atIndex:setNum];
             }
-            if(metalDescriptorSet->getPixelBuffer() != nullptr) {
-                [encoder setFragmentBuffer:metalDescriptorSet->getPixelBuffer()
-                                    offset:0
+            if(pixelOffset.has_value()) {
+                [encoder setFragmentBuffer:backingBuffer
+                                    offset:pixelOffset.value()
                                    atIndex:setNum];
             }
         });
