@@ -90,15 +90,18 @@ namespace clove {
                     MetalDescriptorSet::ArgumentEncoder encoder{};
                     
                     encoder.encoder = [device newArgumentEncoderWithArguments:descriptors];
-                    encoder.offset  = currentOffset;
                     
-                    size_t const bufferSize{ encoder.encoder.encodedLength };
-                    size_t const alignmentOffset{ bufferSize % minOffsetAlignment }; //Calculate the remainder of the offset so we know how far away we are from the next boundary
+                    size_t const alignmentOffset{ currentOffset % minOffsetAlignment }; //Calculate the remainder of the offset so we know how far away we are from the next boundary
                     size_t const alignment{ alignmentOffset != 0 ? (minOffsetAlignment - alignmentOffset) : 0 };
                     
-                    totalBackingBufferSize += bufferSize + alignment;
-                    currentOffset = totalBackingBufferSize;
+                    currentOffset += alignment;
+                    encoder.offset = currentOffset;
                     
+                    size_t const bufferSize{ encoder.encoder.encodedLength };
+                    
+                    totalBackingBufferSize += currentOffset + bufferSize;
+                    currentOffset = totalBackingBufferSize;
+
                     ret = encoder;
                 }
                 return ret;
