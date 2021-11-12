@@ -59,6 +59,14 @@ namespace Bulb {
             });
         }
 
+        private void ModifyComponent(string typeName, byte[] componentData) {
+            Membrane.MessageHandler.sendMessage(new Membrane.Editor_ModifyComponent {
+                entity = EntityId,
+                componentName = typeName,
+                data = componentData
+            });
+        }
+
         private void RemoveComponent(string typeName) {
             Membrane.MessageHandler.sendMessage(new Membrane.Editor_RemoveComponent {
                 entity = EntityId,
@@ -69,6 +77,7 @@ namespace Bulb {
         private void OnComponentCreated(Membrane.Engine_OnComponentAdded message) {
             if (EntityId == message.entity) {
                 var vm = new ComponentViewModel(Membrane.ReflectionHelper.getInfoForType(message.componentName), message.data);
+                vm.OnModified = ModifyComponent;
                 vm.OnRemoved = RemoveComponent;
 
                 Components.Add(vm);

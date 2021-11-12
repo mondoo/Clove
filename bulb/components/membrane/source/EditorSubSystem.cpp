@@ -35,7 +35,9 @@ namespace membrane {
             : subSystem{ layer } {
             MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_CreateEntity ^>(this, &EditorSubSystemMessageProxy::createEntity));
             MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_DeleteEntity ^>(this, &EditorSubSystemMessageProxy::deleteEntity));
+
             MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_AddComponent ^>(this, &EditorSubSystemMessageProxy::addComponent));
+            MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_ModifyComponent ^>(this, &EditorSubSystemMessageProxy::modifyComponent));
             MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_RemoveComponent ^>(this, &EditorSubSystemMessageProxy::removeComponent));
 
             MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_SaveScene ^>(this, &EditorSubSystemMessageProxy::saveScene));
@@ -65,6 +67,13 @@ namespace membrane {
             if (subSystem){
                 System::String ^typeName{ message->componentName };
                 subSystem->addComponent(message->entity, msclr::interop::marshal_as<std::string>(typeName));
+            }
+        }
+
+        void modifyComponent(Editor_ModifyComponent ^ message){
+            if (subSystem){
+                System::String ^typeName{ message->componentName };
+                subSystem->modifyComponent(message->entity, msclr::interop::marshal_as<std::string>(typeName), message->data);
             }
         }
 
@@ -321,13 +330,11 @@ namespace membrane {
         //TODO: Use switch statements
 
         uint8_t *componentMemory{ nullptr };
-        size_t memorySize;
         bool added{ false };
         if(typeInfo->id == transId) {
             if(!currentScene.hasComponent<clove::TransformComponent>(entity)) {
                 added           = true;
                 componentMemory = reinterpret_cast<uint8_t *>(&currentScene.addComponent<clove::TransformComponent>(entity));
-                memorySize      = sizeof(clove::TransformComponent);
             }
         } else if(typeInfo->id == modelId) {
             if(!currentScene.hasComponent<clove::StaticModelComponent>(entity)) {
@@ -341,7 +348,6 @@ namespace membrane {
             if(!currentScene.hasComponent<clove::PointLightComponent>(entity)) {
                 added           = true;
                 componentMemory = reinterpret_cast<uint8_t *>(&currentScene.addComponent<clove::PointLightComponent>(entity));
-                memorySize      = sizeof(clove::PointLightComponent);
             }
         }
 
@@ -353,14 +359,60 @@ namespace membrane {
         message->entity        = entity;
         message->componentName = gcnew System::String{ typeName.data() };
         if(componentMemory != nullptr) {
-            array<System::Byte> ^ componentData = gcnew array<System::Byte>(memorySize);
-            for(size_t i{ 0 }; i < memorySize; ++i) {
+            array<System::Byte> ^ componentData = gcnew array<System::Byte>(typeInfo->size);
+            for(size_t i{ 0 }; i < typeInfo->size; ++i) {
                 componentData[i] = componentMemory[i];
             }
             message->data = componentData;
         }
 
         MessageHandler::sendMessage(message);
+    }
+
+    void EditorSubSystem::modifyComponent(clove::Entity entity, std::string_view typeName, array<uint8_t> ^ data) {
+        clove::reflection::TypeInfo const *typeInfo{ clove::reflection::getTypeInfo(typeName) };
+        CLOVE_ASSERT(typeInfo != nullptr);
+
+        static size_t const transId{ typeid(clove::TransformComponent).hash_code() };
+        static size_t const modelId{ typeid(clove::StaticModelComponent).hash_code() };
+        static size_t const lightId{ typeid(clove::PointLightComponent).hash_code() };
+
+        //TODO: Use switch statements
+
+        pin_ptr<uint8_t> const arrayPointer{ &data[0] };
+        size_t const memorySize{ typeInfo->size };
+
+        bool modified{ false };
+        if(typeInfo->id == transId) {
+            if(currentScene.hasComponent<clove::TransformComponent>(entity)) {
+                auto &comp{ currentScene.getComponent<clove::TransformComponent>(entity) };
+                std::memcpy(&comp, arrayPointer, memorySize);
+                modified = true;
+            }
+        } else if(typeInfo->id == modelId) {
+            //TODO
+        } else if(typeInfo->id == lightId) {
+            if(currentScene.hasComponent<clove::PointLightComponent>(entity)) {
+                auto &comp{ currentScene.getComponent<clove::PointLightComponent>(entity) };
+                std::memcpy(&comp, arrayPointer, memorySize);
+                modified = true;
+            }
+        }
+
+        CLOVE_ASSERT(modified);
+
+        //TODO: Needed?
+        /*auto const *const componentMemory{ reinterpret_cast<uint8_t *>(data.get()) };
+        array<System::Byte> ^ componentData = gcnew array<System::Byte>(memorySize);
+        for(size_t i{ 0 }; i < memorySize; ++i) {
+            componentData[i] = componentMemory[i];
+        }
+
+        auto message{ gcnew Engine_OnComponentModified };
+        message->entity        = entity;
+        message->componentName = gcnew System::String{ typeName.data() };
+        message->data          = componentData;
+        MessageHandler::sendMessage(message);*/
     }
 
     void EditorSubSystem::removeComponent(clove::Entity entity, std::string_view typeName) {
