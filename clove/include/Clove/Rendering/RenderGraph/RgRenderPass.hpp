@@ -5,6 +5,8 @@
 #include "Clove/Rendering/RenderGraph/RgPass.hpp"
 #include "Clove/Rendering/RenderGraph/RgShader.hpp"
 
+#include <Clove/Graphics/GhaGraphicsPipelineObject.hpp>
+
 #include <vector>
 
 namespace clove {
@@ -21,6 +23,9 @@ namespace clove {
         struct Descriptor {
             RgShader vertexShader{};
             RgShader pixelShader{};
+
+            VertexInputBindingDescriptor vertexInput{};
+            std::vector<VertexAttributeDescriptor> vertexAttributes{}; /**< The index of each element maps to the layout(location = x) in the vertex shader. */
 
             vec2i viewportPosition{ 0 };
             vec2ui viewportSize{ 0 };

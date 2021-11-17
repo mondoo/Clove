@@ -717,26 +717,6 @@ namespace clove {
 
             outDescriptorSetLayouts[passId] = globalCache.createDescriptorSetLayout(GhaDescriptorSetLayout::Descriptor{ .bindings = std::move(descriptorBindings) });
 
-            //Build graphics pipeline
-            std::vector<VertexAttributeDescriptor> const vertexAttributes{
-                VertexAttributeDescriptor{
-                    .format = VertexAttributeFormat::R32G32B32_SFLOAT,
-                    .offset = offsetof(Vertex, position),
-                },
-                VertexAttributeDescriptor{
-                    .format = VertexAttributeFormat::R32G32B32_SFLOAT,
-                    .offset = offsetof(Vertex, normal),
-                },
-                VertexAttributeDescriptor{
-                    .format = VertexAttributeFormat::R32G32_SFLOAT,
-                    .offset = offsetof(Vertex, texCoord),
-                },
-                VertexAttributeDescriptor{
-                    .format = VertexAttributeFormat::R32G32B32_SFLOAT,
-                    .offset = offsetof(Vertex, colour),
-                },
-            };
-
             //TEMP: Using dynamic for now
             AreaDescriptor const viewScissorArea{
                 .state = ElementState::Dynamic,
@@ -745,8 +725,8 @@ namespace clove {
             outGraphicsPipelines[passId] = globalCache.createGraphicsPipelineObject(GhaGraphicsPipelineObject::Descriptor{
                 .vertexShader       = shaders.at(passDescriptor.vertexShader),
                 .pixelShader        = shaders.at(passDescriptor.pixelShader),
-                .vertexInput        = Vertex::getInputBindingDescriptor(),
-                .vertexAttributes   = vertexAttributes,
+                .vertexInput        = passDescriptor.vertexInput,
+                .vertexAttributes   = passDescriptor.vertexAttributes,
                 .viewportDescriptor = viewScissorArea,
                 .scissorDescriptor  = viewScissorArea,
                 .depthState         = {

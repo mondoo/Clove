@@ -3,6 +3,7 @@
 #include "Clove/Rendering/RenderGraph/RenderGraph.hpp"
 #include "Clove/Rendering/RenderGraph/RgPass.hpp"
 #include "Clove/Rendering/RenderingConstants.hpp"
+#include "Clove/Rendering/Vertex.hpp"
 
 extern "C" const char constants[];
 extern "C" const size_t constantsLength;
@@ -28,8 +29,27 @@ namespace clove {
 
         //NOTE: Need this as a separate thing otherwise there is an internal compiler error. I think it's because of the clearValue variant
         RgRenderPass::Descriptor passDescriptor{
-            .vertexShader  = renderGraph.createShader({ mesh_v, mesh_vLength }, shaderIncludes, "Mesh (vertex)", GhaShader::Stage::Vertex),
-            .pixelShader   = renderGraph.createShader({ mesh_p, mesh_pLength }, shaderIncludes, "Mesh (pixel)", GhaShader::Stage::Pixel),
+            .vertexShader     = renderGraph.createShader({ mesh_v, mesh_vLength }, shaderIncludes, "Mesh (vertex)", GhaShader::Stage::Vertex),
+            .pixelShader      = renderGraph.createShader({ mesh_p, mesh_pLength }, shaderIncludes, "Mesh (pixel)", GhaShader::Stage::Pixel),
+            .vertexInput      = Vertex::getInputBindingDescriptor(),
+            .vertexAttributes = {
+                VertexAttributeDescriptor{
+                    .format = VertexAttributeFormat::R32G32B32_SFLOAT,
+                    .offset = offsetof(Vertex, position),
+                },
+                VertexAttributeDescriptor{
+                    .format = VertexAttributeFormat::R32G32B32_SFLOAT,
+                    .offset = offsetof(Vertex, normal),
+                },
+                VertexAttributeDescriptor{
+                    .format = VertexAttributeFormat::R32G32_SFLOAT,
+                    .offset = offsetof(Vertex, texCoord),
+                },
+                VertexAttributeDescriptor{
+                    .format = VertexAttributeFormat::R32G32B32_SFLOAT,
+                    .offset = offsetof(Vertex, colour),
+                },
+            },
             .viewportSize  = passData.renderTargetSize,
             .renderTargets = {
                 RgRenderTargetBinding{

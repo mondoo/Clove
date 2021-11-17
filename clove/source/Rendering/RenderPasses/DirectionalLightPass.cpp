@@ -3,6 +3,7 @@
 #include "Clove/Rendering/RenderGraph/RenderGraph.hpp"
 #include "Clove/Rendering/RenderGraph/RgPass.hpp"
 #include "Clove/Rendering/RenderingConstants.hpp"
+#include "Clove/Rendering/Vertex.hpp"
 
 extern "C" const char constants[];
 extern "C" const size_t constantsLength;
@@ -29,8 +30,15 @@ namespace clove {
         for(size_t i{ 0 }; i < passData.directionalLightCount; ++i) {
             //NOTE: Need this as a separate thing otherwise there is an internal compiler error. I think it's because of the clearValue variant
             RgRenderPass::Descriptor passDescriptor{
-                .vertexShader = renderGraph.createShader({ meshshadowmap_v, meshshadowmap_vLength }, shaderIncludes, "Mesh (vertex)", GhaShader::Stage::Vertex),
-                .pixelShader  = renderGraph.createShader({ meshshadowmap_p, meshshadowmap_pLength }, shaderIncludes, "Mesh (pixel)", GhaShader::Stage::Pixel),
+                .vertexShader     = renderGraph.createShader({ meshshadowmap_v, meshshadowmap_vLength }, shaderIncludes, "Mesh shadow map (vertex)", GhaShader::Stage::Vertex),
+                .pixelShader      = renderGraph.createShader({ meshshadowmap_p, meshshadowmap_pLength }, shaderIncludes, "Mesh shadow map (pixel)", GhaShader::Stage::Pixel),
+                .vertexInput      = Vertex::getInputBindingDescriptor(),
+                .vertexAttributes = {
+                    VertexAttributeDescriptor{
+                        .format = VertexAttributeFormat::R32G32B32_SFLOAT,
+                        .offset = offsetof(Vertex, position),
+                    },
+                },
                 .viewportSize = { shadowMapSize, shadowMapSize },
                 .depthStencil = {
                     .loadOp     = LoadOperation::Clear,
