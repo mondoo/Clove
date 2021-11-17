@@ -68,15 +68,15 @@ namespace clove {
         RgResourceId outputResource{ INVALID_RESOURCE_ID }; /**< The final output of the graph. */
 
         //Resources
-        std::unordered_map<RgResourceId, std::unique_ptr<RgBuffer>> buffers{};
-        std::unordered_map<RgResourceId, std::unique_ptr<RgImage>> images{};
+        std::unordered_map<RgResourceId, RgBuffer> buffers{};
+        std::unordered_map<RgResourceId, RgImage> images{};
         std::unordered_map<RgResourceId, GhaSampler *> samplers{};
         std::unordered_map<RgResourceId, GhaShader *> shaders{};
 
         //Passes
-        std::unordered_map<RgPassId, std::unique_ptr<RgRenderPass>> renderPasses{};
-        std::unordered_map<RgPassId, std::unique_ptr<RgComputePass>> computePasses{};
-        std::unordered_map<RgPassId, std::unique_ptr<RgTransferPass>> transferPasses{};
+        std::unordered_map<RgPassId, RgRenderPass> renderPasses{};
+        std::unordered_map<RgPassId, RgComputePass> computePasses{};
+        std::unordered_map<RgPassId, RgTransferPass> transferPasses{};
 
         //FUNCTIONS
     public:
