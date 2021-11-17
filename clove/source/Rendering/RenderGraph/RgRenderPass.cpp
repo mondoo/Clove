@@ -3,9 +3,8 @@
 #include "Clove/Rendering/RenderGraph/RgGlobalCache.hpp"
 
 namespace clove {
-    RgRenderPass::RgRenderPass(RgPassId id, Descriptor descriptor)
-        : RgPass{ id }
-        , descriptor{ std::move(descriptor) } {
+    RgRenderPass::RgRenderPass(Descriptor descriptor)
+        : descriptor{ std::move(descriptor) } {
     }
 
     RgRenderPass::RgRenderPass(RgRenderPass &&other) noexcept = default;

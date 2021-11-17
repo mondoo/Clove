@@ -1,9 +1,8 @@
 #include "Clove/Rendering/RenderGraph/RgComputePass.hpp"
 
 namespace clove {
-    RgComputePass::RgComputePass(RgPassId id, Descriptor descriptor)
-        : RgPass{ id }
-        , descriptor{ std::move(descriptor) } {
+    RgComputePass::RgComputePass(Descriptor descriptor)
+        : descriptor{ std::move(descriptor) } {
     }
 
     RgComputePass::RgComputePass(RgComputePass &&other) noexcept = default;

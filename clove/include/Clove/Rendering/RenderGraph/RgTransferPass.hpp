@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Clove/Rendering/RenderGraph/RgId.hpp"
 #include "Clove/Rendering/RenderGraph/RgPass.hpp"
 
 #include <vector>
@@ -22,13 +23,13 @@ namespace clove {
         //FUNCTIONS
     public:
         RgTransferPass() = delete;
-        RgTransferPass(RgPassId id, BufferWrite writePass);
+        RgTransferPass(BufferWrite writePass);
 
         RgTransferPass(RgTransferPass const &other) = delete;
         RgTransferPass(RgTransferPass &&other) noexcept;
 
         RgTransferPass &operator=(RgTransferPass const &other) = delete;
-        RgTransferPass &operator=(RgTransferPass &&other) noexcept;
+        RgTransferPass &operator                               =(RgTransferPass &&other) noexcept;
 
         ~RgTransferPass();
 

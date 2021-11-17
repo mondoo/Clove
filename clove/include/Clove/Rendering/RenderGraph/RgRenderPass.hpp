@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Clove/Rendering/RenderGraph/Bindings.hpp"
+#include "Clove/Rendering/RenderGraph/RgId.hpp"
 #include "Clove/Rendering/RenderGraph/RgPass.hpp"
 #include "Clove/Rendering/RenderGraph/RgShader.hpp"
 
@@ -54,7 +55,7 @@ namespace clove {
         //FUNCTIONS
     public:
         RgRenderPass() = delete;
-        RgRenderPass(RgPassId id, Descriptor descriptor);
+        RgRenderPass(Descriptor descriptor);
 
         RgRenderPass(RgRenderPass const &other) = delete;
         RgRenderPass(RgRenderPass &&other) noexcept;

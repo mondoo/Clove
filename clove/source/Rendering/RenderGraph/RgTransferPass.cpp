@@ -1,9 +1,8 @@
 #include "Clove/Rendering/RenderGraph/RgTransferPass.hpp"
 
 namespace clove {
-    RgTransferPass::RgTransferPass(RgPassId id, BufferWrite writePass)
-        : RgPass{ id }
-        , writePass{ std::move(writePass) } {
+    RgTransferPass::RgTransferPass(BufferWrite writePass)
+        : writePass{ std::move(writePass) } {
     }
 
     RgTransferPass::RgTransferPass(RgTransferPass &&other) noexcept = default;

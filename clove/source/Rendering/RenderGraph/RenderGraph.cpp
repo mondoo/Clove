@@ -96,7 +96,7 @@ namespace clove {
             image.addWritePass(renderPassId);
         }
 
-        renderPasses.emplace(std::make_pair(renderPassId, RgRenderPass{ renderPassId, std::move(passDescriptor) }));
+        renderPasses.emplace(std::make_pair(renderPassId, RgRenderPass{ std::move(passDescriptor) }));
 
         return renderPassId;
     }
@@ -104,7 +104,7 @@ namespace clove {
     RgPassId RenderGraph::createComputePass(RgComputePass::Descriptor passDescriptor) {
         RgPassId const computePassId{ nextPassId++ };
 
-        computePasses.emplace(std::make_pair(computePassId, RgComputePass{ computePassId, std::move(passDescriptor) }));
+        computePasses.emplace(std::make_pair(computePassId, RgComputePass{ std::move(passDescriptor) }));
 
         return computePassId;
     }
@@ -130,7 +130,7 @@ namespace clove {
         };
         memcpy(write.data.data(), data, size);
 
-        transferPasses.emplace(std::make_pair(transferPassId, RgTransferPass{ transferPassId, std::move(write) }));
+        transferPasses.emplace(std::make_pair(transferPassId, RgTransferPass{ std::move(write) }));
     }
 
     void RenderGraph::addRenderSubmission(RgPassId const renderPass, RgRenderPass::Submission submission) {

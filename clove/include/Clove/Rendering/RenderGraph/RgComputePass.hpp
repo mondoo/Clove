@@ -1,11 +1,12 @@
 #pragma once
 
-#include "Clove/Rendering/RenderGraph/RgPass.hpp"
 #include "Clove/Rendering/RenderGraph/Bindings.hpp"
+#include "Clove/Rendering/RenderGraph/RgId.hpp"
+#include "Clove/Rendering/RenderGraph/RgPass.hpp"
 #include "Clove/Rendering/RenderGraph/RgShader.hpp"
 
-#include <vector>
 #include <Clove/Maths/Vector.hpp>
+#include <vector>
 
 namespace clove {
     class RgComputePass : public RgPass {
@@ -35,7 +36,7 @@ namespace clove {
         //FUNCTIONS
     public:
         RgComputePass() = delete;
-        RgComputePass(RgPassId id, Descriptor descriptor);
+        RgComputePass(Descriptor descriptor);
 
         RgComputePass(RgComputePass const &other) = delete;
         RgComputePass(RgComputePass &&other) noexcept;
