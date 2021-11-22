@@ -35,13 +35,6 @@ namespace clove {
             Stopped
         };
 
-        enum class SubSystemGroup {
-            Initialisation, /**< For layers that need to perform logic before anything else. */
-            Core,           /**< The default group. For layers that contain core / general functionality. */
-            Interface,      /**< For layers that contain interface logic. Usually UI */
-            Render,         /**< For layers that need be run very last. Usually for some form of rendering logic. */
-        };
-
         //VARIABLES
     private:
         static Application *instance;
@@ -60,8 +53,8 @@ namespace clove {
         VirtualFileSystem fileSystem{};
         AssetManager assetManager;
 
-        std::unordered_map<std::type_index, std::pair<SubSystemGroup, size_t>> subSystemToIndex; /**< Contains the index for each subsystem in the subSystems array. */
-        std::map<SubSystemGroup, std::vector<std::unique_ptr<SubSystem>>> subSystems;
+        std::unordered_map<std::type_index, std::pair<SubSystem::Group, size_t>> subSystemToIndex; /**< Contains the index for each subsystem in the subSystems array. */
+        std::map<SubSystem::Group, std::vector<std::unique_ptr<SubSystem>>> subSystems;
 
         std::chrono::steady_clock::time_point prevFrameTime;
 
@@ -107,8 +100,6 @@ namespace clove {
 
         template<typename SubSystemType, typename... Args>
         void pushSubSystem(Args &&...args);
-        template<typename SubSystemType, typename... Args>
-        void pushSubSystem(SubSystemGroup group, Args &&...args);
 
         template<typename SubSystemType>
         SubSystemType &getSubSystem();
