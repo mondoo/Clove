@@ -131,6 +131,10 @@ namespace clove {
 
         currentFrameData.numLights.numDirectional = 0;
         currentFrameData.numLights.numPoint       = 0;
+
+        for(auto &&[id, pass] : geometryPasses) {
+            pass->flushJobs();
+        }
     }
 
     void ForwardRenderer3D::submitMesh(MeshInfo meshInfo) {
