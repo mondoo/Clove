@@ -71,7 +71,8 @@ namespace Bulb {
                 fixed (byte* memPtr = componentData) {
                     //TODO: We know we're using numbers here but what about other types such as strings?
                     if (!float.TryParse(value, out float val)) {
-                        Membrane.Log.write(Membrane.LogLevel.Error, "Could not parse value");
+                        Membrane.Log.write(Membrane.LogLevel.Error, $"Could not parse value \'{value}\' for component \'{Name}\'. Component was not updated");
+                        return;
                     }
 
                     Buffer.MemoryCopy(&val, memPtr + valueOffset, valueSize, sizeof(float));
