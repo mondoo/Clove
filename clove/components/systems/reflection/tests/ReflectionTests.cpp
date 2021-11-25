@@ -68,6 +68,7 @@ CLOVE_REFLECT_END(test::NamespaceReflectedClass)
 
 struct Internal{
     int a;
+    std::string b;
 };
 
 struct Nested{
@@ -77,6 +78,7 @@ struct Nested{
 
 CLOVE_REFLECT_BEGIN(Internal)
 CLOVE_REFLECT_PROPERTY(a)
+CLOVE_REFLECT_PROPERTY(b)
 CLOVE_REFLECT_END(Internal)
 
 CLOVE_REFLECT_BEGIN(Nested)
@@ -197,6 +199,17 @@ TEST(ReflectionTests, CanGetBasicMemberInfo) {
     EXPECT_EQ(privateClassMembers[1].name, "b");
     EXPECT_EQ(privateClassMembers[1].offset, sizeHelper.offsetOfB());
     EXPECT_EQ(privateClassMembers[1].size, sizeHelper.sizeOfB());
+
+    auto const internalInfo{ reflection::getTypeInfo<Internal>() };
+    auto const &internalInfoMembers{ internalInfo.members };
+
+    Internal internalInstance{};
+    internalInstance.b = "Hello, World!";
+
+    auto *const internalClassPtr{ reinterpret_cast<std::byte *>(&internalInstance) };
+    auto *const b{ reinterpret_cast<std::string *>(internalClassPtr + internalInfoMembers[1].offset) };
+
+    EXPECT_EQ(*b, internalInstance.b);
 }
 
 TEST(ReflectionTests, CanGetMemberAttributes) {
