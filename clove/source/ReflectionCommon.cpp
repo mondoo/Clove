@@ -7,14 +7,14 @@
 //Provides reflection information for common types
 
 CLOVE_REFLECT_BEGIN(clove::vec3f)
-CLOVE_REFLECT_PROPERTY(x, clove::EditorEditableMember{})
-CLOVE_REFLECT_PROPERTY(y, clove::EditorEditableMember{})
-CLOVE_REFLECT_PROPERTY(z, clove::EditorEditableMember{})
+CLOVE_REFLECT_MEMBER(x, clove::EditorEditableMember{})
+CLOVE_REFLECT_MEMBER(y, clove::EditorEditableMember{})
+CLOVE_REFLECT_MEMBER(z, clove::EditorEditableMember{})
 CLOVE_REFLECT_END(clove::vec3f)
 
 CLOVE_REFLECT_BEGIN(clove::quatf)
-CLOVE_REFLECT_PROPERTY(x, clove::EditorEditableMember{})
-CLOVE_REFLECT_PROPERTY(y, clove::EditorEditableMember{})
-CLOVE_REFLECT_PROPERTY(z, clove::EditorEditableMember{})
-CLOVE_REFLECT_PROPERTY(w, clove::EditorEditableMember{})
+CLOVE_REFLECT_MEMBER(x, clove::EditorEditableMember{})
+CLOVE_REFLECT_MEMBER(y, clove::EditorEditableMember{})
+CLOVE_REFLECT_MEMBER(z, clove::EditorEditableMember{})
+CLOVE_REFLECT_MEMBER(w, clove::EditorEditableMember{})
 CLOVE_REFLECT_END(clove::quatf)

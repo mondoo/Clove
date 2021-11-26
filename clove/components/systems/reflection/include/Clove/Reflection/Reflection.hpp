@@ -147,15 +147,16 @@ namespace clove::reflection {
                                                                              \
         static size_t constexpr memberIndexOffset{ __COUNTER__ + 1 };
 
-#define CLOVE_REFLECT_PROPERTY(property, ...)                                \
-    template<>                                                               \
-    struct Member<__COUNTER__ - memberIndexOffset> {                         \
-        static std::string_view constexpr name{ #property };                 \
-        static size_t constexpr offset{ offsetof(Type, property) };          \
-        static size_t constexpr size{ sizeof(Type::property) };              \
-        static inline TypeId const id{ typeid(Type::property).hash_code() }; \
-                                                                             \
-        static inline auto const attributes{ std::make_tuple(__VA_ARGS__) }; \
+#define CLOVE_REFLECT_MEMBER(member, ...)                                                      \
+    template<>                                                                                 \
+    struct Member<__COUNTER__ - memberIndexOffset> {                                           \
+        static std::string_view constexpr name{ #member };                                     \
+        static MemberType constexpr type{ internal::getMemberType<decltype(Type::member)>() }; \
+        static size_t constexpr offset{ offsetof(Type, member) };                              \
+        static size_t constexpr size{ sizeof(Type::member) };                                  \
+        static inline TypeId const id{ typeid(Type::member).hash_code() };                     \
+                                                                                               \
+        static inline auto const attributes{ std::make_tuple(__VA_ARGS__) };                   \
     };
 
 #define CLOVE_REFLECT_END(classType)                                                                 \

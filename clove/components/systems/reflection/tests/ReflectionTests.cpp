@@ -14,8 +14,8 @@ public:
 };
 
 CLOVE_REFLECT_BEGIN(PublicReflectClass, TestAttribute{ .text = "class" })
-CLOVE_REFLECT_PROPERTY(x, TestAttribute{ .text = "member" })
-CLOVE_REFLECT_PROPERTY(y)
+CLOVE_REFLECT_MEMBER(x, TestAttribute{ .text = "member" })
+CLOVE_REFLECT_MEMBER(y)
 CLOVE_REFLECT_END(PublicReflectClass)
 
 class PrivateReflectClass {
@@ -43,8 +43,8 @@ public:
 };
 
 CLOVE_REFLECT_BEGIN(PrivateReflectClass)
-CLOVE_REFLECT_PROPERTY(a)
-CLOVE_REFLECT_PROPERTY(b)
+CLOVE_REFLECT_MEMBER(a)
+CLOVE_REFLECT_MEMBER(b)
 CLOVE_REFLECT_END(PrivateReflectClass)
 
 class NotReflectedClass {
@@ -62,8 +62,8 @@ namespace test {
 }
 
 CLOVE_REFLECT_BEGIN(test::NamespaceReflectedClass)
-CLOVE_REFLECT_PROPERTY(a)
-CLOVE_REFLECT_PROPERTY(b)
+CLOVE_REFLECT_MEMBER(a)
+CLOVE_REFLECT_MEMBER(b)
 CLOVE_REFLECT_END(test::NamespaceReflectedClass)
 
 struct Internal{
@@ -77,13 +77,13 @@ struct Nested{
 };
 
 CLOVE_REFLECT_BEGIN(Internal)
-CLOVE_REFLECT_PROPERTY(a)
-CLOVE_REFLECT_PROPERTY(b)
+CLOVE_REFLECT_MEMBER(a)
+CLOVE_REFLECT_MEMBER(b)
 CLOVE_REFLECT_END(Internal)
 
 CLOVE_REFLECT_BEGIN(Nested)
-CLOVE_REFLECT_PROPERTY(a)
-CLOVE_REFLECT_PROPERTY(b)
+CLOVE_REFLECT_MEMBER(a)
+CLOVE_REFLECT_MEMBER(b)
 CLOVE_REFLECT_END(Nested)
 
 TEST(ReflectionTests, CanGetTypeInfoByType) {

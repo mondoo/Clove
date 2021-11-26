@@ -4,5 +4,5 @@
 #include <Clove/Reflection/Reflection.hpp>
 
 CLOVE_REFLECT_BEGIN(clove::StaticModelComponent, clove::EditorVisibleComponent{.name = "Static Model Component"})
-//TODO: Memebers
+CLOVE_REFLECT_MEMBER(model, clove::EditorEditableMember{})
 CLOVE_REFLECT_END(clove::StaticModelComponent)
