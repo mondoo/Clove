@@ -91,11 +91,7 @@ namespace clove::reflection {
     }
 
     template<typename Type>
-    TypeInfo getTypeInfo() {
-        //TODO: Use registry to remain consistent
-        //TODO: Does not work when macros are in a source file so does need to use registry
-        return internal::TypeInfo<Type>::getTypeInfo(); 
-    }
+    TypeInfo const *getTypeInfo();
 
     /**
      * @brief Returns the TypeInfo with the provided typeName.

@@ -87,12 +87,13 @@ CLOVE_REFLECT_MEMBER(b)
 CLOVE_REFLECT_END(Nested)
 
 TEST(ReflectionTests, CanGetTypeInfoByType) {
-    reflection::TypeInfo const publicClassInfo{ reflection::getTypeInfo<PublicReflectClass>() };
-    reflection::TypeInfo const privateClassInfo{ reflection::getTypeInfo<PrivateReflectClass>() };
-    //reflection::TypeInfo const notReflectedClassInfo{ reflection::getTypeInfo<NotReflectedClass>() };
+    reflection::TypeInfo const *publicClassInfo{ reflection::getTypeInfo<PublicReflectClass>() };
+    reflection::TypeInfo const *privateClassInfo{ reflection::getTypeInfo<PrivateReflectClass>() };
+    reflection::TypeInfo const *notReflectedClassInfo{ reflection::getTypeInfo<NotReflectedClass>() };
 
-    //Test cannot compile if used on not reflected types
-    EXPECT_TRUE(true);
+    EXPECT_NE(publicClassInfo, nullptr);
+    EXPECT_NE(privateClassInfo, nullptr);
+    EXPECT_EQ(notReflectedClassInfo, nullptr);
 }
 
 TEST(ReflectionTests, CanGetTypeInfoByName) {
@@ -116,31 +117,31 @@ TEST(ReflectionTests, CanGetTypeInfoById) {
 }
 
 TEST(ReflectionTests, TypeInfoIdIsCorrect) {
-    reflection::TypeInfo const typeInfo{ reflection::getTypeInfo<PublicReflectClass>() };
+    reflection::TypeInfo const *typeInfo{ reflection::getTypeInfo<PublicReflectClass>() };
 
-    EXPECT_EQ(typeInfo.id, typeid(PublicReflectClass).hash_code());
+    EXPECT_EQ(typeInfo->id, typeid(PublicReflectClass).hash_code());
 }
 
 TEST(ReflectionTests, TypeInfoSizeIsCorrect) {
-    reflection::TypeInfo const typeInfo{ reflection::getTypeInfo<PublicReflectClass>() };
+    reflection::TypeInfo const *typeInfo{ reflection::getTypeInfo<PublicReflectClass>() };
 
-    EXPECT_EQ(typeInfo.size, sizeof(PublicReflectClass));
+    EXPECT_EQ(typeInfo->size, sizeof(PublicReflectClass));
 }
 
 TEST(ReflectionTests, CanGetTypeAttributes) {
-    reflection::TypeInfo const publicClassInfo{ reflection::getTypeInfo<PublicReflectClass>() };
-    reflection::TypeInfo const privateClassInfo{ reflection::getTypeInfo<PrivateReflectClass>() };
+    reflection::TypeInfo const *publicClassInfo{ reflection::getTypeInfo<PublicReflectClass>() };
+    reflection::TypeInfo const *privateClassInfo{ reflection::getTypeInfo<PrivateReflectClass>() };
 
-    std::optional<TestAttribute> publicClassAttribute{ publicClassInfo.attributes.get<TestAttribute>() };
-    std::optional<TestAttribute> privateClassAttribute{ privateClassInfo.attributes.get<TestAttribute>() };
+    std::optional<TestAttribute> publicClassAttribute{ publicClassInfo->attributes.get<TestAttribute>() };
+    std::optional<TestAttribute> privateClassAttribute{ privateClassInfo->attributes.get<TestAttribute>() };
 
     EXPECT_TRUE(publicClassAttribute.has_value());
     EXPECT_FALSE(privateClassAttribute.has_value());
 }
 
 TEST(ReflectionTests, CanGetValueOfTypeAttributes) {
-    reflection::TypeInfo const publicClassInfo{ reflection::getTypeInfo<PublicReflectClass>() };
-    std::optional<TestAttribute> publicClassAttribute{ publicClassInfo.attributes.get<TestAttribute>() };
+    reflection::TypeInfo const *publicClassInfo{ reflection::getTypeInfo<PublicReflectClass>() };
+    std::optional<TestAttribute> publicClassAttribute{ publicClassInfo->attributes.get<TestAttribute>() };
 
     ASSERT_TRUE(publicClassAttribute.has_value());
     EXPECT_EQ(publicClassAttribute->text, "class");
@@ -155,20 +156,20 @@ TEST(ReflectionTests, CanGetAllTypesWithAttribute) {
 
 TEST(ReflectionTests, CanGetNumTypePublicMembers) {
     size_t constexpr memberCount{ 2 };
-    reflection::TypeInfo const publicClassInfo{ reflection::getTypeInfo<PublicReflectClass>() };
+    reflection::TypeInfo const *publicClassInfo{ reflection::getTypeInfo<PublicReflectClass>() };
 
-    EXPECT_EQ(publicClassInfo.members.size(), memberCount);
+    EXPECT_EQ(publicClassInfo->members.size(), memberCount);
 }
 
 TEST(ReflectionTests, CanGetNumTypePrivateMembers) {
     size_t constexpr memberCount{ 2 };
-    reflection::TypeInfo const privateClassInfo{ reflection::getTypeInfo<PrivateReflectClass>() };
+    reflection::TypeInfo const *privateClassInfo{ reflection::getTypeInfo<PrivateReflectClass>() };
 
-    EXPECT_EQ(privateClassInfo.members.size(), memberCount);
+    EXPECT_EQ(privateClassInfo->members.size(), memberCount);
 }
 
 TEST(ReflectionTests, CanGetBasicMemberInfo) {
-    std::vector<reflection::MemberInfo> const &publicClassMembers{ reflection::getTypeInfo<PublicReflectClass>().members };
+    std::vector<reflection::MemberInfo> const &publicClassMembers{ reflection::getTypeInfo<PublicReflectClass>()->members };
 
     EXPECT_EQ(publicClassMembers[0].name, "x");
     EXPECT_EQ(publicClassMembers[0].offset, offsetof(PublicReflectClass, x));
@@ -189,7 +190,7 @@ TEST(ReflectionTests, CanGetBasicMemberInfo) {
     EXPECT_EQ(*x, pubClassInstance.x);
     EXPECT_EQ(*y, pubClassInstance.y);
 
-    std::vector<reflection::MemberInfo> const &privateClassMembers{ reflection::getTypeInfo<PrivateReflectClass>().members };
+    std::vector<reflection::MemberInfo> const &privateClassMembers{ reflection::getTypeInfo<PrivateReflectClass>()->members };
     PrivateReflectClass sizeHelper{};
 
     EXPECT_EQ(privateClassMembers[0].name, "a");
@@ -200,8 +201,8 @@ TEST(ReflectionTests, CanGetBasicMemberInfo) {
     EXPECT_EQ(privateClassMembers[1].offset, sizeHelper.offsetOfB());
     EXPECT_EQ(privateClassMembers[1].size, sizeHelper.sizeOfB());
 
-    auto const internalInfo{ reflection::getTypeInfo<Internal>() };
-    auto const &internalInfoMembers{ internalInfo.members };
+    auto const *internalInfo{ reflection::getTypeInfo<Internal>() };
+    auto const &internalInfoMembers{ internalInfo->members };
 
     Internal internalInstance{};
     internalInstance.b = "Hello, World!";
@@ -213,14 +214,14 @@ TEST(ReflectionTests, CanGetBasicMemberInfo) {
 }
 
 TEST(ReflectionTests, CanGetMemberAttributes) {
-    auto members{ reflection::getTypeInfo<PublicReflectClass>().members };
+    auto const &members{ reflection::getTypeInfo<PublicReflectClass>()->members };
 
     EXPECT_TRUE(members[0].attributes.contains<TestAttribute>());
     EXPECT_FALSE(members[1].attributes.contains<TestAttribute>());
 }
 
 TEST(ReflectionTests, CanGetValueOfMemberAttributes) {
-    auto members{ reflection::getTypeInfo<PublicReflectClass>().members };
+    auto const &members{ reflection::getTypeInfo<PublicReflectClass>()->members };
     std::optional<TestAttribute> attribute{ members[0].attributes.get<TestAttribute>() };
 
     ASSERT_TRUE(attribute.has_value());
@@ -228,13 +229,13 @@ TEST(ReflectionTests, CanGetValueOfMemberAttributes) {
 }
 
 TEST(ReflectionTests, MembersHaveTypeInfoIds) {
-    auto nestedInfo{ reflection::getTypeInfo<Nested>() };
-    auto internalInfo{ reflection::getTypeInfo<Internal>() };
+    auto const *nestedInfo{ reflection::getTypeInfo<Nested>() };
+    auto const *internalInfo{ reflection::getTypeInfo<Internal>() };
 
-    EXPECT_EQ(nestedInfo.members[0].id, internalInfo.id);
+    EXPECT_EQ(nestedInfo->members[0].id, internalInfo->id);
 
-    auto *internalTypeInfo{ reflection::getTypeInfo(nestedInfo.members[0].id) };
+    auto *internalTypeInfo{ reflection::getTypeInfo(nestedInfo->members[0].id) };
 
     ASSERT_TRUE(internalTypeInfo != nullptr);
-    EXPECT_EQ(internalTypeInfo->id, internalInfo.id);
+    EXPECT_EQ(internalTypeInfo->id, internalInfo->id);
 }
