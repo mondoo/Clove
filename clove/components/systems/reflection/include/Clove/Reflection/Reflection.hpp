@@ -56,12 +56,6 @@ namespace clove::reflection {
     };
 
     namespace internal {
-        /**
-         * @brief Provides information about a specific type.
-         */
-        template<typename T>
-        struct TypeInfo;
-
         class Registry {
             //VARIABLES
         private:
@@ -88,8 +82,24 @@ namespace clove::reflection {
                 types.push_back(std::move(typeInfo));
             }
         };
-    }
 
+        //TODO: inline
+        template<size_t index, typename TupleType>
+        static void populateAttributes(AttributeContainer &container, TupleType const &attributeTuple) {
+            if constexpr(index < std::tuple_size_v<TupleType>) {
+                container.add(std::get<index>(attributeTuple));
+
+                populateAttributes<index + 1>(container, attributeTuple);
+            }
+        }
+
+
+        struct CreatorHelper {
+            CreatorHelper(std::function<void()> func) {
+                func();
+            }
+        };
+    }
     template<typename Type>
     TypeInfo const *getTypeInfo();
 
@@ -121,90 +131,40 @@ namespace clove::reflection {
     }
 }
 
-#define CLOVE_REFLECT_CAT2(a, b) a##b
+#define INTERNAL_CLOVE_REFLECT_CAT2(a, b) a##b
+#define INTERNAL_CLOVE_REFLECT_CAT(a, b) INTERNAL_CLOVE_REFLECT_CAT2(a, b)
 
-/**
- * @brief Concatenates to variables together
- */
-#define CLOVE_REFLECT_CAT(a, b) CLOVE_REFLECT_CAT2(a, b)
+#define CLOVE_REFLECT_BEGIN(classType, ...)                                                                       \
+    inline static ::clove::reflection::internal::CreatorHelper INTERNAL_CLOVE_REFLECT_CAT(creator, __COUNTER__) { \
+        []() {                                                                                                      \
+            using Type = classType;    \
+            ::clove::reflection::TypeInfo info{};                                                                   \
+            info.name   = #classType;                                                                               \
+            info.id     = typeid(classType).hash_code();                                                            \
+            info.size   = sizeof(classType);\
+            ::clove::reflection::internal::populateAttributes<0>(info.attributes, std::make_tuple(__VA_ARGS__));
 
-#define CLOVE_REFLECT_BEGIN(classType, ...)                                  \
-    template<>                                                               \
-    struct clove::reflection::internal::TypeInfo<classType> {                \
-        using Type = classType;                                              \
-                                                                             \
-        template<size_t>                                                     \
-        struct Member;                                                       \
-                                                                             \
-        static inline auto const attributes{ std::make_tuple(__VA_ARGS__) }; \
-        static std::string_view constexpr name{ #classType };                \
-        static inline TypeId const id{ typeid(classType).hash_code() };      \
-        static inline size_t const size{ sizeof(classType) };                \
-                                                                             \
-        static size_t constexpr memberIndexOffset{ __COUNTER__ + 1 };
+#define CLOVE_REFLECT_MEMBER(member, ...)                                                                          \
+    {                                                                                                              \
+        ::clove::reflection::MemberInfo memberInfo{};                                                              \
+        memberInfo.name   = #member;                                                                               \
+        memberInfo.id     = typeid(Type::member).hash_code();                                                      \
+        memberInfo.offset = offsetof(Type, member);                                                                \
+        memberInfo.size   = sizeof(Type::member);                                                                  \
+        ::clove::reflection::internal::populateAttributes<0>(memberInfo.attributes, std::make_tuple(__VA_ARGS__)); \
+        info.members.push_back(std::move(memberInfo));                                                             \
+    }
 
-#define CLOVE_REFLECT_MEMBER(member, ...)                                                      \
-    template<>                                                                                 \
-    struct Member<__COUNTER__ - memberIndexOffset> {                                           \
-        static std::string_view constexpr name{ #member };                                     \
-        static MemberType constexpr type{ internal::getMemberType<decltype(Type::member)>() }; \
-        static size_t constexpr offset{ offsetof(Type, member) };                              \
-        static size_t constexpr size{ sizeof(Type::member) };                                  \
-        static inline TypeId const id{ typeid(Type::member).hash_code() };                     \
-                                                                                               \
-        static inline auto const attributes{ std::make_tuple(__VA_ARGS__) };                   \
-    };
-
-#define CLOVE_REFLECT_END(classType)                                                                 \
-    static size_t constexpr memberCount{ __COUNTER__ - memberIndexOffset };                          \
-                                                                                                     \
-    TypeInfo() {                                                                                     \
-        internal::Registry::get().addTypeInfo(getTypeInfo());                                        \
-    }                                                                                                \
-                                                                                                     \
-    static clove::reflection::TypeInfo getTypeInfo() {                                               \
-        clove::reflection::TypeInfo info{};                                                          \
-        info.name = name;                                                                            \
-        info.id   = id;                                                                              \
-        info.size = size;                                                                            \
-        populateMemberArray<0>(info.members);                                                        \
-        populateAttributes<0>(info.attributes, attributes);                                          \
-                                                                                                     \
-        return info;                                                                                 \
-    };                                                                                               \
-                                                                                                     \
-private:                                                                                             \
-    template<size_t index>                                                                           \
-    static void populateMemberArray(std::vector<MemberInfo> &memberArray) {                          \
-        if constexpr(index < memberCount) {                                                          \
-            MemberInfo info{};                                                                       \
-            info.name   = Member<index>::name;                                                       \
-            info.id     = Member<index>::id;                                                         \
-            info.offset = Member<index>::offset;                                                     \
-            info.size   = Member<index>::size;                                                       \
-            populateAttributes<0>(info.attributes, Member<index>::attributes);                       \
-            memberArray.push_back(std::move(info));                                                  \
-                                                                                                     \
-            populateMemberArray<index + 1>(memberArray);                                             \
-        }                                                                                            \
-    }                                                                                                \
-                                                                                                     \
-    template<size_t index, typename TupleType>                                                       \
-    static void populateAttributes(AttributeContainer &container, TupleType const &attributeTuple) { \
-        if constexpr(index < std::tuple_size_v<TupleType>) {                                         \
-            container.add(std::get<index>(attributeTuple));                                          \
-                                                                                                     \
-            populateAttributes<index + 1>(container, attributeTuple);                                \
-        }                                                                                            \
-    }                                                                                                \
-    }                                                                                                \
-    ;                                                                                                \
-    inline clove::reflection::internal::TypeInfo<classType> const CLOVE_REFLECT_CAT(creator, __LINE__){};
+#define CLOVE_REFLECT_END                                                        \
+    ::clove::reflection::internal::Registry::get().addTypeInfo(std::move(info)); \
+    }                                                                            \
+    }                                                                            \
+    ;
 
 /**
  * @brief Allows reflection of private members within a class.
  */
 #define CLOVE_REFLECT_PRIVATE(classType) \
-    friend struct clove::reflection::internal::TypeInfo<classType>;
+    friend struct ::clove::reflection::internal::CreatorHelper;
 
 #include "Reflection.inl"

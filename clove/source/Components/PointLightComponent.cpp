@@ -8,4 +8,4 @@ CLOVE_REFLECT_BEGIN(clove::PointLightComponent, clove::EditorVisibleComponent{ .
 CLOVE_REFLECT_MEMBER(ambientColour, clove::EditorEditableMember{})
 CLOVE_REFLECT_MEMBER(diffuseColour, clove::EditorEditableMember{})
 CLOVE_REFLECT_MEMBER(specularColour, clove::EditorEditableMember{})
-CLOVE_REFLECT_END(clove::PointLightComponent)
+CLOVE_REFLECT_END

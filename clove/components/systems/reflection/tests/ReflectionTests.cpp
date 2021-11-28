@@ -16,7 +16,7 @@ public:
 CLOVE_REFLECT_BEGIN(PublicReflectClass, TestAttribute{ .text = "class" })
 CLOVE_REFLECT_MEMBER(x, TestAttribute{ .text = "member" })
 CLOVE_REFLECT_MEMBER(y)
-CLOVE_REFLECT_END(PublicReflectClass)
+CLOVE_REFLECT_END
 
 class PrivateReflectClass {
     CLOVE_REFLECT_PRIVATE(PrivateReflectClass)
@@ -45,7 +45,7 @@ public:
 CLOVE_REFLECT_BEGIN(PrivateReflectClass)
 CLOVE_REFLECT_MEMBER(a)
 CLOVE_REFLECT_MEMBER(b)
-CLOVE_REFLECT_END(PrivateReflectClass)
+CLOVE_REFLECT_END
 
 class NotReflectedClass {
 public:
@@ -64,7 +64,7 @@ namespace test {
 CLOVE_REFLECT_BEGIN(test::NamespaceReflectedClass)
 CLOVE_REFLECT_MEMBER(a)
 CLOVE_REFLECT_MEMBER(b)
-CLOVE_REFLECT_END(test::NamespaceReflectedClass)
+CLOVE_REFLECT_END
 
 struct Internal{
     int a;
@@ -79,12 +79,12 @@ struct Nested{
 CLOVE_REFLECT_BEGIN(Internal)
 CLOVE_REFLECT_MEMBER(a)
 CLOVE_REFLECT_MEMBER(b)
-CLOVE_REFLECT_END(Internal)
+CLOVE_REFLECT_END
 
 CLOVE_REFLECT_BEGIN(Nested)
 CLOVE_REFLECT_MEMBER(a)
 CLOVE_REFLECT_MEMBER(b)
-CLOVE_REFLECT_END(Nested)
+CLOVE_REFLECT_END
 
 TEST(ReflectionTests, CanGetTypeInfoByType) {
     reflection::TypeInfo const *publicClassInfo{ reflection::getTypeInfo<PublicReflectClass>() };
