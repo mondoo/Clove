@@ -22,6 +22,8 @@ namespace clove {
         SkinningPass &operator=(SkinningPass &&other) noexcept;
 
         ~SkinningPass();
+        
+        Id getId() const override;
 
         void execute(RenderGraph &renderGraph, PassData const &passData) override;
     };

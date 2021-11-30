@@ -17,6 +17,10 @@ namespace clove {
     SkinningPass &SkinningPass::operator=(SkinningPass &&other) noexcept = default;
 
     SkinningPass::~SkinningPass() = default;
+    
+    GeometryPass::Id SkinningPass::getId() const {
+        return getIdOf<SkinningPass>();
+    }
 
     void SkinningPass::execute(RenderGraph &renderGraph, PassData const &passData) {
         //TODO: Cache instead of making every frame

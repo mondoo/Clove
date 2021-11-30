@@ -17,6 +17,10 @@ namespace clove {
 
     PointLightPass::~PointLightPass() = default;
 
+    GeometryPass::Id PointLightPass::getId() const {
+        return getIdOf<PointLightPass>();
+    }
+    
     void PointLightPass::execute(RenderGraph &renderGraph, PassData const &passData) {
         //TODO
     }

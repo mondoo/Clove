@@ -81,8 +81,8 @@ namespace clove {
 
         FrameData currentFrameData;
 
-        //Geometry passes. TODO: Use vector?
-        std::unordered_map<GeometryPass::Id, std::unique_ptr<GeometryPass>> geometryPasses;
+        //Geometry passes.
+        std::vector<std::unique_ptr<GeometryPass>> geometryPasses;
 
         //Synchronisation obects
         std::vector<std::unique_ptr<GhaSemaphore>> skinningFinishedSemaphores;

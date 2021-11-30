@@ -22,6 +22,10 @@ namespace clove {
 
     DirectionalLightPass::~DirectionalLightPass() = default;
 
+    GeometryPass::Id DirectionalLightPass::getId() const {
+        return getIdOf<DirectionalLightPass>();
+    }
+    
     void DirectionalLightPass::execute(RenderGraph &renderGraph, PassData const &passData) {
         //TODO: Cache instead of making every frame
         std::unordered_map<std::string, std::string> shaderIncludes;

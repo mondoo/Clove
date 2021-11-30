@@ -23,6 +23,8 @@ namespace clove {
         PointLightPass &operator=(PointLightPass &&other) noexcept;
 
         ~PointLightPass();
+        
+        Id getId() const override;
 
         void execute(RenderGraph &renderGraph, PassData const &passData) override;
     };

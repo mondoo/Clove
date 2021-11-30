@@ -23,6 +23,8 @@ namespace clove {
         ForwardColourPass &operator=(ForwardColourPass &&other) noexcept;
 
         ~ForwardColourPass();
+        
+        Id getId() const override;
 
         void execute(RenderGraph &renderGraph, PassData const &passData) override;
     };

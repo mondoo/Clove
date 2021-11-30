@@ -22,6 +22,10 @@ namespace clove {
 
     ForwardColourPass::~ForwardColourPass() = default;
 
+    GeometryPass::Id ForwardColourPass::getId() const {
+        return getIdOf<ForwardColourPass>();
+    }
+    
     void ForwardColourPass::execute(RenderGraph &renderGraph, PassData const &passData) {
         //TODO: Cache instead of making every frame
         std::unordered_map<std::string, std::string> shaderIncludes;

@@ -23,6 +23,8 @@ namespace clove {
         DirectionalLightPass &operator=(DirectionalLightPass &&other) noexcept;
 
         ~DirectionalLightPass();
+        
+        Id getId() const override;
 
         void execute(RenderGraph &renderGraph, PassData const &passData) override;
     };

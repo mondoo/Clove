@@ -106,8 +106,16 @@ namespace clove {
 
         virtual ~GeometryPass();
 
+        /**
+         * @brief Returns the ID of GeometryPassType.
+         */
         template<typename GeometryPassType>
-        static Id getId();
+        static Id getIdOf();
+        
+        /**
+         * @brief Returns the ID of this specific pass.
+         */
+        virtual Id getId() const = 0;
 
         /**
          * @brief Adds a job to this pass' queue.
@@ -122,7 +130,7 @@ namespace clove {
         /**
          * @brief 
          * @param renderGraph 
-         * @param blackBoard Blackboard containing mesh information.
+         * @param passData PassData containing mesh information.
          */
         virtual void execute(RenderGraph &renderGraph, PassData const &passData) = 0;
 

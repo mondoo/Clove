@@ -74,9 +74,9 @@ namespace clove {
         }
 
         //Create the geometry passes this renderer supports
-        geometryPasses[GeometryPass::getId<SkinningPass>()]         = std::make_unique<SkinningPass>();//NOTE: This needs to be first (or early) as it modifies the vertex buffer.
-        geometryPasses[GeometryPass::getId<ForwardColourPass>()]    = std::make_unique<ForwardColourPass>();
-        geometryPasses[GeometryPass::getId<DirectionalLightPass>()] = std::make_unique<DirectionalLightPass>();
+        geometryPasses.push_back(std::make_unique<SkinningPass>());//NOTE: This needs to be first (or early) as it modifies the vertex buffer.
+        geometryPasses.push_back(std::make_unique<ForwardColourPass>());
+        geometryPasses.push_back(std::make_unique<DirectionalLightPass>());
         //geometryPasses[GeometryPass::getId<PointLightPass>()]       = std::make_unique<PointLightPass>();
 
 #if 0
@@ -132,7 +132,7 @@ namespace clove {
         currentFrameData.numLights.numDirectional = 0;
         currentFrameData.numLights.numPoint       = 0;
 
-        for(auto &&[id, pass] : geometryPasses) {
+        for(auto &pass : geometryPasses) {
             pass->flushJobs();
         }
     }
@@ -318,9 +318,9 @@ namespace clove {
                 .matrixPaletteSize = matrixPaletteSize,
             };
 
-            for(auto id : meshInfo.geometryPassIds) {
-                if(geometryPasses.contains(id)) {
-                    geometryPasses.at(id)->addJob(&geometryJobs[i]);
+            for(auto &pass : geometryPasses) {
+                if(meshInfo.geometryPassIds.contains(pass->getId())) {
+                    pass->addJob(&geometryJobs[i]);
                 }
             }
 
@@ -353,7 +353,7 @@ namespace clove {
             .lightsOffset                 = lightsOffset,
         };
 
-        for(auto &&[id, pass] : geometryPasses) {
+        for(auto &pass : geometryPasses) {
             pass->execute(renderGraph, passData);
         }
 

@@ -266,6 +266,10 @@ namespace clove {
         //NOTE: Only doing buffers for now as images are yet to be supported
         //TODO: It might be better in the future to just insert the correct memory barriers.
         for(auto &&[bufferId, buffer] : buffers) {
+            if(buffer.isExternalBuffer()) {
+                continue;
+            }
+            
             bool isInGraphics{ false };
             bool isInCompute{ false };
 
