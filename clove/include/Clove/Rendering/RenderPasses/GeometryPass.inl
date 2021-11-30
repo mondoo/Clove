@@ -8,7 +8,15 @@ namespace clove {
         return typeid(GeometryPassType).hash_code();
     };
 
-    std::vector<GeometryPass::Job> const &GeometryPass::getJobs() const {
+    void GeometryPass::addJob(Job *job) {
+        jobs.emplace_back(job);
+    }
+
+    void GeometryPass::flushJobs() {
+        jobs.clear();
+    }
+
+    std::vector<GeometryPass::Job *> const &GeometryPass::getJobs() const {
         return jobs;
     }
 }

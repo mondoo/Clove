@@ -53,16 +53,16 @@ namespace clove {
             };
             RgPassId directionalShadowPass{ renderGraph.createRenderPass(passDescriptor) };
 
-            for(auto &job : getJobs()) {
+            for(auto *job : getJobs()) {
                 renderGraph.addRenderSubmission(directionalShadowPass, RgRenderPass::Submission{
-                                                                           .vertexBuffer = job.vertexBuffer,
-                                                                           .indexBuffer  = job.indexBuffer,
+                                                                           .vertexBuffer = job->vertexBuffer,
+                                                                           .indexBuffer  = job->indexBuffer,
                                                                            .shaderUbos   = {
                                                                                RgBufferBinding{
                                                                                    .slot        = 0,
-                                                                                   .buffer      = job.modelBuffer,
+                                                                                   .buffer      = job->modelBuffer,
                                                                                    .offset      = 0,
-                                                                                   .size        = job.modelBufferSize,
+                                                                                   .size        = job->modelBufferSize,
                                                                                    .shaderStage = GhaShader::Stage::Vertex,
                                                                                },
                                                                                RgBufferBinding{
@@ -73,7 +73,7 @@ namespace clove {
                                                                                    .shaderStage = GhaShader::Stage::Vertex,
                                                                                },
                                                                            },
-                                                                           .indexCount = job.indexCount,
+                                                                           .indexCount = job->indexCount,
                                                                        });
             }
         }

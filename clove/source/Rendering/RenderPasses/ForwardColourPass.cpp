@@ -72,16 +72,16 @@ namespace clove {
         };
         RgPassId colourPass{ renderGraph.createRenderPass(passDescriptor) };
 
-        for(auto &job : getJobs()) {
+        for(auto *job : getJobs()) {
             renderGraph.addRenderSubmission(colourPass, RgRenderPass::Submission{
-                                                            .vertexBuffer = job.vertexBuffer,
-                                                            .indexBuffer  = job.indexBuffer,
+                                                            .vertexBuffer = job->vertexBuffer,
+                                                            .indexBuffer  = job->indexBuffer,
                                                             .shaderUbos   = {
                                                                 RgBufferBinding{
                                                                     .slot        = 0,
-                                                                    .buffer      = job.modelBuffer,
+                                                                    .buffer      = job->modelBuffer,
                                                                     .offset      = 0,
-                                                                    .size        = job.modelBufferSize,
+                                                                    .size        = job->modelBufferSize,
                                                                     .shaderStage = GhaShader::Stage::Vertex,
                                                                 },
                                                                 RgBufferBinding{
@@ -121,9 +121,9 @@ namespace clove {
                                                                 },
                                                                 RgBufferBinding{
                                                                     .slot        = 12,
-                                                                    .buffer      = job.colourBuffer,
+                                                                    .buffer      = job->colourBuffer,
                                                                     .offset      = 0,
-                                                                    .size        = job.colourBufferSize,
+                                                                    .size        = job->colourBufferSize,
                                                                     .shaderStage = GhaShader::Stage::Pixel,
                                                                 },
                                                             },
@@ -131,13 +131,13 @@ namespace clove {
                                                                 RgImageBinding{
                                                                     .slot      = 4,
                                                                     .imageView = {
-                                                                        .image = job.diffuseTexture,
+                                                                        .image = job->diffuseTexture,
                                                                     },
                                                                 },
                                                                 RgImageBinding{
                                                                     .slot      = 5,
                                                                     .imageView = {
-                                                                        .image = job.specularTexture,
+                                                                        .image = job->specularTexture,
                                                                     },
                                                                 },
                                                                 RgImageBinding{
@@ -160,14 +160,14 @@ namespace clove {
                                                             .shaderSamplers = {
                                                                 RgSamplerBinding{
                                                                     .slot    = 6,
-                                                                    .sampler = job.materialSampler,
+                                                                    .sampler = job->materialSampler,
                                                                 },
                                                                 RgSamplerBinding{
                                                                     .slot    = 9,
                                                                     .sampler = passData.shadowMaplSampler,
                                                                 },
                                                             },
-                                                            .indexCount = job.indexCount,
+                                                            .indexCount = job->indexCount,
                                                         });
         }
     }

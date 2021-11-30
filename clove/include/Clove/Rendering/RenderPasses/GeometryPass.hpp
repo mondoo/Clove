@@ -3,8 +3,8 @@
 #include "Clove/Rendering/RenderGraph/RgId.hpp"
 #include "Clove/Rendering/RenderGraph/RgSampler.hpp"
 
-#include <vector>
 #include <Clove/Maths/Vector.hpp>
+#include <vector>
 
 namespace clove {
     class RenderGraph;
@@ -86,7 +86,7 @@ namespace clove {
 
         //VARIABLES
     private:
-        std::vector<Job> jobs{};
+        std::vector<Job *> jobs{};
 
         //FUNCTIONS
     public:
@@ -106,12 +106,12 @@ namespace clove {
         /**
          * @brief Adds a job to this pass' queue.
          */
-        void addJob(Job job);
+        inline void addJob(Job *job);
 
         /**
          * @brief Clears the job queue
          */
-        void flushJobs();
+        inline void flushJobs();
 
         /**
          * @brief 
@@ -121,7 +121,7 @@ namespace clove {
         virtual void execute(RenderGraph &renderGraph, PassData const &passData) = 0;
 
     protected:
-        inline std::vector<Job> const &getJobs() const;
+        inline std::vector<Job *> const &getJobs() const;
     };
 }
 
