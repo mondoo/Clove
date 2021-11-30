@@ -28,7 +28,10 @@ namespace clove {
             RgBufferId vertexBuffer{};
             RgBufferId indexBuffer{};
 
+            size_t vertexCount{};
             uint32_t indexCount{};
+
+            size_t vertexBufferSize{};
 
             RgBufferId modelBuffer{};
             RgBufferId colourBuffer{};
@@ -39,6 +42,9 @@ namespace clove {
             RgImageId diffuseTexture{};
             RgImageId specularTexture{};
             RgSampler materialSampler{};
+
+            RgBufferId matrixPalette{};
+            size_t matrixPaletteSize{};
         };
 
         /**

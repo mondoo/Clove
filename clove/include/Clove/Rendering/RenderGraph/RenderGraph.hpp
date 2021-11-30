@@ -173,7 +173,8 @@ namespace clove {
 
         /**
          * @brief Writes data into the provided buffer.
-         * @details Will transition this buffer from video memory to system memory if required.
+         * @details Will transition this buffer from video memory to system memory if required. This also peforms a copy of the data
+         * provided to make sure it's available for the pass.
          * @param data Pointer to data to write.
          * @param offset Offset into the buffer to write to. If the RgBuffer views an offset into a GhaBuffer then it'll be view offset + offset
          * @param size Size of the region in the buffer to write to.

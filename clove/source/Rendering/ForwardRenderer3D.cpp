@@ -74,10 +74,10 @@ namespace clove {
         }
 
         //Create the geometry passes this renderer supports
+        geometryPasses[GeometryPass::getId<SkinningPass>()]         = std::make_unique<SkinningPass>();//NOTE: This needs to be first (or early) as it modifies the vertex buffer.
         geometryPasses[GeometryPass::getId<ForwardColourPass>()]    = std::make_unique<ForwardColourPass>();
         geometryPasses[GeometryPass::getId<DirectionalLightPass>()] = std::make_unique<DirectionalLightPass>();
         //geometryPasses[GeometryPass::getId<PointLightPass>()]       = std::make_unique<PointLightPass>();
-        //geometryPasses[GeometryPass::getId<SkinningPass>()]         = std::make_unique<SkinningPass>();
 
 #if 0
         std::vector<Vertex> const uiVertices{
@@ -262,8 +262,9 @@ namespace clove {
         renderGraph.writeToBuffer(lightsUnfiromBuffer, &currentFrameData.lights, lightsOffset, lightsSize);
 
         //Job info
+        std::vector<GeometryPass::Job> geometryJobs{ currentFrameData.meshes.size() };
         float constexpr anisotropy{ 16.0f };
-        for(auto const &meshInfo : currentFrameData.meshes) {
+        for(size_t i{ 0 }; auto const &meshInfo : currentFrameData.meshes) {
             auto const &mesh{ meshInfo.mesh };
 
             //Uniforms
@@ -276,8 +277,8 @@ namespace clove {
             };
             vec4f const colourData{ meshInfo.material->getColour() };
 
-            size_t modelBufferSize{ sizeof(modelData) };
-            size_t colourBufferSize{ sizeof(colourData) };
+            size_t const modelBufferSize{ sizeof(modelData) };
+            size_t const colourBufferSize{ sizeof(colourData) };
 
             renderGraph.writeToBuffer(modelBuffer, &modelData, 0, sizeof(modelData));
             renderGraph.writeToBuffer(colourBuffer, &colourData, 0, sizeof(colourData));
@@ -295,24 +296,35 @@ namespace clove {
                 .maxAnisotropy    = anisotropy,
             }) };
 
-            GeometryPass::Job const meshJob{
-                .vertexBuffer     = renderGraph.createBuffer(mesh->getCombinedBuffer(), mesh->getVertexOffset(), mesh->getVertexBufferSize()),
-                .indexBuffer      = renderGraph.createBuffer(mesh->getCombinedBuffer(), mesh->getIndexOffset(), mesh->getIndexBufferSize()),
-                .indexCount       = mesh->getIndexCount(),
-                .modelBuffer      = modelBuffer,
-                .colourBuffer     = colourBuffer,
-                .modelBufferSize  = modelBufferSize,
-                .colourBufferSize = colourBufferSize,
-                .diffuseTexture   = diffuseTexture,
-                .specularTexture  = specularTexture,
-                .materialSampler  = materialSampler,
+            //Animation
+            size_t const matrixPaletteSize{ sizeof(mat4f) * MAX_JOINTS };
+            RgBufferId matrixPalette{ renderGraph.createBuffer(matrixPaletteSize) };
+            renderGraph.writeToBuffer(matrixPalette, meshInfo.matrixPalet.data(), 0, matrixPaletteSize);
+
+            geometryJobs[i] = GeometryPass::Job{
+                .vertexBuffer      = renderGraph.createBuffer(mesh->getCombinedBuffer(), mesh->getVertexOffset(), mesh->getVertexBufferSize()),
+                .indexBuffer       = renderGraph.createBuffer(mesh->getCombinedBuffer(), mesh->getIndexOffset(), mesh->getIndexBufferSize()),
+                .vertexCount       = mesh->getVertexCount(),
+                .indexCount        = mesh->getIndexCount(),
+                .vertexBufferSize  = mesh->getVertexBufferSize(),
+                .modelBuffer       = modelBuffer,
+                .colourBuffer      = colourBuffer,
+                .modelBufferSize   = modelBufferSize,
+                .colourBufferSize  = colourBufferSize,
+                .diffuseTexture    = diffuseTexture,
+                .specularTexture   = specularTexture,
+                .materialSampler   = materialSampler,
+                .matrixPalette     = matrixPalette,
+                .matrixPaletteSize = matrixPaletteSize,
             };
 
             for(auto id : meshInfo.geometryPassIds) {
                 if(geometryPasses.contains(id)) {
-                    geometryPasses.at(id)->addJob(meshJob);
+                    geometryPasses.at(id)->addJob(&geometryJobs[i]);
                 }
             }
+
+            ++i;
         }
 
         //Execute passes
