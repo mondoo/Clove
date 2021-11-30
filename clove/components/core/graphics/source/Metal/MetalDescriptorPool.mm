@@ -115,7 +115,7 @@ namespace clove {
                 
                 std::optional<MetalDescriptorSet::ArgumentEncoder> vertexEncoder{ createEncoder(metalDescriptorSetLayouts[i]->getVertexDescriptors(), totalBackingBufferSize, currentOffset) };
                 std::optional<MetalDescriptorSet::ArgumentEncoder> pixelEncoder{ createEncoder(metalDescriptorSetLayouts[i]->getPixelDescriptors(), totalBackingBufferSize, currentOffset) };
-                std::optional<MetalDescriptorSet::ArgumentEncoder> computeEncoder{ createEncoder(metalDescriptorSetLayouts[i]->getPixelDescriptors(), totalBackingBufferSize, currentOffset) };
+                std::optional<MetalDescriptorSet::ArgumentEncoder> computeEncoder{ createEncoder(metalDescriptorSetLayouts[i]->getComputeDescriptors(), totalBackingBufferSize, currentOffset) };
                 
                 CLOVE_ASSERT(totalBackingBufferSize != 0);
                 id<MTLBuffer> encoderBuffer{ bufferPool.allocateBuffer(device, totalBackingBufferSize) };
