@@ -3,6 +3,7 @@
 #include "Clove/Rendering/RenderGraph/RgId.hpp"
 
 #include <Clove/Graphics/GhaGraphicsCommandBuffer.hpp>
+#include <Clove/Graphics/GhaImageView.hpp>
 #include <Clove/Graphics/GhaRenderPass.hpp>
 #include <Clove/Graphics/GhaSampler.hpp>
 #include <Clove/Graphics/GhaShader.hpp>
@@ -10,6 +11,7 @@
 namespace clove {
     struct RgImageView {
         RgImageId image{};
+        GhaImageView::Type viewType{ GhaImageView::Type::_2D };
         uint32_t arrayIndex{ 0 };
         uint32_t arrayCount{ 1 };
     };

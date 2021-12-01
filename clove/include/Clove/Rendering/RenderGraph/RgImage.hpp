@@ -46,7 +46,7 @@ namespace clove {
          * @param arrayCount 
          * @return 
          */
-        GhaImageView *getGhaImageView(RgFrameCache &cache, uint32_t const arrayIndex, uint32_t const arrayCount);
+        GhaImageView *getGhaImageView(RgFrameCache &cache, GhaImageView::Type const viewType, uint32_t const arrayIndex, uint32_t const arrayCount);
 
         inline GhaImage::Format getFormat() const;
         inline vec2ui const &getDimensions() const;

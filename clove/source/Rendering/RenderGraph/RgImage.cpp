@@ -51,9 +51,9 @@ namespace clove {
         return ghaImage;
     }
 
-    GhaImageView *RgImage::getGhaImageView(RgFrameCache &cache, uint32_t const arrayIndex, uint32_t const arrayCount) {
+    GhaImageView *RgImage::getGhaImageView(RgFrameCache &cache, GhaImageView::Type const viewType, uint32_t const arrayIndex, uint32_t const arrayCount) {
         return cache.allocateImageView(getGhaImage(cache), GhaImageView::Descriptor{
-                                                               .type       = getViewType(ghaImageDescriptor.type),
+                                                               .type       = viewType,
                                                                .layer      = arrayIndex,
                                                                .layerCount = arrayCount,
                                                            });

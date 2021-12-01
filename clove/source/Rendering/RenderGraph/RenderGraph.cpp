@@ -749,19 +749,19 @@ namespace clove {
             for(auto &renderTarget : passDescriptor.renderTargets) {
                 RgImageView const &renderTargetView{ renderTarget.imageView };
 
-                attachments.push_back(images.at(renderTargetView.image).getGhaImageView(frameCache, renderTargetView.arrayIndex, renderTargetView.arrayCount));
+                attachments.push_back(images.at(renderTargetView.image).getGhaImageView(frameCache, renderTargetView.viewType, renderTargetView.arrayIndex, renderTargetView.arrayCount));
 
                 if(!framebufferSize.has_value()) {
                     framebufferSize = images.at(renderTargetView.image).getDimensions();
                 }
             }
             if(passDescriptor.depthStencil.imageView.image != INVALID_RESOURCE_ID) {
-                RgImageView const &depthStenculView{ passDescriptor.depthStencil.imageView };
+                RgImageView const &depthStencilView{ passDescriptor.depthStencil.imageView };
 
-                attachments.push_back(images.at(depthStenculView.image).getGhaImageView(frameCache, depthStenculView.arrayIndex, depthStenculView.arrayCount));
+                attachments.push_back(images.at(depthStencilView.image).getGhaImageView(frameCache, depthStencilView.viewType, depthStencilView.arrayIndex, depthStencilView.arrayCount));
 
                 if(!framebufferSize.has_value()) {
-                    framebufferSize = images.at(depthStenculView.image).getDimensions();
+                    framebufferSize = images.at(depthStencilView.image).getDimensions();
                 }
             }
 
@@ -931,7 +931,7 @@ namespace clove {
                 descriptorSet->write(*buffer.getGhaBuffer(frameCache), buffer.getBufferOffset() + ubo.offset, ubo.size, DescriptorType::UniformBuffer, ubo.slot);
             }
             for(auto const &image : submission.shaderImages) {
-                descriptorSet->write(*images.at(image.imageView.image).getGhaImageView(frameCache, image.imageView.arrayIndex, image.imageView.arrayCount), GhaImage::Layout::ShaderReadOnlyOptimal, image.slot);
+                descriptorSet->write(*images.at(image.imageView.image).getGhaImageView(frameCache, image.imageView.viewType, image.imageView.arrayIndex, image.imageView.arrayCount), GhaImage::Layout::ShaderReadOnlyOptimal, image.slot);
             }
             for(auto const &sampler : submission.shaderSamplers) {
                 descriptorSet->write(*samplers.at(sampler.sampler), sampler.slot);

@@ -148,7 +148,6 @@ namespace clove {
                                                                     .slot      = 7,
                                                                     .imageView = {
                                                                         .image      = passData.directionalShadowMap,
-                                                                        .arrayIndex = 0,
                                                                         .arrayCount = MAX_LIGHTS,
                                                                     },
                                                                 },
@@ -156,7 +155,7 @@ namespace clove {
                                                                     .slot      = 8,
                                                                     .imageView = {
                                                                         .image      = passData.pointShadowMap,
-                                                                        .arrayIndex = 0,
+                                                                        .viewType   = GhaImageView::Type::Cube,
                                                                         .arrayCount = MAX_LIGHTS * cubeMapLayerCount,
                                                                     },
                                                                 },

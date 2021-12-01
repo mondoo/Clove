@@ -51,7 +51,6 @@ namespace clove {
                     .imageView  = {
                         .image      = passData.directionalShadowMap,
                         .arrayIndex = static_cast<uint32_t>(i),
-                        .arrayCount = 1,
                     },
                 }
             };
