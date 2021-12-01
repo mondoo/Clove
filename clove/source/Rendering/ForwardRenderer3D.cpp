@@ -77,7 +77,7 @@ namespace clove {
         geometryPasses.push_back(std::make_unique<SkinningPass>());//NOTE: This needs to be first (or early) as it modifies the vertex buffer.
         geometryPasses.push_back(std::make_unique<ForwardColourPass>());
         geometryPasses.push_back(std::make_unique<DirectionalLightPass>());
-        //geometryPasses[GeometryPass::getId<PointLightPass>()]       = std::make_unique<PointLightPass>();
+        geometryPasses.push_back(std::make_unique<PointLightPass>());
 
 #if 0
         std::vector<Vertex> const uiVertices{
@@ -206,7 +206,6 @@ namespace clove {
 
         //Shadows
         std::vector<RgBufferId> directionalLightSpaceBuffers{};
-        std::vector<RgBufferId> pointLightSpaceBuffers{};
 
         directionalLightSpaceBuffers.reserve(currentFrameData.numLights.numDirectional);
         for(int32_t i{ 0 }; i < currentFrameData.numLights.numDirectional; ++i) {
@@ -215,14 +214,32 @@ namespace clove {
             directionalLightSpaceBuffers.push_back(lightSpaceBuffer);
         }
 
-        pointLightSpaceBuffers.reserve(currentFrameData.numLights.numPoint);
+        std::vector<RgBufferId> pointLightSpaceBuffers{};
+        std::vector<RgBufferId> pointLightBuffers{};
+        size_t pointLightBufferSize{ sizeof(vec3f) + sizeof(float) };
+
+        uint32_t constexpr cubeFaces{ 6 };
+        pointLightSpaceBuffers.reserve(currentFrameData.numLights.numPoint * cubeFaces);
+        pointLightBuffers.reserve(currentFrameData.numLights.numPoint);
         for(int32_t i{ 0 }; i < currentFrameData.numLights.numPoint; ++i) {
-            //TODO
-            // RgBufferId lightSpaceBuffer{ renderGraph.createBuffer(sizeof(mat4f)) };
-            // renderGraph.writeToBuffer(lightSpaceBuffer, &currentFrameData.pointShadowTransforms[i], 0, sizeof(mat4f));
+            struct {
+                vec3f pos{};
+                float farPlane{};
+            } const lightData{
+                .pos      = currentFrameData.lights.pointLights[i].position,
+                .farPlane = currentFrameData.lights.pointLights[i].farPlane,
+            };
+            RgBufferId lightBuffer{ renderGraph.createBuffer(sizeof(lightData)) };
+            renderGraph.writeToBuffer(lightBuffer, &lightData, 0, sizeof(lightData));
+            pointLightBuffers.push_back(lightBuffer);
+
+            for(int32_t j{ 0 }; j < cubeFaces; ++j) {
+                RgBufferId lightSpaceBuffer{ renderGraph.createBuffer(sizeof(mat4f)) };
+                renderGraph.writeToBuffer(lightSpaceBuffer, &currentFrameData.pointShadowTransforms[i][j], 0, sizeof(mat4f));
+                pointLightSpaceBuffers.push_back(lightSpaceBuffer);
+            }
         }
 
-        //Images might not be going into the shadow pass but will always going into the lighting pass so we initialise them as ShaderReadOnlyOptimal
         RgImageId directionalShadowMap{ renderGraph.createImage(GhaImage::Type::_2D, GhaImage::Format::D32_SFLOAT, { shadowMapSize, shadowMapSize }, MAX_LIGHTS) };
         RgImageId pointShadowMap{ renderGraph.createImage(GhaImage::Type::Cube, GhaImage::Format::D32_SFLOAT, { shadowMapSize, shadowMapSize }, MAX_LIGHTS) };
         RgSampler shadowMaplSampler{ renderGraph.createSampler(GhaSampler::Descriptor{
@@ -339,6 +356,8 @@ namespace clove {
             .pointLightCount              = currentFrameData.numLights.numPoint,
             .directionalLightSpaceBuffers = std::move(directionalLightSpaceBuffers),
             .pointLightSpaceBuffers       = std::move(pointLightSpaceBuffers),
+            .pointLightBuffers            = std::move(pointLightBuffers),
+            .pointLightBufferSize         = pointLightBufferSize,
             .viewUniformBuffer            = viewUniformBuffer,
             .viewDataSize                 = viewDataSize,
             .viewPositionSize             = viewPositionSize,

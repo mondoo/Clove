@@ -67,7 +67,10 @@ namespace clove {
             uint32_t pointLightCount{};
 
             std::vector<RgBufferId> directionalLightSpaceBuffers{};
+
             std::vector<RgBufferId> pointLightSpaceBuffers{};
+            std::vector<RgBufferId> pointLightBuffers{};
+            size_t pointLightBufferSize{};
 
             //Views
             RgBufferId viewUniformBuffer{};

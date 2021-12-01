@@ -1,7 +1,8 @@
 #version 450
 
-layout(std140, push_constant) uniform Light{
-    layout(offset = 64) vec3 lightPos;
+//TODO: Push constant
+layout(std140, set = 0, binding = 2) uniform Light{
+    vec3 lightPos;
     float farPlane;
 };
 
