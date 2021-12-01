@@ -269,7 +269,7 @@ namespace clove {
             if(buffer.isExternalBuffer()) {
                 continue;
             }
-            
+
             bool isInGraphics{ false };
             bool isInCompute{ false };
 
@@ -571,49 +571,47 @@ namespace clove {
         return dependencies;
     }
 
-    GhaImage::Layout RenderGraph::getPreviousLayout(RgImageId const imageId, std::vector<RgPassId> const &passes, int32_t const currentPassIndex) {
+    GhaImage::Layout RenderGraph::getPreviousLayout(RgImageView const &imageView, std::vector<RgPassId> const &passes, int32_t const currentPassIndex) {
         for(int32_t i{ currentPassIndex - 1 }; i >= 0; --i) {
             if(!renderPasses.contains(passes[i])) {
                 continue;//Only evaluate renderpasses for now. Images are not supported in compute yet
             }
 
             RgRenderPass const &renderPass{ renderPasses.at(passes[i]) };
-            if(renderPass.getOutputResources().contains(imageId)) {
+            if(renderPass.getOutputResources().contains(imageView.image)) {
                 for(auto const &renderTarget : renderPass.getDescriptor().renderTargets) {
-                    if(renderTarget.imageView.image == imageId) {
+                    if(renderTarget.imageView == imageView) {
                         return GhaImage::Layout::ColourAttachmentOptimal;
                     }
                 }
-                if(renderPass.getDescriptor().depthStencil.imageView.image == imageId) {
+                if(renderPass.getDescriptor().depthStencil.imageView == imageView) {
                     return GhaImage::Layout::DepthStencilAttachmentOptimal;
                 }
-
-                CLOVE_ASSERT_MSG(false, "ImageId {0} is not in any render target's output even though it's marked as an output resource", imageId);
             }
         }
 
         //All images are assumed to be in ShaderReadOnlyOptimal before graph execution except those that are not sampled
-        if((images.at(imageId).getCurrentUsage() & GhaImage::UsageMode::Sampled) != 0) {
+        if((images.at(imageView.image).getCurrentUsage() & GhaImage::UsageMode::Sampled) != 0) {
             return GhaImage::Layout::ShaderReadOnlyOptimal;
         } else {
             return GhaImage::Layout::Undefined;
         }
     }
 
-    GhaImage::Layout RenderGraph::getNextLayout(RgImageId const imageId, std::vector<RgPassId> const &passes, int32_t const currentPassIndex) {
+    GhaImage::Layout RenderGraph::getNextLayout(RgImageView const &imageView, std::vector<RgPassId> const &passes, int32_t const currentPassIndex) {
         for(int32_t i{ currentPassIndex }; i < passes.size(); ++i) {
             if(!renderPasses.contains(passes[i])) {
                 continue;//Only evaluate renderpasses for now. Images are not supported in compute yet
             }
 
             RgRenderPass const &renderPass{ renderPasses.at(passes[i]) };
-            if(renderPass.getInputResources().contains(imageId)) {
+            if(renderPass.getInputResources().contains(imageView.image)) {
                 return GhaImage::Layout::ShaderReadOnlyOptimal;
             }
         }
 
         //Undefined is used as a default if it's not used again as it could be used for a colour or depth pass.
-        return imageId == outputResource ? GhaImage::Layout::Present : GhaImage::Layout::Undefined;
+        return imageView.image == outputResource ? GhaImage::Layout::Present : GhaImage::Layout::Undefined;
     }
 
     RgResource *RenderGraph::getResourceFromId(RgResourceId resourceId) {
@@ -654,8 +652,8 @@ namespace clove {
             for(auto &renderTarget : passDescriptor.renderTargets) {
                 RgImageView const &renderTargetView{ renderTarget.imageView };
 
-                GhaImage::Layout const initialLayout{ getPreviousLayout(renderTargetView.image, passes, i) };
-                GhaImage::Layout const finalLayout{ getNextLayout(renderTargetView.image, passes, i) };
+                GhaImage::Layout const initialLayout{ getPreviousLayout(renderTargetView, passes, i) };
+                GhaImage::Layout const finalLayout{ getNextLayout(renderTargetView, passes, i) };
 
                 colourAttachments.emplace_back(AttachmentDescriptor{
                     .format         = images.at(renderTargetView.image).getFormat(),
@@ -671,14 +669,14 @@ namespace clove {
             if(RgDepthStencilBinding const &depthStencil{ passDescriptor.depthStencil }; depthStencil.imageView.image != INVALID_RESOURCE_ID) {
                 RgImageView const &depthStencilView{ depthStencil.imageView };
 
-                GhaImage::Layout const initialLayout{ getPreviousLayout(depthStencilView.image, passes, i) };
-                GhaImage::Layout const finalLayout{ getNextLayout(depthStencilView.image, passes, i) };
+                GhaImage::Layout const initialLayout{ getPreviousLayout(depthStencilView, passes, i) };
+                GhaImage::Layout const finalLayout{ getNextLayout(depthStencilView, passes, i) };
 
                 depthStencilAttachment = AttachmentDescriptor{
                     .format         = images.at(depthStencilView.image).getFormat(),
                     .loadOperation  = depthStencil.loadOp,
                     .storeOperation = depthStencil.storeOp,
-                    .initialLayout  = getPreviousLayout(depthStencilView.image, passes, i),
+                    .initialLayout  = initialLayout,
                     .usedLayout     = GhaImage::Layout::DepthStencilAttachmentOptimal,
                     .finalLayout    = finalLayout != GhaImage::Layout::Undefined ? finalLayout : GhaImage::Layout::DepthStencilAttachmentOptimal,
                 };
