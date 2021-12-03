@@ -272,11 +272,11 @@ namespace clove {
         size_t const dirShadowTransformsOffset{ numLightsOffset + numLightsSize + (minUboOffsetAlignment - ((numLightsOffset + numLightsSize) % minUboOffsetAlignment)) };
         size_t const lightsOffset{ dirShadowTransformsOffset + dirShadowTransformsSize + (minUboOffsetAlignment - ((dirShadowTransformsOffset + dirShadowTransformsSize) % minUboOffsetAlignment)) };
 
-        RgBufferId lightsUnfiromBuffer{ renderGraph.createBuffer(lightsOffset + lightsSize) };
+        RgBufferId lightsUniformBuffer{ renderGraph.createBuffer(lightsOffset + lightsSize) };
 
-        renderGraph.writeToBuffer(lightsUnfiromBuffer, &currentFrameData.numLights, numLightsOffset, numLightsSize);
-        renderGraph.writeToBuffer(lightsUnfiromBuffer, &currentFrameData.directionalShadowTransforms, dirShadowTransformsOffset, dirShadowTransformsSize);
-        renderGraph.writeToBuffer(lightsUnfiromBuffer, &currentFrameData.lights, lightsOffset, lightsSize);
+        renderGraph.writeToBuffer(lightsUniformBuffer, &currentFrameData.numLights, numLightsOffset, numLightsSize);
+        renderGraph.writeToBuffer(lightsUniformBuffer, &currentFrameData.directionalShadowTransforms, dirShadowTransformsOffset, dirShadowTransformsSize);
+        renderGraph.writeToBuffer(lightsUniformBuffer, &currentFrameData.lights, lightsOffset, lightsSize);
 
         //Job info
         std::vector<GeometryPass::Job> geometryJobs{ currentFrameData.meshes.size() };
@@ -363,7 +363,7 @@ namespace clove {
             .viewPositionSize             = viewPositionSize,
             .viewDataOffset               = viewDataOffset,
             .viewPositionOffset           = viewPositionOffset,
-            .lightsUnfiromBuffer          = lightsUnfiromBuffer,
+            .lightsUniformBuffer          = lightsUniformBuffer,
             .numLightsSize                = numLightsSize,
             .dirShadowTransformsSize      = dirShadowTransformsSize,
             .lightsSize                   = lightsSize,

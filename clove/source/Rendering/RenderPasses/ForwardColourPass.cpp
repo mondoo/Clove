@@ -97,14 +97,14 @@ namespace clove {
                                                                 },
                                                                 RgBufferBinding{
                                                                     .slot        = 2,
-                                                                    .buffer      = passData.lightsUnfiromBuffer,
+                                                                    .buffer      = passData.lightsUniformBuffer,
                                                                     .offset      = passData.numLightsOffset,
                                                                     .size        = passData.numLightsSize,
                                                                     .shaderStage = GhaShader::Stage::Vertex | GhaShader::Stage::Pixel,
                                                                 },
                                                                 RgBufferBinding{
                                                                     .slot        = 3,
-                                                                    .buffer      = passData.lightsUnfiromBuffer,
+                                                                    .buffer      = passData.lightsUniformBuffer,
                                                                     .offset      = passData.dirShadowTransformsOffset,
                                                                     .size        = passData.dirShadowTransformsSize,
                                                                     .shaderStage = GhaShader::Stage::Vertex,
@@ -118,7 +118,7 @@ namespace clove {
                                                                 },
                                                                 RgBufferBinding{
                                                                     .slot        = 11,
-                                                                    .buffer      = passData.lightsUnfiromBuffer,
+                                                                    .buffer      = passData.lightsUniformBuffer,
                                                                     .offset      = passData.lightsOffset,
                                                                     .size        = passData.lightsSize,
                                                                     .shaderStage = GhaShader::Stage::Pixel,

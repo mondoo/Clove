@@ -82,7 +82,7 @@ namespace clove {
             size_t viewPositionOffset{};
 
             //Lights
-            RgBufferId lightsUnfiromBuffer{};
+            RgBufferId lightsUniformBuffer{};
 
             size_t numLightsSize{};
             size_t dirShadowTransformsSize{};
