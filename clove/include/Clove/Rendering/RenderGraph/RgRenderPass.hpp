@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Clove/Rendering/RenderGraph/Bindings.hpp"
+#include "Clove/Rendering/RenderGraph/RgBindings.hpp"
 #include "Clove/Rendering/RenderGraph/RgId.hpp"
 #include "Clove/Rendering/RenderGraph/RgPass.hpp"
 #include "Clove/Rendering/RenderGraph/RgShader.hpp"
