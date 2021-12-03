@@ -222,7 +222,8 @@ namespace clove {
         std::vector<RgPassId> executionPasses{};
         buildExecutionPasses(executionPasses, outputResource);
 
-        //Filter out any duplicates and then reverse order so the output pass is at the end.
+        //Reservse order then filter out any duplicates. We reverse order first to make sure we use the earliest pass if any duplicates exist
+        std::reverse(executionPasses.begin(), executionPasses.end());
         {
             std::unordered_set<RgPassId> seenPasses{};
             for(auto iter{ executionPasses.begin() }; iter != executionPasses.end();) {
@@ -234,7 +235,6 @@ namespace clove {
                 }
             }
         }
-        std::reverse(executionPasses.begin(), executionPasses.end());
 
         //Build a list of dependecies between the passes. These dependecies signify anything that needs a sempahore.
         std::vector<PassDependency> const passDependencies{ buildDependencies(executionPasses) };
