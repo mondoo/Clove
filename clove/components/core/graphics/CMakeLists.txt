@@ -7,6 +7,7 @@ option(CLOVE_ENABLE_GHA_VALIDATION "Sets the CLOVE_GHA_VALIDATION macro to 1. Al
 option(CLOVE_COMPILE_DEBUG_SHADERS "Compiles shaders in debug mode, disabling optimisations." OFF)
 
 find_package(shaderc REQUIRED CONFIG)
+find_package(glslang REQUIRED CONFIG)
 find_package(spirv-cross REQUIRED CONFIG)
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows" OR CMAKE_SYSTEM_NAME STREQUAL "Linux")
 	find_package(Vulkan REQUIRED)
@@ -265,6 +266,14 @@ target_link_libraries(
         CloveMaths
 
     PRIVATE
+		#Include all glslang libraries to prevent linking errors witrh shaderc
+        glslang::SPVRemapper
+        glslang::HLSL
+        glslang::OGLCompiler
+        glslang::OSDependent
+        glslang::glslang
+        glslang::SPIRV
+
         shaderc::shaderc
 		spirv-cross::spirv-cross
 
