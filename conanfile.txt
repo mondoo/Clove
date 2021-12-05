@@ -13,3 +13,15 @@ yaml-cpp/0.6.3
 
 [generators]
 cmake_find_package_multi
+
+[options]
+assimp:shared=False
+bullet3:shared=False
+freetype:shared=False
+gtest:shared=False
+libsndfile:shared=False
+openal:shared=True
+shaderc:shared=False
+spdlog:shared=False
+spirv-cross:shared=False
+yaml-cpp:shared=False
