@@ -30,7 +30,7 @@ namespace clove {
         RgComputePass::Descriptor passDescriptor{
             .shader = renderGraph.createShader({ skinning_c, skinning_cLength }, shaderIncludes, "Mesh skinner (compute)", GhaShader::Stage::Compute),
         };
-        RgPassId computePass{ renderGraph.createComputePass(std::move(passDescriptor)) };
+        RgPassId skinningPass{ renderGraph.createComputePass(std::move(passDescriptor)) };
 
         for(auto *job : getJobs()) {
             RgBufferId vertCountBuffer{ renderGraph.createBuffer(sizeof(uint32_t)) };
@@ -38,39 +38,39 @@ namespace clove {
 
             RgBufferId skinnedBuffer{ renderGraph.createBuffer(job->vertexBufferSize) };
 
-            renderGraph.addComputeSubmission(computePass, RgComputePass::Submission{
-                                                              .readUniformBuffers = {
-                                                                  RgBufferBinding{
-                                                                      .slot   = 0,
-                                                                      .buffer = job->matrixPalette,
-                                                                      .offset = 0,
-                                                                      .size   = job->matrixPaletteSize,
-                                                                  },
-                                                                  RgBufferBinding{
-                                                                      .slot   = 1,
-                                                                      .buffer = vertCountBuffer,
-                                                                      .offset = 0,
-                                                                      .size   = sizeof(uint32_t),
-                                                                  },
-                                                              },
-                                                              .readStorageBuffers = {
-                                                                  RgBufferBinding{
-                                                                      .slot   = 2,
-                                                                      .buffer = job->vertexBuffer,
-                                                                      .offset = 0,
-                                                                      .size   = job->vertexBufferSize,
-                                                                  },
-                                                              },
-                                                              .writeBuffers = {
-                                                                  RgBufferBinding{
-                                                                      .slot   = 3,
-                                                                      .buffer = skinnedBuffer,
-                                                                      .offset = 0,
-                                                                      .size   = job->vertexBufferSize,
-                                                                  },
-                                                              },
-                                                              .disptachSize = { (job->vertexCount / AVERAGE_WORK_GROUP_SIZE) + 1, 1, 1 },
-                                                          });
+            renderGraph.addComputeSubmission(skinningPass, RgComputePass::Submission{
+                                                               .readUniformBuffers = {
+                                                                   RgBufferBinding{
+                                                                       .slot   = 0,
+                                                                       .buffer = job->matrixPalette,
+                                                                       .offset = 0,
+                                                                       .size   = job->matrixPaletteSize,
+                                                                   },
+                                                                   RgBufferBinding{
+                                                                       .slot   = 1,
+                                                                       .buffer = vertCountBuffer,
+                                                                       .offset = 0,
+                                                                       .size   = sizeof(uint32_t),
+                                                                   },
+                                                               },
+                                                               .readStorageBuffers = {
+                                                                   RgBufferBinding{
+                                                                       .slot   = 2,
+                                                                       .buffer = job->vertexBuffer,
+                                                                       .offset = 0,
+                                                                       .size   = job->vertexBufferSize,
+                                                                   },
+                                                               },
+                                                               .writeBuffers = {
+                                                                   RgBufferBinding{
+                                                                       .slot   = 3,
+                                                                       .buffer = skinnedBuffer,
+                                                                       .offset = 0,
+                                                                       .size   = job->vertexBufferSize,
+                                                                   },
+                                                               },
+                                                               .disptachSize = { (job->vertexCount / AVERAGE_WORK_GROUP_SIZE) + 1, 1, 1 },
+                                                           });
 
             job->vertexBuffer = skinnedBuffer;
         }
