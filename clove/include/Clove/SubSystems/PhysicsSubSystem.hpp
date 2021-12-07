@@ -86,6 +86,8 @@ namespace clove {
 
         ~PhysicsSubSystem();
 
+        Group getGroup() const override;
+
         void onAttach() override{};
         InputResponse onInputEvent(InputEvent const &inputEvent) override{ return InputResponse::Ignored; }
         void onUpdate(DeltaTime const deltaTime) override;

@@ -5,11 +5,6 @@ CLOVE_DECLARE_LOG_CATEGORY(CloveApplication)
 namespace clove {
     template<typename SubSystemType, typename... Args>
     void Application::pushSubSystem(Args &&...args) {
-        pushSubSystem<SubSystemType>(SubSystemGroup::Core, std::forward<Args>(args)...);
-    }
-
-    template<typename SubSystemType, typename... Args>
-    void Application::pushSubSystem(SubSystemGroup group, Args &&...args) {
         static_assert(std::is_base_of_v<SubSystem, SubSystemType>, "SubSystem provided is not derived from SubSystem.");
 
         std::type_index const subSystemIndex{ typeid(SubSystemType) };
@@ -18,6 +13,8 @@ namespace clove {
         auto subSystem{ std::make_unique<SubSystemType>(std::forward<Args>(args)...) };
 
         CLOVE_LOG(CloveApplication, LogLevel::Trace, "Attached sub system: {0}", subSystem->getName());
+
+        SubSystem::Group const group{ subSystem->getGroup() };
 
         subSystem->onAttach();
         subSystems[group].push_back(std::move(subSystem));

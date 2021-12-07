@@ -37,6 +37,8 @@ namespace membrane {
         EditorSubSystem();
         ~EditorSubSystem();
 
+        Group getGroup() const override;
+
         void onAttach() override;
         clove::InputResponse onInputEvent(clove::InputEvent const &inputEvent) override;
         void onUpdate(clove::DeltaTime const deltaTime) override;

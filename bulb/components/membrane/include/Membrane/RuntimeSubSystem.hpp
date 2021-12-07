@@ -22,6 +22,8 @@ namespace membrane {
     public:
         RuntimeSubSystem();
 
+        Group getGroup() const override;
+
         void onAttach() override;
         clove::InputResponse onInputEvent(clove::InputEvent const &inputEvent) override { return clove::InputResponse::Ignored; }
         void onUpdate(clove::DeltaTime const deltaTime) override;
