@@ -27,6 +27,10 @@ namespace clove {
 
     RenderSubSystem::~RenderSubSystem() = default;
 
+    SubSystem::Group RenderSubSystem::getGroup() const {
+        return Group::Render;
+    }
+
     void RenderSubSystem::onUpdate(DeltaTime const deltaTime) {
         CLOVE_PROFILE_FUNCTION();
 

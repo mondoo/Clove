@@ -22,6 +22,10 @@ namespace clove {
 
     AudioSubSystem::~AudioSubSystem() = default;
 
+    SubSystem::Group AudioSubSystem::getGroup() const {
+        return Group::Render;
+    }
+
     void AudioSubSystem::onUpdate(DeltaTime const deltaTime) {
         CLOVE_PROFILE_FUNCTION();
 
