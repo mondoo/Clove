@@ -2,7 +2,7 @@
 
 namespace clove {
     RgComputePass::RgComputePass(Descriptor descriptor)
-        : descriptor{ std::move(descriptor) } {
+        : descriptor{ descriptor } {
     }
 
     RgComputePass::RgComputePass(RgComputePass &&other) noexcept = default;

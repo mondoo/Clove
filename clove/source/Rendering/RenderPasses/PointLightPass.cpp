@@ -55,7 +55,7 @@ namespace clove {
                         },
                     }
                 };
-                RgPassId pointShadowPass{ renderGraph.createRenderPass(std::move(passDescriptor)) };
+                RgPassId pointShadowPass{ renderGraph.createRenderPass(passDescriptor) };
 
                 for(auto *job : getJobs()) {
                     renderGraph.addRenderSubmission(pointShadowPass, RgRenderPass::Submission{
@@ -63,19 +63,19 @@ namespace clove {
                                                                          .indexBuffer  = job->indexBuffer,
                                                                          .shaderUbos   = {
                                                                              RgBufferBinding{
-                                                                                 .slot        = 0,
+                                                                                 .slot        = 0,//NOLINT
                                                                                  .buffer      = job->modelBuffer,
                                                                                  .size        = job->modelBufferSize,
                                                                                  .shaderStage = GhaShader::Stage::Vertex,
                                                                              },
                                                                              RgBufferBinding{
-                                                                                 .slot        = 1,
+                                                                                 .slot        = 1,//NOLINT
                                                                                  .buffer      = passData.pointLightSpaceBuffers[(i * cubeFaces) + j],
                                                                                  .size        = sizeof(mat4f),
                                                                                  .shaderStage = GhaShader::Stage::Vertex,
                                                                              },
                                                                              RgBufferBinding{
-                                                                                 .slot        = 2,
+                                                                                 .slot        = 2,//NOLINT
                                                                                  .buffer      = passData.pointLightBuffers[i],
                                                                                  .size        = passData.pointLightBufferSize,
                                                                                  .shaderStage = GhaShader::Stage::Pixel,

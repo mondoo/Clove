@@ -30,7 +30,7 @@ namespace clove {
         RgComputePass::Descriptor passDescriptor{
             .shader = renderGraph.createShader({ skinning_c, skinning_cLength }, shaderIncludes, "Mesh skinner (compute)", GhaShader::Stage::Compute),
         };
-        RgPassId skinningPass{ renderGraph.createComputePass(std::move(passDescriptor)) };
+        RgPassId skinningPass{ renderGraph.createComputePass(passDescriptor) };
 
         for(auto *job : getJobs()) {
             RgBufferId vertCountBuffer{ renderGraph.createBuffer(sizeof(uint32_t)) };
@@ -41,31 +41,27 @@ namespace clove {
             renderGraph.addComputeSubmission(skinningPass, RgComputePass::Submission{
                                                                .readUniformBuffers = {
                                                                    RgBufferBinding{
-                                                                       .slot   = 0,
+                                                                       .slot   = 0,//NOLINT
                                                                        .buffer = job->matrixPalette,
-                                                                       .offset = 0,
                                                                        .size   = job->matrixPaletteSize,
                                                                    },
                                                                    RgBufferBinding{
-                                                                       .slot   = 1,
+                                                                       .slot   = 1,//NOLINT
                                                                        .buffer = vertCountBuffer,
-                                                                       .offset = 0,
                                                                        .size   = sizeof(uint32_t),
                                                                    },
                                                                },
                                                                .readStorageBuffers = {
                                                                    RgBufferBinding{
-                                                                       .slot   = 2,
+                                                                       .slot   = 2,//NOLINT
                                                                        .buffer = job->vertexBuffer,
-                                                                       .offset = 0,
                                                                        .size   = job->vertexBufferSize,
                                                                    },
                                                                },
                                                                .writeBuffers = {
                                                                    RgBufferBinding{
-                                                                       .slot   = 3,
+                                                                       .slot   = 3,//NOLINT
                                                                        .buffer = skinnedBuffer,
-                                                                       .offset = 0,
                                                                        .size   = job->vertexBufferSize,
                                                                    },
                                                                },

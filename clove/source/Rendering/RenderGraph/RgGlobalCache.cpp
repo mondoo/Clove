@@ -26,7 +26,7 @@ namespace clove {
             return {};
         }
 
-        size_t const fileSize{ static_cast<size_t>(fileStream.tellg()) };
+        std::streamsize const fileSize{ fileStream.tellg() };
         std::vector<char> buffer(fileSize);
 
         fileStream.seekg(0);
@@ -62,7 +62,7 @@ namespace clove {
         CacheUtils::hashCombine(samplerId, descriptor.maxAnisotropy);
 
         if(!samplers.contains(samplerId)) {
-            samplers[samplerId] = factory->createSampler(std::move(descriptor)).getValue();
+            samplers[samplerId] = factory->createSampler(descriptor).getValue();
         }
         return samplers.at(samplerId).get();
     }

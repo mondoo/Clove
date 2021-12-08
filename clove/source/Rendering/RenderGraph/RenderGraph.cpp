@@ -55,7 +55,7 @@ namespace clove {
 
     RgSampler RenderGraph::createSampler(GhaSampler::Descriptor descriptor) {
         RgResourceId const samplerId{ nextResourceId++ };
-        samplers[samplerId] = globalCache.createSampler(std::move(descriptor));
+        samplers[samplerId] = globalCache.createSampler(descriptor);
 
         return samplerId;
     }
@@ -104,7 +104,7 @@ namespace clove {
     RgPassId RenderGraph::createComputePass(RgComputePass::Descriptor passDescriptor) {
         RgPassId const computePassId{ nextPassId++ };
 
-        computePasses.emplace(std::make_pair(computePassId, RgComputePass{ std::move(passDescriptor) }));
+        computePasses.emplace(std::make_pair(computePassId, RgComputePass{ passDescriptor }));
 
         return computePassId;
     }
@@ -335,7 +335,7 @@ namespace clove {
 
             for(auto const &dependency : passDependencies) {
                 if(passId == dependency.waitPass) {
-                    waitSemaphores.push_back(std::make_pair(dependency.semaphore, dependency.waitStage));
+                    waitSemaphores.emplace_back(dependency.semaphore, dependency.waitStage);
                 } else if(passId == dependency.signalPass) {
                     signalSemaphores.push_back(dependency.semaphore);
                 }
@@ -649,7 +649,7 @@ namespace clove {
 
             //Build and allocate the render pass
             std::vector<AttachmentDescriptor> colourAttachments{};
-            for(auto &renderTarget : passDescriptor.renderTargets) {
+            for(auto const &renderTarget : passDescriptor.renderTargets) {
                 RgImageView const &renderTargetView{ renderTarget.imageView };
 
                 GhaImage::Layout const initialLayout{ getPreviousLayout(renderTargetView, passes, i) };
@@ -684,7 +684,7 @@ namespace clove {
 
             outRenderPasses[passId] = globalCache.createRenderPass(GhaRenderPass::Descriptor{
                 .colourAttachments = std::move(colourAttachments),
-                .depthAttachment   = std::move(depthStencilAttachment.value_or(AttachmentDescriptor{})),
+                .depthAttachment   = depthStencilAttachment.value_or(AttachmentDescriptor{}),
             });
 
             CLOVE_ASSERT_MSG(!passSubmissions.empty(), "Cannot build a pass with 0 submissions!");
@@ -692,7 +692,7 @@ namespace clove {
             //Build descriptor layouts using the first pass.
             //TODO: Get this infomation from shader reflection
             std::vector<DescriptorSetBindingInfo> descriptorBindings{};
-            for(auto &ubo : passSubmissions[0].shaderUbos) {
+            for(auto const &ubo : passSubmissions[0].shaderUbos) {
                 descriptorBindings.emplace_back(DescriptorSetBindingInfo{
                     .binding   = ubo.slot,
                     .type      = DescriptorType::UniformBuffer,
@@ -700,7 +700,7 @@ namespace clove {
                     .stage     = ubo.shaderStage,//TODO: provided by shader reflection
                 });
             }
-            for(auto &image : passSubmissions[0].shaderImages) {
+            for(auto const &image : passSubmissions[0].shaderImages) {
                 descriptorBindings.emplace_back(DescriptorSetBindingInfo{
                     .binding   = image.slot,
                     .type      = DescriptorType::SampledImage,
@@ -708,7 +708,7 @@ namespace clove {
                     .stage     = GhaShader::Stage::Pixel,//TODO: provided by shader reflection
                 });
             }
-            for(auto &sampler : passSubmissions[0].shaderSamplers) {
+            for(auto const &sampler : passSubmissions[0].shaderSamplers) {
                 descriptorBindings.emplace_back(DescriptorSetBindingInfo{
                     .binding   = sampler.slot,
                     .type      = DescriptorType::Sampler,
@@ -744,7 +744,7 @@ namespace clove {
             //Allocate the frame buffer
             std::optional<vec2ui> framebufferSize{};//Use the first valid attachment as the frame buffer size
             std::vector<GhaImageView const *> attachments{};
-            for(auto &renderTarget : passDescriptor.renderTargets) {
+            for(auto const &renderTarget : passDescriptor.renderTargets) {
                 RgImageView const &renderTargetView{ renderTarget.imageView };
 
                 attachments.push_back(images.at(renderTargetView.image).getGhaImageView(frameCache, renderTargetView.viewType, renderTargetView.arrayIndex, renderTargetView.arrayCount));
@@ -806,7 +806,7 @@ namespace clove {
             //Build descriptor layouts using the first pass.
             //TODO: Get this infomation from shader reflection
             std::vector<DescriptorSetBindingInfo> descriptorBindings{};
-            for(auto &ubo : passSubmissions[0].readUniformBuffers) {
+            for(auto const &ubo : passSubmissions[0].readUniformBuffers) {
                 descriptorBindings.emplace_back(DescriptorSetBindingInfo{
                     .binding   = ubo.slot,
                     .type      = DescriptorType::UniformBuffer,
@@ -814,7 +814,7 @@ namespace clove {
                     .stage     = GhaShader::Stage::Compute,
                 });
             }
-            for(auto &sbo : passSubmissions[0].readStorageBuffers) {
+            for(auto const &sbo : passSubmissions[0].readStorageBuffers) {
                 descriptorBindings.emplace_back(DescriptorSetBindingInfo{
                     .binding   = sbo.slot,
                     .type      = DescriptorType::StorageBuffer,
@@ -822,7 +822,7 @@ namespace clove {
                     .stage     = GhaShader::Stage::Compute,
                 });
             }
-            for(auto &sbo : passSubmissions[0].writeBuffers) {
+            for(auto const &sbo : passSubmissions[0].writeBuffers) {
                 descriptorBindings.emplace_back(DescriptorSetBindingInfo{
                     .binding   = sbo.slot,
                     .type      = DescriptorType::StorageBuffer,

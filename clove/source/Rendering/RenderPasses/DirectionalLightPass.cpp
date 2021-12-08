@@ -62,16 +62,14 @@ namespace clove {
                                                                            .indexBuffer  = job->indexBuffer,
                                                                            .shaderUbos   = {
                                                                                RgBufferBinding{
-                                                                                   .slot        = 0,
+                                                                                   .slot        = 0,//NOLINT
                                                                                    .buffer      = job->modelBuffer,
-                                                                                   .offset      = 0,
                                                                                    .size        = job->modelBufferSize,
                                                                                    .shaderStage = GhaShader::Stage::Vertex,
                                                                                },
                                                                                RgBufferBinding{
-                                                                                   .slot        = 1,
+                                                                                   .slot        = 1,//NOLINT
                                                                                    .buffer      = passData.directionalLightSpaceBuffers[i],
-                                                                                   .offset      = 0,
                                                                                    .size        = sizeof(mat4f),
                                                                                    .shaderStage = GhaShader::Stage::Vertex,
                                                                                },

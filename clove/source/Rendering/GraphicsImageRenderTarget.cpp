@@ -51,8 +51,9 @@ namespace clove {
         frameInFlight->reset();
 
         std::vector<std::pair<GhaSemaphore const *, PipelineStage>> transferWaitSemaphores;
+        transferWaitSemaphores.reserve(waitSemaphores.size());
         for(auto const &semaphore : waitSemaphores) {
-            transferWaitSemaphores.push_back(std::make_pair(semaphore, PipelineStage::Transfer));
+            transferWaitSemaphores.emplace_back(semaphore, PipelineStage::Transfer);
         }
 
         TransferSubmitInfo transferSubmission{

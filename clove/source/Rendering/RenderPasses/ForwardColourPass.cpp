@@ -82,77 +82,75 @@ namespace clove {
                                                             .indexBuffer  = job->indexBuffer,
                                                             .shaderUbos   = {
                                                                 RgBufferBinding{
-                                                                    .slot        = 0,
+                                                                    .slot        = 0,//NOLINT
                                                                     .buffer      = job->modelBuffer,
-                                                                    .offset      = 0,
                                                                     .size        = job->modelBufferSize,
                                                                     .shaderStage = GhaShader::Stage::Vertex,
                                                                 },
                                                                 RgBufferBinding{
-                                                                    .slot        = 1,
+                                                                    .slot        = 1,//NOLINT
                                                                     .buffer      = passData.viewUniformBuffer,
                                                                     .offset      = passData.viewDataOffset,
                                                                     .size        = passData.viewDataSize,
                                                                     .shaderStage = GhaShader::Stage::Vertex,
                                                                 },
                                                                 RgBufferBinding{
-                                                                    .slot        = 2,
+                                                                    .slot        = 2,//NOLINT
                                                                     .buffer      = passData.lightsUniformBuffer,
                                                                     .offset      = passData.numLightsOffset,
                                                                     .size        = passData.numLightsSize,
                                                                     .shaderStage = GhaShader::Stage::Vertex | GhaShader::Stage::Pixel,
                                                                 },
                                                                 RgBufferBinding{
-                                                                    .slot        = 3,
+                                                                    .slot        = 3,//NOLINT
                                                                     .buffer      = passData.lightsUniformBuffer,
                                                                     .offset      = passData.dirShadowTransformsOffset,
                                                                     .size        = passData.dirShadowTransformsSize,
                                                                     .shaderStage = GhaShader::Stage::Vertex,
                                                                 },
                                                                 RgBufferBinding{
-                                                                    .slot        = 10,
+                                                                    .slot        = 10,//NOLINT
                                                                     .buffer      = passData.viewUniformBuffer,
                                                                     .offset      = passData.viewPositionOffset,
                                                                     .size        = passData.viewPositionSize,
                                                                     .shaderStage = GhaShader::Stage::Pixel,
                                                                 },
                                                                 RgBufferBinding{
-                                                                    .slot        = 11,
+                                                                    .slot        = 11,//NOLINT
                                                                     .buffer      = passData.lightsUniformBuffer,
                                                                     .offset      = passData.lightsOffset,
                                                                     .size        = passData.lightsSize,
                                                                     .shaderStage = GhaShader::Stage::Pixel,
                                                                 },
                                                                 RgBufferBinding{
-                                                                    .slot        = 12,
+                                                                    .slot        = 12,//NOLINT
                                                                     .buffer      = job->colourBuffer,
-                                                                    .offset      = 0,
                                                                     .size        = job->colourBufferSize,
                                                                     .shaderStage = GhaShader::Stage::Pixel,
                                                                 },
                                                             },
                                                             .shaderImages = {
                                                                 RgImageBinding{
-                                                                    .slot      = 4,
+                                                                    .slot      = 4,//NOLINT
                                                                     .imageView = {
                                                                         .image = job->diffuseTexture,
                                                                     },
                                                                 },
                                                                 RgImageBinding{
-                                                                    .slot      = 5,
+                                                                    .slot      = 5,//NOLINT
                                                                     .imageView = {
                                                                         .image = job->specularTexture,
                                                                     },
                                                                 },
                                                                 RgImageBinding{
-                                                                    .slot      = 7,
+                                                                    .slot      = 7,//NOLINT
                                                                     .imageView = {
                                                                         .image      = passData.directionalShadowMap,
                                                                         .arrayCount = MAX_LIGHTS,
                                                                     },
                                                                 },
                                                                 RgImageBinding{
-                                                                    .slot      = 8,
+                                                                    .slot      = 8,//NOLINT
                                                                     .imageView = {
                                                                         .image      = passData.pointShadowMap,
                                                                         .viewType   = GhaImageView::Type::Cube,
@@ -162,11 +160,11 @@ namespace clove {
                                                             },
                                                             .shaderSamplers = {
                                                                 RgSamplerBinding{
-                                                                    .slot    = 6,
+                                                                    .slot    = 6,//NOLINT
                                                                     .sampler = job->materialSampler,
                                                                 },
                                                                 RgSamplerBinding{
-                                                                    .slot    = 9,
+                                                                    .slot    = 9,//NOLINT
                                                                     .sampler = passData.shadowMaplSampler,
                                                                 },
                                                             },

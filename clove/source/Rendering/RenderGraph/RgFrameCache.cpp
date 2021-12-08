@@ -61,7 +61,7 @@ namespace clove {
         CacheUtils::hashCombine(bufferId, descriptor.memoryType);
 
         return bufferPool.retrieve(bufferId, [&]() {
-            return ghaFactory->createBuffer(std::move(descriptor)).getValue();
+            return ghaFactory->createBuffer(descriptor).getValue();
         });
     }
 
@@ -76,7 +76,7 @@ namespace clove {
         CacheUtils::hashCombine(imageId, descriptor.sharingMode);
 
         return imagePool.retrieve(imageId, [&]() {
-            return ghaFactory->createImage(std::move(descriptor)).getValue();
+            return ghaFactory->createImage(descriptor).getValue();
         });
     }
 
@@ -88,7 +88,7 @@ namespace clove {
         CacheUtils::hashCombine(viewId, descriptor.layerCount);
 
         return imageViewPool.retrieve(viewId, [&]() {
-            return ghaFactory->createImageView(*image, std::move(descriptor)).getValue();
+            return ghaFactory->createImageView(*image, descriptor).getValue();
         });
     }
 
