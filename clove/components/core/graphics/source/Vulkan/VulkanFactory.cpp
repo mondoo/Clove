@@ -28,7 +28,7 @@
 
 #include <Clove/Cast.hpp>
 #include <fstream>
-#include <format>
+#include <sstream>
 
 namespace clove {
     namespace {
@@ -396,7 +396,9 @@ namespace clove {
         uint32_t const desiredImageCount{ descriptor.imageCount };
         uint32_t const maxImageCount{ surfaceSupport.capabilities.maxImageCount };
         if(desiredImageCount > maxImageCount) {
-            return Unexpected{ std::runtime_error{ std::format("Could not create GhaSwapchain. {0} backing images requested but only {1} are available.", desiredImageCount, maxImageCount) } };
+            std::stringstream outputString{};
+            outputString << "Could not create GhaSwapchain." << desiredImageCount << " backing images requested but only " << maxImageCount << " are available.";
+            return Unexpected{ std::runtime_error{ outputString.str() } };
         }
 
         VkSwapchainCreateInfoKHR const createInfo{
