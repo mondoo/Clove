@@ -5,7 +5,7 @@
 namespace clove {
     VulkanImageView::VulkanImageView(GhaImage::Format viewedFormat, vec2ui viewedDimensions, VkDevice device, VkImageView imageView)
         : viewedFormat{ viewedFormat }
-        , viewedDimensions{ std::move(viewedDimensions) }
+        , viewedDimensions{ viewedDimensions }
         , device{ device }
         , imageView{ imageView } {
     }
