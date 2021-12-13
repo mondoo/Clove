@@ -3,6 +3,7 @@
 #include "Clove/Graphics/Metal/DeviceWrapper.hpp"
 #include "Clove/Graphics/Metal/MetalFactory.hpp"
 #include "Clove/Graphics/Metal/MetalDevice.hpp"
+#include "Clove/Graphics/Metal/MetalLog.hpp"
 
 #include <MetalKit/MetalKit.h>
 
@@ -12,6 +13,8 @@ namespace clove {
         
         //Create device
         wrapper->device = MTLCreateSystemDefaultDevice();
+        
+        CLOVE_LOG(CloveGhaMetal, LogLevel::Trace, "Argument buffer tier level for device is {0}.", wrapper->device.argumentBuffersSupport);
         
         //Create view
         if(nativeWindow.has_value()) {

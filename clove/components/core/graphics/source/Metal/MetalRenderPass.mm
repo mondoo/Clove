@@ -1,10 +1,10 @@
 #include "Clove/Graphics/Metal/MetalRenderPass.hpp"
 
 namespace clove {
-    MetalRenderPass::MetalRenderPass(MTLRenderPipelineColorAttachmentDescriptorArray* colourAttachments, MTLPixelFormat depthPixelFormat, Descriptor descriptor)
-        : colourAttachments{ colourAttachments }
+    MetalRenderPass::MetalRenderPass(Descriptor descriptor, MTLRenderPipelineColorAttachmentDescriptorArray* colourAttachments, MTLPixelFormat depthPixelFormat)
+        : descriptor{ std::move(descriptor) }
         , depthPixelFormat{ depthPixelFormat }
-        , descriptor{ std::move(descriptor) }{
+        , colourAttachments{ colourAttachments } {
     }
     
     MetalRenderPass::MetalRenderPass(MetalRenderPass &&other) noexcept = default;
@@ -12,4 +12,8 @@ namespace clove {
     MetalRenderPass& MetalRenderPass::operator=(MetalRenderPass &&other) noexcept = default;
     
     MetalRenderPass::~MetalRenderPass() = default;
+
+	GhaRenderPass::Descriptor const &MetalRenderPass::getDescriptor() const {
+		return descriptor;
+	}
 }

@@ -1,27 +1,18 @@
 #include "Clove/Graphics/Vulkan/VulkanSwapchain.hpp"
 
 #include "Clove/Graphics/Vulkan/VulkanImage.hpp"
-#include "Clove/Graphics/Vulkan/VulkanImageView.hpp"
 #include "Clove/Graphics/Vulkan/VulkanResult.hpp"
 #include "Clove/Graphics/Vulkan/VulkanSemaphore.hpp"
 
 #include <Clove/Cast.hpp>
 
 namespace clove {
-    VulkanSwapchain::VulkanSwapchain(DevicePointer device, VkSwapchainKHR swapchain, VkFormat swapChainImageFormat, VkExtent2D swapChainExtent)
+    VulkanSwapchain::VulkanSwapchain(DevicePointer device, VkSwapchainKHR swapchain, VkFormat swapChainImageFormat, VkExtent2D swapChainExtent, std::vector<std::unique_ptr<VulkanImage>> images)
         : device{ std::move(device) }
         , swapchain{ swapchain }
         , swapChainImageFormat{ swapChainImageFormat }
-        , swapChainExtent{ swapChainExtent } {
-        uint32_t imageCount{ 0 };
-        vkGetSwapchainImagesKHR(this->device.get(), swapchain, &imageCount, nullptr);
-        images.resize(imageCount);
-        vkGetSwapchainImagesKHR(this->device.get(), swapchain, &imageCount, images.data());
-
-        imageViews.resize(std::size(images));
-        for(size_t i = 0; i < images.size(); ++i) {
-            imageViews[i] = std::make_unique<VulkanImageView>(this->device.get(), VulkanImageView::create(this->device.get(), images[i], VK_IMAGE_VIEW_TYPE_2D, swapChainImageFormat, VK_IMAGE_ASPECT_COLOR_BIT, 0, 1));
-        }
+        , swapChainExtent{ swapChainExtent }
+        , images{ std::move(images) } {
     }
 
     VulkanSwapchain::VulkanSwapchain(VulkanSwapchain &&other) noexcept = default;
@@ -48,15 +39,15 @@ namespace clove {
         return { swapChainExtent.width, swapChainExtent.height };
     }
 
-    std::vector<GhaImageView *> VulkanSwapchain::getImageViews() const {
-        std::vector<GhaImageView *> views{};
-        views.reserve(imageViews.size());
-        
-        for(auto const &view : imageViews){
-            views.push_back(view.get());
+    std::vector<GhaImage *> VulkanSwapchain::getImages() const {
+        std::vector<GhaImage *> ghaImages{};
+        ghaImages.reserve(images.size());
+
+        for(auto const &image : images){
+            ghaImages.push_back(image.get());
         }
 
-        return views;
+        return ghaImages;
     }
 
     VkSwapchainKHR VulkanSwapchain::getSwapchain() const {

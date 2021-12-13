@@ -7,7 +7,7 @@
 #include <vulkan/vulkan.h>
 
 namespace clove {
-    class VulkanImageView;
+    class VulkanImage;
 }
 
 namespace clove {
@@ -20,13 +20,12 @@ namespace clove {
         VkFormat swapChainImageFormat{};
         VkExtent2D swapChainExtent{};
 
-        std::vector<VkImage> images;
-        std::vector<std::unique_ptr<VulkanImageView>> imageViews;
+        std::vector<std::unique_ptr<VulkanImage>> images;
 
         //FUNCTIONS
     public:
         VulkanSwapchain() = delete;
-        VulkanSwapchain(DevicePointer device, VkSwapchainKHR swapchain, VkFormat swapChainImageFormat, VkExtent2D swapChainExtent);
+        VulkanSwapchain(DevicePointer device, VkSwapchainKHR swapchain, VkFormat swapChainImageFormat, VkExtent2D swapChainExtent, std::vector<std::unique_ptr<VulkanImage>> images);
 
         VulkanSwapchain(VulkanSwapchain const &other) = delete;
         VulkanSwapchain(VulkanSwapchain &&other) noexcept;
@@ -41,7 +40,7 @@ namespace clove {
         GhaImage::Format getImageFormat() const override;
         vec2ui getSize() const override;
 
-        std::vector<GhaImageView *> getImageViews() const override;
+        std::vector<GhaImage *> getImages() const override;
 
         VkSwapchainKHR getSwapchain() const;
     };

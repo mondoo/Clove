@@ -23,18 +23,16 @@ namespace clove {
     class Material {
         //VARIABLES
     private:
-        //Default images and views - fall backs for if a texture hasn't been provided.
+        //Default image - fall back for if a texture hasn't been provided.
         static std::weak_ptr<GhaImage> defaultImage;
-        static std::weak_ptr<GhaImageView> defaultView;
 
-        std::shared_ptr<GhaImage> localImage;
-        std::shared_ptr<GhaImageView> localView;
+        std::shared_ptr<GhaImage> localDefaultImage;
 
         AssetPtr<Texture> diffuseTexture;
         AssetPtr<Texture> specularTexture;
 
         vec4f colour{ 1.0f };
-        float shininess{ 32.0f };
+        float shininess{ 32.0f };//TODO: Not hooked up to the shaders
 
         //FUNCTIONS
     public:
@@ -49,10 +47,10 @@ namespace clove {
         ~Material();
 
         inline void setDiffuseTexture(AssetPtr<Texture> texture);
-        std::shared_ptr<GhaImageView> getDiffuseView() const;
+        GhaImage *getDiffuseImage() const;
 
         inline void setSpecularTexture(AssetPtr<Texture> texture);
-        std::shared_ptr<GhaImageView> getSpecularView() const;
+        GhaImage *getSpecularImage() const;
 
         inline void setColour(vec4f colour);
         inline vec4f const &getColour() const;

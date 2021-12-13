@@ -2,25 +2,20 @@
 
 #include "Clove/Application.hpp"
 
-#include <Clove/Graphics/GhaFence.hpp>
 #include <Clove/Graphics/GhaBuffer.hpp>
 #include <Clove/Graphics/GhaDevice.hpp>
 #include <Clove/Graphics/GhaFactory.hpp>
+#include <Clove/Graphics/GhaFence.hpp>
 #include <Clove/Graphics/GhaGraphicsQueue.hpp>
 
 namespace clove {
     GraphicsImageRenderTarget::GraphicsImageRenderTarget(GhaImage::Descriptor imageDescriptor, GhaFactory *factory)
         : imageDescriptor{ imageDescriptor }
         , factory{ factory } {
-
-        //We won't be allocating any buffers from this queue, only using it to submit
-        graphicsQueue = this->factory->createGraphicsQueue(CommandQueueDescriptor{ .flags = QueueFlags::None }).getValue();
-        transferQueue = this->factory->createTransferQueue(CommandQueueDescriptor{ .flags = QueueFlags::ReuseBuffers }).getValue();
-
-        frameInFlight           = this->factory->createFence({ true }).getValue();
-        renderFinishedSemaphore = this->factory->createSemaphore().getValue();
-
+        transferQueue         = this->factory->createTransferQueue(CommandQueueDescriptor{ .flags = QueueFlags::ReuseBuffers }).getValue();
         transferCommandBuffer = transferQueue->allocateCommandBuffer();
+
+        frameInFlight = this->factory->createFence({ true }).getValue();
 
         createImages();
     }
@@ -31,27 +26,38 @@ namespace clove {
 
     GraphicsImageRenderTarget::~GraphicsImageRenderTarget() = default;
 
-    Expected<uint32_t, std::string> GraphicsImageRenderTarget::aquireNextImage(size_t const frameId) {
+    Expected<uint32_t, std::string> GraphicsImageRenderTarget::aquireNextImage(GhaSemaphore const *const signalSemaphore) {
         if(requiresResize) {
             createImages();
             return Unexpected<std::string>{ "Backbuffer was recreated." };
         }
 
-        //Because we only have one frame, just wait for the graphics/transfer queues to finish using it then return
+        //A bit hacky but inject an empty submission to signal the provided semaphore.
+        //This will execute after what ever is in the current queue so will technicaly signal once the transfer queue
+        //is ready to transfer another image
+        if(signalSemaphore != nullptr) {
+            TransferSubmitInfo transferSubmission{
+                .signalSemaphores = { signalSemaphore },
+            };
+            transferQueue->submit({ std::move(transferSubmission) }, nullptr);
+        }
+
+        return 0; //Only a single backing image for now
+    }
+
+    void GraphicsImageRenderTarget::present(uint32_t imageIndex, std::vector<GhaSemaphore const *> waitSemaphores) {
+        //Fences can't be resubmitted in a signaled state. So we have to wait for and then reset the fence.
         frameInFlight->wait();
         frameInFlight->reset();
 
-        return 0;
-    }
-
-    void GraphicsImageRenderTarget::submit(uint32_t imageIndex, size_t const frameId, GraphicsSubmitInfo submission) {
-        using namespace clove;
-
-        submission.signalSemaphores.push_back(renderFinishedSemaphore.get());
-        graphicsQueue->submit({ std::move(submission) }, nullptr);
+        std::vector<std::pair<GhaSemaphore const *, PipelineStage>> transferWaitSemaphores;
+        transferWaitSemaphores.reserve(waitSemaphores.size());
+        for(auto const &semaphore : waitSemaphores) {
+            transferWaitSemaphores.emplace_back(semaphore, PipelineStage::Transfer);
+        }
 
         TransferSubmitInfo transferSubmission{
-            .waitSemaphores = { { renderFinishedSemaphore.get(), PipelineStage::Transfer } },
+            .waitSemaphores = transferWaitSemaphores,
             .commandBuffers = { transferCommandBuffer.get() },
         };
         transferQueue->submit({ std::move(transferSubmission) }, frameInFlight.get());
@@ -65,8 +71,8 @@ namespace clove {
         return imageDescriptor.dimensions;
     }
 
-    std::vector<GhaImageView *> GraphicsImageRenderTarget::getImageViews() const {
-        return { renderTargetView.get() };
+    std::vector<GhaImage *> GraphicsImageRenderTarget::getImages() const {
+        return { renderTargetImage.get() };
     }
 
     void GraphicsImageRenderTarget::resize(vec2ui size) {
@@ -90,11 +96,6 @@ namespace clove {
         onPropertiesChangedBegin.broadcast();
 
         renderTargetImage = factory->createImage(imageDescriptor).getValue();
-        renderTargetView  = renderTargetImage->createView(GhaImageView::Descriptor{
-            .type       = GhaImageView::Type::_2D,
-            .layer      = 0,
-            .layerCount = 1,
-        });
 
         size_t constexpr bytesPerPixel{ 4 };//Assuming image format is 4 bbp
         size_t const bufferSize{ imageDescriptor.dimensions.x * imageDescriptor.dimensions.y * bytesPerPixel };

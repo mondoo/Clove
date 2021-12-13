@@ -17,11 +17,7 @@ namespace clove {
         //VARIABLES
     private:
         /**
-         * @brief Buffer containing the bind pose vertices of this mesh.
-         */
-        std::unique_ptr<GhaBuffer> vertexBuffer;
-        /**
-         * @brief Buffer container both the indices and skinned vertices of this mesh.
+         * @brief Buffer container both the indices and vertices of this mesh.
          */
         std::unique_ptr<GhaBuffer> combinedBuffer;
 
@@ -31,6 +27,7 @@ namespace clove {
         size_t vertexOffset{ 0 };
         size_t vertexBufferSize{ 0 };
         size_t indexOffset{ 0 };
+        size_t indexBufferSize{ 0 };
 
         //FUNCTIONS
     public:
@@ -51,14 +48,6 @@ namespace clove {
          * @details This buffer contains the bind pose vertices for the
          * mesh. Before any skinning has taken place.
          */
-        inline GhaBuffer *getVertexBuffer() const;
-
-        /**
-         * @brief Returns a GhaBuffer containing both vertices and indices.
-         * The lifetime of the buffer is tied to this object.
-         * @details The vertices in this buffer are pre-skinned and are safe
-         * to use straight away for animated meshes.
-         */
         inline GhaBuffer *getCombinedBuffer() const;
 
         /**
@@ -72,7 +61,8 @@ namespace clove {
          * @brief Returns the offset into the combinedBuffer for the indices.
          */
         inline size_t getIndexOffset() const;
-        inline size_t getIndexCount() const;
+        inline size_t getIndexBufferSize() const;
+        inline uint32_t getIndexCount() const;
     };
 }
 

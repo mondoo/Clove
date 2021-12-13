@@ -31,27 +31,29 @@ namespace clove {
         virtual ~GhaDescriptorSet() = default;
 
         /**
-         * @brief Maps a region of a buffer into a binding inside a shader.
-         * @param buffer The buffer to map from.
-         * @param offset An offset into the buffer to start mapping from.
-         * @param range The size of the region into the buffer to map.
-         * @param bindingSlot The binding slot inside the shader to map to.
+         * @brief Writes a region of a buffer into a binding inside a shader.
+         * @details The value that is read from the shader will be whatever value is in the buffer at the time of writing.
+         * @param buffer The buffer to write from.
+         * @param offset An offset into the buffer to start writting from.
+         * @param range The size of the region into the buffer to write.
+         * @param bindingSlot The binding slot inside the shader to write to.
          */
-        virtual void map(GhaBuffer const &buffer, size_t const offset, size_t const range, DescriptorType const descriptorType, uint32_t const bindingSlot) = 0;
+        virtual void write(GhaBuffer const &buffer, size_t const offset, size_t const range, DescriptorType const descriptorType, uint32_t const bindingSlot) = 0;
 
         /**
-         * @brief Maps an image view into a binding inside a shader.
-         * @param imageView The image view to map.
-         * @param layout The layout of the image being mapped.
-         * @param bindingSlot The binding slot inside the shader to map to.
+         * @brief Writes an image into a binding inside a shader.
+         * @details The value that is read from the shader will be whatever value is in the image at the time of writing.
+         * @param imageView The image view to write.
+         * @param layout The layout of the image being written.
+         * @param bindingSlot The binding slot inside the shader to write to.
          */
-        virtual void map(GhaImageView const &imageView, GhaImage::Layout const layout, uint32_t const bindingSlot) = 0;
+        virtual void write(GhaImageView const &imageView, GhaImage::Layout const layout, uint32_t const bindingSlot) = 0;
 
         /**
-         * @brief Maps a sampler into a binding inside a shader.
-         * @param sampler The sampler to map.
-         * @param bindingSlot The binding slot inside the shader to map to.
+         * @brief Writes a sampler into a binding inside a shader.
+         * @param sampler The sampler to write.
+         * @param bindingSlot The binding slot inside the shader to write to.
          */
-        virtual void map(GhaSampler const &sampler, uint32_t const bindingSlot) = 0;
+        virtual void write(GhaSampler const &sampler, uint32_t const bindingSlot) = 0;
     };
 }

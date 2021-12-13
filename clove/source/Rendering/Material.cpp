@@ -10,7 +10,6 @@
 
 namespace clove {
     std::weak_ptr<GhaImage> Material::defaultImage{};
-    std::weak_ptr<GhaImageView> Material::defaultView{};
 
     Material::Material() {
         if(defaultImage.use_count() == 0) {
@@ -30,18 +29,10 @@ namespace clove {
 
             std::shared_ptr<GhaImage> image{ createImageWithData(factory, imageDescriptor, &white, bytesPerTexel) };
 
-            localImage = image;
-            localView  = image->createView(GhaImageView::Descriptor{
-                .type       = GhaImageView::Type::_2D,
-                .layer      = 0,
-                .layerCount = 1,
-            });
-
-            defaultImage = localImage;
-            defaultView  = localView;
+            defaultImage      = image;
+            localDefaultImage = image;
         } else {
-            localImage = defaultImage.lock();
-            localView  = defaultView.lock();
+            localDefaultImage = defaultImage.lock();
         }
     }
 
@@ -55,19 +46,19 @@ namespace clove {
 
     Material::~Material() = default;
 
-    std::shared_ptr<GhaImageView> Material::getDiffuseView() const {
+    GhaImage *Material::getDiffuseImage() const {
         if(diffuseTexture.isValid()) {
-            return diffuseTexture->getImageView();
+            return diffuseTexture->getImage();
         } else {
-            return localView;
+            return localDefaultImage.get();
         }
     }
 
-    std::shared_ptr<GhaImageView> Material::getSpecularView() const {
+    GhaImage *Material::getSpecularImage() const {
         if(specularTexture.isValid()) {
-            return specularTexture->getImageView();
+            return specularTexture->getImage();
         } else {
-            return localView;
+            return localDefaultImage.get();
         }
     }
 }

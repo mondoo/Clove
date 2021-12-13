@@ -12,14 +12,9 @@ namespace clove {
 
 namespace clove {
     class DirectionalLightPass : public GeometryPass {
-        //VARIABLES
-    private:
-        std::unique_ptr<GhaGraphicsPipelineObject> pipeline{ nullptr };
-
         //FUNCTIONS
     public:
-        DirectionalLightPass() = delete;
-        DirectionalLightPass(GhaFactory &ghaFactory, GhaRenderPass *ghaRenderPass);//TEMP: Using an external render pass for now but these pass will need to create their own
+        DirectionalLightPass();
 
         DirectionalLightPass(DirectionalLightPass const &other) = delete;
         DirectionalLightPass(DirectionalLightPass &&other) noexcept;
@@ -28,7 +23,9 @@ namespace clove {
         DirectionalLightPass &operator=(DirectionalLightPass &&other) noexcept;
 
         ~DirectionalLightPass();
+        
+        Id getId() const override;
 
-        void execute(GhaGraphicsCommandBuffer &commandBuffer, FrameData const &frameData) override;
+        void execute(RenderGraph &renderGraph, PassData const &passData) override;
     };
 }

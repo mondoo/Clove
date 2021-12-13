@@ -1,5 +1,8 @@
 #pragma once
 
+#include "Clove/Graphics/GhaImage.hpp"
+
+#include <Clove/Maths/Vector.hpp>
 #include <cinttypes>
 
 namespace clove {
@@ -7,7 +10,6 @@ namespace clove {
      * @brief Represents a view on a subset of a GhaImage.
      * @details GhaImages are not directly accessed by shaders for reading / writing.
      * Instead, a view onto that image is used.
-     * @see GhaImage::createView
      */
     class GhaImageView {
         //TYPES
@@ -27,5 +29,17 @@ namespace clove {
         //FUNCTIONS
     public:
         virtual ~GhaImageView() = default;
+
+        /**
+         * @brief Returns the format of the viewed image.
+         * @return 
+         */
+        virtual GhaImage::Format getImageFormat() const = 0;
+
+        /**
+         * @brief Returns the dimensions of the viewed image.
+         * @return 
+         */
+        virtual vec2ui const &getImageDimensions() const = 0;
     };
 }

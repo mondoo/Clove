@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Clove/Graphics/GhaImage.hpp"
-
 #include <Clove/Delegate/MultiCastDelegate.hpp>
 #include <Clove/Expected.hpp>
+#include <Clove/Graphics/GhaImage.hpp>
+#include <Clove/Graphics/GhaImageView.hpp>
 
 namespace clove {
     class GhaSemaphore;
@@ -43,20 +43,17 @@ namespace clove {
 
         /**
          * @brief Aquire the next available image that can be rendered to.
-         * @param frameId Which frame is currently being rendered. This 
-         * number will be from 0 - N-1 where N is the total number of frames in flight.
+         * @param signalSemaphore A semaphore this RenderTarget will signal when the image is ready to render to. Can be nullptr.
          * @return Returns the image index for the getImageViews array.
          */
-        virtual Expected<uint32_t, std::string> aquireNextImage(size_t const frameId) = 0;
+        virtual Expected<uint32_t, std::string> aquireNextImage(GhaSemaphore const *const signalSemaphore) = 0;
 
         /**
-         * @brief Submit graphics command buffers to be presented on this RenderTarget.
+         * @brief Presents the render target with imageIndex.
          * @param imageIndex The image index of the getImageViews array this submission is for.
-         * @param frameId Which frame is currently being rendered. This 
-         * number will be from 0 - N-1 where N is the total number of frames in flight.
-         * @param submission The graphics queue submission that uses the imageIndex image.
+         * @param waitSemaphores Semaphores the RenderTarget will wait on before beginning presentation logic.
          */
-        virtual void submit(uint32_t imageIndex, size_t const frameId, GraphicsSubmitInfo submission) = 0;
+        virtual void present(uint32_t imageIndex, std::vector<GhaSemaphore const *> waitSemaphores) = 0;
 
         virtual GhaImage::Format getImageFormat() const = 0;
         virtual vec2ui getSize() const                  = 0;
@@ -66,6 +63,6 @@ namespace clove {
          * are tied to this object.
          * @return 
          */
-        virtual std::vector<GhaImageView *> getImageViews() const = 0;
+        virtual std::vector<GhaImage *> getImages() const = 0;
     };
 }

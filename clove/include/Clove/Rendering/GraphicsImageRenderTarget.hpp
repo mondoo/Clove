@@ -28,15 +28,12 @@ namespace clove {
 
         GhaFactory *factory{ nullptr };
 
-        std::unique_ptr<GhaGraphicsQueue> graphicsQueue;
         std::unique_ptr<GhaTransferQueue> transferQueue;
         std::unique_ptr<GhaTransferCommandBuffer> transferCommandBuffer;
 
-        std::unique_ptr<GhaSemaphore> renderFinishedSemaphore;
         std::unique_ptr<GhaFence> frameInFlight;
 
         std::unique_ptr<GhaImage> renderTargetImage;
-        std::unique_ptr<GhaImageView> renderTargetView;
         std::unique_ptr<GhaBuffer> renderTargetBuffer;
 
         bool requiresResize{ false };
@@ -54,14 +51,14 @@ namespace clove {
 
         ~GraphicsImageRenderTarget();
 
-        Expected<uint32_t, std::string> aquireNextImage(size_t const frameId) override;
+        Expected<uint32_t, std::string> aquireNextImage(GhaSemaphore const *const signalSemaphore) override;
 
-        void submit(uint32_t imageIndex, size_t const frameId, GraphicsSubmitInfo submission) override;
+        void present(uint32_t imageIndex, std::vector<GhaSemaphore const *> waitSemaphores) override;
 
         GhaImage::Format getImageFormat() const override;
         vec2ui getSize() const override;
 
-        std::vector<GhaImageView *> getImageViews() const override;
+        std::vector<GhaImage *> getImages() const override;
 
         void resize(vec2ui size);
 

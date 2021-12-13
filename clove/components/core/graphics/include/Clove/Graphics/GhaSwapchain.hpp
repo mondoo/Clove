@@ -19,7 +19,8 @@ namespace clove {
         //TYPES
     public:
         struct Descriptor {
-            vec2ui extent;
+            vec2ui extent;            /**< Size of the swapchain's backing images. */
+            uint32_t imageCount{ 3 }; /**< How many images the swapchain will hold. */
         };
 
         //FUNCTIONS
@@ -42,6 +43,6 @@ namespace clove {
          * of the views are tied to this object.
          * @return 
          */
-        virtual std::vector<GhaImageView *> getImageViews() const = 0;
+        virtual std::vector<GhaImage *> getImages() const = 0;
     };
 }

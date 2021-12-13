@@ -194,6 +194,10 @@ namespace clove {
             .sharingMode = SharingMode::Concurrent,
         };
         
+        GhaImageView::Descriptor const imageViewDescriptor{
+            .type = GhaImageView::Type::_2D,
+        };
+        
         //Creating 3 back buffers for now. Will need to synchronise this number across APIs.
         size_t constexpr swapchainImageCount{ 3 };
         
@@ -248,7 +252,7 @@ namespace clove {
         
         MTLPixelFormat depthPixelFormat{ MetalImage::convertFormat(descriptor.depthAttachment.format) };
         
-        return std::unique_ptr<GhaRenderPass>{ createGhaObject<MetalRenderPass>(colourAttachments, depthPixelFormat, std::move(descriptor)) };
+        return std::unique_ptr<GhaRenderPass>{ createGhaObject<MetalRenderPass>(std::move(descriptor), colourAttachments, depthPixelFormat) };
     }
     
     Expected<std::unique_ptr<GhaDescriptorSetLayout>, std::runtime_error> MetalFactory::createDescriptorSetLayout(GhaDescriptorSetLayout::Descriptor descriptor) noexcept {
@@ -256,20 +260,28 @@ namespace clove {
         NSMutableArray<MTLArgumentDescriptor *> *pixelDescriptors{ [[NSMutableArray<MTLArgumentDescriptor *> alloc] init] };
         NSMutableArray<MTLArgumentDescriptor *> *computeDescriptors{ [[NSMutableArray<MTLArgumentDescriptor *> alloc] init]  };
         
+        auto const getDataType = [](DescriptorType descriptorType) {
+            switch(descriptorType) {
+                case DescriptorType::SampledImage:
+                    return MTLDataTypeTexture;
+                case DescriptorType::Sampler:
+                    return MTLDataTypeSampler;
+                default:
+                    return MTLDataTypePointer;
+            }
+        };
+        
+        //Metal validates the bounds of argument buffer binding slots based off the order they are in the NSMutableArray
+        //so sort them here to make sure they are in the correct order.
+        std::sort(descriptor.bindings.begin(), descriptor.bindings.end(), [](DescriptorSetBindingInfo const &lhs, DescriptorSetBindingInfo const &rhs){
+            return rhs.binding > lhs.binding;
+        });
+        
         for(auto const &binding : descriptor.bindings) {
             MTLArgumentDescriptor *bindingDescriptor{ [[MTLArgumentDescriptor alloc] init] };
+            
             [bindingDescriptor setIndex:binding.binding];
-            switch(binding.type) {
-                case DescriptorType::SampledImage:
-                    [bindingDescriptor setDataType:MTLDataTypeTexture];
-                    break;
-                case DescriptorType::Sampler:
-                    [bindingDescriptor setDataType:MTLDataTypeSampler];
-                    break;
-                default:
-                    [bindingDescriptor setDataType:MTLDataTypePointer];
-                    break;
-            }
+            [bindingDescriptor setDataType:getDataType(binding.type)];
             [bindingDescriptor setArrayLength:binding.arraySize];
             
             if((binding.stage & GhaShader::Stage::Vertex) != 0){
@@ -352,7 +364,7 @@ namespace clove {
             return Unexpected{ std::runtime_error{ [[error description] cStringUsingEncoding:[NSString defaultCStringEncoding]] } };
         }
         
-        return std::unique_ptr<GhaGraphicsPipelineObject>{ createGhaObject<MetalGraphicsPipelineObject>(pipelineState, depthStencilState) };
+        return std::unique_ptr<GhaGraphicsPipelineObject>{ createGhaObject<MetalGraphicsPipelineObject>(std::move(descriptor), pipelineState, depthStencilState) };
     }
     
     Expected<std::unique_ptr<GhaComputePipelineObject>, std::runtime_error> MetalFactory::createComputePipelineObject(GhaComputePipelineObject::Descriptor descriptor) noexcept {
@@ -366,7 +378,7 @@ namespace clove {
                                                     cStringUsingEncoding:[NSString defaultCStringEncoding]] } };
         }
         
-        return std::unique_ptr<GhaComputePipelineObject>{ createGhaObject<MetalComputePipelineObject>(pipelineState) };
+        return std::unique_ptr<GhaComputePipelineObject>{ createGhaObject<MetalComputePipelineObject>(std::move(descriptor), pipelineState) };
     }
     
     Expected<std::unique_ptr<GhaFramebuffer>, std::runtime_error> MetalFactory::createFramebuffer(GhaFramebuffer::Descriptor descriptor) noexcept {
@@ -428,6 +440,27 @@ namespace clove {
         id<MTLTexture> texture{ [device newTextureWithDescriptor:mtlDescriptor] };
         return std::unique_ptr<GhaImage>{ createGhaObject<MetalImage>(texture, descriptor) };
     }
+    
+    Expected<std::unique_ptr<GhaImageView>, std::runtime_error> MetalFactory::createImageView(GhaImage const &image, GhaImageView::Descriptor descriptor) noexcept {
+		GhaImage::Descriptor const &imageDescriptor{ image.getDescriptor() };
+		
+		NSRange const mipLevels{
+			.location = 0,
+			.length   = 1,
+		};
+		NSRange const arraySlices{
+			.location = descriptor.layer,
+			.length   = descriptor.layerCount,
+		};
+
+		id<MTLTexture> mtlTexture{ polyCast<MetalImage const>(&image)->getTexture() };
+		id<MTLTexture> textureView{ [mtlTexture newTextureViewWithPixelFormat:MetalImage::convertFormat(imageDescriptor.format)
+                                                                  textureType:MetalImageView::convertType(descriptor.type, descriptor.layerCount)
+                                                                       levels:mipLevels
+                                                                       slices:arraySlices] };
+		
+		return std::unique_ptr<GhaImageView>{ createGhaObject<MetalImageView>(imageDescriptor.format, imageDescriptor.dimensions, textureView) };
+	}
     
     Expected<std::unique_ptr<GhaSampler>, std::runtime_error> MetalFactory::createSampler(GhaSampler::Descriptor descriptor) noexcept {
         MTLSamplerDescriptor *samplerDescriptor{ [[MTLSamplerDescriptor alloc] init] };

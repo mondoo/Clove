@@ -1,8 +1,4 @@
 namespace clove {
-    GhaBuffer *Mesh::getVertexBuffer() const {
-        return vertexBuffer.get();
-    }
-
     GhaBuffer *Mesh::getCombinedBuffer() const {
         return combinedBuffer.get();
     }
@@ -23,7 +19,11 @@ namespace clove {
         return indexOffset;
     }
 
-    size_t Mesh::getIndexCount() const {
+    size_t Mesh::getIndexBufferSize() const {
+        return indexBufferSize;
+    }
+
+    uint32_t Mesh::getIndexCount() const {
         return indices.size();
     }
 }

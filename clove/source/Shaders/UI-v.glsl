@@ -1,6 +1,7 @@
 #version 450
 
-layout(std140, push_constant) uniform ModelProjection{
+//TODO: Push constant
+layout(std140, set = 0, binding = 0) uniform ModelProjection{
     mat4 modelProjection;
 };
 

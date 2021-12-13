@@ -63,7 +63,7 @@ namespace clove {
                     passIds.insert(technique.passIds.begin(), technique.passIds.end());
                 }
                 for(auto const &mesh : staticModel.model->getMeshes()) {
-                    renderer->submitMesh(ForwardRenderer3D::MeshInfo{ mesh, staticModel.material, modelTransform, matrixPalet }, passIds);
+                    renderer->submitMesh(ForwardRenderer3D::MeshInfo{ mesh, staticModel.material, modelTransform, matrixPalet, passIds });
                 }
             }
         });
@@ -78,7 +78,7 @@ namespace clove {
                     passIds.insert(technique.passIds.begin(), technique.passIds.end());
                 }
                 for(auto const &mesh : animatedModel.model->getMeshes()) {
-                    renderer->submitMesh(ForwardRenderer3D::MeshInfo{ mesh, animatedModel.material, modelTransform, matrixPalet }, passIds);
+                    renderer->submitMesh(ForwardRenderer3D::MeshInfo{ mesh, animatedModel.material, modelTransform, matrixPalet, passIds });
                 }
             }
         });

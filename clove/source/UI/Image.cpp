@@ -17,7 +17,7 @@ namespace clove {
         uint32_t constexpr bytesPerTexel{ 4 };
         uint32_t constexpr white{ 0xffffffff };
 
-        GhaFactory &factory = *Application::get().getGraphicsDevice()->getGraphicsFactory();
+        GhaFactory &factory{ *Application::get().getGraphicsDevice()->getGraphicsFactory() };
 
         GhaImage::Descriptor constexpr imageDescriptor{
             .type        = GhaImage::Type::_2D,
@@ -28,20 +28,10 @@ namespace clove {
         };
 
         image     = createImageWithData(factory, imageDescriptor, &white, bytesPerTexel);
-        imageView = image->createView(GhaImageView::Descriptor{
-            .type       = GhaImageView::Type::_2D,
-            .layer      = 0,
-            .layerCount = 1,
-        });
     }
 
     Image::Image(std::shared_ptr<GhaImage> graphicsImage)
         : image(std::move(graphicsImage)) {
-        imageView = image->createView(GhaImageView::Descriptor{
-            .type       = GhaImageView::Type::_2D,
-            .layer      = 0,
-            .layerCount = 1,
-        });
     }
 
     Image::Image(Image const &other) = default;
@@ -63,6 +53,6 @@ namespace clove {
         mat4f const model{ translate(mat4f{ 1.0f }, { pos, 0.0f }) * rotate(mat4f{ 1.0f }, this->rotation, { 0.0f, 0.0f, 1.0f }) * scale(mat4f{ 1.0f }, vec3f{ size, 0.0f }) };
         mat4f const projection{ createOrthographicMatrix(-screenHalfSize.x, screenHalfSize.x, -screenHalfSize.y, screenHalfSize.y) };
 
-        Application::get().getRenderer()->submitWidget(imageView, projection * model);
+        Application::get().getRenderer()->submitWidget(image, projection * model);
     }
 }

@@ -8,32 +8,6 @@
 #include <array>
 
 namespace clove {
-    namespace {
-        VkImageViewType getImageViewType(GhaImageView::Type garlicImageType, uint32_t layerCount) {
-            switch(garlicImageType) {
-                case GhaImageView::Type::_2D:
-                    if(layerCount > 1u) {
-                        return VK_IMAGE_VIEW_TYPE_2D_ARRAY;
-                    } else {
-                        return VK_IMAGE_VIEW_TYPE_2D;
-                    }
-                case GhaImageView::Type::_3D:
-                    return VK_IMAGE_VIEW_TYPE_3D;
-                case GhaImageView::Type::Cube: {
-                    uint32_t constexpr cubeLayerCount{ 6 };
-                    if(layerCount > cubeLayerCount) {
-                        return VK_IMAGE_VIEW_TYPE_CUBE_ARRAY;
-                    } else {
-                        return VK_IMAGE_VIEW_TYPE_CUBE;
-                    }
-                }
-                default:
-                    CLOVE_ASSERT_MSG(false, "{0}: Unhandled image type");
-                    return VK_IMAGE_VIEW_TYPE_2D;
-            }
-        }
-    }
-
     VulkanImage::VulkanImage(DevicePointer device, VkImage image, Descriptor descriptor, MemoryAllocator::Chunk const *allocatedBlock, std::shared_ptr<MemoryAllocator> memoryAllocator)
         : device{ std::move(device) }
         , image{ image }
@@ -42,22 +16,25 @@ namespace clove {
         , memoryAllocator{ std::move(memoryAllocator) } {
     }
 
+    VulkanImage::VulkanImage(DevicePointer device, VkImage image, Descriptor descriptor)
+        : device{ std::move(device) }
+        , image{ image }
+        , descriptor{ descriptor } {
+    }
+
     VulkanImage::VulkanImage(VulkanImage &&other) noexcept = default;
 
     VulkanImage &VulkanImage::operator=(VulkanImage &&other) noexcept = default;
 
     VulkanImage::~VulkanImage() {
-        vkDestroyImage(device.get(), image, nullptr);
-        memoryAllocator->free(allocatedBlock);
+        if(memoryAllocator != nullptr) {
+            vkDestroyImage(device.get(), image, nullptr);
+            memoryAllocator->free(allocatedBlock);
+        }
     }
 
     VulkanImage::Descriptor const &VulkanImage::getDescriptor() const {
         return descriptor;
-    }
-
-    std::unique_ptr<GhaImageView> VulkanImage::createView(GhaImageView::Descriptor viewDescriptor) const {
-        VkImageAspectFlags const aspectFlags{ static_cast<VkImageAspectFlags>(descriptor.format == GhaImage::Format::D32_SFLOAT ? VK_IMAGE_ASPECT_DEPTH_BIT : VK_IMAGE_ASPECT_COLOR_BIT) };
-        return std::make_unique<VulkanImageView>(device.get(), VulkanImageView::create(device.get(), image, getImageViewType(viewDescriptor.type, viewDescriptor.layerCount), convertFormat(descriptor.format), aspectFlags, viewDescriptor.layer, viewDescriptor.layerCount));
     }
 
     GhaImage::Format VulkanImage::convertFormat(VkFormat vulkanFormat) {

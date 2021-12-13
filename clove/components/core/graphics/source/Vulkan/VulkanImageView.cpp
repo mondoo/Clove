@@ -3,9 +3,11 @@
 #include "Clove/Graphics/Vulkan/VulkanLog.hpp"
 
 namespace clove {
-    VulkanImageView::VulkanImageView(VkDevice device, VkImageView imageView)
-        : device(device)
-        , imageView(imageView) {
+    VulkanImageView::VulkanImageView(GhaImage::Format viewedFormat, vec2ui viewedDimensions, VkDevice device, VkImageView imageView)
+        : viewedFormat{ viewedFormat }
+        , viewedDimensions{ viewedDimensions }
+        , device{ device }
+        , imageView{ imageView } {
     }
 
     VulkanImageView::VulkanImageView(VulkanImageView &&other) noexcept = default;
@@ -16,35 +18,35 @@ namespace clove {
         vkDestroyImageView(device, imageView, nullptr);
     }
 
-    VkImageView VulkanImageView::create(VkDevice device, VkImage image, VkImageViewType viewType, VkFormat format, VkImageAspectFlags aspectFlags, uint32_t const baseLayer, uint32_t const layerCount) {
-        VkImageViewCreateInfo viewInfo{
-            .sType      = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
-            .pNext      = nullptr,
-            .flags      = 0u,
-            .image      = image,
-            .viewType   = viewType,
-            .format     = format,
-            .components = {
-                .r = VK_COMPONENT_SWIZZLE_IDENTITY,
-                .g = VK_COMPONENT_SWIZZLE_IDENTITY,
-                .b = VK_COMPONENT_SWIZZLE_IDENTITY,
-                .a = VK_COMPONENT_SWIZZLE_IDENTITY,
-            },
-            .subresourceRange = {
-                .aspectMask     = aspectFlags,
-                .baseMipLevel   = 0,
-                .levelCount     = 1,
-                .baseArrayLayer = baseLayer,
-                .layerCount     = layerCount,
+    GhaImage::Format VulkanImageView::getImageFormat() const {
+        return viewedFormat;
+    }
+
+    vec2ui const &VulkanImageView::getImageDimensions() const {
+        return viewedDimensions;
+    }
+
+    VkImageViewType VulkanImageView::convertType(GhaImageView::Type garlicImageType, uint32_t const layerCount) {
+        switch(garlicImageType) {
+            case GhaImageView::Type::_2D:
+                if(layerCount > 1u) {
+                    return VK_IMAGE_VIEW_TYPE_2D_ARRAY;
+                } else {
+                    return VK_IMAGE_VIEW_TYPE_2D;
+                }
+            case GhaImageView::Type::_3D:
+                return VK_IMAGE_VIEW_TYPE_3D;
+            case GhaImageView::Type::Cube: {
+                uint32_t constexpr cubeLayerCount{ 6 };
+                if(layerCount > cubeLayerCount) {
+                    return VK_IMAGE_VIEW_TYPE_CUBE_ARRAY;
+                } else {
+                    return VK_IMAGE_VIEW_TYPE_CUBE;
+                }
             }
-        };
-
-        VkImageView imageView{ nullptr };
-        if(vkCreateImageView(device, &viewInfo, nullptr, &imageView) != VK_SUCCESS) {
-            CLOVE_LOG(CloveGhaVulkan, LogLevel::Error, "Failed to create texture image view");
-            return VK_NULL_HANDLE;
+            default:
+                CLOVE_ASSERT_MSG(false, "{0}: Unhandled image type");
+                return VK_IMAGE_VIEW_TYPE_2D;
         }
-
-        return imageView;
     }
 }

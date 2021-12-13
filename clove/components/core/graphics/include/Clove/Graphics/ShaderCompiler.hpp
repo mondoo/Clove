@@ -36,10 +36,10 @@ namespace clove::ShaderCompiler {
      * @brief Transpiles SPIR-V shader code into HLSL shader code.
      * @return HLSL shader code as a string.
      */
-    Expected<std::string, std::runtime_error> spirvToHLSL(std::span<uint32_t> spirvSource);
+    std::string spirvToHLSL(std::span<uint32_t> spirvSource);
     /**
      * @brief Transpiles SPIR-V shader code into MSL shader code.
      * @return MSL shader code as a string.
      */
-    Expected<std::string, std::runtime_error> spirvToMSL(std::span<uint32_t> spirvSource);
+    std::string spirvToMSL(std::span<uint32_t> spirvSource);
 }

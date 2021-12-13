@@ -11,19 +11,20 @@ struct Vertex{
     vec4 weights;
 };
 
-layout(std140, push_constant) uniform VertCount{
-	uint vertCount;
-};
-
 layout(std140, set = 0, binding = 0) uniform Skeleton{
 	mat4 matrixPalet[MAX_JOINTS];
 };
 
-layout(std140, set = 0, binding = 1) readonly buffer BindVertices{
+//TODO: Make this a push constant
+layout(std140, set = 0, binding = 1) uniform VertCount{
+	uint vertCount;
+};
+
+layout(std140, set = 0, binding = 2) readonly buffer BindVertices{
 	Vertex bindVertices[];
 };
 
-layout(std140, set = 0, binding = 2) buffer SkinnedVertices{
+layout(std140, set = 0, binding = 3) buffer SkinnedVertices{
 	Vertex skinnedVertices[];
 };
 
