@@ -35,7 +35,7 @@ jobs:
       working-directory: ${{ github.workspace }}/build
       run: cmake --build . --target ALL_BUILD --config $env:BUILD_TYPE
     - name: Upload artefacts
-      uses: actions/upload-artifact@master
+      uses: actions/upload-artifact@v2
       with:
         name: windows-msvc
         path: build/
@@ -75,7 +75,7 @@ jobs:
       - name: Tar files to preserve permissions
         run: tar -cvf build_files.tar build/
       - name: Upload artefacts
-        uses: actions/upload-artifact@master
+        uses: actions/upload-artifact@v2
         with:
           name: macos-apple_clang
           path: build_files.tar
@@ -120,7 +120,7 @@ jobs:
       - name: Tar files to preserve permissions
         run: tar -cvf build_files.tar build/
       - name: Upload artefacts
-        uses: actions/upload-artifact@master
+        uses: actions/upload-artifact@v2
         with:
           name: linux-gcc
           path: build_files.tar
@@ -150,7 +150,7 @@ jobs:
       - name: Tar files to preserve permissions
         run: tar -cvf build_files.tar build/
       - name: Upload artefacts
-        uses: actions/upload-artifact@master
+        uses: actions/upload-artifact@v2
         with:
           name: linux-clang
           path: build_files.tar
