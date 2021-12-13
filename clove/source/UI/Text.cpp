@@ -41,7 +41,7 @@ namespace clove {
                 mat4f model{ translate(mat4f{ 1.0f }, { xpos, ypos, 0.0f }) };
                 model *= scale(mat4f{ 1.0f }, { width, height, 0.0f });
 
-                Application::get().getRenderer()->submitText(glyph.characterView, projection * model);
+                Application::get().getRenderer()->submitText(glyph.character, projection * model);
             }
 
             cursorPos.x += static_cast<float>(glyph.advance.x);

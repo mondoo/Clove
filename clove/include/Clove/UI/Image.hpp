@@ -16,7 +16,6 @@ namespace clove {
         //VARIABLES
     private:
         std::shared_ptr<GhaImage> image;
-        std::shared_ptr<GhaImageView> imageView;
 
         vec2f position{ 0.0f, 0.0f };
         float rotation{ 0.0f };

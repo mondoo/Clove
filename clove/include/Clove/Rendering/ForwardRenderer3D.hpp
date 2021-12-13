@@ -47,10 +47,9 @@ namespace clove {
 
             std::vector<MeshInfo> meshes;
 
-#if 0
-            std::vector<std::pair<std::shared_ptr<GhaImageView>, mat4f>> widgets;
-            std::vector<std::pair<std::shared_ptr<GhaImageView>, mat4f>> text;
-#endif
+            std::vector<std::pair<std::shared_ptr<GhaImage>, mat4f>> widgets;
+            std::vector<std::pair<std::shared_ptr<GhaImage>, mat4f>> text;
+
             void forEachMesh(std::function<void(Mesh const &, size_t const index)> func) {
                 for(size_t index = 0; auto const &meshInfo : meshes) {
                     func(*meshInfo.mesh, index++);
@@ -74,10 +73,8 @@ namespace clove {
         std::vector<RgFrameCache> frameCaches{};
         RgGlobalCache globalCache;
 
-#if 0
         //'Square' mesh used to render UI
-        std::shared_ptr<Mesh> uiMesh;
-#endif
+        std::unique_ptr<Mesh> uiMesh;
 
         FrameData currentFrameData;
 
@@ -116,8 +113,8 @@ namespace clove {
         void submitLight(DirectionalLight const &light);
         void submitLight(PointLight const &light);
 
-        void submitWidget(std::shared_ptr<GhaImageView> const &widget, mat4f const modelProjection);
-        void submitText(std::shared_ptr<GhaImageView> const &text, mat4f const modelProjection);
+        void submitWidget(std::shared_ptr<GhaImage> widget, mat4f const modelProjection);
+        void submitText(std::shared_ptr<GhaImage> text, mat4f const modelProjection);
 
         void end();
 

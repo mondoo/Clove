@@ -79,7 +79,6 @@ namespace clove {
         geometryPasses.push_back(std::make_unique<DirectionalLightPass>());
         geometryPasses.push_back(std::make_unique<PointLightPass>());
 
-#if 0
         std::vector<Vertex> const uiVertices{
             Vertex{
                 .position = { 1.0f, 1.0f, 0.0f },
@@ -100,12 +99,15 @@ namespace clove {
         };
 
         std::vector<uint16_t> const uiIndices{
-            0, 2, 3,
-            0, 3, 1,
+            0,
+            2,
+            3,
+            0,
+            3,
+            1,
         };
 
         uiMesh = std::make_unique<Mesh>(uiVertices, uiIndices);
-#endif
     }
 
     ForwardRenderer3D::ForwardRenderer3D(ForwardRenderer3D &&other) noexcept = default;
@@ -120,10 +122,8 @@ namespace clove {
 
     void ForwardRenderer3D::begin() {
         currentFrameData.meshes.clear();
-#if 0
         currentFrameData.widgets.clear();
         currentFrameData.text.clear();
-#endif
 
         currentFrameData.numLights.numDirectional = 0;
         currentFrameData.numLights.numPoint       = 0;
@@ -158,16 +158,12 @@ namespace clove {
         currentFrameData.pointShadowTransforms[lightIndex] = light.shadowTransforms;
     }
 
-    void ForwardRenderer3D::submitWidget(std::shared_ptr<GhaImageView> const &widget, mat4f const modelProjection) {
-#if 0
-        currentFrameData.widgets.emplace_back(widget, modelProjection);
-#endif
+    void ForwardRenderer3D::submitWidget(std::shared_ptr<GhaImage> widget, mat4f const modelProjection) {
+        currentFrameData.widgets.emplace_back(std::move(widget), modelProjection);
     }
 
-    void ForwardRenderer3D::submitText(std::shared_ptr<GhaImageView> const &text, mat4f const modelProjection) {
-#if 0
-        currentFrameData.text.emplace_back(text, modelProjection);
-#endif
+    void ForwardRenderer3D::submitText(std::shared_ptr<GhaImage> text, mat4f const modelProjection) {
+        currentFrameData.text.emplace_back(std::move(text), modelProjection);
     }
 
     void ForwardRenderer3D::end() {
@@ -370,6 +366,153 @@ namespace clove {
 
         for(auto &pass : geometryPasses) {
             pass->execute(renderGraph, passData);
+        }
+
+        //Execute UI work
+        //TODO: Cache instead of making every frame
+        std::unordered_map<std::string, std::string> shaderIncludes;
+        shaderIncludes["Constants.glsl"] = { constants, constantsLength };
+
+        RgRenderPass::Descriptor uiPassDescriptor{
+            .vertexShader     = renderGraph.createShader({ ui_v, ui_vLength }, shaderIncludes, "UI (vertex)", GhaShader::Stage::Vertex),
+            .pixelShader      = renderGraph.createShader({ widget_p, widget_pLength }, shaderIncludes, "Widget (pixel)", GhaShader::Stage::Pixel),
+            .vertexInput      = Vertex::getInputBindingDescriptor(),
+            .vertexAttributes = {
+                VertexAttributeDescriptor{
+                    .format = VertexAttributeFormat::R32G32B32_SFLOAT,
+                    .offset = offsetof(Vertex, position),
+                },
+                VertexAttributeDescriptor{
+                    .format = VertexAttributeFormat::R32G32_SFLOAT,
+                    .offset = offsetof(Vertex, texCoord),
+                },
+            },
+            .viewportSize  = passData.renderTargetSize,
+            .depthTest     = false,
+            .depthWrite    = false,
+            .renderTargets = {
+                RgRenderTargetBinding{
+                    .loadOp     = LoadOperation::Clear,
+                    .storeOp    = StoreOperation::Store,
+                    .clearValue = ColourValue{ 0.0f, 0.0, 0.0f, 1.0f },
+                    .imageView  = {
+                        .image = passData.renderTarget,
+                    },
+                },
+            },
+            .depthStencil = {
+                .loadOp     = LoadOperation::Clear,
+                .storeOp    = StoreOperation::DontCare,
+                .clearValue = DepthStencilValue{ .depth = 1.0f },
+                .imageView  = {
+                    .image = passData.depthTarget,
+                },
+            },
+        };
+
+        RgBufferId uiVertBuffer{ renderGraph.createBuffer(uiMesh->getCombinedBuffer(), uiMesh->getVertexOffset(), uiMesh->getVertexBufferSize()) };
+        RgBufferId uiIndexBuffer{ renderGraph.createBuffer(uiMesh->getCombinedBuffer(), uiMesh->getIndexOffset(), uiMesh->getIndexBufferSize()) };
+
+        if(!currentFrameData.widgets.empty()) {
+            RgPassId widgetPass{ renderGraph.createRenderPass(uiPassDescriptor) };
+            for(size_t index{ 0 }; auto &&[texture, modelProj] : currentFrameData.widgets) {
+                vec4f constexpr colour{ 1.0f };//Temp colour
+
+                size_t constexpr modelProjSize{ sizeof(modelProj) };
+                size_t constexpr colourSize{ sizeof(colour) };
+
+                RgBufferId modelBuffer{ renderGraph.createBuffer(modelProjSize) };
+                RgBufferId colourBuffer{ renderGraph.createBuffer(colourSize) };
+
+                renderGraph.writeToBuffer(modelBuffer, &modelProj, 0, modelProjSize);
+                renderGraph.writeToBuffer(modelBuffer, &colour, 0, colourSize);
+
+                renderGraph.addRenderSubmission(widgetPass, RgRenderPass::Submission{
+                                                                .vertexBuffer = uiVertBuffer,
+                                                                .indexBuffer  = uiIndexBuffer,
+                                                                .shaderUbos   = {
+                                                                    RgBufferBinding{
+                                                                        .slot        = 0,//NOLINT
+                                                                        .buffer      = modelBuffer,
+                                                                        .size        = modelProjSize,
+                                                                        .shaderStage = GhaShader::Stage::Vertex,
+                                                                    },
+                                                                    RgBufferBinding{
+                                                                        .slot        = 1,//NOLINT
+                                                                        .buffer      = colourBuffer,
+                                                                        .size        = colourSize,
+                                                                        .shaderStage = GhaShader::Stage::Pixel,
+                                                                    },
+                                                                },
+                                                                .indexCount = uiMesh->getIndexCount(),
+                                                            });
+
+                ++index;
+            }
+        }
+
+        if(!currentFrameData.text.empty()) {
+            uiPassDescriptor.pixelShader = renderGraph.createShader({ font_p, font_pLength }, shaderIncludes, "Font (pixel)", GhaShader::Stage::Pixel);
+            RgPassId textPass{ renderGraph.createRenderPass(uiPassDescriptor) };
+
+            for(size_t index{ 0 }; auto &&[texture, modelProj] : currentFrameData.text) {
+                vec4f constexpr colour{ 1.0f };//Temp colour
+
+                size_t constexpr modelProjSize{ sizeof(modelProj) };
+                size_t constexpr colourSize{ sizeof(colour) };
+
+                RgBufferId modelBuffer{ renderGraph.createBuffer(modelProjSize) };
+                RgBufferId colourBuffer{ renderGraph.createBuffer(colourSize) };
+                RgImageId fontImage{ renderGraph.createImage(texture.get()) };
+                RgSampler fontSampler{ renderGraph.createSampler(GhaSampler::Descriptor{
+                    .minFilter        = GhaSampler::Filter::Nearest,
+                    .magFilter        = GhaSampler::Filter::Nearest,
+                    .addressModeU     = GhaSampler::AddressMode::ClampToBorder,
+                    .addressModeV     = GhaSampler::AddressMode::ClampToBorder,
+                    .addressModeW     = GhaSampler::AddressMode::ClampToBorder,
+                    .enableAnisotropy = false,
+                }) };
+
+                renderGraph.writeToBuffer(modelBuffer, &modelProj, 0, modelProjSize);
+                renderGraph.writeToBuffer(modelBuffer, &colour, 0, colourSize);
+
+                renderGraph.addRenderSubmission(textPass, RgRenderPass::Submission{
+                                                              .vertexBuffer = uiVertBuffer,
+                                                              .indexBuffer  = uiIndexBuffer,
+                                                              .shaderUbos   = {
+                                                                  RgBufferBinding{
+                                                                      .slot        = 0,//NOLINT
+                                                                      .buffer      = modelBuffer,
+                                                                      .size        = modelProjSize,
+                                                                      .shaderStage = GhaShader::Stage::Vertex,
+                                                                  },
+                                                                  RgBufferBinding{
+                                                                      .slot        = 1,//NOLINT
+                                                                      .buffer      = colourBuffer,
+                                                                      .size        = colourSize,
+                                                                      .shaderStage = GhaShader::Stage::Pixel,
+                                                                  },
+                                                              },
+                                                              .shaderImages = {
+                                                                  RgImageBinding{
+                                                                      .slot      = 3,//NOLINT
+                                                                      .imageView = {
+                                                                          .image = fontImage,
+                                                                      },
+                                                                  },
+
+                                                              },
+                                                              .shaderSamplers = {
+                                                                  RgSamplerBinding{
+                                                                      .slot    = 2,//NOLINT
+                                                                      .sampler = fontSampler,
+                                                                  },
+                                                              },
+                                                              .indexCount = uiMesh->getIndexCount(),
+                                                          });
+
+                ++index;
+            }
         }
 
         renderGraph.execute(RenderGraph::ExecutionInfo{

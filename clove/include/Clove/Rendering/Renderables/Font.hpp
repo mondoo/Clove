@@ -24,7 +24,6 @@ namespace clove {
             vec2i bearing{};
             vec2i advance{};
             std::shared_ptr<GhaImage> character;
-            std::shared_ptr<GhaImageView> characterView;
         };
 
         using FTLibWeakPtr   = std::weak_ptr<std::remove_pointer_t<FT_Library>>;

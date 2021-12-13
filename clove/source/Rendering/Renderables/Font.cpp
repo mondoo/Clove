@@ -117,12 +117,6 @@ namespace clove {
             };
 
             glyph.character     = createImageWithData(*graphicsFactory, glyphImageDescriptor, faceBuffer, sizeBytes);
-            glyph.characterView = graphicsFactory->createImageView(*glyph.character, GhaImageView::Descriptor{
-                                                                                         .type       = GhaImageView::Type::_2D,
-                                                                                         .layer      = 0,
-                                                                                         .layerCount = 1,
-                                                                                     })
-                                      .getValue();
         }
 
         return glyph;
