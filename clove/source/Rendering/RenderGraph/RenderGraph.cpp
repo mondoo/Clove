@@ -394,7 +394,9 @@ namespace clove {
 
     void RenderGraph::buildExecutionPasses(std::vector<RgPassId> &outPasses, RgResourceId resourceId) {
         RgResource const *const resource{ getResourceFromId(resourceId) };
-        CLOVE_ASSERT(resource != nullptr);
+        if(resource == nullptr){
+            return;
+        }
 
         std::vector<RgPassId> resourceWritePasses{};
         for(RgPassId passId : resource->getWritePasses()) {
@@ -404,7 +406,11 @@ namespace clove {
         outPasses.insert(outPasses.end(), resourceWritePasses.begin(), resourceWritePasses.end());
 
         for(RgPassId passId : resourceWritePasses) {
-            RgPass *pass{ getPassFromId(passId) };
+            RgPass const *const pass{ getPassFromId(passId) };
+            if(pass == nullptr) {
+                return;
+            }
+
             for(RgResourceId resource : pass->getInputResources()) {
                 buildExecutionPasses(outPasses, resource);
             }
@@ -431,6 +437,10 @@ namespace clove {
                 RgRenderPass const &dependantPass{ renderPasses.at(passId) };
                 for(RgResourceId const resourceId : dependantPass.getInputResources()) {
                     RgResource const *const resource{ getResourceFromId(resourceId) };
+                    if(resource == nullptr) {
+                        continue;
+                    }
+
                     RgPassId dependencyId{ 0 };
                     size_t currentDistance{ -1u };
                     bool hasDependency{ false };
@@ -521,6 +531,10 @@ namespace clove {
             if(computePasses.contains(passId)) {
                 for(RgResourceId const resourceId : computePasses.at(passId).getInputResources()) {
                     RgResource const *const resource{ getResourceFromId(resourceId) };
+                    if(resource == nullptr) {
+                        continue;
+                    }
+
                     RgPassId dependencyId{ 0 };
                     size_t currentDistance{ -1u };
                     bool hasDependency{ false };
@@ -620,6 +634,7 @@ namespace clove {
         } else if(buffers.contains(resourceId)) {
             return &buffers.at(resourceId);
         } else {
+            CLOVE_ASSERT_MSG(false, "Could not resourceId pass ID");
             return nullptr;
         }
     }
@@ -908,10 +923,10 @@ namespace clove {
         };
 
         std::vector<ClearValue> clearValues{};
-        for(auto &target : passDescriptor.renderTargets) {
+        for(auto const &target : passDescriptor.renderTargets) {
             clearValues.push_back(target.clearValue);
         }
-        clearValues.push_back(passDescriptor.depthStencil.clearValue);
+        clearValues.emplace_back(passDescriptor.depthStencil.clearValue);
 
         graphicsCommandBufffer.beginRenderPass(*allocatedRenderPasses.at(passId), *allocatedFramebuffers.at(passId), renderArea, clearValues);
 

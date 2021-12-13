@@ -151,15 +151,15 @@ namespace clove {
         return bufferPtr;
     }
 
-    void RgFrameCache::submit(GraphicsSubmitInfo submitInfo, GhaFence *signalFence) {
+    void RgFrameCache::submit(GraphicsSubmitInfo submitInfo, GhaFence *signalFence) {//NOLINT false positive - thinks submitInfo is copied
         graphicsQueue->submit({ std::move(submitInfo) }, signalFence);
     }
 
-    void RgFrameCache::submit(ComputeSubmitInfo submitInfo, GhaFence *signalFence) {
+    void RgFrameCache::submit(ComputeSubmitInfo submitInfo, GhaFence *signalFence) {//NOLINT false positive - thinks submitInfo is copied
         computeQueue->submit({ std::move(submitInfo) }, signalFence);
     }
 
-    void RgFrameCache::submit(TransferSubmitInfo submitInfo, GhaFence *signalFence) {
+    void RgFrameCache::submit(TransferSubmitInfo submitInfo, GhaFence *signalFence) {//NOLINT false positive - thinks submitInfo is copied
         transferQueue->submit({ std::move(submitInfo) }, signalFence);
     }
 }

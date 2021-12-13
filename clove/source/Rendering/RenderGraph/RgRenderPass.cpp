@@ -18,10 +18,10 @@ namespace clove {
         for(auto const &submission : submissions) {
             inputResources.emplace(submission.vertexBuffer);
             inputResources.emplace(submission.indexBuffer);
-            for(auto const &ubo : submission.shaderUbos){
+            for(auto const &ubo : submission.shaderUbos) {
                 inputResources.emplace(ubo.buffer);
             }
-            for(auto const &image : submission.shaderImages){
+            for(auto const &image : submission.shaderImages) {
                 inputResources.emplace(image.imageView.image);
             }
         }
@@ -30,11 +30,12 @@ namespace clove {
 
     std::unordered_set<RgResourceId> RgRenderPass::getOutputResources() const {
         std::unordered_set<RgResourceId> outputResources{};
-        for(auto const &renderTarget : descriptor.renderTargets){
+        for(auto const &renderTarget : descriptor.renderTargets) {
             outputResources.emplace(renderTarget.imageView.image);
         }
-        if(descriptor.depthStencil.imageView.image != INVALID_RESOURCE_ID)
+        if(descriptor.depthStencil.imageView.image != INVALID_RESOURCE_ID) {
             outputResources.emplace(descriptor.depthStencil.imageView.image);
+        }
         return outputResources;
     }
 }
