@@ -25,7 +25,7 @@ namespace clove::reflection {
     std::vector<TypeInfo const *> getTypesWithAttribute() {
         std::vector<TypeInfo const *> typeInfos{};
 
-        for(auto &typeInfo : internal::Registry::get().getRegisteredTypes()) {
+        for(auto &&[typeId, typeInfo] : internal::Registry::get().getRegisteredTypes()) {
             if(typeInfo.attributes.contains<AttributeType>()) {
                 typeInfos.push_back(&typeInfo);
             }
@@ -35,12 +35,8 @@ namespace clove::reflection {
     }
 
     namespace internal {
-        std::vector<reflection::TypeInfo> const &Registry::getRegisteredTypes() const {
+        std::unordered_map<TypeId, reflection::TypeInfo> const &Registry::getRegisteredTypes() const {
             return types;
-        }
-
-        void Registry::addTypeInfo(reflection::TypeInfo typeInfo) {
-            types.push_back(std::move(typeInfo));
         }
 
         template<size_t index, typename TupleType>

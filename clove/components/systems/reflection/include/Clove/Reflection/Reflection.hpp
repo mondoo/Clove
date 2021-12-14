@@ -83,7 +83,7 @@ namespace clove::reflection {
         class Registry {
             //VARIABLES
         private:
-            std::vector<reflection::TypeInfo> types{};//TODO: Make into a map
+            std::unordered_map<TypeId, reflection::TypeInfo> types{};
 
             //FUNCTIONS
         public:
@@ -99,9 +99,9 @@ namespace clove::reflection {
 
             static Registry &get();
 
-            inline std::vector<reflection::TypeInfo> const &getRegisteredTypes() const;
+            inline std::unordered_map<TypeId, reflection::TypeInfo> const &getRegisteredTypes() const;
 
-            inline void addTypeInfo(reflection::TypeInfo typeInfo);
+            void addTypeInfo(TypeId const typeId, reflection::TypeInfo typeInfo);
         };
 
         template<typename ReflectType>
@@ -141,9 +141,9 @@ namespace clove::reflection {
         info.members.push_back(std::move(memberInfo));                                                             \
     }
 
-#define CLOVE_REFLECT_END                                                        \
-    ::clove::reflection::internal::Registry::get().addTypeInfo(std::move(info)); \
-    }                                                                            \
+#define CLOVE_REFLECT_END                                                                                  \
+    ::clove::reflection::internal::Registry::get().addTypeInfo(typeid(Type).hash_code(), std::move(info)); \
+    }                                                                                                      \
     ;
 
 /**

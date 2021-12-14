@@ -1,8 +1,12 @@
 #include "Clove/Reflection/Reflection.hpp"
 
+#include <Clove/Log/Log.hpp>
+
+CLOVE_DECLARE_LOG_CATEGORY(CloveReflection)
+
 namespace clove::reflection {
     TypeInfo const *getTypeInfo(std::string_view typeName) {
-        for(auto &typeInfo : internal::Registry::get().getRegisteredTypes()) {
+        for(auto &&[typeId, typeInfo] : internal::Registry::get().getRegisteredTypes()) {
             if(typeInfo.name == typeName) {
                 return &typeInfo;
             }
@@ -12,13 +16,13 @@ namespace clove::reflection {
     }
 
     TypeInfo const *getTypeInfo(TypeId typeId) {
-        for(auto &typeInfo : internal::Registry::get().getRegisteredTypes()) {
-            if(typeInfo.id == typeId) {
-                return &typeInfo;
-            }
-        }
+        auto const &registeredTypes{ internal::Registry::get().getRegisteredTypes() };
 
-        return nullptr;
+        if(registeredTypes.contains(typeId)) {
+            return &registeredTypes.at(typeId);
+        } else {
+            return nullptr;
+        }
     }
 
     namespace internal {
@@ -33,6 +37,14 @@ namespace clove::reflection {
             }
 
             return *instance;
+        }
+
+        void Registry::addTypeInfo(TypeId const typeId, reflection::TypeInfo typeInfo) {
+            if(!types.contains(typeId)) {
+                types.emplace(typeId, std::move(typeInfo));
+            } else {
+                CLOVE_LOG(CloveReflection, LogLevel::Warning, "TypeId {0} ({1}) already exists in registry. Ignoring potential duplicate.", typeId, typeInfo.name);
+            }
         }
     }
 }
