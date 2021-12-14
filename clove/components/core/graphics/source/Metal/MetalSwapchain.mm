@@ -10,19 +10,12 @@
 namespace clove {
 	MetalSwapchain::MetalSwapchain(id<MTLCommandQueue> signalQueue, std::vector<std::unique_ptr<GhaImage>> images, GhaImage::Format imageFormat, vec2ui imageSize)
         : signalQueue{ signalQueue }
-        , images{ std::move(images) }
+		, images{ std::move(images) }
 		, imageFormat{ imageFormat }
 		, imageSize{ imageSize } {
-		imageViews.reserve(this->images.size());
-			
-		GhaImageView::Descriptor const viewDescriptor{
-			.type = GhaImageView::Type::_2D,
-		};
-			
-		for(size_t i{ 0 }; i < this->images.size(); ++i) {
-			imageViews.emplace_back(this->images[i]->createView(viewDescriptor));
-			imageQueue.push(i);
-		}
+        for(size_t i{ 0 }; i < this->images.size(); ++i) {
+            imageQueue.push(i);
+        }
 	}
 	
 	MetalSwapchain::MetalSwapchain(MetalSwapchain &&other) noexcept = default;
@@ -65,15 +58,15 @@ namespace clove {
 		return imageSize;
 	}
 
-	std::vector<GhaImageView *> MetalSwapchain::getImageViews() const {
-        std::vector<GhaImageView *> views{};
-        views.reserve(imageViews.size());
+	std::vector<GhaImage *> MetalSwapchain::getImages() const {
+        std::vector<GhaImage *> ghaImages{};
+        ghaImages.reserve(images.size());
         
-        for(auto const &view : imageViews) {
-            views.push_back(view.get());
+        for(auto const &image : images) {
+            ghaImages.push_back(image.get());
         }
         
-		return views;
+		return ghaImages;
 	}
 	
 	void MetalSwapchain::markIndexAsFree(uint32_t index) {

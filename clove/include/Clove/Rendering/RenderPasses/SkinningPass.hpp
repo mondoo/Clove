@@ -11,14 +11,9 @@ namespace clove {
 
 namespace clove {
     class SkinningPass : public GeometryPass {
-        //VARIABLES
-    private:
-        std::unique_ptr<GhaComputePipelineObject> pipeline;
-
         //FUNCTIONS
     public:
-        SkinningPass() = delete;
-        SkinningPass(GhaFactory &ghaFactory);
+        SkinningPass();
 
         SkinningPass(SkinningPass const &other) = delete;
         SkinningPass(SkinningPass &&other) noexcept;
@@ -27,7 +22,9 @@ namespace clove {
         SkinningPass &operator=(SkinningPass &&other) noexcept;
 
         ~SkinningPass();
+        
+        Id getId() const override;
 
-        void execute(GhaComputeCommandBuffer &commandBuffer, FrameData const &frameData) override;
+        void execute(RenderGraph &renderGraph, PassData const &passData) override;
     };
 }

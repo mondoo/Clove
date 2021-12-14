@@ -16,11 +16,15 @@ namespace membrane {
         , currentScene{ clove::Application::get().getEntityManager() } {
     }
 
+    clove::SubSystem::Group RuntimeSubSystem::getGroup() const {
+        return Group::Core;
+    }
+
     void RuntimeSubSystem::onAttach() {
         auto &app{ clove::Application::get() };
 
         //push the physics sub system from the application
-        app.pushSubSystem<clove::PhysicsSubSystem>(clove::Application::SubSystemGroup::Initialisation, app.getEntityManager());
+        app.pushSubSystem<clove::PhysicsSubSystem>(app.getEntityManager());
 
         currentScene.load(app.getFileSystem()->resolve("./scene.clvscene"));
     }

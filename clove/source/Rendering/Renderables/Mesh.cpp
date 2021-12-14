@@ -32,7 +32,7 @@ namespace clove {
         GhaFactory &factory{ *Application::get().getGraphicsDevice()->getGraphicsFactory() };
 
         vertexBufferSize = sizeof(Vertex) * this->vertices.size();
-        size_t const indexBufferSize{ sizeof(uint16_t) * this->indices.size() };
+        indexBufferSize  = sizeof(uint16_t) * this->indices.size();
         size_t const totalSize{ vertexBufferSize + indexBufferSize };
 
         vertexOffset = 0;
@@ -50,23 +50,13 @@ namespace clove {
                                                  })
                                 .getValue() };
 
-        //VertexBuffer
-        vertexBuffer = factory.createBuffer(GhaBuffer::Descriptor{
-                                                .size        = vertexBufferSize,
-                                                .usageFlags  = GhaBuffer::UsageMode::TransferDestination | GhaBuffer::UsageMode::StorageBuffer | GhaBuffer::UsageMode::VertexBuffer,
-                                                .sharingMode = SharingMode::Concurrent,
-                                                .memoryType  = MemoryType::VideoMemory,
-                                            })
-                           .getValue();
-
         //Combined Buffer
         combinedBuffer = factory.createBuffer(GhaBuffer::Descriptor{
-                                                  .size        = totalSize,
-                                                  .usageFlags  = GhaBuffer::UsageMode::TransferSource | GhaBuffer::UsageMode::TransferDestination | GhaBuffer::UsageMode::StorageBuffer | GhaBuffer::UsageMode::VertexBuffer | GhaBuffer::UsageMode::IndexBuffer,
-                                                  .sharingMode = SharingMode::Concurrent,
-                                                  .memoryType  = MemoryType::VideoMemory,
-                                              })
-                             .getValue();
+            .size        = totalSize,
+            .usageFlags  = GhaBuffer::UsageMode::TransferDestination | GhaBuffer::UsageMode::StorageBuffer | GhaBuffer::UsageMode::VertexBuffer | GhaBuffer::UsageMode::IndexBuffer,
+            .sharingMode = SharingMode::Concurrent,
+            .memoryType  = MemoryType::VideoMemory,
+        }).getValue();
 
         //Map the data into system memory
         stagingBuffer->write(this->vertices.data(), vertexOffset, vertexBufferSize);
@@ -74,7 +64,6 @@ namespace clove {
 
         //Transfer the data to video memory
         transferCommandBuffer->beginRecording(CommandBufferUsage::OneTimeSubmit);
-        transferCommandBuffer->copyBufferToBuffer(*stagingBuffer, 0, *vertexBuffer, 0, vertexBufferSize);
         transferCommandBuffer->copyBufferToBuffer(*stagingBuffer, 0, *combinedBuffer, 0, totalSize);
         transferCommandBuffer->endRecording();
 
@@ -91,14 +80,10 @@ namespace clove {
         , indices{ other.indices }
         , vertexOffset{ other.vertexOffset }
         , vertexBufferSize{ other.vertexBufferSize }
-        , indexOffset{ other.indexOffset } {
+        , indexOffset{ other.indexOffset }
+        , indexBufferSize{ other.indexBufferSize } {
 
-        copyFullBuffer(*other.vertexBuffer, *vertexBuffer, vertexBufferSize);
-
-        //Create a copy of the combined buffer as this will change per mesh
-        size_t const indexBufferSize{ sizeof(uint16_t) * indices.size() };
         size_t const totalSize{ vertexBufferSize + indexBufferSize };
-
         copyFullBuffer(*other.combinedBuffer, *combinedBuffer, totalSize);
     }
 
@@ -110,13 +95,9 @@ namespace clove {
         vertexOffset     = other.vertexOffset;
         vertexBufferSize = other.vertexBufferSize;
         indexOffset      = other.indexOffset;
+        indexBufferSize  = other.indexBufferSize;
 
-        copyFullBuffer(*other.vertexBuffer, *vertexBuffer, vertexBufferSize);
-
-        //Create a copy of the combined buffer as this will change per mesh
-        size_t const indexBufferSize{ sizeof(uint16_t) * indices.size() };
         size_t const totalSize{ vertexBufferSize + indexBufferSize };
-
         copyFullBuffer(*other.combinedBuffer, *combinedBuffer, totalSize);
 
         return *this;

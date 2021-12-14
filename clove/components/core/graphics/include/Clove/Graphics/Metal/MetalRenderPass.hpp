@@ -8,17 +8,17 @@ namespace clove {
 	class MetalRenderPass : public GhaRenderPass {
 		//VARIABLES
 	private:
+		Descriptor descriptor{};
+
 		MTLRenderPipelineColorAttachmentDescriptorArray* colourAttachments{ nullptr };
 		MTLPixelFormat depthPixelFormat;
-		
-		Descriptor descriptor{};
 		
 		//FUNCTIONS
 	public:
 		MetalRenderPass() = delete;
-		MetalRenderPass(MTLRenderPipelineColorAttachmentDescriptorArray* colourAttachments, MTLPixelFormat depthPixelFormat, Descriptor descriptor);
-		
-		MetalRenderPass(MetalRenderPass const &other) = delete;
+        MetalRenderPass(Descriptor descriptor, MTLRenderPipelineColorAttachmentDescriptorArray *colourAttachments, MTLPixelFormat depthPixelFormat);
+
+        MetalRenderPass(MetalRenderPass const &other) = delete;
 		MetalRenderPass(MetalRenderPass &&other) noexcept;
 		
 		MetalRenderPass& operator=(MetalRenderPass const &other) = delete;
@@ -26,10 +26,10 @@ namespace clove {
 		
 		~MetalRenderPass();
 		
+		Descriptor const &getDescriptor() const override;
+
 		inline MTLRenderPipelineColorAttachmentDescriptorArray* getColourAttachments() const;
 		inline MTLPixelFormat getDepthPixelFormat() const;
-		
-		inline Descriptor const &getDescriptor() const;
 	};
 }
 

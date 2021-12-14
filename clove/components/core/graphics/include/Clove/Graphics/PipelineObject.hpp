@@ -7,21 +7,21 @@
 namespace clove {
     enum class PipelineStage {
         //External Stages
-        Top,
+        Top, /**< Before any following stages commence. */
 
         //Transfer stages
-        Transfer,
+        Transfer, /**< All copy commands. */
 
         //Compute stages
-        ComputeShader,
+        ComputeShader, /**< Execution of a compute shader. */
 
         //Graphics stages
-        VertexInput,
-        VertexShader,
-        PixelShader,
-        EarlyPixelTest,
-        LatePixelTest,
-        ColourAttachmentOutput,
+        VertexInput,            /**< Where vertex and index buffers are consumed. */
+        VertexShader,           /**< Execution of a vertex shader. */
+        PixelShader,            /**< Execution of a pixel shader. */
+        EarlyPixelTest,         /**< Early depth and stencil tests. */
+        LatePixelTest,          /**< Late depth and stencil tests. */
+        ColourAttachmentOutput, /**< After blending where the final colour values are output. */
     };
 
     struct PushConstantDescriptor {

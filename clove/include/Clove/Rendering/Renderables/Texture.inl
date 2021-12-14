@@ -1,5 +1,5 @@
 namespace clove {
-    std::shared_ptr<GhaImageView> Texture::getImageView() const {
-        return imageView;
+    GhaImage *Texture::getImage() const {
+        return image.get();
     }
 }

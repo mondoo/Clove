@@ -21,13 +21,14 @@ namespace clove {
 
         Descriptor descriptor{};
 
-        std::shared_ptr<MemoryAllocator> memoryAllocator;
+        std::shared_ptr<MemoryAllocator> memoryAllocator{ nullptr };
         MemoryAllocator::Chunk const *allocatedBlock{ nullptr };
 
         //FUNCTIONS
     public:
         VulkanImage() = delete;
-        VulkanImage(DevicePointer device, VkImage image, Descriptor descriptor, MemoryAllocator::Chunk const *allocatedBlock, std::shared_ptr<MemoryAllocator> memoryAllocator);
+        VulkanImage(DevicePointer device, VkImage image, Descriptor descriptor, MemoryAllocator::Chunk const *allocatedBlock, std::shared_ptr<MemoryAllocator> memoryAllocator); /**< Constructor for images owned by this object. */
+        VulkanImage(DevicePointer device, VkImage image, Descriptor descriptor);                                                                                                 /**< Constructor for images not owned by this object (i.e swap chain). */
 
         VulkanImage(VulkanImage const &other) = delete;
         VulkanImage(VulkanImage &&other) noexcept;
@@ -38,8 +39,6 @@ namespace clove {
         ~VulkanImage();
 
         Descriptor const &getDescriptor() const override;
-
-        std::unique_ptr<GhaImageView> createView(GhaImageView::Descriptor viewDescriptor) const override;
 
         inline VkImage getImage() const;
 

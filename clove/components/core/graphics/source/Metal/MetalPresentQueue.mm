@@ -2,7 +2,7 @@
 
 #include "Clove/Graphics/Metal/MetalView.hpp"
 #include "Clove/Graphics/Metal/MetalSwapchain.hpp"
-#include "Clove/Graphics/Metal/MetalImageView.hpp"
+#include "Clove/Graphics/Metal/MetalImage.hpp"
 #include "Clove/Graphics/Metal/MetalSemaphore.hpp"
 
 #include <Clove/Cast.hpp>
@@ -27,7 +27,7 @@ namespace clove {
                 return Result::Error_SwapchainOutOfDate;
             }
             
-            id<MTLTexture> texture{ polyCast<MetalImageView const>(swapchain->getImageViews()[presentInfo.imageIndex])->getTexture() };
+            id<MTLTexture> texture{ polyCast<MetalImage const>(swapchain->getImages()[presentInfo.imageIndex])->getTexture() };
             id<CAMetalDrawable> drawable{ view.metalLayer.nextDrawable };
             
             id<MTLCommandBuffer> commandBuffer{ [commandQueue commandBuffer] };

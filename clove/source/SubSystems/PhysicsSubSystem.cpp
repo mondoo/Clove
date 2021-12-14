@@ -90,6 +90,10 @@ namespace clove {
 
     PhysicsSubSystem::~PhysicsSubSystem() = default;
 
+    SubSystem::Group PhysicsSubSystem::getGroup() const {
+        return Group::Initialisation;
+    }
+
     void PhysicsSubSystem::onUpdate(DeltaTime const deltaTime) {
         CLOVE_PROFILE_FUNCTION();
 

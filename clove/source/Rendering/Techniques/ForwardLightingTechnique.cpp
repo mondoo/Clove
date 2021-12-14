@@ -9,16 +9,16 @@ namespace clove {
     Technique createForwardLightingTechnique() {
         return Technique{
             .passIds = std::set<GeometryPass::Id>{
-                GeometryPass::getId<ForwardColourPass>(),
-                GeometryPass::getId<DirectionalLightPass>(),
-                GeometryPass::getId<PointLightPass>()
+                GeometryPass::getIdOf<ForwardColourPass>(),
+                GeometryPass::getIdOf<DirectionalLightPass>(),
+                GeometryPass::getIdOf<PointLightPass>()
             },
         };
     }
 
     Technique createSkinnedForwardLightingTechnique(){
         Technique technique{ createForwardLightingTechnique() };
-        technique.passIds.emplace(GeometryPass::getId<SkinningPass>());
+        technique.passIds.emplace(GeometryPass::getIdOf<SkinningPass>());
 
         return technique;
     }

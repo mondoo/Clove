@@ -8,12 +8,14 @@ namespace clove {
 	class MetalComputePipelineObject : public GhaComputePipelineObject {
 		//VARIABLES
 	private:
+        Descriptor descriptor{};
+        
 		id<MTLComputePipelineState> pipelineState{ nullptr };
 		
 		//FUNCTIONS
 	public:
 		MetalComputePipelineObject() = delete;
-		MetalComputePipelineObject(id<MTLComputePipelineState> pipelineState);
+		MetalComputePipelineObject(Descriptor descriptor, id<MTLComputePipelineState> pipelineState);
 		
 		MetalComputePipelineObject(MetalComputePipelineObject const &other) = delete;
 		MetalComputePipelineObject(MetalComputePipelineObject &&other) noexcept;
@@ -22,6 +24,8 @@ namespace clove {
 		MetalComputePipelineObject &operator=(MetalComputePipelineObject &&other) noexcept;
 		
 		~MetalComputePipelineObject();
+        
+        Descriptor const &getDescriptor() const override;
 		
 		inline id<MTLComputePipelineState> getPipelineState() const;
 	};

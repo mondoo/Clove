@@ -1,5 +1,7 @@
 #include "Clove/Graphics/Validation/ValidationBuffer.hpp"
 
+#include "Clove/Graphics/Resource.hpp"
+
 #include <Clove/Log/Log.hpp>
 
 namespace clove {

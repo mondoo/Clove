@@ -1,15 +1,10 @@
 #pragma once
 
-#include "Clove/Graphics/GhaImageView.hpp"
 #include "Clove/Graphics/Resource.hpp"
 
 #include <Clove/Definitions.hpp>
 #include <Clove/Maths/Vector.hpp>
 #include <memory>
-
-namespace clove {
-    class GhaImageView;
-}
 
 namespace clove {
     /**
@@ -62,7 +57,7 @@ namespace clove {
             Type type;
             UsageMode usageFlags;
             vec2ui dimensions;
-            uint32_t arrayCount{ 1u }; /**< How many elements to create for an image array. If the image is of type Cube then this number will be multiplied by 6. */
+            uint32_t arrayCount{ 1u }; /**< How many elements to create for an image array. */
             Format format;
             SharingMode sharingMode;
         };
@@ -72,8 +67,6 @@ namespace clove {
         virtual ~GhaImage() = default;
 
         virtual Descriptor const &getDescriptor() const = 0;
-
-        virtual std::unique_ptr<GhaImageView> createView(GhaImageView::Descriptor viewDescriptor) const = 0;
     };
 
     CLOVE_ENUM_BIT_FLAG_OPERATORS(GhaImage::UsageMode, GhaImage::UsageModeType)

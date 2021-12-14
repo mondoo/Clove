@@ -20,8 +20,8 @@ namespace clove {
 
     VulkanDescriptorSet::~VulkanDescriptorSet() = default;
 
-    void VulkanDescriptorSet::map(GhaBuffer const &buffer, size_t const offset, size_t const range, DescriptorType const descriptorType, uint32_t const bindingSlot) {
-        auto const *vkBuffer = polyCast<VulkanBuffer const>(&buffer);
+    void VulkanDescriptorSet::write(GhaBuffer const &buffer, size_t const offset, size_t const range, DescriptorType const descriptorType, uint32_t const bindingSlot) {
+        auto const *vkBuffer{ polyCast<VulkanBuffer const>(&buffer) };
 
         VkDescriptorBufferInfo bufferInfo{
             .buffer = vkBuffer->getBuffer(),
@@ -45,7 +45,7 @@ namespace clove {
         vkUpdateDescriptorSets(device, 1, &writeInfo, 0, nullptr);
     }
 
-    void VulkanDescriptorSet::map(GhaImageView const &imageView, GhaImage::Layout const layout, uint32_t const bindingSlot) {
+    void VulkanDescriptorSet::write(GhaImageView const &imageView, GhaImage::Layout const layout, uint32_t const bindingSlot) {
         auto const *vkImageView{ polyCast<VulkanImageView const>(&imageView) };
 
         VkDescriptorImageInfo imageInfo{
@@ -69,7 +69,7 @@ namespace clove {
         vkUpdateDescriptorSets(device, 1, &writeInfo, 0, nullptr);
     }
 
-    void VulkanDescriptorSet::map(GhaSampler const &sampler, uint32_t const bindingSlot) {
+    void VulkanDescriptorSet::write(GhaSampler const &sampler, uint32_t const bindingSlot) {
         auto const *vkSampler{ polyCast<VulkanSampler const>(&sampler) };
 
         VkDescriptorImageInfo samplerInfo{

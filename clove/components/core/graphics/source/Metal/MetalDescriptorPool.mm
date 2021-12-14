@@ -1,10 +1,12 @@
 #include "Clove/Graphics/Metal/MetalDescriptorPool.hpp"
 
+#include "Clove/Graphics/Helpers.hpp"
 #include "Clove/Graphics/Metal/MetalDescriptorSet.hpp"
 #include "Clove/Graphics/Metal/MetalDescriptorSetLayout.hpp"
 #include "Clove/Graphics/Metal/MetalLog.hpp"
 
 #include <Clove/Cast.hpp>
+#include <optional>
 
 namespace clove {
     MetalDescriptorPool::BufferPool::BufferPool() = default;
@@ -74,43 +76,61 @@ namespace clove {
         @autoreleasepool{
             size_t const setNum{ layouts.size() };
             
-            std::vector<MetalDescriptorSetLayout const *> metalDescriptorSets{};
-            metalDescriptorSets.reserve(setNum);
+            std::vector<MetalDescriptorSetLayout const *> metalDescriptorSetLayouts{};
+            metalDescriptorSetLayouts.reserve(setNum);
             for(size_t i{ 0 }; i < layouts.size(); ++i) {
-                metalDescriptorSets.emplace_back(polyCast<MetalDescriptorSetLayout const>(layouts[i]));
+                metalDescriptorSetLayouts.push_back(polyCast<MetalDescriptorSetLayout const>(layouts[i]));
             }
+            
+            auto const createEncoder = [this](NSArray<MTLArgumentDescriptor *> *descriptors, size_t &totalBackingBufferSize, size_t &currentOffset){
+                size_t constexpr minOffsetAlignment{ 256 }; //Offsets into argument buffers must be a multiple of 256
+                
+                std::optional<MetalDescriptorSet::ArgumentEncoder> ret{};
+                if(descriptors.count > 0) {
+                    MetalDescriptorSet::ArgumentEncoder encoder{};
+                    
+                    encoder.encoder = [device newArgumentEncoderWithArguments:descriptors];
+                    
+                    size_t const alignmentOffset{ currentOffset % minOffsetAlignment }; //Calculate the remainder of the offset so we know how far away we are from the next boundary
+                    size_t const alignment{ alignmentOffset != 0 ? (minOffsetAlignment - alignmentOffset) : 0 };
+                    
+                    currentOffset += alignment;
+                    encoder.offset = currentOffset;
+                    
+                    size_t const bufferSize{ encoder.encoder.encodedLength };
+                    
+                    totalBackingBufferSize += currentOffset + bufferSize;
+                    currentOffset = totalBackingBufferSize;
+
+                    ret = encoder;
+                }
+                return ret;
+            };
             
             std::vector<std::unique_ptr<GhaDescriptorSet>> descriptorSets{};
             descriptorSets.reserve(setNum);
             for(size_t i{ 0 }; i < layouts.size(); ++i) {
-                id<MTLArgumentEncoder> vertexEncoder{ nullptr };
-                id<MTLBuffer> vertexEncoderBuffer{ nullptr };
-                if(metalDescriptorSets[i]->getVertexDescriptors().count > 0){
-                    vertexEncoder       = [device newArgumentEncoderWithArguments:metalDescriptorSets[i]->getVertexDescriptors()];
-                    vertexEncoderBuffer = bufferPool.allocateBuffer(device, vertexEncoder.encodedLength);
-                    
-                    [vertexEncoder setArgumentBuffer:vertexEncoderBuffer offset:0];
+                size_t totalBackingBufferSize{ 0 };
+                size_t currentOffset{ 0 };
+                
+                std::optional<MetalDescriptorSet::ArgumentEncoder> vertexEncoder{ createEncoder(metalDescriptorSetLayouts[i]->getVertexDescriptors(), totalBackingBufferSize, currentOffset) };
+                std::optional<MetalDescriptorSet::ArgumentEncoder> pixelEncoder{ createEncoder(metalDescriptorSetLayouts[i]->getPixelDescriptors(), totalBackingBufferSize, currentOffset) };
+                std::optional<MetalDescriptorSet::ArgumentEncoder> computeEncoder{ createEncoder(metalDescriptorSetLayouts[i]->getComputeDescriptors(), totalBackingBufferSize, currentOffset) };
+                
+                CLOVE_ASSERT(totalBackingBufferSize != 0);
+                id<MTLBuffer> encoderBuffer{ bufferPool.allocateBuffer(device, totalBackingBufferSize) };
+                
+                if(vertexEncoder.has_value()) {
+                    [vertexEncoder->encoder setArgumentBuffer:encoderBuffer offset:vertexEncoder->offset];
+                }
+                if(pixelEncoder.has_value()) {
+                    [pixelEncoder->encoder setArgumentBuffer:encoderBuffer offset:pixelEncoder->offset];
+                }
+                if(computeEncoder.has_value()) {
+                    [computeEncoder->encoder setArgumentBuffer:encoderBuffer offset:computeEncoder->offset];
                 }
                 
-                id<MTLArgumentEncoder> pixelEncoder{ nullptr };
-                id<MTLBuffer> pixelEncoderBuffer{ nullptr };
-                if(metalDescriptorSets[i]->getPixelDescriptors().count > 0){
-                    pixelEncoder       = [device newArgumentEncoderWithArguments:metalDescriptorSets[i]->getPixelDescriptors()];
-                    pixelEncoderBuffer = bufferPool.allocateBuffer(device, pixelEncoder.encodedLength);
-                    
-                    [pixelEncoder setArgumentBuffer:pixelEncoderBuffer offset:0];
-                }
-                
-                id<MTLArgumentEncoder> computeEncoder{ nullptr };
-                id<MTLBuffer> computeEncoderBuffer{ nullptr };
-                if(metalDescriptorSets[i]->getComputeDescriptors().count > 0){
-                    computeEncoder       = [device newArgumentEncoderWithArguments:metalDescriptorSets[i]->getComputeDescriptors()];
-                    computeEncoderBuffer = bufferPool.allocateBuffer(device, computeEncoder.encodedLength);
-                    
-                    [computeEncoder setArgumentBuffer:computeEncoderBuffer offset:0];
-                }
-                
-                descriptorSets.emplace_back(std::make_unique<MetalDescriptorSet>(vertexEncoder, vertexEncoderBuffer, pixelEncoder, pixelEncoderBuffer, computeEncoder, computeEncoderBuffer, layouts[i]));
+                descriptorSets.emplace_back(createGhaObject<MetalDescriptorSet>(std::move(vertexEncoder), std::move(pixelEncoder), std::move(computeEncoder), encoderBuffer, layouts[i]));
             }
             
             return descriptorSets;
@@ -124,7 +144,7 @@ namespace clove {
             return;
         }
 
-        freeBuffers(*mtlDescriptorSet);
+        freeBuffer(*mtlDescriptorSet);
 
         descriptorSet.reset();
     }
@@ -137,7 +157,7 @@ namespace clove {
                 continue;
             }
 
-            freeBuffers(*mtlDescriptorSet);
+            freeBuffer(*mtlDescriptorSet);
 
             descriptorSet.reset();
         }
@@ -147,15 +167,7 @@ namespace clove {
         bufferPool.reset();
     }
 
-    void MetalDescriptorPool::freeBuffers(MetalDescriptorSet &descriptorSet) {
-        if(id<MTLBuffer> vertexBuffer{ descriptorSet.getVertexBuffer() }) {
-            bufferPool.freeBuffer(vertexBuffer);
-        }
-        if(id<MTLBuffer> pixelBuffer{ descriptorSet.getPixelBuffer() }) {
-            bufferPool.freeBuffer(pixelBuffer);
-        }
-        if(id<MTLBuffer> computeBuffer{ descriptorSet.getComputeBuffer() }) {
-            bufferPool.freeBuffer(computeBuffer);
-        }
+    void MetalDescriptorPool::freeBuffer(MetalDescriptorSet &descriptorSet) {
+        bufferPool.freeBuffer(descriptorSet.getBackingBuffer());
     }
 }

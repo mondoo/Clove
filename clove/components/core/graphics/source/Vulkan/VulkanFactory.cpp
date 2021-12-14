@@ -28,6 +28,7 @@
 
 #include <Clove/Cast.hpp>
 #include <fstream>
+#include <sstream>
 
 namespace clove {
     namespace {
@@ -230,6 +231,46 @@ namespace clove {
                     break;
             }
         }
+
+        Expected<VkImageView, std::runtime_error> createVkImageView(VkDevice device, VkImage image, GhaImageView::Descriptor const &viewdescriptor, GhaImage::Format const imageFormat) {
+            VkImageAspectFlags const aspectFlags{ static_cast<VkImageAspectFlags>(imageFormat == GhaImage::Format::D32_SFLOAT ? VK_IMAGE_ASPECT_DEPTH_BIT : VK_IMAGE_ASPECT_COLOR_BIT) };
+
+            VkImageViewCreateInfo const viewInfo{
+                .sType      = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
+                .pNext      = nullptr,
+                .flags      = 0,
+                .image      = image,
+                .viewType   = VulkanImageView::convertType(viewdescriptor.type, viewdescriptor.layerCount),
+                .format     = VulkanImage::convertFormat(imageFormat),
+                .components = {
+                    .r = VK_COMPONENT_SWIZZLE_IDENTITY,
+                    .g = VK_COMPONENT_SWIZZLE_IDENTITY,
+                    .b = VK_COMPONENT_SWIZZLE_IDENTITY,
+                    .a = VK_COMPONENT_SWIZZLE_IDENTITY,
+                },
+                .subresourceRange = {
+                    .aspectMask     = aspectFlags,
+                    .baseMipLevel   = 0,
+                    .levelCount     = 1,
+                    .baseArrayLayer = viewdescriptor.layer,
+                    .layerCount     = viewdescriptor.layerCount,
+                }
+            };
+
+            VkImageView imageView{ nullptr };
+            if(VkResult const result{ vkCreateImageView(device, &viewInfo, nullptr, &imageView) }; result != VK_SUCCESS) {
+                switch(result) {
+                    case VK_ERROR_OUT_OF_HOST_MEMORY:
+                        return Unexpected{ std::runtime_error{ "Failed to create GhaImageView. Out of host memory" } };
+                    case VK_ERROR_OUT_OF_DEVICE_MEMORY:
+                        return Unexpected{ std::runtime_error{ "Failed to create GhaImageView. Out of device memory" } };
+                    default:
+                        return Unexpected{ std::runtime_error{ "Failed to create GhaImageView. Reason unkown." } };
+                }
+            }
+
+            return imageView;
+        }
     }
 
     VulkanFactory::VulkanFactory(DevicePointer devicePtr, QueueFamilyIndices queueFamilyIndices)
@@ -352,16 +393,18 @@ namespace clove {
         VkPresentModeKHR const presentMode{ chooseSwapPresentMode(surfaceSupport.presentModes) };
         VkExtent2D const swapchainExtent{ chooseSwapExtent(surfaceSupport.capabilities, windowExtent) };
 
-        //Request one more than the minimum images the swap chain can support because sometimes we might need to wait for the driver
-        uint32_t imageCount = surfaceSupport.capabilities.minImageCount + 1;
-        if(surfaceSupport.capabilities.maxImageCount > 0 && imageCount > surfaceSupport.capabilities.maxImageCount) {
-            imageCount = surfaceSupport.capabilities.maxImageCount;
+        uint32_t const desiredImageCount{ descriptor.imageCount };
+        uint32_t const maxImageCount{ surfaceSupport.capabilities.maxImageCount };
+        if(desiredImageCount > maxImageCount) {
+            std::stringstream outputString{};
+            outputString << "Could not create GhaSwapchain." << desiredImageCount << " backing images requested but only " << maxImageCount << " are available.";
+            return Unexpected{ std::runtime_error{ outputString.str() } };
         }
 
         VkSwapchainCreateInfoKHR const createInfo{
             .sType                 = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
             .surface               = devicePtr.getSurface(),
-            .minImageCount         = imageCount,
+            .minImageCount         = desiredImageCount,
             .imageFormat           = surfaceFormat.format,
             .imageColorSpace       = surfaceFormat.colorSpace,
             .imageExtent           = swapchainExtent,
@@ -399,7 +442,33 @@ namespace clove {
             }
         }
 
-        return std::unique_ptr<GhaSwapchain>{ createGhaObject<VulkanSwapchain>(devicePtr, swapchain, surfaceFormat.format, swapchainExtent) };
+        std::vector<VkImage> images{};
+        std::vector<std::unique_ptr<VulkanImage>> vulkanImages{};
+
+        GhaImage::Format const imageFormat{ VulkanImage::convertFormat(surfaceFormat.format) };
+        vec2ui const swapchainSize{ swapchainExtent.width, swapchainExtent.height };
+
+        //Descriptor is reconstructed from the image* settings in the VkSwapchainCreateInfoKHR
+        GhaImage::Descriptor const imageDescriptor{
+            .type        = GhaImage::Type::_2D,
+            .usageFlags  = GhaImage::UsageMode::ColourAttachment,
+            .dimensions  = swapchainSize,
+            .arrayCount  = 1,
+            .format      = imageFormat,
+            .sharingMode = SharingMode::Exclusive,
+        };
+
+        uint32_t createdImageCount{ 0 };
+        vkGetSwapchainImagesKHR(devicePtr.get(), swapchain, &createdImageCount, nullptr);
+        images.resize(createdImageCount);
+        vkGetSwapchainImagesKHR(devicePtr.get(), swapchain, &createdImageCount, images.data());
+
+        vulkanImages.resize(images.size());
+        for(size_t i{ 0 }; i < images.size(); ++i) {
+            vulkanImages[i] = createGhaObject<VulkanImage>(devicePtr, images[i], imageDescriptor);
+        }
+
+        return std::unique_ptr<GhaSwapchain>{ createGhaObject<VulkanSwapchain>(devicePtr, swapchain, surfaceFormat.format, swapchainExtent, std::move(vulkanImages)) };
     }
 
     Expected<std::unique_ptr<GhaShader>, std::runtime_error> VulkanFactory::createShaderFromFile(std::filesystem::path const &file, GhaShader::Stage shaderStage) noexcept {
@@ -510,7 +579,7 @@ namespace clove {
             }
         }
 
-        return std::unique_ptr<GhaRenderPass>{ createGhaObject<VulkanRenderPass>(devicePtr, renderPass) };
+        return std::unique_ptr<GhaRenderPass>{ createGhaObject<VulkanRenderPass>(std::move(descriptor), devicePtr, renderPass) };
     }
 
     Expected<std::unique_ptr<GhaDescriptorSetLayout>, std::runtime_error> VulkanFactory::createDescriptorSetLayout(GhaDescriptorSetLayout::Descriptor descriptor) noexcept {
@@ -772,7 +841,7 @@ namespace clove {
             }
         }
 
-        return std::unique_ptr<GhaGraphicsPipelineObject>{ createGhaObject<VulkanGraphicsPipelineObject>(devicePtr, pipeline, pipelineLayout) };
+        return std::unique_ptr<GhaGraphicsPipelineObject>{ createGhaObject<VulkanGraphicsPipelineObject>(std::move(descriptor), devicePtr, pipeline, pipelineLayout) };
     }
 
     Expected<std::unique_ptr<GhaComputePipelineObject>, std::runtime_error> VulkanFactory::createComputePipelineObject(GhaComputePipelineObject::Descriptor descriptor) noexcept {
@@ -843,7 +912,7 @@ namespace clove {
             }
         }
 
-        return std::unique_ptr<GhaComputePipelineObject>{ createGhaObject<VulkanComputePipelineObject>(devicePtr, pipeline, pipelineLayout) };
+        return std::unique_ptr<GhaComputePipelineObject>{ createGhaObject<VulkanComputePipelineObject>(std::move(descriptor), devicePtr, pipeline, pipelineLayout) };
     }
 
     Expected<std::unique_ptr<GhaFramebuffer>, std::runtime_error> VulkanFactory::createFramebuffer(GhaFramebuffer::Descriptor descriptor) noexcept {
@@ -1044,6 +1113,17 @@ namespace clove {
         vkBindImageMemory(devicePtr.get(), image, allocatedBlock->memory, allocatedBlock->offset);
 
         return std::unique_ptr<GhaImage>{ createGhaObject<VulkanImage>(devicePtr, image, descriptor, allocatedBlock, memoryAllocator) };
+    }
+
+    Expected<std::unique_ptr<GhaImageView>, std::runtime_error> VulkanFactory::createImageView(GhaImage const &image, GhaImageView::Descriptor descriptor) noexcept {
+        GhaImage::Descriptor const imageDescriptor{ image.getDescriptor() };
+
+        auto result{ createVkImageView(devicePtr.get(), polyCast<VulkanImage const>(&image)->getImage(), descriptor, imageDescriptor.format) };
+        if(!result.hasValue()) {
+            return Unexpected{ result.getError() };
+        }
+
+        return std::unique_ptr<GhaImageView>{ createGhaObject<VulkanImageView>(imageDescriptor.format, imageDescriptor.dimensions, devicePtr.get(), result.getValue()) };
     }
 
     Expected<std::unique_ptr<GhaSampler>, std::runtime_error> VulkanFactory::createSampler(GhaSampler::Descriptor descriptor) noexcept {

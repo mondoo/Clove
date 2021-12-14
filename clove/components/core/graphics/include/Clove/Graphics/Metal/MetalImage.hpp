@@ -27,8 +27,6 @@ namespace clove {
 		
 		Descriptor const &getDescriptor() const override;
 
-		std::unique_ptr<GhaImageView> createView(GhaImageView::Descriptor viewDescriptor) const override;
-		
 		id<MTLTexture> getTexture() const;
 		
 		static MTLPixelFormat convertFormat(Format format);

@@ -13,10 +13,8 @@ namespace clove {
     class Texture {
         //VARIABLES
     private:
-        std::shared_ptr<GhaImage> image{ nullptr };
-        std::shared_ptr<GhaImageView> imageView{ nullptr };
-
-        std::unique_ptr<void, std::function<void(void *)>> buffer{ nullptr };
+        std::unique_ptr<void, std::function<void(void *)>> buffer{ nullptr }; /**< Raw image data created from file. */
+        std::unique_ptr<GhaImage> image{ nullptr };
 
         vec2ui dimensions{ 0, 0 };
         int32_t channels{ 0 };
@@ -34,7 +32,7 @@ namespace clove {
 
         ~Texture();
 
-        inline std::shared_ptr<GhaImageView> getImageView() const;
+        inline GhaImage *getImage() const;
     };
 }
 

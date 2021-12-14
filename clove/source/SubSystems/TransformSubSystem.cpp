@@ -37,6 +37,10 @@ namespace clove {
 
     TransformSubSystem::~TransformSubSystem() = default;
 
+    SubSystem::Group TransformSubSystem::getGroup() const {
+        return Group::Initialisation;
+    }
+
     void TransformSubSystem::onUpdate(DeltaTime const deltaTime) {
         CLOVE_PROFILE_FUNCTION();
 

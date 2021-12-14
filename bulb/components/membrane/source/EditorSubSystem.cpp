@@ -117,6 +117,10 @@ namespace membrane {
         proxy->reset();
     }
 
+    clove::SubSystem::Group EditorSubSystem::getGroup() const {
+        return Group::Core;
+    }
+
     void EditorSubSystem::onAttach() {
         auto &app{ clove::Application::get() };
 

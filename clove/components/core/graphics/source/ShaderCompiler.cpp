@@ -145,11 +145,12 @@ namespace clove::ShaderCompiler {
         return compile(source, std::make_unique<EmbeddedSourceIncluder>(std::move(includeSources)), shaderName, shaderStage);
     }
 
-    Expected<std::string, std::runtime_error> spirvToHLSL(std::span<uint32_t> spirvSource) {
-        return Unexpected{ std::runtime_error{ "SPIR-V to HLSL not supported!" } };
+    std::string spirvToHLSL(std::span<uint32_t> spirvSource) {
+        CLOVE_ASSERT_MSG(false, "HLSL not implemented!");
+        return "";
     }
 
-    Expected<std::string, std::runtime_error> spirvToMSL(std::span<uint32_t> spirvSource) {
+    std::string spirvToMSL(std::span<uint32_t> spirvSource) {
         spirv_cross::CompilerMSL msl{ spirvSource.data(), spirvSource.size() };
         msl.set_common_options(spirv_cross::CompilerGLSL::Options{
             .vertex = {

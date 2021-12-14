@@ -7,16 +7,16 @@ layout(std140, set = 0, binding = 0) uniform Model{
 	mat4 normalMatrix;
 };
 
-layout(std140, set = 1, binding = 0) uniform ViewProj{
+layout(std140, set = 0, binding = 1) uniform ViewProj{
 	mat4 view;
 	mat4 proj;
 };
 
-layout(std140, set = 2, binding = 1) uniform NumLights{
+layout(std140, set = 0, binding = 2) uniform NumLights{
 	int numDirLights;
 	int numPointLights;
 };
-layout(std140, set = 2, binding = 2) uniform LightMatrix{
+layout(std140, set = 0, binding = 3) uniform LightMatrix{
 	mat4 lightSpaceMatrices[MAX_LIGHTS];
 };
 

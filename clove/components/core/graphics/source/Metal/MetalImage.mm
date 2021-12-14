@@ -5,30 +5,6 @@
 #include <Clove/Log/Log.hpp>
 
 namespace clove {
-    namespace {
-        MTLTextureType convertImageViewType(GhaImageView::Type type, uint32_t arrayCount) {
-            switch (type) {
-                case GhaImageView::Type::_2D:
-                    if(arrayCount > 1) {
-                        return MTLTextureType2DArray;
-                    } else {
-                        return MTLTextureType2D;
-                    }
-                case GhaImageView::Type::_3D:
-                    return MTLTextureType3D;
-                case GhaImageView::Type::Cube:
-                    if(arrayCount > 1) {
-                        return MTLTextureTypeCubeArray;
-                    } else {
-                        return MTLTextureTypeCube;
-                    }
-                default:
-                    CLOVE_ASSERT_MSG(false, "{0}: Unkown type passed", CLOVE_FUNCTION_NAME_PRETTY);
-                    return MTLTextureType2D;
-            }
-        }
-    }
-    
     MetalImage::MetalImage(id<MTLTexture> texture, Descriptor descriptor)
         : texture{ texture }
         , descriptor{ descriptor } {
@@ -43,21 +19,7 @@ namespace clove {
     GhaImage::Descriptor const &MetalImage::getDescriptor() const {
         return descriptor;
     }
-    
-    std::unique_ptr<GhaImageView> MetalImage::createView(GhaImageView::Descriptor viewDescriptor) const {
-        NSRange const mipLevels{
-            .location = 0,
-            .length   = 1,
-        };
-        NSRange const arraySlices{
-            .location = viewDescriptor.layer,
-            .length   = viewDescriptor.layerCount,
-        };
-        
-        id<MTLTexture> textureView{ [texture newTextureViewWithPixelFormat:convertFormat(descriptor.format) textureType:convertImageViewType(viewDescriptor.type, viewDescriptor.layerCount) levels:mipLevels slices:arraySlices] };
-        return std::make_unique<MetalImageView>(textureView);
-    }
-    
+       
     id<MTLTexture> MetalImage::getTexture() const {
         return texture;
     }

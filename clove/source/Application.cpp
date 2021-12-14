@@ -41,7 +41,8 @@ namespace clove {
         auto graphicsDevice{ createGhaDevice(graphicsApi, window->getNativeWindow()).getValue() };
         auto audioDevice{ createAhaDevice(audioApi).getValue() };
 
-        auto renderTarget{ std::make_unique<SwapchainRenderTarget>(*window, graphicsDevice.get()) };
+        uint32_t constexpr swapchainImageCount{ 3 };
+        auto renderTarget{ std::make_unique<SwapchainRenderTarget>(*window, graphicsDevice.get(), swapchainImageCount) };
 
         std::unique_ptr<Application> app{ new Application{ std::move(graphicsDevice), std::move(audioDevice), std::move(window), std::move(renderTarget) } };
         windowPtr->onWindowCloseDelegate.bind(&Application::shutdown, app.get());

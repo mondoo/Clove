@@ -5,6 +5,7 @@
 #include "Clove/Graphics/Metal/MetalDescriptorSet.hpp"
 #include "Clove/Graphics/Metal/MetalGlobals.hpp"
 #include "Clove/Graphics/Metal/MetalImage.hpp"
+#include "Clove/Graphics/Metal/MetalLog.hpp"
 
 #include <Clove/Cast.hpp>
 
@@ -26,16 +27,26 @@ namespace clove {
 	}
 
 	void MetalComputeCommandBuffer::bindPipelineObject(GhaComputePipelineObject &pipelineObject) {
-		commands.emplace_back([pipelineObject = &pipelineObject](id<MTLComputeCommandEncoder> encoder){
+		commands.emplace_back([pipelineObject = &pipelineObject](id<MTLComputeCommandEncoder> encoder) {
 			[encoder setComputePipelineState:polyCast<MetalComputePipelineObject>(pipelineObject)->getPipelineState()];
 		});
 	}
 
 	void MetalComputeCommandBuffer::bindDescriptorSet(GhaDescriptorSet &descriptorSet, uint32_t const setNum) {
-		commands.emplace_back([descriptorSet = &descriptorSet, setNum](id<MTLComputeCommandEncoder> encoder){
-			[encoder setBuffer:polyCast<MetalDescriptorSet>(descriptorSet)->getComputeBuffer()
-						offset:0
-					   atIndex:setNum];
+		commands.emplace_back([descriptorSet = &descriptorSet, setNum](id<MTLComputeCommandEncoder> encoder) {
+            auto const *const metalDescriptorSet{ polyCast<MetalDescriptorSet>(descriptorSet) };
+            if(metalDescriptorSet == nullptr) {
+                CLOVE_LOG(CloveGhaMetal, LogLevel::Error, "{0}: DescriptorSet is nullptr", CLOVE_FUNCTION_NAME);
+                return;
+            }
+            
+            id<MTLBuffer> backingBuffer{ metalDescriptorSet->getBackingBuffer() };
+            std::optional<size_t> computeOffset{ metalDescriptorSet->getComputeOffset() };
+            CLOVE_ASSERT(computeOffset.has_value());
+            
+            [encoder setBuffer:backingBuffer
+                        offset:computeOffset.value()
+                       atIndex:setNum];
 		});
 	}
 	

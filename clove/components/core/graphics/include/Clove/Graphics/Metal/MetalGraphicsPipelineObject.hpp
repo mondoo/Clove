@@ -8,13 +8,15 @@ namespace clove {
     class MetalGraphicsPipelineObject : public GhaGraphicsPipelineObject {
         //VARIABLES
     private:
+        Descriptor descriptor{};
+        
         id<MTLRenderPipelineState> pipeline;
         id<MTLDepthStencilState> depthStencil;
 
         //FUNCTIONS
     public:
         MetalGraphicsPipelineObject() = delete;
-        MetalGraphicsPipelineObject(id<MTLRenderPipelineState> pipeline, id<MTLDepthStencilState> depthStencil);
+        MetalGraphicsPipelineObject(Descriptor descriptor, id<MTLRenderPipelineState> pipeline, id<MTLDepthStencilState> depthStencil);
 
         MetalGraphicsPipelineObject(MetalGraphicsPipelineObject const &other) = delete;
         MetalGraphicsPipelineObject(MetalGraphicsPipelineObject &&other) noexcept;
@@ -23,6 +25,8 @@ namespace clove {
         MetalGraphicsPipelineObject &operator=(MetalGraphicsPipelineObject &&other) noexcept;
 
         ~MetalGraphicsPipelineObject();
+
+        Descriptor const &getDescriptor() const override;
 
         inline id<MTLRenderPipelineState> getPipeline() const;
         inline id<MTLDepthStencilState> getDepthStencil() const;

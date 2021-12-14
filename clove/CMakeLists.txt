@@ -7,6 +7,12 @@ set(ASSETS ${CMAKE_CURRENT_SOURCE_DIR}/assets)
 add_subdirectory(components)
 add_subdirectory(external)
 
+#CMake
+find_package(assimp REQUIRED CONFIG)
+find_package(Bullet REQUIRED CONFIG)
+find_package(Freetype REQUIRED CONFIG)
+find_package(SndFile REQUIRED CONFIG)
+
 #Prepare SOURCEs to be inbedded
 set(
 	ShaderIncludes
@@ -141,6 +147,40 @@ add_library(
 		${INCLUDE}/Rendering/Renderables/Texture.hpp
 		${INCLUDE}/Rendering/Renderables/Texture.inl
 		${SOURCE}/Rendering/Renderables/Texture.cpp
+
+		${INCLUDE}/Rendering/RenderGraph/CacheUtils.hpp
+		${INCLUDE}/Rendering/RenderGraph/CacheUtils.inl
+		${INCLUDE}/Rendering/RenderGraph/RenderGraph.hpp
+		${SOURCE}/Rendering/RenderGraph/RenderGraph.cpp
+		${INCLUDE}/Rendering/RenderGraph/RenderGraphLog.hpp
+		${INCLUDE}/Rendering/RenderGraph/RgBindings.hpp
+		${INCLUDE}/Rendering/RenderGraph/RgBuffer.hpp
+		${INCLUDE}/Rendering/RenderGraph/RgBuffer.inl
+		${SOURCE}/Rendering/RenderGraph/RgBuffer.cpp
+		${INCLUDE}/Rendering/RenderGraph/RgComputePass.hpp
+		${INCLUDE}/Rendering/RenderGraph/RgComputePass.inl
+		${SOURCE}/Rendering/RenderGraph/RgComputePass.cpp
+		${INCLUDE}/Rendering/RenderGraph/RgFrameCache.hpp
+		${SOURCE}/Rendering/RenderGraph/RgFrameCache.cpp
+		${INCLUDE}/Rendering/RenderGraph/RgGlobalCache.hpp
+		${SOURCE}/Rendering/RenderGraph/RgGlobalCache.cpp
+		${INCLUDE}/Rendering/RenderGraph/RgId.hpp
+		${INCLUDE}/Rendering/RenderGraph/RgImage.hpp
+		${INCLUDE}/Rendering/RenderGraph/RgImage.inl
+		${SOURCE}/Rendering/RenderGraph/RgImage.cpp
+		${INCLUDE}/Rendering/RenderGraph/RgPass.hpp
+		${INCLUDE}/Rendering/RenderGraph/RgRenderPass.hpp
+		${INCLUDE}/Rendering/RenderGraph/RgRenderPass.inl
+		${SOURCE}/Rendering/RenderGraph/RgRenderPass.cpp
+		${INCLUDE}/Rendering/RenderGraph/RgResource.hpp
+		${INCLUDE}/Rendering/RenderGraph/RgResource.inl
+		${SOURCE}/Rendering/RenderGraph/RgResource.cpp
+		${INCLUDE}/Rendering/RenderGraph/RgSampler.hpp
+		${INCLUDE}/Rendering/RenderGraph/RgShader.hpp
+		${INCLUDE}/Rendering/RenderGraph/RgTransferPass.hpp
+		${INCLUDE}/Rendering/RenderGraph/RgTransferPass.inl
+		${SOURCE}/Rendering/RenderGraph/RgTransferPass.cpp
+		
 		${INCLUDE}/Rendering/RenderPasses/ForwardColourPass.hpp
 		${SOURCE}/Rendering/RenderPasses/ForwardColourPass.cpp
 		${INCLUDE}/Rendering/RenderPasses/DirectionalLightPass.hpp
@@ -250,10 +290,10 @@ target_link_libraries(
 		CloveTimer
 
 	PRIVATE
-		CONAN_PKG::assimp
-		CONAN_PKG::bullet3
-		CONAN_PKG::freetype
-		CONAN_PKG::libsndfile
+		assimp::assimp
+		Bullet::Bullet
+		Freetype::Freetype
+		SndFile::SndFile
 		stb
 )
 

@@ -2,15 +2,15 @@
 
 #include "Constants.glsl"
 
-layout(set = 0, binding = 1) uniform texture2D diffuseTexture;
-layout(set = 0, binding = 2) uniform texture2D specularTexture;
-layout(set = 0, binding = 3) uniform sampler meshSampler;
+layout(set = 0, binding = 4) uniform texture2D diffuseTexture;
+layout(set = 0, binding = 5) uniform texture2D specularTexture;
+layout(set = 0, binding = 6) uniform sampler meshSampler;
 
-layout(set = 2, binding = 3) uniform texture2DArray directionalDepthTexture;
-layout(set = 2, binding = 4) uniform textureCubeArray pointLightDepthTexture;
-layout(Set = 2, binding = 5) uniform sampler shadowSampler;
+layout(set = 0, binding = 7) uniform texture2DArray directionalDepthTexture;
+layout(set = 0, binding = 8) uniform textureCubeArray pointLightDepthTexture;
+layout(Set = 0, binding = 9) uniform sampler shadowSampler;
 
-layout(set = SET_VIEW, binding = 1) uniform ViewPosition{
+layout(set = 0, binding = 10) uniform ViewPosition{
 	vec3 viewPos;
 };
 
@@ -33,16 +33,16 @@ struct PointLightData{
 	
 	float farplane;
 };
-layout(std140, set = 2, binding = 0) uniform Lights{
+layout(std140, set = 0, binding = 11) uniform Lights{
 	DirectionalLightData directionalLights[MAX_LIGHTS];
 	PointLightData pointLights[MAX_LIGHTS];
 };
-layout(std140, set = 2, binding = 1) uniform NumLights{
+layout(std140, set = 0, binding = 2) uniform NumLights{
 	uint numDirLights;
 	uint numPointLights;
 };
 
-layout(std140, set = 0, binding = 4) uniform Colour{
+layout(std140, set = 0, binding = 12) uniform Colour{
 	vec4 colour;
 };
 

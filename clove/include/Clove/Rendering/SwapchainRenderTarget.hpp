@@ -25,14 +25,9 @@ namespace clove {
         GhaDevice *graphicsDevice{ nullptr };
         GhaFactory *graphicsFactory{ nullptr };
 
+        uint32_t imageCount{};
         std::unique_ptr<GhaSwapchain> swapchain;
         std::unique_ptr<GhaPresentQueue> presentQueue;
-        std::unique_ptr<GhaGraphicsQueue> graphicsQueue;
-
-        std::vector<std::unique_ptr<GhaSemaphore>> renderFinishedSemaphores;
-        std::vector<std::unique_ptr<GhaSemaphore>> imageAvailableSemaphores;
-        std::vector<std::unique_ptr<GhaFence>> framesInFlight;
-        std::vector<GhaFence *> imagesInFlight;
 
         vec2ui windowSize{};
         DelegateHandle windowResizeHandle;
@@ -42,7 +37,7 @@ namespace clove {
         //FUNCTIONS
     public:
         SwapchainRenderTarget() = delete;
-        SwapchainRenderTarget(Window &swapchainWindow, GhaDevice *graphicsDevice);
+        SwapchainRenderTarget(Window &swapchainWindow, GhaDevice *graphicsDevice, uint32_t imageCount);
 
         SwapchainRenderTarget(SwapchainRenderTarget const &other);
         SwapchainRenderTarget(SwapchainRenderTarget &&other) noexcept;
@@ -52,14 +47,14 @@ namespace clove {
 
         ~SwapchainRenderTarget();
 
-        Expected<uint32_t, std::string> aquireNextImage(size_t const frameId) override;
+        Expected<uint32_t, std::string> aquireNextImage(GhaSemaphore const *const signalSemaphore) override;
 
-        void submit(uint32_t imageIndex, size_t const frameId, GraphicsSubmitInfo submission) override;
+        void present(uint32_t imageIndex, std::vector<GhaSemaphore const *> waitSemaphores) override;
 
         GhaImage::Format getImageFormat() const override;
         vec2ui getSize() const override;
 
-        std::vector<GhaImageView *> getImageViews() const override;
+        std::vector<GhaImage *> getImages() const override;
 
     private:
         void onSurfaceSizeChanged(vec2ui const &size);

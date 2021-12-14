@@ -27,6 +27,10 @@ namespace clove {
 
     RenderSubSystem::~RenderSubSystem() = default;
 
+    SubSystem::Group RenderSubSystem::getGroup() const {
+        return Group::Render;
+    }
+
     void RenderSubSystem::onUpdate(DeltaTime const deltaTime) {
         CLOVE_PROFILE_FUNCTION();
 
@@ -59,7 +63,7 @@ namespace clove {
                     passIds.insert(technique.passIds.begin(), technique.passIds.end());
                 }
                 for(auto const &mesh : staticModel.model->getMeshes()) {
-                    renderer->submitMesh(ForwardRenderer3D::MeshInfo{ mesh, staticModel.material, modelTransform, matrixPalet }, passIds);
+                    renderer->submitMesh(ForwardRenderer3D::MeshInfo{ mesh, staticModel.material, modelTransform, matrixPalet, passIds });
                 }
             }
         });
@@ -74,7 +78,7 @@ namespace clove {
                     passIds.insert(technique.passIds.begin(), technique.passIds.end());
                 }
                 for(auto const &mesh : animatedModel.model->getMeshes()) {
-                    renderer->submitMesh(ForwardRenderer3D::MeshInfo{ mesh, animatedModel.material, modelTransform, matrixPalet }, passIds);
+                    renderer->submitMesh(ForwardRenderer3D::MeshInfo{ mesh, animatedModel.material, modelTransform, matrixPalet, passIds });
                 }
             }
         });

@@ -12,12 +12,4 @@ namespace clove {
     GeometryPass &GeometryPass::operator=(GeometryPass &&other) noexcept = default;
 
     GeometryPass::~GeometryPass() = default;
-
-    void GeometryPass::addJob(Job job) {
-        jobs.emplace_back(std::move(job));
-    }
-
-    void GeometryPass::flushJobs() {
-        jobs.clear();
-    }
 }
