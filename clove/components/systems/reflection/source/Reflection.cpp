@@ -20,4 +20,19 @@ namespace clove::reflection {
 
         return nullptr;
     }
+
+    namespace internal {
+        Registry::Registry() = default;
+
+        Registry::~Registry() = default;
+
+        Registry &Registry::get() {
+            static Registry *instance{ nullptr };
+            if(instance == nullptr) {
+                instance = new Registry{};
+            }
+
+            return *instance;
+        }
+    }
 }

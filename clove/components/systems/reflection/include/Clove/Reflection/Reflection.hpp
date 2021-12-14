@@ -16,19 +16,13 @@ namespace clove::reflection {
         //FUNCTIONS
     public:
         template<typename AttributeType>
-        void add(AttributeType &&attribute) {
-            attributes.setValue(typeid(AttributeType).hash_code(), std::forward<AttributeType>(attribute));
-        }
+        void add(AttributeType &&attribute);
 
         template<typename AttributeType>
-        bool contains() const {
-            return attributes.hasValue(typeid(AttributeType).hash_code());
-        }
+        bool contains() const;
 
         template<typename AttributeType>
-        std::optional<AttributeType> get() const {
-            return attributes.getValue<AttributeType>(typeid(AttributeType).hash_code());
-        }
+        std::optional<AttributeType> get() const;
     };
 
     using TypeId = decltype(std::declval<std::type_info>().hash_code());
@@ -55,6 +49,36 @@ namespace clove::reflection {
         AttributeContainer attributes{};
     };
 
+    /**
+     * @brief Returns the TypeInfo for the provided Type
+     * @tparam Type 
+     * @return 
+     */
+    template<typename Type>
+    TypeInfo const *getTypeInfo();
+
+    /**
+     * @brief Returns the TypeInfo for the provided typeName.
+     * @param typeName 
+     * @return 
+     */
+    TypeInfo const *getTypeInfo(std::string_view typeName);
+
+    /**
+     * @brief Returns the TypeInfo for the provided typeId.
+     * @param typeId 
+     * @return 
+     */
+    TypeInfo const *getTypeInfo(TypeId typeId);
+
+    /**
+     * @brief Returns all types with attribute of AttributeType
+     * @tparam AttributeType 
+     * @return 
+     */
+    template<typename AttributeType>
+    std::vector<TypeInfo const *> getTypesWithAttribute();
+
     namespace internal {
         class Registry {
             //VARIABLES
@@ -63,69 +87,28 @@ namespace clove::reflection {
 
             //FUNCTIONS
         public:
-            //TODO: Ctors
+            Registry();
 
-            static Registry &get() {
-                static Registry *instance{ nullptr };
-                if(instance == nullptr) {
-                    instance = new Registry{};
-                }
+            Registry(Registry const &other)     = delete;
+            Registry(Registry &&other) noexcept = delete;
 
-                return *instance;
-            }
+            Registry &operator=(Registry const &other) = delete;
+            Registry &operator=(Registry &&other) noexcept = delete;
 
-            std::vector<reflection::TypeInfo> const &getRegisteredTypes() const {
-                return types;
-            }
+            ~Registry();
 
-            void addTypeInfo(reflection::TypeInfo typeInfo) {
-                types.push_back(std::move(typeInfo));
-            }
+            static Registry &get();
+
+            inline std::vector<reflection::TypeInfo> const &getRegisteredTypes() const;
+
+            inline void addTypeInfo(reflection::TypeInfo typeInfo);
         };
-
-        //TODO: inline
-        template<size_t index, typename TupleType>
-        static void populateAttributes(AttributeContainer &container, TupleType const &attributeTuple) {
-            if constexpr(index < std::tuple_size_v<TupleType>) {
-                container.add(std::get<index>(attributeTuple));
-
-                populateAttributes<index + 1>(container, attributeTuple);
-            }
-        }
-
 
         template<typename ReflectType>
         struct CreatorHelper;
-    }
 
-    template<typename Type>
-    TypeInfo const *getTypeInfo();
-
-    /**
-     * @brief Returns the TypeInfo with the provided typeName.
-     * @param typeName 
-     * @return 
-     */
-    TypeInfo const *getTypeInfo(std::string_view typeName);
-
-    /**
-     * @brief Returns the TypeInfo with the provided typeId.
-     * @param typeId 
-     * @return 
-     */
-    TypeInfo const *getTypeInfo(TypeId typeId);
-
-    template<typename AttributeType>
-    std::vector<TypeInfo const *> getTypesWithAttribute() {
-        std::vector<TypeInfo const *> typeInfos{};
-
-        for(auto &typeInfo : internal::Registry::get().getRegisteredTypes()) {
-            if(typeInfo.attributes.contains<AttributeType>()) {
-                typeInfos.push_back(&typeInfo);
-            }
-        }
-
-        return typeInfos;
+        template<size_t index, typename TupleType>
+        static void populateAttributes(AttributeContainer &container, TupleType const &attributeTuple);
     }
 }
 
@@ -137,7 +120,6 @@ namespace clove::reflection {
     struct ::clove::reflection::internal::CreatorHelper<classType> {                                                                \
         CreatorHelper();                                                                                                            \
     };                                                                                                                              \
-                                                                                                                                    \
     inline static ::clove::reflection::internal::CreatorHelper<classType> const INTERNAL_CLOVE_REFLECT_CAT(creator, __COUNTER__){}; \
                                                                                                                                     \
     ::clove::reflection::internal::CreatorHelper<classType>::CreatorHelper() {                                                      \
