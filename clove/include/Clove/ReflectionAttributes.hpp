@@ -1,14 +1,24 @@
 #pragma once
 
+#include <Clove/ECS/Entity.hpp>
+#include <Clove/Reflection/Reflection.hpp>
+#include <functional>
+#include <memory>
 #include <optional>
 #include <string>
 
 namespace clove {
+    class EntityManager;
+}
+
+namespace clove {
     /**
-     * @brief Signifies that the class wants to be displayed in editor as an entity component.
+     * @brief Signifies that this type wants to be displayed in editor as an entity component.
      */
     struct EditorVisibleComponent {
         std::optional<std::string> name{}; /**< Name of the class. If not set then will just use the type's name. */
+
+        std::function<uint8_t *(Entity, EntityManager &)> onEditorCreateComponent{}; /**< Called when the editor wants to create this component. */
     };
 
     /**

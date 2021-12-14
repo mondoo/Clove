@@ -9,9 +9,9 @@ namespace membrane {
 
         //FUNCTIONS
     public:
-        MemberInfo(System::Int32 offset, System::Int32 size) 
+        MemberInfo(System::Int32 offset, System::Int32 size)
             : offset{ offset }
-            , size{ size }{
+            , size{ size } {
         }
     };
 

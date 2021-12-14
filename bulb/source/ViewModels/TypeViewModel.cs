@@ -2,9 +2,11 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows;
 
+using Membrane = membrane;
+
 namespace Bulb {
     /// <summary>
-    /// Viewmodel for each editor type.
+    /// Viewmodel for each editor visible type.
     /// </summary>
     public class TypeViewModel : ViewModel {
         public string Name { get; }
@@ -16,7 +18,7 @@ namespace Bulb {
                 OnPropertyChanged(nameof(Value));
 
                 if (value.Length != 0) {
-                    OnValueChanged?.Invoke(valueOffset, valueSize, this.value);
+                    OnValueChanged?.Invoke(type, valueOffset, valueSize, this.value);
                 }
             }
         }
@@ -30,7 +32,8 @@ namespace Bulb {
         public ValueChangedHandler OnValueChanged;
 
         private int valueOffset;
-        private int valueSize;
+        private readonly int valueOffset;
+        private readonly int valueSize;
 
         public TypeViewModel(string name, List<TypeViewModel> members) {
             Name = name;

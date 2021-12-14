@@ -1,5 +1,6 @@
 #include "Membrane/EditorSubSystem.hpp"
 
+#include "Membrane/MembraneLog.hpp"
 #include "Membrane/MessageHandler.hpp"
 #include "Membrane/Messages.hpp"
 #include "Membrane/NameComponent.hpp"
@@ -16,6 +17,7 @@
 #include <Clove/Maths/MathsHelpers.hpp>
 #include <Clove/ModelLoader.hpp>
 #include <Clove/Reflection/Reflection.hpp>
+#include <Clove/ReflectionAttributes.hpp>
 #include <Clove/SubSystems/PhysicsSubSystem.hpp>
 #include <msclr/marshal_cppstd.h>
 
@@ -213,7 +215,7 @@ namespace membrane {
 
     void EditorSubSystem::onDetach() {
         //saveScene();
-        currentScene.destroyAllEntities();
+        currentScene.getEntityManager().destroyAll();
     }
 
     void EditorSubSystem::saveScene() {
@@ -226,10 +228,10 @@ namespace membrane {
         Engine_OnSceneLoaded ^ loadMessage { gcnew Engine_OnSceneLoaded };
         loadMessage->entities = gcnew System::Collections::Generic::List<Entity ^>{};
         for(auto entity : currentScene.getKnownEntities()) {
-            Entity ^ editorEntity { gcnew Entity };
+            /*Entity ^ editorEntity { gcnew Entity };
             editorEntity->id         = entity;
             editorEntity->name       = gcnew System::String(currentScene.getComponent<NameComponent>(entity).name.c_str());
-            editorEntity->components = gcnew System::Collections::Generic::List<Component ^>{};
+            editorEntity->components = gcnew System::Collections::Generic::List<Component ^>{};*/
 
             //Add all of the component types for an entity
             /*if(currentScene.hasComponent<clove::TransformComponent>(entity)) {
@@ -297,7 +299,7 @@ namespace membrane {
                 editorEntity->components->Add(componentData);
             }*/
 
-            loadMessage->entities->Add(editorEntity);
+            //loadMessage->entities->Add(editorEntity);
         }
 
         MessageHandler::sendMessage(loadMessage);
@@ -305,7 +307,7 @@ namespace membrane {
 
     clove::Entity EditorSubSystem::createEntity(std::string_view name) {
         clove::Entity entity{ currentScene.createEntity() };
-        currentScene.addComponent<NameComponent>(entity, std::string{ std::move(name) });
+        currentScene.getEntityManager().addComponent<NameComponent>(entity, std::string{ std::move(name) });
 
         Engine_OnEntityCreated ^ message { gcnew Engine_OnEntityCreated };
         message->entity = entity;
@@ -316,7 +318,7 @@ namespace membrane {
     }
 
     void EditorSubSystem::deleteEntity(clove::Entity entity) {
-        currentScene.deleteEntity(entity);
+        currentScene.getEntityManager().destroy(entity);
 
         Engine_OnEntityDeleted ^ message { gcnew Engine_OnEntityDeleted };
         message->entity = entity;
@@ -325,39 +327,23 @@ namespace membrane {
 
     void EditorSubSystem::addComponent(clove::Entity entity, std::string_view typeName) {
         clove::reflection::TypeInfo const *typeInfo{ clove::reflection::getTypeInfo(typeName) };
-        CLOVE_ASSERT(typeInfo != nullptr);
-
-        static size_t const transId{ typeid(clove::TransformComponent).hash_code() };
-        static size_t const modelId{ typeid(clove::StaticModelComponent).hash_code() };
-        static size_t const lightId{ typeid(clove::PointLightComponent).hash_code() };
-
-        //TODO: Use switch statements
-
-        uint8_t *componentMemory{ nullptr };
-        bool added{ false };
-        if(typeInfo->id == transId) {
-            if(!currentScene.hasComponent<clove::TransformComponent>(entity)) {
-                added           = true;
-                componentMemory = reinterpret_cast<uint8_t *>(&currentScene.addComponent<clove::TransformComponent>(entity));
-            }
-        } else if(typeInfo->id == modelId) {
-            if(!currentScene.hasComponent<clove::StaticModelComponent>(entity)) {
-                added = true;
-                auto &comp{ currentScene.addComponent<clove::StaticModelComponent>(entity) };
-
-                //TEMP: loading in model manually for now
-               
-            }
-        } else if(typeInfo->id == lightId) {
-            if(!currentScene.hasComponent<clove::PointLightComponent>(entity)) {
-                added           = true;
-                componentMemory = reinterpret_cast<uint8_t *>(&currentScene.addComponent<clove::PointLightComponent>(entity));
-            }
+        if(typeInfo == nullptr) {
+            CLOVE_LOG(Membrane, clove::LogLevel::Error, "Could not get typeinfo for {0}", typeName);
+            return;
         }
 
-        //TEMP: Asserting for now but if Clove/Membrane is not aware of the type then we need to pass off to user code
-        //This can be a dynamically loaded function pointer
-        CLOVE_ASSERT(added);
+        std::optional<clove::EditorVisibleComponent> componentAttribute{ typeInfo->attributes.get<clove::EditorVisibleComponent>() };
+        if(!componentAttribute.has_value()) {
+            CLOVE_LOG(Membrane, clove::LogLevel::Error, "Could not get EditorVisibleComponent attribute for {0}", typeName);
+            return;
+        }
+
+        if(componentAttribute->onEditorCreateComponent == nullptr) {
+            CLOVE_LOG(Membrane, clove::LogLevel::Error, "{0} does not provide an implementation for EditorVisibleComponent::onEditorCreateComponent. Cannot create component", typeName);
+            return;
+        }
+
+        uint8_t *componentMemory{ componentAttribute->onEditorCreateComponent(entity, currentScene.getEntityManager()) };
 
         auto message{ gcnew Engine_OnComponentAdded };
         message->entity        = entity;
@@ -375,83 +361,28 @@ namespace membrane {
 
     void EditorSubSystem::modifyComponent(clove::Entity entity, std::string_view typeName, array<uint8_t> ^ data) {
         clove::reflection::TypeInfo const *typeInfo{ clove::reflection::getTypeInfo(typeName) };
-        CLOVE_ASSERT(typeInfo != nullptr);
-
-        static size_t const transId{ typeid(clove::TransformComponent).hash_code() };
-        static size_t const modelId{ typeid(clove::StaticModelComponent).hash_code() };
-        static size_t const lightId{ typeid(clove::PointLightComponent).hash_code() };
-
-        //TODO: Use switch statements
-
-        pin_ptr<uint8_t> const arrayPointer{ &data[0] };
-        size_t const memorySize{ typeInfo->size };
-
-        bool modified{ false };
-        if(typeInfo->id == transId) {
-            if(currentScene.hasComponent<clove::TransformComponent>(entity)) {
-                auto &comp{ currentScene.getComponent<clove::TransformComponent>(entity) };
-                std::memcpy(&comp, arrayPointer, memorySize);
-                modified = true;
-            }
-        } else if(typeInfo->id == modelId) {
-            //TODO
-        } else if(typeInfo->id == lightId) {
-            if(currentScene.hasComponent<clove::PointLightComponent>(entity)) {
-                auto &comp{ currentScene.getComponent<clove::PointLightComponent>(entity) };
-                std::memcpy(&comp, arrayPointer, memorySize);
-                modified = true;
-            }
+        if(typeInfo == nullptr) {
+            CLOVE_LOG(Membrane, clove::LogLevel::Error, "Could not get typeinfo for {0}", typeName);
+            return;
         }
-
-        CLOVE_ASSERT(modified);
-
-        //TODO: Needed?
-        /*auto const *const componentMemory{ reinterpret_cast<uint8_t *>(data.get()) };
-        array<System::Byte> ^ componentData = gcnew array<System::Byte>(memorySize);
-        for(size_t i{ 0 }; i < memorySize; ++i) {
-            componentData[i] = componentMemory[i];
-        }
-
-        auto message{ gcnew Engine_OnComponentModified };
-        message->entity        = entity;
-        message->componentName = gcnew System::String{ typeName.data() };
-        message->data          = componentData;
-        MessageHandler::sendMessage(message);*/
     }
 
     void EditorSubSystem::removeComponent(clove::Entity entity, std::string_view typeName) {
         clove::reflection::TypeInfo const *typeInfo{ clove::reflection::getTypeInfo(typeName) };
-        CLOVE_ASSERT(typeInfo != nullptr);
-
-        static size_t const transId{ typeid(clove::TransformComponent).hash_code() };
-        static size_t const modelId{ typeid(clove::StaticModelComponent).hash_code() };
-        static size_t const lightId{ typeid(clove::PointLightComponent).hash_code() };
-
-        //TODO: Use switch statements
-
-        bool removed{ false };
-        if(typeInfo->id == transId) {
-            currentScene.removeComponent<clove::TransformComponent>(entity);
-            removed = true;
-        } else if(typeInfo->id == modelId) {
-            currentScene.removeComponent<clove::StaticModelComponent>(entity);
-            removed = true;
-        } else if(typeInfo->id == lightId) {
-            currentScene.removeComponent<clove::PointLightComponent>(entity);
-            removed = true;
+        if(typeInfo == nullptr) {
+            CLOVE_LOG(Membrane, clove::LogLevel::Error, "Could not get typeinfo for {0}", typeName);
+            return;
         }
 
-        CLOVE_ASSERT(removed);
-
-        auto message{ gcnew Engine_OnComponentRemoved };
+        /*auto message{ gcnew Engine_OnComponentRemoved };
         message->entity        = entity;
         message->componentName = gcnew System::String{ typeName.data() };
-        MessageHandler::sendMessage(message);
+        MessageHandler::sendMessage(message);*/
     }
 
     void EditorSubSystem::updateName(clove::Entity entity, std::string name) {
-        if(currentScene.hasComponent<NameComponent>(entity)) {
+        /*if(currentScene.hasComponent<NameComponent>(entity)) {
             currentScene.getComponent<NameComponent>(entity).name = std::move(name);
-        }
+        }*/
     }
 }
