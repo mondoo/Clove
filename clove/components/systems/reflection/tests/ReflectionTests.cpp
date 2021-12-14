@@ -66,12 +66,12 @@ CLOVE_REFLECT_MEMBER(a)
 CLOVE_REFLECT_MEMBER(b)
 CLOVE_REFLECT_END
 
-struct Internal{
+struct Internal {
     int a;
     std::string b;
 };
 
-struct Nested{
+struct Nested {
     Internal a;
     int b;
 };
@@ -236,6 +236,6 @@ TEST(ReflectionTests, MembersHaveTypeInfoIds) {
 
     auto *internalTypeInfo{ reflection::getTypeInfo(nestedInfo->members[0].id) };
 
-    ASSERT_TRUE(internalTypeInfo != nullptr);
+    ASSERT_NE(internalTypeInfo, nullptr);
     EXPECT_EQ(internalTypeInfo->id, internalInfo->id);
 }

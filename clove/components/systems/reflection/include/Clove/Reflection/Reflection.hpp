@@ -94,12 +94,10 @@ namespace clove::reflection {
         }
 
 
-        struct CreatorHelper {
-            CreatorHelper(std::function<void()> func) {
-                func();
-            }
-        };
+        template<typename ReflectType>
+        struct CreatorHelper;
     }
+
     template<typename Type>
     TypeInfo const *getTypeInfo();
 
@@ -134,15 +132,21 @@ namespace clove::reflection {
 #define INTERNAL_CLOVE_REFLECT_CAT2(a, b) a##b
 #define INTERNAL_CLOVE_REFLECT_CAT(a, b) INTERNAL_CLOVE_REFLECT_CAT2(a, b)
 
-#define CLOVE_REFLECT_BEGIN(classType, ...)                                                                       \
-    inline static ::clove::reflection::internal::CreatorHelper INTERNAL_CLOVE_REFLECT_CAT(creator, __COUNTER__) { \
-        []() {                                                                                                      \
-            using Type = classType;    \
-            ::clove::reflection::TypeInfo info{};                                                                   \
-            info.name   = #classType;                                                                               \
-            info.id     = typeid(classType).hash_code();                                                            \
-            info.size   = sizeof(classType);\
-            ::clove::reflection::internal::populateAttributes<0>(info.attributes, std::make_tuple(__VA_ARGS__));
+#define CLOVE_REFLECT_BEGIN(classType, ...)                                                                                         \
+    template<>                                                                                                                      \
+    struct ::clove::reflection::internal::CreatorHelper<classType> {                                                                \
+        CreatorHelper();                                                                                                            \
+    };                                                                                                                              \
+                                                                                                                                    \
+    inline static ::clove::reflection::internal::CreatorHelper<classType> const INTERNAL_CLOVE_REFLECT_CAT(creator, __COUNTER__){}; \
+                                                                                                                                    \
+    ::clove::reflection::internal::CreatorHelper<classType>::CreatorHelper() {                                                      \
+        using Type = classType;                                                                                                     \
+        ::clove::reflection::TypeInfo info{};                                                                                       \
+        info.name = #classType;                                                                                                     \
+        info.id   = typeid(classType).hash_code();                                                                                  \
+        info.size = sizeof(classType);                                                                                              \
+        ::clove::reflection::internal::populateAttributes<0>(info.attributes, std::make_tuple(__VA_ARGS__));
 
 #define CLOVE_REFLECT_MEMBER(member, ...)                                                                          \
     {                                                                                                              \
@@ -158,13 +162,12 @@ namespace clove::reflection {
 #define CLOVE_REFLECT_END                                                        \
     ::clove::reflection::internal::Registry::get().addTypeInfo(std::move(info)); \
     }                                                                            \
-    }                                                                            \
     ;
 
 /**
  * @brief Allows reflection of private members within a class.
  */
 #define CLOVE_REFLECT_PRIVATE(classType) \
-    friend struct ::clove::reflection::internal::CreatorHelper;
+    friend struct ::clove::reflection::internal::CreatorHelper<classType>;
 
 #include "Reflection.inl"
