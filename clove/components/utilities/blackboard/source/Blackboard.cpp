@@ -1,33 +1,33 @@
-#include "Clove/BlackBoard.hpp"
+#include "Clove/Blackboard.hpp"
 
 namespace {
     size_t constexpr defaultMemorySize{ 1024 };
 }
 
 namespace clove {
-    BlackBoard::BlackBoard()
-        : BlackBoard(defaultMemorySize) {
+    Blackboard::Blackboard()
+        : Blackboard(defaultMemorySize) {
     }
 
-    BlackBoard::BlackBoard(size_t memorySize)
+    Blackboard::Blackboard(size_t memorySize)
         : memoryBlock(memorySize) {
     }
 
-    BlackBoard::BlackBoard(BlackBoard &&other) noexcept
+    Blackboard::Blackboard(Blackboard &&other) noexcept
         : memoryBlock(std::move(other.memoryBlock)) {
         dataMap = std::move(other.dataMap);
     }
 
-    BlackBoard &BlackBoard::operator=(BlackBoard &&other) noexcept {
+    Blackboard &Blackboard::operator=(Blackboard &&other) noexcept {
         memoryBlock = std::move(other.memoryBlock);
         dataMap     = std::move(other.dataMap);
 
         return *this;
     }
 
-    BlackBoard::~BlackBoard() = default;
+    Blackboard::~Blackboard() = default;
 
-    bool BlackBoard::hasValue(Key key) const {
+    bool Blackboard::hasValue(Key key) const {
         return dataMap.find(key) != dataMap.end();
     }
 }

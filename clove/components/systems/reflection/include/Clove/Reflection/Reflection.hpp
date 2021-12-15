@@ -11,7 +11,7 @@ namespace clove::reflection {
     class AttributeContainer {
         //VARIABLES
     private:
-        BlackBoard attributes{};
+        Blackboard attributes{};
 
         //FUNCTIONS
     public:

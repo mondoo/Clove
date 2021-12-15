@@ -4,7 +4,7 @@ CLOVE_DECLARE_LOG_CATEGORY(CloveBlackboard)
 
 namespace clove {
     template<typename DataType>
-    void BlackBoard::setValue(Key key, DataType value) {
+    void Blackboard::setValue(Key key, DataType value) {
         void *block{ nullptr };
 
         if(!hasValue(key)) {
@@ -26,7 +26,7 @@ namespace clove {
     }
 
     template<typename DataType>
-    std::optional<DataType> BlackBoard::getValue(Key key) const {
+    std::optional<DataType> Blackboard::getValue(Key key) const {
         if(!hasValue(key)) {
             return {};
         }

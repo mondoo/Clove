@@ -10,7 +10,7 @@ namespace clove {
     class BehaviourTree {
         //VARIABLES
     private:
-        BlackBoard blackboard;
+        Blackboard blackboard;
         std::unique_ptr<Task> rootTask;
 
         //FUNCTIONS
@@ -27,7 +27,7 @@ namespace clove {
 
         void setRootTask(std::unique_ptr<Task> task);
 
-        BlackBoard &getBlackBoard();
+        Blackboard &getBlackboard();
 
         void run(DeltaTime deltaTime);
     };

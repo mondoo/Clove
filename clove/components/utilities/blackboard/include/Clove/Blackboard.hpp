@@ -5,7 +5,7 @@
 #include <optional>
 
 namespace clove {
-    class BlackBoard {
+    class Blackboard {
         //TYPES
     public:
         using Key = size_t;
@@ -18,16 +18,16 @@ namespace clove {
 
         //FUNCTIONS
     public:
-        BlackBoard();
-        BlackBoard(size_t memorySize);
+        Blackboard();
+        Blackboard(size_t memorySize);
 
-        BlackBoard(BlackBoard const &other) = delete;
-        BlackBoard(BlackBoard &&other) noexcept;
+        Blackboard(Blackboard const &other) = delete;
+        Blackboard(Blackboard &&other) noexcept;
 
-        BlackBoard &operator=(BlackBoard const &other) = delete;
-        BlackBoard &operator=(BlackBoard &&other) noexcept;
+        Blackboard &operator=(Blackboard const &other) = delete;
+        Blackboard &operator=(Blackboard &&other) noexcept;
 
-        ~BlackBoard();
+        ~Blackboard();
 
         template<typename DataType>
         void setValue(Key key, DataType value);
@@ -37,4 +37,4 @@ namespace clove {
     };
 }
 
-#include "BlackBoard.inl"
+#include "Blackboard.inl"
