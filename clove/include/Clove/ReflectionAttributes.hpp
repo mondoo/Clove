@@ -19,6 +19,7 @@ namespace clove {
         std::optional<std::string> name{}; /**< Name of the class. If not set then will just use the type's name. */
 
         std::function<uint8_t *(Entity, EntityManager &)> onEditorCreateComponent{}; /**< Called when the editor wants to create this component. */
+        std::function<void(Entity, EntityManager &)> onEditorDestroyComponent{};     /**< Called when the editor wants to destroy this component.*/
     };
 
     /**

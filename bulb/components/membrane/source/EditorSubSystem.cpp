@@ -374,10 +374,23 @@ namespace membrane {
             return;
         }
 
-        /*auto message{ gcnew Engine_OnComponentRemoved };
+        std::optional<clove::EditorVisibleComponent> componentAttribute{ typeInfo->attributes.get<clove::EditorVisibleComponent>() };
+        if(!componentAttribute.has_value()) {
+            CLOVE_LOG(Membrane, clove::LogLevel::Error, "Could not get EditorVisibleComponent attribute for {0}", typeName);
+            return;
+        }
+
+        if(componentAttribute->onEditorCreateComponent == nullptr) {
+            CLOVE_LOG(Membrane, clove::LogLevel::Error, "{0} does not provide an implementation for EditorVisibleComponent::onEditorCreateComponent. Cannot remove component", typeName);
+            return;
+        }
+
+        componentAttribute->onEditorDestroyComponent(entity, currentScene.getEntityManager());
+
+        auto message{ gcnew Engine_OnComponentRemoved };
         message->entity        = entity;
         message->componentName = gcnew System::String{ typeName.data() };
-        MessageHandler::sendMessage(message);*/
+        MessageHandler::sendMessage(message);
     }
 
     void EditorSubSystem::updateName(clove::Entity entity, std::string name) {
