@@ -17,69 +17,48 @@ namespace Bulb {
 
         public ICommand RemoveComponentCommand { get; }
 
-        public delegate void ModifyComponentHandler(string componentName, byte[] data);
+        public delegate void ModifyComponentHandler(string componentName, string memberName, string memberValue);
         public ModifyComponentHandler OnModified;
 
         public delegate void RemoveComponentHandler(string typeName);
         public RemoveComponentHandler OnRemoved;
 
-        private byte[] componentData;
-        private Membrane.EditorTypeInfo componentTypeInfo;
+        private readonly Membrane.EditorTypeInfo componentTypeInfo;
 
-        public ComponentViewModel(Membrane.EditorTypeInfo componentTypeInfo, byte[] componentData) {
+        public ComponentViewModel(Membrane.EditorTypeInfo componentTypeInfo) {
             Name = componentTypeInfo.displayName;
             TypeName = componentTypeInfo.typeName;
-            this.componentData = componentData;
             this.componentTypeInfo = componentTypeInfo;
 
             Members = new ObservableCollection<TypeViewModel>();
             foreach (var memberInfo in componentTypeInfo.members) {
-                Members.Add(BuildTypeViewModel(memberInfo, componentData));
+                Members.Add(BuildTypeViewModel(memberInfo));
             }
 
             RemoveComponentCommand = new RelayCommand(() => { OnRemoved?.Invoke(TypeName); });
         }
 
-        private TypeViewModel BuildTypeViewModel(Membrane.EditorTypeInfo typeInfo, byte[] typeMemory) {
+        private TypeViewModel BuildTypeViewModel(Membrane.EditorTypeInfo typeInfo) {
             var members = new List<TypeViewModel>();
-            foreach (var memberInfo in typeInfo.members) {
-                members.Add(BuildTypeViewModel(memberInfo, typeMemory));
+            if (typeInfo.members != null) {
+                foreach (Membrane.EditorTypeInfo memberInfo in typeInfo.members) {
+                    members.Add(BuildTypeViewModel(memberInfo));
+                }
             }
 
             TypeViewModel vm;
-            if (typeInfo.memberInfo != null && members.Count == 0) { //Count == 0 ensures we only do this for leaf members
-                unsafe {
-                    fixed (byte* memPtr = typeMemory) {
-                        //TODO: We know we're using numbers here but what about other types such as strings?
-                        float val;
-                        Buffer.MemoryCopy(memPtr + typeInfo.memberInfo.offset, &val, sizeof(float), typeInfo.memberInfo.size);
-                        
-                        vm = new TypeViewModel(typeInfo.displayName, typeInfo.memberInfo.offset, typeInfo.memberInfo.size, val.ToString());
-                        vm.OnValueChanged += OnValueChanged;
-                    }
-                }
+            if (typeInfo.value != null && members.Count == 0) {
+                vm = new TypeViewModel(typeInfo.displayName, typeInfo.typeName, typeInfo.value);
+                vm.OnValueChanged += OnValueChanged;
             } else {
-                vm = new TypeViewModel(typeInfo.displayName, members);
+                vm = new TypeViewModel(typeInfo.displayName, typeInfo.typeName, members);
             }
 
             return vm;
         }
 
-        private void OnValueChanged(int valueOffset, int valueSize, string value) {
-            //TODO: Only handling numbers for now - other basic types need to be supported
-            unsafe {
-                fixed (byte* memPtr = componentData) {
-                    //TODO: We know we're using numbers here but what about other types such as strings?
-                    if (!float.TryParse(value, out float val)) {
-                        Membrane.Log.write(Membrane.LogLevel.Error, $"Could not parse value \'{value}\' for component \'{Name}\'. Component was not updated");
-                        return;
-                    }
-
-                    Buffer.MemoryCopy(&val, memPtr + valueOffset, valueSize, sizeof(float));
-
-                    OnModified?.Invoke(componentTypeInfo.typeName, componentData);
-                }
-            }
+        private void OnValueChanged(string memberName, string value) {
+            OnModified?.Invoke(componentTypeInfo.typeName, memberName, value);
         }
     }
 }

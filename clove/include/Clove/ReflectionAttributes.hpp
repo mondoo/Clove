@@ -12,6 +12,17 @@ namespace clove {
 }
 
 namespace clove {
+    inline std::string defaultEditorGetValue(void const *const memory, size_t offset, size_t size) {
+        //NOTE: Currently assuming everything using this is a float
+        return { "test" };
+    }
+
+    inline void defaultEditorSetValue(void const *const memory, size_t offset, size_t size, std::string_view value) {
+        //NOTE: Currently assuming everything using this is a float
+    }
+}
+
+namespace clove {
     /**
      * @brief Signifies that this type wants to be displayed in editor as an entity component.
      */
@@ -27,5 +38,8 @@ namespace clove {
      */
     struct EditorEditableMember {
         std::optional<std::string> name{}; /**< Name of the member. If not set then will just use the type's name. */
+
+        std::function<std::string(void const *const, size_t, size_t)> onEditorGetValue{ &defaultEditorGetValue };            /**< Called when the editor retrieves the member. Override for custom serialisation logic. */
+        std::function<void(void const *const, size_t, size_t, std::string_view)> onEditorSetValue{ &defaultEditorSetValue }; /**< Called when the editor writes to the member. Override for custom serialisation logic. */
     };
 }

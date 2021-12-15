@@ -53,7 +53,7 @@ namespace membrane {
         void deleteEntity(clove::Entity entity);
 
         void addComponent(clove::Entity entity, std::string_view typeName);
-        void modifyComponent(clove::Entity entity, std::string_view typeName, array<uint8_t> ^data);
+        void modifyComponent(clove::Entity entity, std::string_view typeName, std::string_view memberName, std::string_view memberValue);
         void removeComponent(clove::Entity entity, std::string_view typeName); 
 
         void updateName(clove::Entity entity, std::string name);

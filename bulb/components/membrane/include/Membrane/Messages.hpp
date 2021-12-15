@@ -3,6 +3,10 @@
 #include "Membrane/MessageBase.hpp"
 
 namespace membrane {
+    ref class EditorTypeInfo;
+}
+
+namespace membrane {
     // clang-format off
     //Types
     public ref struct Component{
@@ -31,7 +35,8 @@ namespace membrane {
     public:
         System::UInt32 entity;
         System::String ^componentName;
-        array<uint8_t> ^data;
+        System::String ^memberName;
+        System::String ^memberValue;
     };
     public ref class Editor_RemoveComponent : public EditorMessage {
     public:
@@ -89,13 +94,13 @@ namespace membrane {
     public:
         System::UInt32 entity;
         System::String ^componentName;
-        array<System::Byte> ^data;
+        EditorTypeInfo ^typeInfo;
     };
     public ref class Engine_OnComponentModified : public EngineMessage {
     public:
         System::UInt32 entity;
         System::String ^componentName;
-        array<System::Byte> ^data;
+        EditorTypeInfo ^typeInfo;
     };
     public ref class Engine_OnComponentRemoved : public EngineMessage {
     public:

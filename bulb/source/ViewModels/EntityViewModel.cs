@@ -59,11 +59,12 @@ namespace Bulb {
             });
         }
 
-        private void ModifyComponent(string typeName, byte[] componentData) {
+        private void ModifyComponent(string componentName, string memberName, string memberValue) {
             Membrane.MessageHandler.sendMessage(new Membrane.Editor_ModifyComponent {
                 entity = EntityId,
-                componentName = typeName,
-                data = componentData
+                componentName = componentName,
+                memberName = memberName,
+                memberValue = memberValue
             });
         }
 
@@ -76,7 +77,7 @@ namespace Bulb {
 
         private void OnComponentCreated(Membrane.Engine_OnComponentAdded message) {
             if (EntityId == message.entity) {
-                var vm = new ComponentViewModel(Membrane.ReflectionHelper.getInfoForType(message.componentName), message.data);
+                var vm = new ComponentViewModel(message.typeInfo);
                 vm.OnModified = ModifyComponent;
                 vm.OnRemoved = RemoveComponent;
 
@@ -107,9 +108,9 @@ namespace Bulb {
 
             ComponentMenuItems.Clear();
 
-            List<Membrane.EditorTypeInfo> types = Membrane.ReflectionHelper.getAvailableTypes();
+            List<Membrane.AvailableTypeInfo> types = Membrane.ReflectionHelper.getAvailableTypes();
 
-            foreach (Membrane.EditorTypeInfo type in types) {
+            foreach (Membrane.AvailableTypeInfo type in types) {
                 if (!entitiesComponents.Contains(type.displayName)) {
                     ComponentMenuItems.Add(new ComponentMenuItemViewModel(type.displayName, new RelayCommand(() => AddComponent(type.typeName))));
                 }

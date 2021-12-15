@@ -4,6 +4,7 @@
 #include "Membrane/MessageHandler.hpp"
 #include "Membrane/Messages.hpp"
 #include "Membrane/NameComponent.hpp"
+#include "Membrane/ReflectionHelper.hpp"
 
 #include <Clove/Application.hpp>
 #include <Clove/Components/CameraComponent.hpp>
@@ -20,6 +21,8 @@
 #include <Clove/ReflectionAttributes.hpp>
 #include <Clove/SubSystems/PhysicsSubSystem.hpp>
 #include <msclr/marshal_cppstd.h>
+
+using namespace clove;
 
 namespace membrane {
     // clang-format off
@@ -75,7 +78,9 @@ namespace membrane {
         void modifyComponent(Editor_ModifyComponent ^ message){
             if (subSystem){
                 System::String ^typeName{ message->componentName };
-                subSystem->modifyComponent(message->entity, msclr::interop::marshal_as<std::string>(typeName), message->data);
+                System::String ^memberName{ message->memberName };
+                System::String ^memberValue{ message->memberValue };
+                subSystem->modifyComponent(message->entity, msclr::interop::marshal_as<std::string>(typeName), msclr::interop::marshal_as<std::string>(memberName), msclr::interop::marshal_as<std::string>(memberValue));
             }
         }
 
@@ -105,6 +110,50 @@ namespace membrane {
             }
         }
     };
+
+    namespace {
+        System::Collections::Generic::List<EditorTypeInfo ^> ^ constructMembers(std::vector<reflection::MemberInfo> const &members, void const *const memory, size_t offsetIntoParent) {
+            auto editorVisibleMemers{ gcnew System::Collections::Generic::List<EditorTypeInfo ^>{} };
+
+            for(auto const &member : members) {
+                if(std::optional<EditorEditableMember> attribute{ member.attributes.get<EditorEditableMember>() }) {
+                    size_t const totalMemberOffset{ offsetIntoParent + member.offset };
+
+                    auto memberInfo{ gcnew EditorTypeInfo{} };
+                    memberInfo->typeName    = gcnew System::String{ member.name.c_str() };
+                    memberInfo->displayName = gcnew System::String{ attribute->name.value_or(member.name).c_str() };
+                    if(reflection::TypeInfo const *memberTypeInfo{ reflection::getTypeInfo(member.id) }) {
+                        memberInfo->members = constructMembers(memberTypeInfo->members, memory, totalMemberOffset);
+                        memberInfo->value   = nullptr;
+                    } else {
+                        memberInfo->members = nullptr;
+
+                        if (attribute->onEditorGetValue != nullptr){
+                            std::string value{ attribute->onEditorGetValue(memory, totalMemberOffset, member.size) };
+                            memberInfo->value = gcnew System::String{ value.c_str() };
+                        } else{
+                            CLOVE_LOG(Membrane, clove::LogLevel::Error, "EditorEditableMember {0} does not provide an implemntation for onEditorGetValue", member.name);
+                        }
+                    }
+
+                    editorVisibleMemers->Add(memberInfo);
+                }
+            }
+
+            return editorVisibleMemers;
+        }
+
+        EditorTypeInfo ^ constructEditorTypeInfo(reflection::TypeInfo const *typeInfo, void const *const memory) {
+            EditorVisibleComponent const visibleAttribute{ typeInfo->attributes.get<EditorVisibleComponent>().value() };
+
+            auto editorTypeInfo{ gcnew EditorTypeInfo{} };
+            editorTypeInfo->typeName    = gcnew System::String{ typeInfo->name.c_str() };
+            editorTypeInfo->displayName = gcnew System::String{ visibleAttribute.name.value_or(typeInfo->name).c_str() };
+            editorTypeInfo->members     = constructMembers(typeInfo->members, memory, 0);
+
+            return editorTypeInfo;
+        }
+    }
     // clang-format on
 }
 
@@ -348,18 +397,12 @@ namespace membrane {
         auto message{ gcnew Engine_OnComponentAdded };
         message->entity        = entity;
         message->componentName = gcnew System::String{ typeName.data() };
-        if(componentMemory != nullptr) {
-            array<System::Byte> ^ componentData = gcnew array<System::Byte>(typeInfo->size);
-            for(size_t i{ 0 }; i < typeInfo->size; ++i) {
-                componentData[i] = componentMemory[i];
-            }
-            message->data = componentData;
-        }
+        message->typeInfo      = constructEditorTypeInfo(typeInfo, componentMemory);
 
         MessageHandler::sendMessage(message);
     }
 
-    void EditorSubSystem::modifyComponent(clove::Entity entity, std::string_view typeName, array<uint8_t> ^ data) {
+    void EditorSubSystem::modifyComponent(clove::Entity entity, std::string_view typeName, std::string_view memberName, std::string_view memberValue) {
         clove::reflection::TypeInfo const *typeInfo{ clove::reflection::getTypeInfo(typeName) };
         if(typeInfo == nullptr) {
             CLOVE_LOG(Membrane, clove::LogLevel::Error, "Could not get typeinfo for {0}", typeName);
@@ -394,8 +437,8 @@ namespace membrane {
     }
 
     void EditorSubSystem::updateName(clove::Entity entity, std::string name) {
-        /*if(currentScene.hasComponent<NameComponent>(entity)) {
-            currentScene.getComponent<NameComponent>(entity).name = std::move(name);
-        }*/
+        if(currentScene.getEntityManager().hasComponent<NameComponent>(entity)) {
+            currentScene.getEntityManager().getComponent<NameComponent>(entity).name = std::move(name);
+        }
     }
 }
