@@ -34,16 +34,7 @@ namespace membrane {
 
         inline std::vector<clove::Entity> getKnownEntities() const;
 
-        template<typename ComponentType, typename... ConstructArgs>
-        ComponentType &addComponent(clove::Entity entity, ConstructArgs &&...args);
-        template<typename ComponentType>
-        ComponentType &getComponent(clove::Entity entity);
-        template<typename ComponentType>
-        bool hasComponent(clove::Entity entity);
-        template<typename ComponentType>
-        void removeComponent(clove::Entity entity);
-
-        inline void destroyAllEntities();
+        inline clove::EntityManager &getEntityManager() const;
     };
 }
 
