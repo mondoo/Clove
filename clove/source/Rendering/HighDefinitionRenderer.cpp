@@ -508,7 +508,7 @@ namespace clove {
             };
             RgPassId directionalShadowPass{ renderGraph.createRenderPass(passDescriptor) };
 
-            for(auto &mesh : meshes) {
+            for(auto const &mesh : meshes) {
                 renderGraph.addRenderSubmission(directionalShadowPass, RgRenderPass::Submission{
                                                                            .vertexBuffer = mesh.vertexBuffer,
                                                                            .indexBuffer  = mesh.indexBuffer,
@@ -572,7 +572,7 @@ namespace clove {
                 };
                 RgPassId pointShadowPass{ renderGraph.createRenderPass(passDescriptor) };
 
-                for(auto &mesh : meshes) {
+                for(auto const &mesh : meshes) {
                     renderGraph.addRenderSubmission(pointShadowPass, RgRenderPass::Submission{
                                                                          .vertexBuffer = mesh.vertexBuffer,
                                                                          .indexBuffer  = mesh.indexBuffer,
@@ -689,7 +689,7 @@ namespace clove {
         };
         RgPassId colourPass{ renderGraph.createRenderPass(passDescriptor) };
 
-        for(auto &mesh : meshes) {
+        for(auto const &mesh : meshes) {
             renderGraph.addRenderSubmission(colourPass, RgRenderPass::Submission{
                                                             .vertexBuffer = mesh.vertexBuffer,
                                                             .indexBuffer  = mesh.indexBuffer,
