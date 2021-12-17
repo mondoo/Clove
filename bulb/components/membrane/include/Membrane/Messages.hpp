@@ -35,8 +35,8 @@ namespace membrane {
     public:
         System::UInt32 entity;
         System::String ^componentName;
-        System::String ^memberName;
-        System::String ^memberValue;
+        System::UInt32 offset;
+        System::String ^value;
     };
     public ref class Editor_RemoveComponent : public EditorMessage {
     public:

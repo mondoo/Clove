@@ -17,7 +17,7 @@ namespace Bulb {
 
         public ICommand RemoveComponentCommand { get; }
 
-        public delegate void ModifyComponentHandler(string componentName, string memberName, string memberValue);
+        public delegate void ModifyComponentHandler(string componentName, uint offset, string value);
         public ModifyComponentHandler OnModified;
 
         public delegate void RemoveComponentHandler(string typeName);
@@ -48,17 +48,17 @@ namespace Bulb {
 
             TypeViewModel vm;
             if (typeInfo.value != null && members.Count == 0) {
-                vm = new TypeViewModel(typeInfo.displayName, typeInfo.typeName, typeInfo.value);
+                vm = new TypeViewModel(typeInfo.displayName, typeInfo.offset, typeInfo.value);
                 vm.OnValueChanged += OnValueChanged;
             } else {
-                vm = new TypeViewModel(typeInfo.displayName, typeInfo.typeName, members);
+                vm = new TypeViewModel(typeInfo.displayName, members);
             }
 
             return vm;
         }
 
-        private void OnValueChanged(string memberName, string value) {
-            OnModified?.Invoke(componentTypeInfo.typeName, memberName, value);
+        private void OnValueChanged(uint offset, string value) {
+            OnModified?.Invoke(componentTypeInfo.typeName, offset, value);
         }
     }
 }

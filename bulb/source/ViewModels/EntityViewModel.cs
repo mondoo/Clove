@@ -59,12 +59,12 @@ namespace Bulb {
             });
         }
 
-        private void ModifyComponent(string componentName, string memberName, string memberValue) {
+        private void ModifyComponent(string componentName, uint offset, string value) {
             Membrane.MessageHandler.sendMessage(new Membrane.Editor_ModifyComponent {
                 entity = EntityId,
                 componentName = componentName,
-                memberName = memberName,
-                memberValue = memberValue
+                offset = offset,
+                value = value
             });
         }
 

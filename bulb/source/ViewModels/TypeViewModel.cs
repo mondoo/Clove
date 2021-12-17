@@ -18,7 +18,7 @@ namespace Bulb {
                 OnPropertyChanged(nameof(Value));
 
                 if (value.Length != 0) {
-                    OnValueChanged?.Invoke(typeName, this.value);
+                    OnValueChanged?.Invoke(offsetIntoParent, this.value);
                 }
             }
         }
@@ -28,23 +28,22 @@ namespace Bulb {
         public ObservableCollection<TypeViewModel> Members { get; }
         public Visibility MembersVisibility { get; }
 
-        public delegate void ValueChangedHandler(string name, string value);
+        public delegate void ValueChangedHandler(uint offset, string value);
         public ValueChangedHandler OnValueChanged;
 
-        private readonly string typeName;
+        private readonly uint offsetIntoParent;
 
-        public TypeViewModel(string displayName, string typeName, List<TypeViewModel> members) {
+        public TypeViewModel(string displayName, List<TypeViewModel> members) {
             Name = displayName;
-            this.typeName = typeName;
             Members = new ObservableCollection<TypeViewModel>(members);
 
             MembersVisibility = Visibility.Visible;
             ValueVisibility = Visibility.Collapsed;
         }
 
-        public TypeViewModel(string displayName, string typeName, string value) {
+        public TypeViewModel(string displayName, uint offset, string value) {
             Name = displayName;
-            this.typeName = typeName;
+            offsetIntoParent = offset;
             this.value = value; //Bypass property to prevent delegate being fired.
 
             MembersVisibility = Visibility.Collapsed;

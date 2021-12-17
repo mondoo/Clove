@@ -78,9 +78,8 @@ namespace membrane {
         void modifyComponent(Editor_ModifyComponent ^ message){
             if (subSystem){
                 System::String ^typeName{ message->componentName };
-                System::String ^memberName{ message->memberName };
-                System::String ^memberValue{ message->memberValue };
-                subSystem->modifyComponent(message->entity, msclr::interop::marshal_as<std::string>(typeName), msclr::interop::marshal_as<std::string>(memberName), msclr::interop::marshal_as<std::string>(memberValue));
+                System::String ^memberValue{ message->value };
+                subSystem->modifyComponent(message->entity, msclr::interop::marshal_as<std::string>(typeName), message->offset, msclr::interop::marshal_as<std::string>(memberValue));
             }
         }
 
@@ -122,6 +121,7 @@ namespace membrane {
                     auto memberInfo{ gcnew EditorTypeInfo{} };
                     memberInfo->typeName    = gcnew System::String{ member.name.c_str() };
                     memberInfo->displayName = gcnew System::String{ attribute->name.value_or(member.name).c_str() };
+                    memberInfo->offset      = totalMemberOffset;
                     if(reflection::TypeInfo const *memberTypeInfo{ reflection::getTypeInfo(member.id) }) {
                         memberInfo->members = constructMembers(memberTypeInfo->members, memory, totalMemberOffset);
                         memberInfo->value   = nullptr;
@@ -152,6 +152,21 @@ namespace membrane {
             editorTypeInfo->members     = constructMembers(typeInfo->members, memory, 0);
 
             return editorTypeInfo;
+        }
+
+        void modifyComponentMember(uint8_t *const memory, clove::reflection::TypeInfo const *typeInfo, std::string_view value, size_t const requiredOffset, size_t currentOffset){
+            for (auto const& member : typeInfo->members){
+                if(std::optional<EditorEditableMember> attribute{ member.attributes.get<EditorEditableMember>() }) {
+                    size_t const totalMemberOffset{ currentOffset + member.offset };
+                    reflection::TypeInfo const *memberTypeInfo{ reflection::getTypeInfo(member.id) };
+
+                    if (memberTypeInfo != nullptr){
+                        modifyComponentMember(memory, memberTypeInfo, value, requiredOffset, totalMemberOffset);
+                    } else if (totalMemberOffset == requiredOffset){
+                        attribute->onEditorSetValue(memory, totalMemberOffset, member.size, value);
+                    }
+                }
+            }
         }
     }
     // clang-format on
@@ -402,12 +417,28 @@ namespace membrane {
         MessageHandler::sendMessage(message);
     }
 
-    void EditorSubSystem::modifyComponent(clove::Entity entity, std::string_view typeName, std::string_view memberName, std::string_view memberValue) {
+    void EditorSubSystem::modifyComponent(clove::Entity entity, std::string_view typeName, size_t offset, std::string_view value) {
         clove::reflection::TypeInfo const *typeInfo{ clove::reflection::getTypeInfo(typeName) };
         if(typeInfo == nullptr) {
             CLOVE_LOG(Membrane, clove::LogLevel::Error, "Could not get typeinfo for {0}", typeName);
             return;
         }
+
+        std::optional<clove::EditorVisibleComponent> componentAttribute{ typeInfo->attributes.get<clove::EditorVisibleComponent>() };
+        if(!componentAttribute.has_value()) {
+            CLOVE_LOG(Membrane, clove::LogLevel::Error, "Could not get EditorVisibleComponent attribute for {0}", typeName);
+            return;
+        }
+
+        if(componentAttribute->onEditorGetComponent == nullptr) {
+            CLOVE_LOG(Membrane, clove::LogLevel::Error, "{0} does not provide an implementation for EditorVisibleComponent::onEditorGetComponent. Cannot modify component", typeName);
+            return;
+        }
+
+        uint8_t *componentMemory{ componentAttribute->onEditorCreateComponent(entity, currentScene.getEntityManager()) };
+
+        size_t startingOffset{ 0 };
+        modifyComponentMember(componentMemory, typeInfo, value, offset, startingOffset);
     }
 
     void EditorSubSystem::removeComponent(clove::Entity entity, std::string_view typeName) {
