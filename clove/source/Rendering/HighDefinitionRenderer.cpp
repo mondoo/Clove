@@ -20,29 +20,30 @@
 extern "C" const char constants[];
 extern "C" const size_t constantsLength;
 
-extern "C" const char skinning_c[];
-extern "C" const size_t skinning_cLength;
+extern "C" const char skinningcompute[];
+extern "C" const size_t skinningcomputeLength;
 
-extern "C" const char meshshadowmap_v[];
-extern "C" const size_t meshshadowmap_vLength;
-extern "C" const char meshshadowmap_p[];
-extern "C" const size_t meshshadowmap_pLength;
-extern "C" const char meshcubeshadowmap_v[];
-extern "C" const size_t meshcubeshadowmap_vLength;
-extern "C" const char meshcubeshadowmap_p[];
-extern "C" const size_t meshcubeshadowmap_pLength;
+extern "C" const char dirshadowdepthsvert[];
+extern "C" const size_t dirshadowdepthsvertLength;
+extern "C" const char dirshadowdepthspixel[];
+extern "C" const size_t dirshadowdepthspixelLength;
 
-extern "C" const char mesh_v[];
-extern "C" const size_t mesh_vLength;
-extern "C" const char mesh_p[];
-extern "C" const size_t mesh_pLength;
+extern "C" const char pointshadowdepthsvert[];
+extern "C" const size_t pointshadowdepthsvertLength;
+extern "C" const char pointshadowdepthspixel[];
+extern "C" const size_t pointshadowdepthspixelLength;
 
-extern "C" const char ui_v[];
-extern "C" const size_t ui_vLength;
-extern "C" const char widget_p[];
-extern "C" const size_t widget_pLength;
-extern "C" const char font_p[];
-extern "C" const size_t font_pLength;
+extern "C" const char forwardpassvert[];
+extern "C" const size_t forwardpassvertLength;
+extern "C" const char forwardpasspixel[];
+extern "C" const size_t forwardpasspixelLength;
+
+extern "C" const char uivert[];
+extern "C" const size_t uivertLength;
+extern "C" const char widgetpixel[];
+extern "C" const size_t widgetpixelLength;
+extern "C" const char fontpixel[];
+extern "C" const size_t fontpixelLength;
 
 namespace clove {
     HighDefinitionRenderer::HighDefinitionRenderer(GhaDevice *ghaDevice, std::unique_ptr<RenderTarget> renderTarget)
@@ -262,8 +263,8 @@ namespace clove {
         shaderIncludes["Constants.glsl"] = { constants, constantsLength };
 
         RgRenderPass::Descriptor uiPassDescriptor{
-            .vertexShader     = renderGraph.createShader({ ui_v, ui_vLength }, shaderIncludes, "UI (vertex)", GhaShader::Stage::Vertex),
-            .pixelShader      = renderGraph.createShader({ widget_p, widget_pLength }, shaderIncludes, "Widget (pixel)", GhaShader::Stage::Pixel),
+            .vertexShader     = renderGraph.createShader({ uivert, uivertLength }, shaderIncludes, "UI (vertex)", GhaShader::Stage::Vertex),
+            .pixelShader      = renderGraph.createShader({ widgetpixel, widgetpixelLength }, shaderIncludes, "Widget (pixel)", GhaShader::Stage::Pixel),
             .vertexInput      = Vertex::getInputBindingDescriptor(),
             .vertexAttributes = {
                 VertexAttributeDescriptor{
@@ -340,7 +341,7 @@ namespace clove {
         }
 
         if(!currentFrameData.text.empty()) {
-            uiPassDescriptor.pixelShader = renderGraph.createShader({ font_p, font_pLength }, shaderIncludes, "Font (pixel)", GhaShader::Stage::Pixel);
+            uiPassDescriptor.pixelShader = renderGraph.createShader({ fontpixel, fontpixelLength }, shaderIncludes, "Font (pixel)", GhaShader::Stage::Pixel);
             RgPassId textPass{ renderGraph.createRenderPass(uiPassDescriptor) };
 
             for(size_t index{ 0 }; auto &&[texture, modelProj] : currentFrameData.text) {
@@ -422,7 +423,7 @@ namespace clove {
 
     void HighDefinitionRenderer::skinMeshes(RenderGraph &renderGraph, std::vector<RenderGraphMeshInfo> &meshes) {
         RgComputePass::Descriptor passDescriptor{
-            .shader = renderGraph.createShader({ skinning_c, skinning_cLength }, shaderIncludes, "Mesh skinner (compute)", GhaShader::Stage::Compute),
+            .shader = renderGraph.createShader({ skinningcompute, skinningcomputeLength }, shaderIncludes, "Mesh skinner (compute)", GhaShader::Stage::Compute),
         };
         RgPassId skinningPass{ renderGraph.createComputePass(passDescriptor) };
 
@@ -485,8 +486,8 @@ namespace clove {
 
             //NOTE: Need this as a separate thing otherwise there is an internal compiler error. I think it's because of the clearValue variant
             RgRenderPass::Descriptor passDescriptor{
-                .vertexShader     = renderGraph.createShader({ meshshadowmap_v, meshshadowmap_vLength }, shaderIncludes, "Mesh shadow map (vertex)", GhaShader::Stage::Vertex),
-                .pixelShader      = renderGraph.createShader({ meshshadowmap_p, meshshadowmap_pLength }, shaderIncludes, "Mesh shadow map (pixel)", GhaShader::Stage::Pixel),
+                .vertexShader     = renderGraph.createShader({ dirshadowdepthsvert, dirshadowdepthsvertLength }, shaderIncludes, "Mesh shadow map (vertex)", GhaShader::Stage::Vertex),
+                .pixelShader      = renderGraph.createShader({ dirshadowdepthspixel, dirshadowdepthspixelLength }, shaderIncludes, "Mesh shadow map (pixel)", GhaShader::Stage::Pixel),
                 .vertexInput      = Vertex::getInputBindingDescriptor(),
                 .vertexAttributes = {
                     VertexAttributeDescriptor{
@@ -549,8 +550,8 @@ namespace clove {
                 renderGraph.writeToBuffer(lightSpaceBuffer, &currentFrameData.pointShadowTransforms[i][j], 0, sizeof(mat4f));
 
                 RgRenderPass::Descriptor passDescriptor{
-                    .vertexShader     = renderGraph.createShader({ meshcubeshadowmap_v, meshcubeshadowmap_vLength }, shaderIncludes, "Mesh cube shadow map (vertex)", GhaShader::Stage::Vertex),
-                    .pixelShader      = renderGraph.createShader({ meshcubeshadowmap_p, meshcubeshadowmap_pLength }, shaderIncludes, "Mesh cube shadow map (pixel)", GhaShader::Stage::Pixel),
+                    .vertexShader     = renderGraph.createShader({ pointshadowdepthsvert, pointshadowdepthsvertLength }, shaderIncludes, "Mesh cube shadow map (vertex)", GhaShader::Stage::Vertex),
+                    .pixelShader      = renderGraph.createShader({ pointshadowdepthspixel, pointshadowdepthspixelLength }, shaderIncludes, "Mesh cube shadow map (pixel)", GhaShader::Stage::Pixel),
                     .vertexInput      = Vertex::getInputBindingDescriptor(),
                     .vertexAttributes = {
                         VertexAttributeDescriptor{
@@ -645,8 +646,8 @@ namespace clove {
 
         //NOTE: Need this as a separate thing otherwise there is an internal compiler error. I think it's because of the clearValue variant
         RgRenderPass::Descriptor passDescriptor{
-            .vertexShader     = renderGraph.createShader({ mesh_v, mesh_vLength }, shaderIncludes, "Mesh (vertex)", GhaShader::Stage::Vertex),
-            .pixelShader      = renderGraph.createShader({ mesh_p, mesh_pLength }, shaderIncludes, "Mesh (pixel)", GhaShader::Stage::Pixel),
+            .vertexShader     = renderGraph.createShader({ forwardpassvert, forwardpassvertLength }, shaderIncludes, "Mesh (vertex)", GhaShader::Stage::Vertex),
+            .pixelShader      = renderGraph.createShader({ forwardpasspixel, forwardpasspixelLength }, shaderIncludes, "Mesh (pixel)", GhaShader::Stage::Pixel),
             .vertexInput      = Vertex::getInputBindingDescriptor(),
             .vertexAttributes = {
                 VertexAttributeDescriptor{
