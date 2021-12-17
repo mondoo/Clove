@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Clove/Rendering/Techniques/Technique.hpp"
-
 #include <filesystem>
 #include <memory>
 #include <vector>
@@ -19,13 +17,10 @@ namespace clove {
     private:
         std::vector<std::shared_ptr<Mesh>> meshes;
 
-        std::vector<Technique> techniques{};
-
         //FUNCTIONS
     public:
         StaticModel() = delete;
         StaticModel(std::vector<std::shared_ptr<Mesh>> meshes);
-        StaticModel(std::vector<std::shared_ptr<Mesh>> meshes, std::vector<Technique> renderingTechniques);
 
         StaticModel(StaticModel const &other);
         StaticModel(StaticModel &&other) noexcept;
@@ -36,11 +31,6 @@ namespace clove {
         ~StaticModel();
 
         inline std::vector<std::shared_ptr<Mesh>> const &getMeshes() const;
-
-        inline std::vector<Technique> const &getTechniques() const;
-
-        inline void addTechnique(Technique technique);
-        inline void removeTechnique(Technique const &technique);
 
         inline std::shared_ptr<Mesh> &operator[](size_t index);
     };

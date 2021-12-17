@@ -180,21 +180,6 @@ add_library(
 		${INCLUDE}/Rendering/RenderGraph/RgTransferPass.inl
 		${SOURCE}/Rendering/RenderGraph/RgTransferPass.cpp
 		
-		${INCLUDE}/Rendering/RenderPasses/ForwardColourPass.hpp
-		${SOURCE}/Rendering/RenderPasses/ForwardColourPass.cpp
-		${INCLUDE}/Rendering/RenderPasses/DirectionalLightPass.hpp
-		${SOURCE}/Rendering/RenderPasses/DirectionalLightPass.cpp
-		${INCLUDE}/Rendering/RenderPasses/GeometryPass.hpp
-		${INCLUDE}/Rendering/RenderPasses/GeometryPass.inl
-		${SOURCE}/Rendering/RenderPasses/GeometryPass.cpp
-		${INCLUDE}/Rendering/RenderPasses/PointLightPass.hpp
-		${SOURCE}/Rendering/RenderPasses/PointLightPass.cpp
-		${INCLUDE}/Rendering/RenderPasses/SkinningPass.hpp
-		${SOURCE}/Rendering/RenderPasses/SkinningPass.cpp
-		${INCLUDE}/Rendering/Techniques/ForwardLightingTechnique.hpp
-		${SOURCE}/Rendering/Techniques/ForwardLightingTechnique.cpp
-		${INCLUDE}/Rendering/Techniques/Technique.hpp
-
 		${INCLUDE}/SubSystems/AudioSubSystem.hpp
 		${SOURCE}/SubSystems/AudioSubSystem.cpp
 		${INCLUDE}/SubSystems/PhysicsSubSystem.hpp
