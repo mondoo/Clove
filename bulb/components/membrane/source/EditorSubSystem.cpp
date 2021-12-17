@@ -129,7 +129,7 @@ namespace membrane {
                         memberInfo->members = nullptr;
 
                         if (attribute->onEditorGetValue != nullptr){
-                            std::string value{ attribute->onEditorGetValue(memory, totalMemberOffset, member.size) };
+                            std::string value{ attribute->onEditorGetValue(reinterpret_cast<uint8_t const *const>(memory), totalMemberOffset, member.size) };
                             memberInfo->value = gcnew System::String{ value.c_str() };
                         } else{
                             CLOVE_LOG(Membrane, clove::LogLevel::Error, "EditorEditableMember {0} does not provide an implemntation for onEditorGetValue", member.name);

@@ -12,9 +12,12 @@ namespace clove {
 }
 
 namespace clove {
-    inline std::string defaultEditorGetValue(void const *const memory, size_t offset, size_t size) {
+    inline std::string defaultEditorGetValue(uint8_t const *const memory, size_t offset, size_t size) {
         //NOTE: Currently assuming everything using this is a float
-        return { "test" };
+        CLOVE_ASSERT(size == sizeof(float));
+
+        float const value{ *reinterpret_cast<float const *const>(memory + offset) };
+        return std::to_string(value);
     }
 
     inline void defaultEditorSetValue(void const *const memory, size_t offset, size_t size, std::string_view value) {
@@ -39,7 +42,7 @@ namespace clove {
     struct EditorEditableMember {
         std::optional<std::string> name{}; /**< Name of the member. If not set then will just use the type's name. */
 
-        std::function<std::string(void const *const, size_t, size_t)> onEditorGetValue{ &defaultEditorGetValue };            /**< Called when the editor retrieves the member. Override for custom serialisation logic. */
+        std::function<std::string(uint8_t const *const, size_t, size_t)> onEditorGetValue{ &defaultEditorGetValue };            /**< Called when the editor retrieves the member. Override for custom serialisation logic. */
         std::function<void(void const *const, size_t, size_t, std::string_view)> onEditorSetValue{ &defaultEditorSetValue }; /**< Called when the editor writes to the member. Override for custom serialisation logic. */
     };
 }
