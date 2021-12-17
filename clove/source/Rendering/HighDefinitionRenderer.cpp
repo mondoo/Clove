@@ -4,10 +4,6 @@
 #include "Clove/Rendering/Camera.hpp"
 #include "Clove/Rendering/Material.hpp"
 #include "Clove/Rendering/RenderGraph/RenderGraph.hpp"
-#include "Clove/Rendering/RenderPasses/DirectionalLightPass.hpp"
-#include "Clove/Rendering/RenderPasses/ForwardColourPass.hpp"
-#include "Clove/Rendering/RenderPasses/PointLightPass.hpp"
-#include "Clove/Rendering/RenderPasses/SkinningPass.hpp"
 #include "Clove/Rendering/RenderTarget.hpp"
 #include "Clove/Rendering/Renderables/Mesh.hpp"
 #include "Clove/Rendering/RenderingHelpers.hpp"
@@ -24,12 +20,30 @@
 extern "C" const char constants[];
 extern "C" const size_t constantsLength;
 
-extern "C" const char ui_v[];
-extern "C" const size_t ui_vLength;
-extern "C" const char widget_p[];
-extern "C" const size_t widget_pLength;
-extern "C" const char font_p[];
-extern "C" const size_t font_pLength;
+extern "C" const char skinningcompute[];
+extern "C" const size_t skinningcomputeLength;
+
+extern "C" const char dirshadowdepthsvert[];
+extern "C" const size_t dirshadowdepthsvertLength;
+extern "C" const char dirshadowdepthspixel[];
+extern "C" const size_t dirshadowdepthspixelLength;
+
+extern "C" const char pointshadowdepthsvert[];
+extern "C" const size_t pointshadowdepthsvertLength;
+extern "C" const char pointshadowdepthspixel[];
+extern "C" const size_t pointshadowdepthspixelLength;
+
+extern "C" const char forwardpassvert[];
+extern "C" const size_t forwardpassvertLength;
+extern "C" const char forwardpasspixel[];
+extern "C" const size_t forwardpasspixelLength;
+
+extern "C" const char uivert[];
+extern "C" const size_t uivertLength;
+extern "C" const char widgetpixel[];
+extern "C" const size_t widgetpixelLength;
+extern "C" const char fontpixel[];
+extern "C" const size_t fontpixelLength;
 
 namespace clove {
     HighDefinitionRenderer::HighDefinitionRenderer(GhaDevice *ghaDevice, std::unique_ptr<RenderTarget> renderTarget)
@@ -55,6 +69,8 @@ namespace clove {
             frameCaches.emplace_back(ghaFactory, graphicsQueue.get(), computeQueue.get(), transferQueue.get());
         }
 
+        shaderIncludes["Constants.glsl"] = { constants, constantsLength };
+
         renderTargetPropertyChangedBeginHandle = this->renderTarget->onPropertiesChangedBegin.bind(&HighDefinitionRenderer::resetGraphCaches, this);
 
         //Create semaphores for frame synchronisation
@@ -72,12 +88,6 @@ namespace clove {
         for(auto &fence : framesInFlight) {
             fence = ghaFactory->createFence({ true }).getValue();
         }
-
-        //Create the geometry passes this renderer supports
-        geometryPasses.push_back(std::make_unique<SkinningPass>());//NOTE: This needs to be first (or early) as it modifies the vertex buffer.
-        geometryPasses.push_back(std::make_unique<ForwardColourPass>());
-        geometryPasses.push_back(std::make_unique<DirectionalLightPass>());
-        geometryPasses.push_back(std::make_unique<PointLightPass>());
 
         std::vector<Vertex> const uiVertices{
             Vertex{
@@ -127,10 +137,6 @@ namespace clove {
 
         currentFrameData.numLights.numDirectional = 0;
         currentFrameData.numLights.numPoint       = 0;
-
-        for(auto &pass : geometryPasses) {
-            pass->flushJobs();
-        }
     }
 
     void HighDefinitionRenderer::submitMesh(MeshInfo meshInfo) {
@@ -186,94 +192,18 @@ namespace clove {
 
         framesInFlight[currentFrame]->reset();
 
-        size_t const minUboOffsetAlignment{ ghaDevice->getLimits().minUniformBufferOffsetAlignment };
-
-        //Build the render graph
         RenderGraph renderGraph{ frameCaches[imageIndex], globalCache };
 
         RgImageId renderTargetImage{ renderGraph.createImage(renderTarget->getImages()[imageIndex]) };
+        RgImageId depthTargetImage{ renderGraph.createImage(GhaImage::Type::_2D, GhaImage::Format::D32_SFLOAT, renderTarget->getSize()) };// TODO: This will probably be a manually created image.
         renderGraph.registerGraphOutput(renderTargetImage);
 
-        RgImageId depthTargetImage{ renderGraph.createImage(GhaImage::Type::_2D, GhaImage::Format::D32_SFLOAT, renderTarget->getSize()) };// TODO: This will probably be a manually created image.
-
-        //Shadows
-        std::vector<RgBufferId> directionalLightSpaceBuffers{};
-
-        directionalLightSpaceBuffers.reserve(currentFrameData.numLights.numDirectional);
-        for(int32_t i{ 0 }; i < currentFrameData.numLights.numDirectional; ++i) {
-            RgBufferId lightSpaceBuffer{ renderGraph.createBuffer(sizeof(mat4f)) };
-            renderGraph.writeToBuffer(lightSpaceBuffer, &currentFrameData.directionalShadowTransforms[i], 0, sizeof(mat4f));
-            directionalLightSpaceBuffers.push_back(lightSpaceBuffer);
-        }
-
-        std::vector<RgBufferId> pointLightSpaceBuffers{};
-        std::vector<RgBufferId> pointLightBuffers{};
-        size_t pointLightBufferSize{ sizeof(vec3f) + sizeof(float) };
-
-        uint32_t constexpr cubeFaces{ 6 };
-        pointLightSpaceBuffers.reserve(currentFrameData.numLights.numPoint * cubeFaces);
-        pointLightBuffers.reserve(currentFrameData.numLights.numPoint);
-        for(int32_t i{ 0 }; i < currentFrameData.numLights.numPoint; ++i) {
-            struct {
-                vec3f pos{};
-                float farPlane{};
-            } const lightData{
-                .pos      = currentFrameData.lights.pointLights[i].position,
-                .farPlane = currentFrameData.lights.pointLights[i].farPlane,
-            };
-            RgBufferId lightBuffer{ renderGraph.createBuffer(sizeof(lightData)) };
-            renderGraph.writeToBuffer(lightBuffer, &lightData, 0, sizeof(lightData));
-            pointLightBuffers.push_back(lightBuffer);
-
-            for(int32_t j{ 0 }; j < cubeFaces; ++j) {
-                RgBufferId lightSpaceBuffer{ renderGraph.createBuffer(sizeof(mat4f)) };
-                renderGraph.writeToBuffer(lightSpaceBuffer, &currentFrameData.pointShadowTransforms[i][j], 0, sizeof(mat4f));
-                pointLightSpaceBuffers.push_back(lightSpaceBuffer);
-            }
-        }
-
-        RgImageId directionalShadowMap{ renderGraph.createImage(GhaImage::Type::_2D, GhaImage::Format::D32_SFLOAT, { shadowMapSize, shadowMapSize }, MAX_LIGHTS) };
-        RgImageId pointShadowMap{ renderGraph.createImage(GhaImage::Type::Cube, GhaImage::Format::D32_SFLOAT, { shadowMapSize, shadowMapSize }, MAX_LIGHTS) };
-        RgSampler shadowMaplSampler{ renderGraph.createSampler(GhaSampler::Descriptor{
-            .minFilter        = GhaSampler::Filter::Linear,
-            .magFilter        = GhaSampler::Filter::Linear,
-            .addressModeU     = GhaSampler::AddressMode::ClampToBorder,
-            .addressModeV     = GhaSampler::AddressMode::ClampToBorder,
-            .addressModeW     = GhaSampler::AddressMode::ClampToBorder,
-            .enableAnisotropy = false,
-        }) };
-
-        //View uniform buffer
-        size_t const viewDataSize{ sizeof(currentFrameData.viewData) };
-        size_t const viewPositionSize{ sizeof(currentFrameData.viewPosition) };
-
-        size_t const viewDataOffset{ 0 };
-        size_t const viewPositionOffset{ viewDataOffset + viewDataSize + (minUboOffsetAlignment - ((viewDataOffset + viewDataSize) % minUboOffsetAlignment)) };
-
-        RgBufferId viewUniformBuffer{ renderGraph.createBuffer(viewPositionOffset + viewPositionSize) };
-
-        renderGraph.writeToBuffer(viewUniformBuffer, &currentFrameData.viewData, viewDataOffset, viewDataSize);
-        renderGraph.writeToBuffer(viewUniformBuffer, &currentFrameData.viewPosition, viewPositionOffset, viewPositionSize);
-
-        //Lights uniform buffer
-        size_t const numLightsSize{ sizeof(currentFrameData.numLights) };
-        size_t const dirShadowTransformsSize{ sizeof(currentFrameData.directionalShadowTransforms) };
-        size_t const lightsSize{ sizeof(currentFrameData.lights) };
-
-        size_t const numLightsOffset{ 0 };
-        size_t const dirShadowTransformsOffset{ numLightsOffset + numLightsSize + (minUboOffsetAlignment - ((numLightsOffset + numLightsSize) % minUboOffsetAlignment)) };
-        size_t const lightsOffset{ dirShadowTransformsOffset + dirShadowTransformsSize + (minUboOffsetAlignment - ((dirShadowTransformsOffset + dirShadowTransformsSize) % minUboOffsetAlignment)) };
-
-        RgBufferId lightsUniformBuffer{ renderGraph.createBuffer(lightsOffset + lightsSize) };
-
-        renderGraph.writeToBuffer(lightsUniformBuffer, &currentFrameData.numLights, numLightsOffset, numLightsSize);
-        renderGraph.writeToBuffer(lightsUniformBuffer, &currentFrameData.directionalShadowTransforms, dirShadowTransformsOffset, dirShadowTransformsSize);
-        renderGraph.writeToBuffer(lightsUniformBuffer, &currentFrameData.lights, lightsOffset, lightsSize);
-
-        //Job info
-        std::vector<GeometryPass::Job> geometryJobs{ currentFrameData.meshes.size() };
+        //Mesh info
         float constexpr anisotropy{ 16.0f };
-        for(size_t i{ 0 }; auto const &meshInfo : currentFrameData.meshes) {
+
+        std::vector<RenderGraphMeshInfo> renderGraphMeshes{};
+        for(size_t i{ 0 }; i < currentFrameData.meshes.size(); ++i) {
+            auto const &meshInfo{ currentFrameData.meshes[i] };
             auto const &mesh{ meshInfo.mesh };
 
             //Uniforms
@@ -305,68 +235,27 @@ namespace clove {
                 .maxAnisotropy    = anisotropy,
             }) };
 
-            //Animation
-            size_t const matrixPaletteSize{ sizeof(mat4f) * MAX_JOINTS };
-            RgBufferId matrixPalette{ renderGraph.createBuffer(matrixPaletteSize) };
-            renderGraph.writeToBuffer(matrixPalette, meshInfo.matrixPalet.data(), 0, matrixPaletteSize);
-
-            geometryJobs[i] = GeometryPass::Job{
-                .vertexBuffer      = renderGraph.createBuffer(mesh->getCombinedBuffer(), mesh->getVertexOffset(), mesh->getVertexBufferSize()),
-                .indexBuffer       = renderGraph.createBuffer(mesh->getCombinedBuffer(), mesh->getIndexOffset(), mesh->getIndexBufferSize()),
-                .vertexCount       = mesh->getVertexCount(),
-                .indexCount        = mesh->getIndexCount(),
-                .vertexBufferSize  = mesh->getVertexBufferSize(),
-                .modelBuffer       = modelBuffer,
-                .colourBuffer      = colourBuffer,
-                .modelBufferSize   = modelBufferSize,
-                .colourBufferSize  = colourBufferSize,
-                .diffuseTexture    = diffuseTexture,
-                .specularTexture   = specularTexture,
-                .materialSampler   = materialSampler,
-                .matrixPalette     = matrixPalette,
-                .matrixPaletteSize = matrixPaletteSize,
-            };
-
-            for(auto &pass : geometryPasses) {
-                if(meshInfo.geometryPassIds.contains(pass->getId())) {
-                    pass->addJob(&geometryJobs[i]);
-                }
-            }
-
-            ++i;
+            renderGraphMeshes.emplace_back(RenderGraphMeshInfo{
+                .meshIndex        = i,
+                .vertexBuffer     = renderGraph.createBuffer(mesh->getCombinedBuffer(), mesh->getVertexOffset(), mesh->getVertexBufferSize()),
+                .indexBuffer      = renderGraph.createBuffer(mesh->getCombinedBuffer(), mesh->getIndexOffset(), mesh->getIndexBufferSize()),
+                .vertexCount      = mesh->getVertexCount(),
+                .indexCount       = mesh->getIndexCount(),
+                .vertexBufferSize = mesh->getVertexBufferSize(),
+                .modelBuffer      = modelBuffer,
+                .colourBuffer     = colourBuffer,
+                .modelBufferSize  = modelBufferSize,
+                .colourBufferSize = colourBufferSize,
+                .diffuseTexture   = diffuseTexture,
+                .specularTexture  = specularTexture,
+                .materialSampler  = materialSampler,
+            });
         }
 
         //Execute passes
-        GeometryPass::PassData const passData{
-            .renderTarget                 = renderTargetImage,
-            .depthTarget                  = depthTargetImage,
-            .renderTargetSize             = renderTarget->getSize(),
-            .directionalShadowMap         = directionalShadowMap,
-            .pointShadowMap               = pointShadowMap,
-            .shadowMaplSampler            = shadowMaplSampler,
-            .directionalLightCount        = currentFrameData.numLights.numDirectional,
-            .pointLightCount              = currentFrameData.numLights.numPoint,
-            .directionalLightSpaceBuffers = std::move(directionalLightSpaceBuffers),
-            .pointLightSpaceBuffers       = std::move(pointLightSpaceBuffers),
-            .pointLightBuffers            = std::move(pointLightBuffers),
-            .pointLightBufferSize         = pointLightBufferSize,
-            .viewUniformBuffer            = viewUniformBuffer,
-            .viewDataSize                 = viewDataSize,
-            .viewPositionSize             = viewPositionSize,
-            .viewDataOffset               = viewDataOffset,
-            .viewPositionOffset           = viewPositionOffset,
-            .lightsUniformBuffer          = lightsUniformBuffer,
-            .numLightsSize                = numLightsSize,
-            .dirShadowTransformsSize      = dirShadowTransformsSize,
-            .lightsSize                   = lightsSize,
-            .numLightsOffset              = numLightsOffset,
-            .dirShadowTransformsOffset    = dirShadowTransformsOffset,
-            .lightsOffset                 = lightsOffset,
-        };
-
-        for(auto &pass : geometryPasses) {
-            pass->execute(renderGraph, passData);
-        }
+        skinMeshes(renderGraph, renderGraphMeshes);
+        RenderGraphShadowMaps const shadowMaps{ renderShadowDepths(renderGraph, renderGraphMeshes) };
+        renderSene(renderGraph, renderGraphMeshes, shadowMaps, renderTargetImage, depthTargetImage);
 
         //Execute UI work
         //TODO: Cache instead of making every frame
@@ -374,8 +263,8 @@ namespace clove {
         shaderIncludes["Constants.glsl"] = { constants, constantsLength };
 
         RgRenderPass::Descriptor uiPassDescriptor{
-            .vertexShader     = renderGraph.createShader({ ui_v, ui_vLength }, shaderIncludes, "UI (vertex)", GhaShader::Stage::Vertex),
-            .pixelShader      = renderGraph.createShader({ widget_p, widget_pLength }, shaderIncludes, "Widget (pixel)", GhaShader::Stage::Pixel),
+            .vertexShader     = renderGraph.createShader({ uivert, uivertLength }, shaderIncludes, "UI (vertex)", GhaShader::Stage::Vertex),
+            .pixelShader      = renderGraph.createShader({ widgetpixel, widgetpixelLength }, shaderIncludes, "Widget (pixel)", GhaShader::Stage::Pixel),
             .vertexInput      = Vertex::getInputBindingDescriptor(),
             .vertexAttributes = {
                 VertexAttributeDescriptor{
@@ -387,7 +276,7 @@ namespace clove {
                     .offset = offsetof(Vertex, texCoord),
                 },
             },
-            .viewportSize  = passData.renderTargetSize,
+            .viewportSize  = getRenderTargetSize(),
             .depthTest     = false,
             .depthWrite    = false,
             .renderTargets = {
@@ -396,7 +285,7 @@ namespace clove {
                     .storeOp    = StoreOperation::Store,
                     .clearValue = ColourValue{ 0.0f, 0.0, 0.0f, 1.0f },
                     .imageView  = {
-                        .image = passData.renderTarget,
+                        .image = renderTargetImage,
                     },
                 },
             },
@@ -405,7 +294,7 @@ namespace clove {
                 .storeOp    = StoreOperation::DontCare,
                 .clearValue = DepthStencilValue{ .depth = 1.0f },
                 .imageView  = {
-                    .image = passData.depthTarget,
+                    .image = depthTargetImage,
                 },
             },
         };
@@ -452,7 +341,7 @@ namespace clove {
         }
 
         if(!currentFrameData.text.empty()) {
-            uiPassDescriptor.pixelShader = renderGraph.createShader({ font_p, font_pLength }, shaderIncludes, "Font (pixel)", GhaShader::Stage::Pixel);
+            uiPassDescriptor.pixelShader = renderGraph.createShader({ fontpixel, fontpixelLength }, shaderIncludes, "Font (pixel)", GhaShader::Stage::Pixel);
             RgPassId textPass{ renderGraph.createRenderPass(uiPassDescriptor) };
 
             for(size_t index{ 0 }; auto &&[texture, modelProj] : currentFrameData.text) {
@@ -530,6 +419,371 @@ namespace clove {
 
     vec2ui HighDefinitionRenderer::getRenderTargetSize() const {
         return renderTarget->getSize();
+    }
+
+    void HighDefinitionRenderer::skinMeshes(RenderGraph &renderGraph, std::vector<RenderGraphMeshInfo> &meshes) {
+        RgComputePass::Descriptor passDescriptor{
+            .shader = renderGraph.createShader({ skinningcompute, skinningcomputeLength }, shaderIncludes, "Mesh skinner (compute)", GhaShader::Stage::Compute),
+        };
+        RgPassId skinningPass{ renderGraph.createComputePass(passDescriptor) };
+
+        for(auto &mesh : meshes) {
+            if(!currentFrameData.meshes[mesh.meshIndex].matrixPalet.has_value()) {
+                continue;
+            }
+
+            size_t const matrixPaletteSize{ sizeof(mat4f) * MAX_JOINTS };
+            RgBufferId matrixPalette{ renderGraph.createBuffer(matrixPaletteSize) };
+            renderGraph.writeToBuffer(matrixPalette, currentFrameData.meshes[mesh.meshIndex].matrixPalet->data(), 0, matrixPaletteSize);
+
+            RgBufferId vertCountBuffer{ renderGraph.createBuffer(sizeof(uint32_t)) };
+            renderGraph.writeToBuffer(vertCountBuffer, &mesh.vertexCount, 0, sizeof(uint32_t));
+
+            RgBufferId skinnedBuffer{ renderGraph.createBuffer(mesh.vertexBufferSize) };
+
+            renderGraph.addComputeSubmission(skinningPass, RgComputePass::Submission{
+                                                               .readUniformBuffers = {
+                                                                   RgBufferBinding{
+                                                                       .slot   = 0,//NOLINT
+                                                                       .buffer = matrixPalette,
+                                                                       .size   = matrixPaletteSize,
+                                                                   },
+                                                                   RgBufferBinding{
+                                                                       .slot   = 1,//NOLINT
+                                                                       .buffer = vertCountBuffer,
+                                                                       .size   = sizeof(uint32_t),
+                                                                   },
+                                                               },
+                                                               .readStorageBuffers = {
+                                                                   RgBufferBinding{
+                                                                       .slot   = 2,//NOLINT
+                                                                       .buffer = mesh.vertexBuffer,
+                                                                       .size   = mesh.vertexBufferSize,
+                                                                   },
+                                                               },
+                                                               .writeBuffers = {
+                                                                   RgBufferBinding{
+                                                                       .slot   = 3,//NOLINT
+                                                                       .buffer = skinnedBuffer,
+                                                                       .size   = mesh.vertexBufferSize,
+                                                                   },
+                                                               },
+                                                               .disptachSize = { (mesh.vertexCount / AVERAGE_WORK_GROUP_SIZE) + 1, 1, 1 },
+                                                           });
+
+            mesh.vertexBuffer = skinnedBuffer;
+        }
+    }
+
+    HighDefinitionRenderer::RenderGraphShadowMaps HighDefinitionRenderer::renderShadowDepths(RenderGraph &renderGraph, std::vector<RenderGraphMeshInfo> const &meshes) {
+        RgImageId directionalShadowMap{ renderGraph.createImage(GhaImage::Type::_2D, GhaImage::Format::D32_SFLOAT, { shadowMapSize, shadowMapSize }, MAX_LIGHTS) };
+        RgImageId pointShadowMap{ renderGraph.createImage(GhaImage::Type::Cube, GhaImage::Format::D32_SFLOAT, { shadowMapSize, shadowMapSize }, MAX_LIGHTS) };
+
+        //Directional lights
+        for(size_t i{ 0 }; i < currentFrameData.numLights.numDirectional; ++i) {
+            RgBufferId lightSpaceBuffer{ renderGraph.createBuffer(sizeof(mat4f)) };
+            renderGraph.writeToBuffer(lightSpaceBuffer, &currentFrameData.directionalShadowTransforms[i], 0, sizeof(mat4f));
+
+            //NOTE: Need this as a separate thing otherwise there is an internal compiler error. I think it's because of the clearValue variant
+            RgRenderPass::Descriptor passDescriptor{
+                .vertexShader     = renderGraph.createShader({ dirshadowdepthsvert, dirshadowdepthsvertLength }, shaderIncludes, "Mesh shadow map (vertex)", GhaShader::Stage::Vertex),
+                .pixelShader      = renderGraph.createShader({ dirshadowdepthspixel, dirshadowdepthspixelLength }, shaderIncludes, "Mesh shadow map (pixel)", GhaShader::Stage::Pixel),
+                .vertexInput      = Vertex::getInputBindingDescriptor(),
+                .vertexAttributes = {
+                    VertexAttributeDescriptor{
+                        .format = VertexAttributeFormat::R32G32B32_SFLOAT,
+                        .offset = offsetof(Vertex, position),
+                    },
+                },
+                .viewportSize = { shadowMapSize, shadowMapSize },
+                .depthStencil = {
+                    .loadOp     = LoadOperation::Clear,
+                    .storeOp    = StoreOperation::Store,
+                    .clearValue = DepthStencilValue{ .depth = 1.0f },
+                    .imageView  = {
+                        .image      = directionalShadowMap,
+                        .arrayIndex = static_cast<uint32_t>(i),
+                    },
+                }
+            };
+            RgPassId directionalShadowPass{ renderGraph.createRenderPass(passDescriptor) };
+
+            for(auto const &mesh : meshes) {
+                renderGraph.addRenderSubmission(directionalShadowPass, RgRenderPass::Submission{
+                                                                           .vertexBuffer = mesh.vertexBuffer,
+                                                                           .indexBuffer  = mesh.indexBuffer,
+                                                                           .shaderUbos   = {
+                                                                               RgBufferBinding{
+                                                                                   .slot        = 0,//NOLINT
+                                                                                   .buffer      = mesh.modelBuffer,
+                                                                                   .size        = mesh.modelBufferSize,
+                                                                                   .shaderStage = GhaShader::Stage::Vertex,
+                                                                               },
+                                                                               RgBufferBinding{
+                                                                                   .slot        = 1,//NOLINT
+                                                                                   .buffer      = lightSpaceBuffer,
+                                                                                   .size        = sizeof(mat4f),
+                                                                                   .shaderStage = GhaShader::Stage::Vertex,
+                                                                               },
+                                                                           },
+                                                                           .indexCount = mesh.indexCount,
+                                                                       });
+            }
+        }
+
+        //Point lights
+        uint32_t constexpr cubeFaces{ 6 };
+        for(size_t i{ 0 }; i < currentFrameData.numLights.numPoint; ++i) {
+            struct {
+                vec3f pos{};
+                float farPlane{};
+            } const lightData{
+                .pos      = currentFrameData.lights.pointLights[i].position,
+                .farPlane = currentFrameData.lights.pointLights[i].farPlane,
+            };
+
+            RgBufferId lightBuffer{ renderGraph.createBuffer(sizeof(lightData)) };
+            renderGraph.writeToBuffer(lightBuffer, &lightData, 0, sizeof(lightData));
+
+            for(size_t j{ 0 }; j < cubeFaces; ++j) {
+                RgBufferId lightSpaceBuffer{ renderGraph.createBuffer(sizeof(mat4f)) };
+                renderGraph.writeToBuffer(lightSpaceBuffer, &currentFrameData.pointShadowTransforms[i][j], 0, sizeof(mat4f));
+
+                RgRenderPass::Descriptor passDescriptor{
+                    .vertexShader     = renderGraph.createShader({ pointshadowdepthsvert, pointshadowdepthsvertLength }, shaderIncludes, "Mesh cube shadow map (vertex)", GhaShader::Stage::Vertex),
+                    .pixelShader      = renderGraph.createShader({ pointshadowdepthspixel, pointshadowdepthspixelLength }, shaderIncludes, "Mesh cube shadow map (pixel)", GhaShader::Stage::Pixel),
+                    .vertexInput      = Vertex::getInputBindingDescriptor(),
+                    .vertexAttributes = {
+                        VertexAttributeDescriptor{
+                            .format = VertexAttributeFormat::R32G32B32_SFLOAT,
+                            .offset = offsetof(Vertex, position),
+                        },
+                    },
+                    .viewportSize = { shadowMapSize, shadowMapSize },
+                    .depthStencil = {
+                        .loadOp     = LoadOperation::Clear,
+                        .storeOp    = StoreOperation::Store,
+                        .clearValue = DepthStencilValue{ .depth = 1.0f },
+                        .imageView  = {
+                            .image      = pointShadowMap,
+                            .arrayIndex = static_cast<uint32_t>((i * cubeFaces) + j),
+                        },
+                    }
+                };
+                RgPassId pointShadowPass{ renderGraph.createRenderPass(passDescriptor) };
+
+                for(auto const &mesh : meshes) {
+                    renderGraph.addRenderSubmission(pointShadowPass, RgRenderPass::Submission{
+                                                                         .vertexBuffer = mesh.vertexBuffer,
+                                                                         .indexBuffer  = mesh.indexBuffer,
+                                                                         .shaderUbos   = {
+                                                                             RgBufferBinding{
+                                                                                 .slot        = 0,//NOLINT
+                                                                                 .buffer      = mesh.modelBuffer,
+                                                                                 .size        = mesh.modelBufferSize,
+                                                                                 .shaderStage = GhaShader::Stage::Vertex,
+                                                                             },
+                                                                             RgBufferBinding{
+                                                                                 .slot        = 1,//NOLINT
+                                                                                 .buffer      = lightSpaceBuffer,
+                                                                                 .size        = sizeof(mat4f),
+                                                                                 .shaderStage = GhaShader::Stage::Vertex,
+                                                                             },
+                                                                             RgBufferBinding{
+                                                                                 .slot        = 2,//NOLINT
+                                                                                 .buffer      = lightBuffer,
+                                                                                 .size        = sizeof(lightData),
+                                                                                 .shaderStage = GhaShader::Stage::Pixel,
+                                                                             },
+                                                                         },
+                                                                         .indexCount = mesh.indexCount,
+                                                                     });
+                }
+            }
+        }
+
+        return RenderGraphShadowMaps{ .directionalShadowMap = directionalShadowMap, .pointShadowMap = pointShadowMap };
+    }
+
+    void HighDefinitionRenderer::renderSene(RenderGraph &renderGraph, std::vector<RenderGraphMeshInfo> const &meshes, RenderGraphShadowMaps const shadowMaps, RgImageId const renderTarget, RgImageId const depthTarget) {
+        size_t const minUboOffsetAlignment{ ghaDevice->getLimits().minUniformBufferOffsetAlignment };
+
+        //View uniform buffer
+        size_t const viewDataSize{ sizeof(currentFrameData.viewData) };
+        size_t const viewPositionSize{ sizeof(currentFrameData.viewPosition) };
+
+        size_t const viewDataOffset{ 0 };
+        size_t const viewPositionOffset{ viewDataOffset + viewDataSize + (minUboOffsetAlignment - ((viewDataOffset + viewDataSize) % minUboOffsetAlignment)) };
+
+        RgBufferId viewUniformBuffer{ renderGraph.createBuffer(viewPositionOffset + viewPositionSize) };
+
+        renderGraph.writeToBuffer(viewUniformBuffer, &currentFrameData.viewData, viewDataOffset, viewDataSize);
+        renderGraph.writeToBuffer(viewUniformBuffer, &currentFrameData.viewPosition, viewPositionOffset, viewPositionSize);
+
+        //Lights uniform buffer
+        size_t const numLightsSize{ sizeof(currentFrameData.numLights) };
+        size_t const dirShadowTransformsSize{ sizeof(currentFrameData.directionalShadowTransforms) };
+        size_t const lightsSize{ sizeof(currentFrameData.lights) };
+
+        size_t const numLightsOffset{ 0 };
+        size_t const dirShadowTransformsOffset{ numLightsOffset + numLightsSize + (minUboOffsetAlignment - ((numLightsOffset + numLightsSize) % minUboOffsetAlignment)) };
+        size_t const lightsOffset{ dirShadowTransformsOffset + dirShadowTransformsSize + (minUboOffsetAlignment - ((dirShadowTransformsOffset + dirShadowTransformsSize) % minUboOffsetAlignment)) };
+
+        RgBufferId lightsUniformBuffer{ renderGraph.createBuffer(lightsOffset + lightsSize) };
+
+        renderGraph.writeToBuffer(lightsUniformBuffer, &currentFrameData.numLights, numLightsOffset, numLightsSize);
+        renderGraph.writeToBuffer(lightsUniformBuffer, &currentFrameData.directionalShadowTransforms, dirShadowTransformsOffset, dirShadowTransformsSize);
+        renderGraph.writeToBuffer(lightsUniformBuffer, &currentFrameData.lights, lightsOffset, lightsSize);
+
+        RgSampler shadowMapSampler{ renderGraph.createSampler(GhaSampler::Descriptor{
+            .minFilter        = GhaSampler::Filter::Linear,
+            .magFilter        = GhaSampler::Filter::Linear,
+            .addressModeU     = GhaSampler::AddressMode::ClampToBorder,
+            .addressModeV     = GhaSampler::AddressMode::ClampToBorder,
+            .addressModeW     = GhaSampler::AddressMode::ClampToBorder,
+            .enableAnisotropy = false,
+        }) };
+
+        //NOTE: Need this as a separate thing otherwise there is an internal compiler error. I think it's because of the clearValue variant
+        RgRenderPass::Descriptor passDescriptor{
+            .vertexShader     = renderGraph.createShader({ forwardpassvert, forwardpassvertLength }, shaderIncludes, "Mesh (vertex)", GhaShader::Stage::Vertex),
+            .pixelShader      = renderGraph.createShader({ forwardpasspixel, forwardpasspixelLength }, shaderIncludes, "Mesh (pixel)", GhaShader::Stage::Pixel),
+            .vertexInput      = Vertex::getInputBindingDescriptor(),
+            .vertexAttributes = {
+                VertexAttributeDescriptor{
+                    .format = VertexAttributeFormat::R32G32B32_SFLOAT,
+                    .offset = offsetof(Vertex, position),
+                },
+                VertexAttributeDescriptor{
+                    .format = VertexAttributeFormat::R32G32B32_SFLOAT,
+                    .offset = offsetof(Vertex, normal),
+                },
+                VertexAttributeDescriptor{
+                    .format = VertexAttributeFormat::R32G32_SFLOAT,
+                    .offset = offsetof(Vertex, texCoord),
+                },
+                VertexAttributeDescriptor{
+                    .format = VertexAttributeFormat::R32G32B32_SFLOAT,
+                    .offset = offsetof(Vertex, colour),
+                },
+            },
+            .viewportSize  = getRenderTargetSize(),
+            .renderTargets = {
+                RgRenderTargetBinding{
+                    .loadOp     = LoadOperation::Clear,
+                    .storeOp    = StoreOperation::Store,
+                    .clearValue = ColourValue{ 0.0f, 0.0, 0.0f, 1.0f },
+                    .imageView  = {
+                        .image = renderTarget,
+                    },
+                },
+            },
+            .depthStencil = {
+                .loadOp     = LoadOperation::Clear,
+                .storeOp    = StoreOperation::DontCare,
+                .clearValue = DepthStencilValue{ .depth = 1.0f },
+                .imageView  = {
+                    .image = depthTarget,
+                },
+            },
+        };
+        RgPassId colourPass{ renderGraph.createRenderPass(passDescriptor) };
+
+        for(auto const &mesh : meshes) {
+            renderGraph.addRenderSubmission(colourPass, RgRenderPass::Submission{
+                                                            .vertexBuffer = mesh.vertexBuffer,
+                                                            .indexBuffer  = mesh.indexBuffer,
+                                                            .shaderUbos   = {
+                                                                RgBufferBinding{
+                                                                    .slot        = 0,//NOLINT
+                                                                    .buffer      = mesh.modelBuffer,
+                                                                    .size        = mesh.modelBufferSize,
+                                                                    .shaderStage = GhaShader::Stage::Vertex,
+                                                                },
+                                                                RgBufferBinding{
+                                                                    .slot        = 1,//NOLINT
+                                                                    .buffer      = viewUniformBuffer,
+                                                                    .offset      = viewDataOffset,
+                                                                    .size        = viewDataSize,
+                                                                    .shaderStage = GhaShader::Stage::Vertex,
+                                                                },
+                                                                RgBufferBinding{
+                                                                    .slot        = 2,//NOLINT
+                                                                    .buffer      = lightsUniformBuffer,
+                                                                    .offset      = numLightsOffset,
+                                                                    .size        = numLightsSize,
+                                                                    .shaderStage = GhaShader::Stage::Vertex | GhaShader::Stage::Pixel,
+                                                                },
+                                                                RgBufferBinding{
+                                                                    .slot        = 3,//NOLINT
+                                                                    .buffer      = lightsUniformBuffer,
+                                                                    .offset      = dirShadowTransformsOffset,
+                                                                    .size        = dirShadowTransformsSize,
+                                                                    .shaderStage = GhaShader::Stage::Vertex,
+                                                                },
+                                                                RgBufferBinding{
+                                                                    .slot        = 10,//NOLINT
+                                                                    .buffer      = viewUniformBuffer,
+                                                                    .offset      = viewPositionOffset,
+                                                                    .size        = viewPositionSize,
+                                                                    .shaderStage = GhaShader::Stage::Pixel,
+                                                                },
+                                                                RgBufferBinding{
+                                                                    .slot        = 11,//NOLINT
+                                                                    .buffer      = lightsUniformBuffer,
+                                                                    .offset      = lightsOffset,
+                                                                    .size        = lightsSize,
+                                                                    .shaderStage = GhaShader::Stage::Pixel,
+                                                                },
+                                                                RgBufferBinding{
+                                                                    .slot        = 12,//NOLINT
+                                                                    .buffer      = mesh.colourBuffer,
+                                                                    .size        = mesh.colourBufferSize,
+                                                                    .shaderStage = GhaShader::Stage::Pixel,
+                                                                },
+                                                            },
+                                                            .shaderImages = {
+                                                                RgImageBinding{
+                                                                    .slot      = 4,//NOLINT
+                                                                    .imageView = {
+                                                                        .image = mesh.diffuseTexture,
+                                                                    },
+                                                                },
+                                                                RgImageBinding{
+                                                                    .slot      = 5,//NOLINT
+                                                                    .imageView = {
+                                                                        .image = mesh.specularTexture,
+                                                                    },
+                                                                },
+                                                                RgImageBinding{
+                                                                    .slot      = 7,//NOLINT
+                                                                    .imageView = {
+                                                                        .image      = shadowMaps.directionalShadowMap,
+                                                                        .arrayCount = MAX_LIGHTS,
+                                                                    },
+                                                                },
+                                                                RgImageBinding{
+                                                                    .slot      = 8,//NOLINT
+                                                                    .imageView = {
+                                                                        .image      = shadowMaps.pointShadowMap,
+                                                                        .viewType   = GhaImageView::Type::Cube,
+                                                                        .arrayCount = MAX_LIGHTS * cubeMapLayerCount,
+                                                                    },
+                                                                },
+                                                            },
+                                                            .shaderSamplers = {
+                                                                RgSamplerBinding{
+                                                                    .slot    = 6,//NOLINT
+                                                                    .sampler = mesh.materialSampler,
+                                                                },
+                                                                RgSamplerBinding{
+                                                                    .slot    = 9,//NOLINT
+                                                                    .sampler = shadowMapSampler,
+                                                                },
+                                                            },
+                                                            .indexCount = mesh.indexCount,
+                                                        });
+        }
     }
 
     void HighDefinitionRenderer::resetGraphCaches() {

@@ -21,67 +21,53 @@ set(
 
 set(
 	ShaderFiles
-		${SOURCE}/Shaders/Mesh-v.glsl
-		${SOURCE}/Shaders/MeshShadowMap-v.glsl
-		${SOURCE}/Shaders/MeshCubeShadowMap-v.glsl
+		${SOURCE}/Shaders/ForwardPassVert.glsl
+		${SOURCE}/Shaders/ForwardPassPixel.glsl
 
-		${SOURCE}/Shaders/Mesh-p.glsl
-		${SOURCE}/Shaders/MeshShadowMap-p.glsl
-		${SOURCE}/Shaders/MeshCubeShadowMap-p.glsl
+		${SOURCE}/Shaders/DirShadowDepthsVert.glsl
+		${SOURCE}/Shaders/DirShadowDepthsPixel.glsl
+		
+		${SOURCE}/Shaders/PointShadowDepthsVert.glsl
+		${SOURCE}/Shaders/PointShadowDepthsPixel.glsl
 
-		${SOURCE}/Shaders/UI-v.glsl
-		${SOURCE}/Shaders/Widget-p.glsl
-		${SOURCE}/Shaders/Font-p.glsl
+		${SOURCE}/Shaders/UIVert.glsl
+		${SOURCE}/Shaders/WidgetPixel.glsl
+		${SOURCE}/Shaders/FontPixel.glsl
 
-		${SOURCE}/Shaders/Skinning-c.glsl
+		${SOURCE}/Shaders/SkinningCompute.glsl
 
 		${ShaderIncludes}
 )
 
-#Convert SOURCEs into c strings
+#Convert sourcess into c strings
 set(ResourceBinaries)
 
-function(embeddSOURCE SOURCEs readType)
+function(embedSource source readType)
 	set(files)
 
-	foreach(res IN ITEMS ${SOURCEs})
-		get_filename_component(fileName ${res} NAME_WLE)
+	get_filename_component(fileName ${source} NAME_WLE)
 
-		string(REPLACE "-" "_" fileName ${fileName})
-		string(TOLOWER ${fileName} fileName)
+	string(REPLACE "-" "_" fileName ${fileName})
+	string(TOLOWER ${fileName} fileName)
 
-		add_custom_command(
-			OUTPUT ${fileName}.c
-			COMMAND reb ${fileName} ${res} ${readType}
-			DEPENDS ${res}
-		)
+	add_custom_command(
+		OUTPUT ${fileName}.c
+		COMMAND reb ${fileName} ${source} ${readType}
+		DEPENDS ${source}
+	)
 
-		set(files ${files} "${fileName}.c")
-	endforeach()
+	set(files ${files} "${fileName}.c")
 
 	set(ResourceBinaries ${ResourceBinaries} ${files} PARENT_SCOPE)
 endfunction()
 
 #Assets
-embeddSOURCE("${ASSETS}/fonts/Roboto/Roboto-Black.ttf" "rb")
+embedSource("${ASSETS}/fonts/Roboto/Roboto-Black.ttf" "rb")
 
-#Shader include
-embeddSOURCE("${SOURCE}/Shaders/Constants.glsl" "r")
-
-#Shader source
-embeddSOURCE("${SOURCE}/Shaders/Mesh-v.glsl" "r")
-embeddSOURCE("${SOURCE}/Shaders/MeshShadowMap-v.glsl" "r")
-embeddSOURCE("${SOURCE}/Shaders/MeshCubeShadowMap-v.glsl" "r")
-
-embeddSOURCE("${SOURCE}/Shaders/Mesh-p.glsl" "r")
-embeddSOURCE("${SOURCE}/Shaders/MeshShadowMap-p.glsl" "r")
-embeddSOURCE("${SOURCE}/Shaders/MeshCubeShadowMap-p.glsl" "r")
-
-embeddSOURCE("${SOURCE}/Shaders/UI-v.glsl" "r")
-embeddSOURCE("${SOURCE}/Shaders/Widget-p.glsl" "r")
-embeddSOURCE("${SOURCE}/Shaders/Font-p.glsl" "r")
-
-embeddSOURCE("${SOURCE}/Shaders/Skinning-c.glsl" "r")
+#Shaders
+foreach(shader ${ShaderFiles})
+	embedSource(${shader} "r")
+endforeach()
 
 #Library
 add_library(
@@ -180,21 +166,6 @@ add_library(
 		${INCLUDE}/Rendering/RenderGraph/RgTransferPass.inl
 		${SOURCE}/Rendering/RenderGraph/RgTransferPass.cpp
 		
-		${INCLUDE}/Rendering/RenderPasses/ForwardColourPass.hpp
-		${SOURCE}/Rendering/RenderPasses/ForwardColourPass.cpp
-		${INCLUDE}/Rendering/RenderPasses/DirectionalLightPass.hpp
-		${SOURCE}/Rendering/RenderPasses/DirectionalLightPass.cpp
-		${INCLUDE}/Rendering/RenderPasses/GeometryPass.hpp
-		${INCLUDE}/Rendering/RenderPasses/GeometryPass.inl
-		${SOURCE}/Rendering/RenderPasses/GeometryPass.cpp
-		${INCLUDE}/Rendering/RenderPasses/PointLightPass.hpp
-		${SOURCE}/Rendering/RenderPasses/PointLightPass.cpp
-		${INCLUDE}/Rendering/RenderPasses/SkinningPass.hpp
-		${SOURCE}/Rendering/RenderPasses/SkinningPass.cpp
-		${INCLUDE}/Rendering/Techniques/ForwardLightingTechnique.hpp
-		${SOURCE}/Rendering/Techniques/ForwardLightingTechnique.cpp
-		${INCLUDE}/Rendering/Techniques/Technique.hpp
-
 		${INCLUDE}/SubSystems/AudioSubSystem.hpp
 		${SOURCE}/SubSystems/AudioSubSystem.cpp
 		${INCLUDE}/SubSystems/PhysicsSubSystem.hpp

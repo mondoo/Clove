@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Clove/Rendering/RenderPasses/GeometryPass.hpp"
 #include "Clove/Rendering/ShaderBufferTypes.hpp"
 
 #include <memory>
 #include <set>
+#include <optional>
 
 namespace clove {
     class Mesh;
@@ -21,9 +21,7 @@ namespace clove {
             std::shared_ptr<Mesh> mesh;
             std::shared_ptr<Material> material;
             mat4f transform;
-            std::array<mat4f, MAX_JOINTS> matrixPalet;
-
-            std::set<GeometryPass::Id> geometryPassIds;
+            std::optional<std::array<mat4f, MAX_JOINTS>> matrixPalet;
         };
 
         //FUNCTIONS

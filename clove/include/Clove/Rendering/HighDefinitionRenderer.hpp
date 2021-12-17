@@ -2,6 +2,8 @@
 
 #include "Clove/Rendering/RenderGraph/RgFrameCache.hpp"
 #include "Clove/Rendering/RenderGraph/RgGlobalCache.hpp"
+#include "Clove/Rendering/RenderGraph/RgId.hpp"
+#include "Clove/Rendering/RenderGraph/RgSampler.hpp"
 #include "Clove/Rendering/Renderer.hpp"
 
 #include <Clove/Delegate/DelegateHandle.hpp>
@@ -15,13 +17,13 @@ namespace clove {
     class Sprite;
     class Mesh;
     class Material;
+    class RenderGraph;
 }
 
 namespace clove {
     class HighDefinitionRenderer : public Renderer{
         //TYPES
     private:
-        //Data for an entire frame
         struct FrameData {
             ViewData viewData;
             vec3f viewPosition;
@@ -37,13 +39,35 @@ namespace clove {
 
             std::vector<std::pair<std::shared_ptr<GhaImage>, mat4f>> widgets;
             std::vector<std::pair<std::shared_ptr<GhaImage>, mat4f>> text;
-
-            void forEachMesh(std::function<void(Mesh const &, size_t const index)> func) {
-                for(size_t index = 0; auto const &meshInfo : meshes) {
-                    func(*meshInfo.mesh, index++);
-                }
-            }
         };
+
+        struct RenderGraphMeshInfo {
+            size_t meshIndex{};
+
+            RgBufferId vertexBuffer{};
+            RgBufferId indexBuffer{};
+
+            size_t vertexCount{};
+            uint32_t indexCount{};
+
+            size_t vertexBufferSize{};
+
+            RgBufferId modelBuffer{};
+            RgBufferId colourBuffer{};
+
+            size_t modelBufferSize{};
+            size_t colourBufferSize{};
+
+            RgImageId diffuseTexture{};
+            RgImageId specularTexture{};
+            RgSampler materialSampler{};
+        };
+
+        struct RenderGraphShadowMaps{
+            RgImageId directionalShadowMap;
+            RgImageId pointShadowMap;
+        };
+
         //VARIABLES
     private:
         size_t maxFramesInFlight{};
@@ -61,13 +85,12 @@ namespace clove {
         std::vector<RgFrameCache> frameCaches{};
         RgGlobalCache globalCache;
 
+        std::unordered_map<std::string, std::string> shaderIncludes{};
+
         //'Square' mesh used to render UI
         std::unique_ptr<Mesh> uiMesh;
 
         FrameData currentFrameData;
-
-        //Geometry passes.
-        std::vector<std::unique_ptr<GeometryPass>> geometryPasses;
 
         //Synchronisation obects
         std::vector<std::unique_ptr<GhaSemaphore>> skinningFinishedSemaphores;
@@ -109,6 +132,10 @@ namespace clove {
         vec2ui getRenderTargetSize() const override;
 
     private:
+        void skinMeshes(RenderGraph &renderGraph, std::vector<RenderGraphMeshInfo> &meshes);
+        RenderGraphShadowMaps renderShadowDepths(RenderGraph &renderGraph, std::vector<RenderGraphMeshInfo> const &meshes);
+        void renderSene(RenderGraph &renderGraph, std::vector<RenderGraphMeshInfo> const &meshes, RenderGraphShadowMaps const shadowMaps, RgImageId const renderTarget, RgImageId const depthTarget);
+
         void resetGraphCaches();
     };
 }
