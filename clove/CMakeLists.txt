@@ -234,8 +234,6 @@ add_library(
 
 		${INCLUDE}/ReflectionAttributes.hpp
 
-		${INCLUDE}/SerialisationCommon.hpp
-
 		${INCLUDE}/SoundFile.hpp
 		${SOURCE}/SoundFile.cpp
 

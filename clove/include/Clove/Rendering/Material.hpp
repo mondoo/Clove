@@ -4,7 +4,6 @@
 #include "Clove/FileSystem/AssetManager.hpp"
 #include "Clove/FileSystem/AssetPtr.hpp"
 #include "Clove/Rendering/Renderables/Texture.hpp"
-#include "Clove/SerialisationCommon.hpp"
 
 #include <Clove/Maths/Vector.hpp>
 #include <memory>
@@ -70,47 +69,3 @@ namespace clove {
 }
 
 #include "Material.inl"
-
-namespace clove {
-    template<>
-    inline serialiser::Node serialise(Material const &object) {
-        serialiser::Node node{};
-        node["version"] = 1;
-
-        if(object.getDiffuseTexture().isValid()) {
-            node["diffuse"] = object.getDiffuseTexture().getPath().string();
-        } else {
-            node["diffuse"] = "none";
-        }
-
-        if(object.getSpecularTexture().isValid()) {
-            node["specular"] = object.getSpecularTexture().getPath().string();
-        } else {
-            node["specular"] = "none";
-        }
-
-        node["colour"]    = object.getColour();
-        node["shininess"] = object.getShininess();
-
-        return node;
-    }
-
-    template<>
-    inline Material deserialise(serialiser::Node const &node) {
-        Material material{};
-
-        auto const diffusePath{ node["diffuse"].as<std::string>() };
-        auto const specularPath{ node["specular"].as<std::string>() };
-
-        if(diffusePath != "none") {
-            material.setDiffuseTexture(Application::get().getAssetManager()->getTexture(diffusePath));
-        }
-        if(specularPath != "none") {
-            material.setSpecularTexture(Application::get().getAssetManager()->getTexture(specularPath));
-        }
-        material.setColour(node["colour"].as<vec4f>());
-        material.setShininess(node["shininess"].as<float>());
-
-        return material;
-    }
-}
