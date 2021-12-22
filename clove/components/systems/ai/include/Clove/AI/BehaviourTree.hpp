@@ -2,7 +2,7 @@
 
 #include "Clove/AI/Task.hpp"
 
-#include <Clove/BlackBoard.hpp>
+#include <Clove/Blackboard.hpp>
 #include <Clove/DeltaTime.hpp>
 #include <memory>
 
