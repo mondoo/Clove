@@ -435,7 +435,7 @@ namespace membrane {
             return;
         }
 
-        uint8_t *componentMemory{ componentAttribute->onEditorCreateComponent(entity, currentScene.getEntityManager()) };
+        uint8_t *componentMemory{ componentAttribute->onEditorGetComponent(entity, currentScene.getEntityManager()) };
 
         size_t startingOffset{ 0 };
         modifyComponentMember(componentMemory, typeInfo, value, offset, startingOffset);
