@@ -1,7 +1,7 @@
 #include "Clove/Application.hpp"
 
 #include "Clove/InputEvent.hpp"
-#include "Clove/Rendering/ForwardRenderer3D.hpp"
+#include "Clove/Rendering/HighDefinitionRenderer.hpp"
 #include "Clove/Rendering/GraphicsImageRenderTarget.hpp"
 #include "Clove/Rendering/SwapchainRenderTarget.hpp"
 #include "Clove/SubSystems/AudioSubSystem.hpp"
@@ -140,12 +140,6 @@ namespace clove {
         prevFrameTime = std::chrono::steady_clock::now();
 
         //Systems
-        renderer = std::make_unique<ForwardRenderer3D>(this->graphicsDevice.get(), std::move(renderTarget));
-
-        //SubSystems
-        //pushSubSystem<TransformSubSystem>(SubSystemGroup::Initialisation, &entityManager);
-        //pushSubSystem<PhysicsSubSystem>(SubSystemGroup::Initialisation, &entityManager);
-        //pushSubSystem<AudioSubSystem>(SubSystemGroup::Render, &entityManager);
-        //pushSubSystem<RenderSubSystem>(SubSystemGroup::Render, renderer.get(), &entityManager);
+        renderer = std::make_unique<HighDefinitionRenderer>(this->graphicsDevice.get(), std::move(renderTarget));
     }
 }

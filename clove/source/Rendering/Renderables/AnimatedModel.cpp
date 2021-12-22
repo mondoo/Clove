@@ -1,13 +1,12 @@
 #include "Clove/Rendering/Renderables/AnimatedModel.hpp"
 
 #include "Clove/Rendering/RenderingLog.hpp"
-#include "Clove/Rendering/Techniques/ForwardLightingTechnique.hpp"
 
 #include <Clove/Log/Log.hpp>
 
 namespace clove {
     AnimatedModel::AnimatedModel(std::vector<std::shared_ptr<Mesh>> meshes, std::unique_ptr<Skeleton> skeleton, std::vector<AnimationClip> animClips)
-        : StaticModel{ std::move(meshes), { createSkinnedForwardLightingTechnique() } }
+        : StaticModel{ std::move(meshes) }
         , skeleton{ std::move(skeleton) }
         , animClips{ std::move(animClips) } {
         if(this->animClips.empty()) {
