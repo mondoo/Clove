@@ -6,6 +6,6 @@
 namespace clove {
     struct StaticModelComponent {
         AssetPtr<StaticModel> model;
-        std::shared_ptr<Material> material{ std::make_shared<Material>() };
+        Material material{};
     };
 }
