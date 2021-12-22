@@ -1,7 +1,8 @@
 #include "Clove/Components/StaticModelComponent.hpp"
-#include "Clove/ReflectionAttributes.hpp"
+
 #include "Clove/Application.hpp"
 #include "Clove/FileSystem/AssetManager.hpp"
+#include "Clove/ReflectionAttributes.hpp"
 
 #include <Clove/Reflection/Reflection.hpp>
 
@@ -26,7 +27,7 @@ CLOVE_REFLECT_MEMBER(model, clove::EditorEditableMember{
                                     CLOVE_ASSERT(size == sizeof(AssetPtr<StaticModel>));
 
                                     auto *const assetPtr{ reinterpret_cast<AssetPtr<StaticModel> *const>(memory + offset) };
-                                    *assetPtr = clove::Application::get().getAssetManager()->getStaticModel(value);
-                                },
+                                    *assetPtr = clove::Application::get().getAssetManager()->getStaticModel(value); },
                             })
+CLOVE_REFLECT_MEMBER(material, clove::EditorEditableMember{})
 CLOVE_REFLECT_END

@@ -5,6 +5,7 @@
 #include "Clove/FileSystem/AssetPtr.hpp"
 #include "Clove/Rendering/Renderables/Texture.hpp"
 
+#include <Clove/Reflection/Reflection.hpp>
 #include <Clove/Maths/Vector.hpp>
 #include <memory>
 
@@ -20,6 +21,8 @@ namespace clove {
 	 * what an object looks like.
 	 */
     class Material {
+        CLOVE_REFLECT_PRIVATE(Material)
+        
         //VARIABLES
     private:
         //Default image - fall back for if a texture hasn't been provided.
@@ -56,15 +59,6 @@ namespace clove {
 
         inline void setShininess(float shininess);
         inline float getShininess() const;
-
-        //TEMP - for serialisation will be removed in the future
-        AssetPtr<Texture> getDiffuseTexture() const {
-            return diffuseTexture;
-        };
-        AssetPtr<Texture> getSpecularTexture() const {
-            return specularTexture;
-        };
-        //
     };
 }
 
