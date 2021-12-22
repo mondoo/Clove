@@ -6,6 +6,7 @@
 #include <tuple>
 #include <typeinfo>
 #include <vector>
+#include <unordered_map>
 
 namespace clove::reflection {
     class AttributeContainer {
