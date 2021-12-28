@@ -23,15 +23,9 @@ add_library(
 
         ${INCLUDE}/EditorSubSystem.hpp
         ${SOURCE}/EditorSubSystem.cpp
-        ${INCLUDE}/RuntimeSubSystem.hpp
-        ${SOURCE}/RuntimeSubSystem.cpp
         
         ${INCLUDE}/EditorViewport.hpp
         ${SOURCE}/EditorViewport.cpp
-
-        ${INCLUDE}/Scene.hpp
-		${INCLUDE}/Scene.inl
-		${SOURCE}/Scene.cpp
 )
 
 #Include

@@ -1,13 +1,19 @@
 #pragma once
 
-#include "Membrane/Scene.hpp"
-
 #include <Clove/ECS/Entity.hpp>
-#include <Clove/SubSystem.hpp>
 #include <Clove/Rendering/Camera.hpp>
+#include <Clove/SubSystem.hpp>
 #include <msclr/gcroot.h>
 #include <string_view>
+#include <unordered_map>
 #include <vector>
+
+namespace clove {
+    class EntityManager;
+    namespace reflection {
+        class TypeInfo;
+    }
+}
 
 namespace membrane {
     /**
@@ -21,7 +27,8 @@ namespace membrane {
     private:
         msclr::gcroot<EditorSubSystemMessageProxy ^> proxy;
 
-        Scene currentScene;
+        clove::EntityManager *entityManager{ nullptr };
+        std::unordered_map<clove::Entity, std::vector<clove::reflection::TypeInfo const *>> trackedComponents;
 
         clove::Entity editorCamera{};
 
@@ -33,7 +40,7 @@ namespace membrane {
 
         //FUNCTIONS
     public:
-        EditorSubSystem();
+        EditorSubSystem(clove::EntityManager *entityManager);
         ~EditorSubSystem();
 
         Group getGroup() const override;
@@ -43,8 +50,6 @@ namespace membrane {
         void onUpdate(clove::DeltaTime const deltaTime) override;
         void onDetach() override;
 
-    //private:
-        //TODO: Save and load scene to custom file
         void saveScene();
         void loadScene();
 
@@ -54,7 +59,7 @@ namespace membrane {
 
         void addComponent(clove::Entity entity, std::string_view typeName);
         void modifyComponent(clove::Entity entity, std::string_view typeName, size_t offset, std::string_view value);
-        void removeComponent(clove::Entity entity, std::string_view typeName); 
+        void removeComponent(clove::Entity entity, std::string_view typeName);
 
         void updateName(clove::Entity entity, std::string name);
     };

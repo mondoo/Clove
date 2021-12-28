@@ -4,7 +4,6 @@
 #include "Membrane/EditorViewport.hpp"
 #include "Membrane/MessageHandler.hpp"
 #include "Membrane/Messages.hpp"
-#include "Membrane/RuntimeSubSystem.hpp"
 
 #include <Clove/Application.hpp>
 #include <Clove/Components/StaticModelComponent.hpp>
@@ -68,7 +67,7 @@ namespace membrane {
         vfs->mount(GAME_DIR "/content", ".");
         std::filesystem::create_directories(vfs->resolve("."));
 
-        app->pushSubSystem<EditorSubSystem>();
+        app->pushSubSystem<EditorSubSystem>(app->getEntityManager());
 
         MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_Stop ^>(this, &Application::setEditorMode));
         MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_Play ^>(this, &Application::setRuntimeMode));
@@ -196,17 +195,17 @@ namespace membrane {
     }
 
     void Application::setEditorMode(Editor_Stop ^ message) {
-        app->popSubSystem<RuntimeSubSystem>();
+        /*app->popSubSystem<RuntimeSubSystem>();
         app->pushSubSystem<EditorSubSystem>();
-        isInEditorMode = true;
+        isInEditorMode = true;*/
     }
 
     void Application::setRuntimeMode(Editor_Play ^ message) {
-        app->getSubSystem<EditorSubSystem>().saveScene();
+        /*app->getSubSystem<EditorSubSystem>().saveScene();
 
         app->popSubSystem<EditorSubSystem>();
         app->pushSubSystem<RuntimeSubSystem>();
-        isInEditorMode = false;
+        isInEditorMode = false;*/
     }
 
     bool Application::tryLoadGameDll(std::string_view path) {
