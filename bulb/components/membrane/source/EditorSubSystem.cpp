@@ -85,26 +85,22 @@ namespace {
         }
     }
 
-    serialiser::Node serialiseType(reflection::TypeInfo const *type, uint8_t const *const typeMemory, size_t currentOffset) {
-        if(type == nullptr) {
+    serialiser::Node serialiseComponent(reflection::TypeInfo const *const componentTypeInfo, uint8_t const *const componentMemory, size_t currentOffset = 0) {
+        if(componentTypeInfo == nullptr) {
             return {};
         }
 
         serialiser::Node members{};
 
-        for(auto const &member : type->members) {
+        for(auto const &member : componentTypeInfo->members) {
             if(std::optional<EditorEditableMember> attribute{ member.attributes.get<EditorEditableMember>() }) {
                 size_t const totalMemberOffset{ currentOffset + member.offset };
 
-                serialiser::Node memberNode{};
-
                 if(reflection::TypeInfo const *memberType{ reflection::getTypeInfo(member.id) }) {
-                    memberNode[member.name] = serialiseType(memberType, typeMemory, totalMemberOffset);
+                    members[member.name] = serialiseComponent(memberType, componentMemory, totalMemberOffset);
                 } else {
-                    memberNode[member.name] = attribute->onEditorGetValue(typeMemory, totalMemberOffset, member.size);
+                    members[member.name] = attribute->onEditorGetValue(componentMemory, totalMemberOffset, member.size);
                 }
-
-                members.pushBack(memberNode);
             }
         }
 
@@ -318,12 +314,8 @@ namespace membrane {
 
             for(auto const *typeInfo : components) {
                 uint8_t const *const componentMemory{ typeInfo->attributes.get<clove::EditorVisibleComponent>()->onEditorGetComponent(entity, *entityManager) };
-                size_t constexpr startingOffset{ 0 };
 
-                serialiser::Node componentNode{};
-                componentNode[typeInfo->name] = serialiseType(typeInfo, componentMemory, startingOffset);
-
-                entityNode["components"].pushBack(componentNode);
+                entityNode["components"][typeInfo->name] = serialiseComponent(typeInfo, componentMemory);
             }
 
             rootNode["entities"].pushBack(entityNode);
