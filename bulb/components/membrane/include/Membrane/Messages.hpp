@@ -9,14 +9,10 @@ namespace membrane {
 namespace membrane {
     // clang-format off
     //Types
-    public ref struct Component{
-        //ComponentType type;
-        System::Object ^initData;
-    };
     public ref struct Entity{
         System::UInt32 id;
         System::String ^name;
-        System::Collections::Generic::List<Component^> ^components;
+        System::Collections::Generic::List<EditorTypeInfo^> ^components;
     };
 
     //Messages sent from Bulb

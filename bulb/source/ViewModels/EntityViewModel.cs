@@ -45,10 +45,10 @@ namespace Bulb {
             RefreshAvailableComponents();
         }
 
-        public EntityViewModel(List<Membrane.Component> components) : this() {
-            //foreach (Membrane.Component component in components) {
-            //    Components.Add(CreateComponentViewModel(component.type, component.initData));
-            //}
+        public EntityViewModel(List<Membrane.EditorTypeInfo> components) : this() {
+            foreach (var component in components) {
+                Components.Add(CreateComponentViewModel(component));
+            }
             RefreshAvailableComponents();
         }
 
@@ -77,11 +77,7 @@ namespace Bulb {
 
         private void OnComponentCreated(Membrane.Engine_OnComponentAdded message) {
             if (EntityId == message.entity) {
-                var vm = new ComponentViewModel(message.typeInfo);
-                vm.OnModified = ModifyComponent;
-                vm.OnRemoved = RemoveComponent;
-
-                Components.Add(vm);
+                Components.Add(CreateComponentViewModel(message.typeInfo));
 
                 RefreshAvailableComponents();
             }
@@ -115,6 +111,14 @@ namespace Bulb {
                     ComponentMenuItems.Add(new ComponentMenuItemViewModel(type.displayName, new RelayCommand(() => AddComponent(type.typeName))));
                 }
             }
+        }
+
+        private ComponentViewModel CreateComponentViewModel(Membrane.EditorTypeInfo componentTypeInfo) {
+            var vm = new ComponentViewModel(componentTypeInfo);
+            vm.OnModified = ModifyComponent;
+            vm.OnRemoved = RemoveComponent;
+
+            return vm;
         }
     }
 }

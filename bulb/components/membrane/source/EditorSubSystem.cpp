@@ -106,6 +106,20 @@ namespace {
 
         return members;
     }
+
+    void deserialiseComponent(reflection::TypeInfo const *const componentTypeInfo, uint8_t *const componentMemory, serialiser::Node const &componentNode, size_t currentOffset = 0) {
+        for(auto const &member : componentTypeInfo->members) {
+            if(std::optional<EditorEditableMember> attribute{ member.attributes.get<EditorEditableMember>() }) {
+                size_t const totalMemberOffset{ currentOffset + member.offset };
+
+                if(reflection::TypeInfo const *memberType{ reflection::getTypeInfo(member.id) }) {
+                    deserialiseComponent(memberType, componentMemory, componentNode[member.name], totalMemberOffset);
+                } else {
+                    attribute->onEditorSetValue(componentMemory, totalMemberOffset, member.size, componentNode[member.name].as<std::string>());
+                }
+            }
+        }
+    }
 }
 
 namespace membrane {
@@ -326,6 +340,44 @@ namespace membrane {
     }
 
     void EditorSubSystem::loadScene() {
+        auto loadResult{ loadYaml(clove::Application::get().getFileSystem()->resolve("./scene.clvscene")) };
+        serialiser::Node rootNode{ loadResult.getValue() };
+
+        System::Collections::Generic::List<Entity ^> ^ entities { gcnew System::Collections::Generic::List<Entity ^> };
+
+        for(auto const &entityNode : rootNode["entities"]) {
+            clove::Entity entity{ entityManager->create() };
+            Entity ^ editorEntity { gcnew Entity };
+
+            std::string const name{ entityNode["name"].as<std::string>() };
+
+            entityManager->addComponent<NameComponent>(entity, name);
+
+            editorEntity->name       = gcnew System::String{ name.c_str() };
+            editorEntity->components = gcnew System::Collections::Generic::List<EditorTypeInfo ^>;
+
+            for(auto const &componentNode : entityNode["components"]) {
+                std::string const componentName{ componentNode.getKey() };
+                clove::reflection::TypeInfo const *const typeInfo{ clove::reflection::getTypeInfo(componentName) };
+
+                if(typeInfo == nullptr) {
+                    CLOVE_LOG(Membrane, clove::LogLevel::Error, "Could not get typeinfo for {0}", componentName);
+                    continue;
+                }
+
+                uint8_t *const componentMemory{ typeInfo->attributes.get<clove::EditorVisibleComponent>()->onEditorCreateComponent(entity, *entityManager) };
+                deserialiseComponent(typeInfo, componentMemory, componentNode);
+
+                trackedComponents[entity].push_back(typeInfo);
+                editorEntity->components->Add(constructEditorTypeInfo(typeInfo, componentMemory));
+            }
+
+            entities->Add(editorEntity);
+        }
+
+        Engine_OnSceneLoaded ^ message { gcnew Engine_OnSceneLoaded };
+        message->entities = entities;
+        MessageHandler::sendMessage(message);
     }
 
     clove::Entity EditorSubSystem::createEntity(std::string_view name) {
