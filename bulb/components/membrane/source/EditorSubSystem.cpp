@@ -353,6 +353,7 @@ namespace membrane {
 
             entityManager->addComponent<NameComponent>(entity, name);
 
+            editorEntity->id         = entity;
             editorEntity->name       = gcnew System::String{ name.c_str() };
             editorEntity->components = gcnew System::Collections::Generic::List<EditorTypeInfo ^>;
 
