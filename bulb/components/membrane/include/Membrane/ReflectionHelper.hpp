@@ -1,6 +1,19 @@
 #pragma once
 
 namespace membrane {
+    public enum class EditorTypeType{
+        Value,
+        Parent,
+        Dropdown,
+    };
+
+    public ref class EditorTypeDropdown {
+        //VARIABLES
+    public:
+        System::String ^currentSelection{ nullptr };
+        System::Collections::Generic::List<System::String ^> ^ dropdownItems{ nullptr };
+    };
+
     public ref class EditorTypeInfo {
         //VARIABLES
     public:
@@ -9,8 +22,8 @@ namespace membrane {
 
         System::UInt32 offset{ 0 }; /**< Offset into the parent of this type. */
 
-        System::Collections::Generic::List<EditorTypeInfo ^> ^members { nullptr };
-        System::String ^value { nullptr }; /**< If this type is a leaf type (does not contain it's own members) then this will hold it's value.*/
+        EditorTypeType type{};
+        System::Object ^typeData{}; //Data dependant on the type. If it is a value then it is a string, if it is a parent then it is an array of members etc.
     };
 
     public ref class AvailableTypeInfo {

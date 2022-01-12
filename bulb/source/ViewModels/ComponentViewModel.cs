@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 using Membrane = membrane;
 using System;
+using System.Diagnostics;
 
 namespace Bulb {
     /// <summary>
@@ -30,8 +31,11 @@ namespace Bulb {
             TypeName = componentTypeInfo.typeName;
             this.componentTypeInfo = componentTypeInfo;
 
+            Debug.Assert(componentTypeInfo.type == Membrane.EditorTypeType.Parent);
+            var members = (List<Membrane.EditorTypeInfo>)componentTypeInfo.typeData;
+
             Members = new ObservableCollection<TypeViewModel>();
-            foreach (var memberInfo in componentTypeInfo.members) {
+            foreach (var memberInfo in members) {
                 Members.Add(BuildTypeViewModel(memberInfo));
             }
 
@@ -39,19 +43,34 @@ namespace Bulb {
         }
 
         private TypeViewModel BuildTypeViewModel(Membrane.EditorTypeInfo typeInfo) {
-            var members = new List<TypeViewModel>();
-            if (typeInfo.members != null) {
-                foreach (Membrane.EditorTypeInfo memberInfo in typeInfo.members) {
-                    members.Add(BuildTypeViewModel(memberInfo));
-                }
-            }
-
             TypeViewModel vm;
-            if (typeInfo.value != null && members.Count == 0) {
-                vm = new TypeViewModel(typeInfo.displayName, typeInfo.offset, typeInfo.value);
-                vm.OnValueChanged += OnValueChanged;
-            } else {
-                vm = new TypeViewModel(typeInfo.displayName, members);
+            switch (typeInfo.type) {
+                case Membrane.EditorTypeType.Value:
+                    vm = new TypeViewModel(typeInfo.displayName, typeInfo.offset, (string)typeInfo.typeData);
+                    vm.OnValueChanged += OnValueChanged;
+                    break;
+
+                case Membrane.EditorTypeType.Parent: {
+                    var typeMembers = (List<Membrane.EditorTypeInfo>)typeInfo.typeData;
+                    List<TypeViewModel> viewModelMembers = new List<TypeViewModel>();
+
+                    foreach (Membrane.EditorTypeInfo memberInfo in typeMembers) {
+                        viewModelMembers.Add(BuildTypeViewModel(memberInfo));
+                    }
+                    vm = new TypeViewModel(typeInfo.displayName, viewModelMembers);
+                }
+                break;
+
+                case Membrane.EditorTypeType.Dropdown: {
+                    var dropdownData = (Membrane.EditorTypeDropdown)typeInfo.typeData;
+                    vm = new TypeViewModel(typeInfo.displayName, dropdownData.currentSelection, dropdownData.dropdownItems);
+                }
+                break;
+
+                default:
+                    Debug.Assert(false, "EditorTypeType not handled");
+                    vm = new TypeViewModel("Unknown", 0, "");
+                    break;
             }
 
             return vm;

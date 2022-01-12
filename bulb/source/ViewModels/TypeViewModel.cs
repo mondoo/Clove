@@ -28,6 +28,9 @@ namespace Bulb {
         public ObservableCollection<TypeViewModel> Members { get; }
         public Visibility MembersVisibility { get; }
 
+        public ObservableCollection<string> DropdownItems { get; }
+        public Visibility DropdownVisibility { get; }
+
         public delegate void ValueChangedHandler(uint offset, string value);
         public ValueChangedHandler OnValueChanged;
 
@@ -39,6 +42,17 @@ namespace Bulb {
 
             MembersVisibility = Visibility.Visible;
             ValueVisibility = Visibility.Collapsed;
+            DropdownVisibility = Visibility.Collapsed;
+        }
+
+        public TypeViewModel(string displayName, string selection, List<string> dropdownItems) {
+            Name = displayName;
+            this.value = selection; //Bypass property to prevent delegate being fired.
+            DropdownItems = new ObservableCollection<string>(dropdownItems);
+
+            MembersVisibility = Visibility.Collapsed;
+            ValueVisibility = Visibility.Collapsed;
+            DropdownVisibility = Visibility.Visible;
         }
 
         public TypeViewModel(string displayName, uint offset, string value) {
@@ -48,6 +62,7 @@ namespace Bulb {
 
             MembersVisibility = Visibility.Collapsed;
             ValueVisibility = Visibility.Visible;
+            DropdownVisibility = Visibility.Collapsed;
         }
     }
 }

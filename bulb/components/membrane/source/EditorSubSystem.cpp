@@ -25,47 +25,66 @@
 #include <msclr/marshal_cppstd.h>
 
 using namespace clove;
+using namespace membrane;
 
 namespace {
-    System::Collections::Generic::List<membrane::EditorTypeInfo ^> ^ constructMembers(std::vector<reflection::MemberInfo> const &members, void const *const memory, size_t offsetIntoParent) {
-        auto editorVisibleMemers{ gcnew System::Collections::Generic::List<membrane::EditorTypeInfo ^>{} };
+    System::Collections::Generic::List<EditorTypeInfo ^> ^ constructMembers(std::vector<reflection::MemberInfo> const &members, void const *const memory, size_t offsetIntoParent) {
+        auto editorVisibleMembers{ gcnew System::Collections::Generic::List<EditorTypeInfo ^>{} };
 
         for(auto const &member : members) {
-            if(std::optional<EditorEditableMember> attribute{ member.attributes.get<EditorEditableMember>() }) {
-                size_t const totalMemberOffset{ offsetIntoParent + member.offset };
+            size_t const totalMemberOffset{ offsetIntoParent + member.offset };
 
-                auto memberInfo{ gcnew membrane::EditorTypeInfo{} };
+            if(std::optional<EditorEditableMember> attribute{ member.attributes.get<EditorEditableMember>() }) {
+                auto memberInfo{ gcnew EditorTypeInfo{} };
                 memberInfo->typeName    = gcnew System::String{ member.name.c_str() };
                 memberInfo->displayName = gcnew System::String{ attribute->name.value_or(member.name).c_str() };
                 memberInfo->offset      = totalMemberOffset;
                 if(reflection::TypeInfo const *memberTypeInfo{ reflection::getTypeInfo(member.id) }) {
-                    memberInfo->members = constructMembers(memberTypeInfo->members, memory, totalMemberOffset);
-                    memberInfo->value   = nullptr;
+                    memberInfo->type     = EditorTypeType::Parent;
+                    memberInfo->typeData = constructMembers(memberTypeInfo->members, memory, totalMemberOffset);
                 } else {
-                    memberInfo->members = nullptr;
+                    memberInfo->type = EditorTypeType::Value;
 
                     if(attribute->onEditorGetValue != nullptr) {
                         std::string value{ attribute->onEditorGetValue(reinterpret_cast<uint8_t const *const>(memory), totalMemberOffset, member.size) };
-                        memberInfo->value = gcnew System::String{ value.c_str() };
+                        memberInfo->typeData = gcnew System::String{ value.c_str() };
                     } else {
-                        CLOVE_LOG(Membrane, clove::LogLevel::Error, "EditorEditableMember {0} does not provide an implemntation for onEditorGetValue", member.name);
+                        CLOVE_LOG(Membrane, clove::LogLevel::Error, "EditorEditableMember {0} does not provide an implementation for onEditorGetValue", member.name);
+                        memberInfo->typeData = gcnew System::String{ "" };
                     }
                 }
 
-                editorVisibleMemers->Add(memberInfo);
+                editorVisibleMembers->Add(memberInfo);
+            } else if(std::optional<EditorEditableDropdown> attribute{ member.attributes.get<EditorEditableDropdown>() }) {
+                auto memberInfo{ gcnew EditorTypeInfo{} };
+                memberInfo->typeName    = gcnew System::String{ member.name.c_str() };
+                memberInfo->displayName = gcnew System::String{ attribute->name.value_or(member.name).c_str() };
+                memberInfo->offset      = totalMemberOffset;
+                memberInfo->type        = EditorTypeType::Dropdown;
+
+                EditorTypeDropdown ^dropdownData{ gcnew EditorTypeDropdown };
+                dropdownData->currentSelection = gcnew System::String{ attribute->getSelectedItem()->name.c_str() };//TODO: Check for attributes
+                dropdownData->dropdownItems    = gcnew System::Collections::Generic::List<System::String ^>{};
+                for(auto item : attribute->getDropdownMembers()) {
+                    dropdownData->dropdownItems->Add(gcnew System::String{ item.c_str() });
+                }
+                memberInfo->typeData = dropdownData;
+                
+                editorVisibleMembers->Add(memberInfo);
             }
         }
 
-        return editorVisibleMemers;
+        return editorVisibleMembers;
     }
 
-    membrane::EditorTypeInfo^ constructEditorTypeInfo(reflection::TypeInfo const *typeInfo, void const *const memory) {
+    EditorTypeInfo^ constructEditorTypeInfo(reflection::TypeInfo const *typeInfo, void const *const memory) {
         EditorVisibleComponent const visibleAttribute{ typeInfo->attributes.get<EditorVisibleComponent>().value() };
 
-        auto editorTypeInfo{ gcnew membrane::EditorTypeInfo{} };
+        auto editorTypeInfo{ gcnew EditorTypeInfo{} };
         editorTypeInfo->typeName    = gcnew System::String{ typeInfo->name.c_str() };
         editorTypeInfo->displayName = gcnew System::String{ visibleAttribute.name.value_or(typeInfo->name).c_str() };
-        editorTypeInfo->members     = constructMembers(typeInfo->members, memory, 0);
+        editorTypeInfo->type        = EditorTypeType::Parent;
+        editorTypeInfo->typeData    = constructMembers(typeInfo->members, memory, 0);
 
         return editorTypeInfo;
     }
