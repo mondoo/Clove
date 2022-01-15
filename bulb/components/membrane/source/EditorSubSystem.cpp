@@ -384,6 +384,11 @@ namespace membrane {
     }
 
     void EditorSubSystem::loadScene() {
+        for(auto &&[entity, components] : trackedComponents) {
+            entityManager->destroy(entity);    
+        }
+        trackedComponents.clear();
+
         auto loadResult{ loadYaml(clove::Application::get().getFileSystem()->resolve("./scene.clvscene")) };
         serialiser::Node rootNode{ loadResult.getValue() };
 
