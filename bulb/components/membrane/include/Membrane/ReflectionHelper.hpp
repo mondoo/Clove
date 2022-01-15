@@ -10,8 +10,10 @@ namespace membrane {
     public ref class EditorTypeDropdown {
         //VARIABLES
     public:
-        System::String ^currentSelection{ nullptr };
-        System::Collections::Generic::List<System::String ^> ^ dropdownItems{ nullptr };
+        System::Int32 currentSelection{};
+        System::Collections::Generic::List<System::String ^> ^ dropdownItems { nullptr };
+
+        System::Collections::Generic::List<ref class EditorTypeInfo ^> ^ dropdownTypeInfos { nullptr };
     };
 
     public ref class EditorTypeInfo {

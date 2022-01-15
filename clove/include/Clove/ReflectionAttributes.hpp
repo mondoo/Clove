@@ -15,16 +15,14 @@ namespace clove {
 }
 
 namespace clove {
-    inline std::string defaultEditorGetValue(uint8_t const *const memory, size_t offset, size_t size) {
-        //NOTE: Currently assuming everything using this is a float
+    inline std::string getFloatValue(uint8_t const *const memory, size_t offset, size_t size) {
         CLOVE_ASSERT(size == sizeof(float));
 
         float const value{ *reinterpret_cast<float const *const>(memory + offset) };
         return std::to_string(value);
     }
 
-    inline void defaultEditorSetValue(uint8_t *const memory, size_t offset, size_t size, std::string_view value) {
-        //NOTE: Currently assuming everything using this is a float
+    inline void setFloatValue(uint8_t *const memory, size_t offset, size_t size, std::string_view value) {
         CLOVE_ASSERT(size == sizeof(float));
 
         try {
@@ -54,8 +52,8 @@ namespace clove {
     struct EditorEditableMember {
         std::optional<std::string> name{}; /**< Name of the member. If not set then will just use the type's name. */
 
-        std::function<std::string(uint8_t const *const, size_t, size_t)> onEditorGetValue{ &defaultEditorGetValue };      /**< Called when the editor retrieves the member. Override for custom serialisation logic. */
-        std::function<void(uint8_t *const, size_t, size_t, std::string_view)> onEditorSetValue{ &defaultEditorSetValue }; /**< Called when the editor writes to the member. Override for custom serialisation logic. */
+        std::function<std::string(uint8_t const *const, size_t, size_t)> onEditorGetValue{ &getFloatValue };      /**< Called when the editor retrieves the member. Override for custom serialisation logic. */
+        std::function<void(uint8_t *const, size_t, size_t, std::string_view)> onEditorSetValue{ &setFloatValue }; /**< Called when the editor writes to the member. Override for custom serialisation logic. */
     };
 
     /**
@@ -64,8 +62,10 @@ namespace clove {
     struct EditorEditableDropdown {
         std::optional<std::string> name{}; /**< Name of the member. If not set then will just use the type's name. */
 
-        std::function<std::vector<std::string>()> getDropdownMembers{};                                                  /**< Returns all possible members for the drop down. */
-        std::function<reflection::TypeInfo const *(uint8_t *const, size_t, size_t, std::string_view)> setSelectedItem{}; /**< Sets the current dropdown selection. Returns the typeInfo of the new selection. Items will need to be set up as EditorEditableMembers. */
-        std::function<reflection::TypeInfo const *()> getSelectedItem{};                                                 /**< Returns the typeInfo of the currently selected item. Items will need to be set up as EditorEditableMembers. */
+        std::function<std::vector<std::string>()> getDropdownMembers{};                          /**< Returns all possible members for the drop down. */
+        std::function<void(uint8_t *const, size_t, size_t, std::string_view)> setSelectedItem{}; /**< Sets the current dropdown selection. Returns the typeInfo of the new selection. Items will need to be set up as EditorEditableMembers. */
+        std::function<size_t(uint8_t const *const, size_t, size_t)> getSelectedIndex{};          /**< Returns the index and typeInfo of the currently selected item. Items will need to be set up as EditorEditableMembers. */
+
+        std::function<reflection::TypeInfo const *(std::string_view)> getTypeInfoForMember{ nullptr }; /**< OPTIONAL. If set then when a member is selected this type info will also display.*/
     };
 }

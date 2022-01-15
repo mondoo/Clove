@@ -17,6 +17,11 @@ namespace Bulb {
                 this.value = value;
                 OnPropertyChanged(nameof(Value));
 
+                if(DropdownVisibility == Visibility.Visible && DropdownItemTypeInfos != null) {
+                    Members.Clear();
+                    Members.Add(DropdownItemTypeInfos[DropdownItems.IndexOf(value)]);
+                }
+
                 if (value.Length != 0) {
                     OnValueChanged?.Invoke(offsetIntoParent, this.value);
                 }
@@ -30,6 +35,7 @@ namespace Bulb {
 
         public ObservableCollection<string> DropdownItems { get; }
         public Visibility DropdownVisibility { get; }
+        private List<TypeViewModel> DropdownItemTypeInfos { get; }
 
         public delegate void ValueChangedHandler(uint offset, string value);
         public ValueChangedHandler OnValueChanged;
@@ -45,12 +51,22 @@ namespace Bulb {
             DropdownVisibility = Visibility.Collapsed;
         }
 
-        public TypeViewModel(string displayName, string selection, List<string> dropdownItems) {
+        public TypeViewModel(string displayName, uint offset, List<string> dropdownItems, int selection, List<TypeViewModel> members) {
             Name = displayName;
-            this.value = selection; //Bypass property to prevent delegate being fired.
+            offsetIntoParent = offset;
             DropdownItems = new ObservableCollection<string>(dropdownItems);
+            value = DropdownItems[selection]; //Bypass property to prevent delegate being fired.
 
-            MembersVisibility = Visibility.Collapsed;
+            if (members != null) {
+                MembersVisibility = Visibility.Visible;
+                DropdownItemTypeInfos = members;
+
+                Members = new ObservableCollection<TypeViewModel>();
+                Members.Add(DropdownItemTypeInfos[selection]);
+            } else {
+                MembersVisibility = Visibility.Collapsed;
+            }
+
             ValueVisibility = Visibility.Collapsed;
             DropdownVisibility = Visibility.Visible;
         }

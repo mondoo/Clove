@@ -63,11 +63,31 @@ namespace {
                 memberInfo->type        = EditorTypeType::Dropdown;
 
                 EditorTypeDropdown ^dropdownData{ gcnew EditorTypeDropdown };
-                dropdownData->currentSelection = gcnew System::String{ attribute->getSelectedItem()->name.c_str() };//TODO: Check for attributes
+                dropdownData->currentSelection = attribute->getSelectedIndex(reinterpret_cast<uint8_t const *const>(memory), totalMemberOffset, member.size);
                 dropdownData->dropdownItems    = gcnew System::Collections::Generic::List<System::String ^>{};
                 for(auto item : attribute->getDropdownMembers()) {
                     dropdownData->dropdownItems->Add(gcnew System::String{ item.c_str() });
                 }
+                if(attribute->getTypeInfoForMember != nullptr) {
+                    std::vector<reflection::MemberInfo> dropdownMemberInfos{};
+                    for(auto item : attribute->getDropdownMembers()) {
+                        //Construct member infos in order to call this function again. This is a bit hacky but allows us to reuse a lot of code and handle all cases
+                        reflection::TypeInfo const *itemTypeInfo{ attribute->getTypeInfoForMember(item) };
+
+                        reflection::MemberInfo info{
+                            itemTypeInfo->name,
+                            itemTypeInfo->id,
+                            0,
+                            itemTypeInfo->size
+                        };
+                        info.attributes.add(EditorEditableMember{ item });
+
+                        dropdownMemberInfos.push_back(std::move(info));
+                    }
+
+                    dropdownData->dropdownTypeInfos = constructMembers(dropdownMemberInfos, memory, totalMemberOffset);
+                }
+                
                 memberInfo->typeData = dropdownData;
                 
                 editorVisibleMembers->Add(memberInfo);
@@ -77,7 +97,7 @@ namespace {
         return editorVisibleMembers;
     }
 
-    EditorTypeInfo^ constructEditorTypeInfo(reflection::TypeInfo const *typeInfo, void const *const memory) {
+    EditorTypeInfo^ constructComponentEditorTypeInfo(reflection::TypeInfo const *typeInfo, void const *const memory) {
         EditorVisibleComponent const visibleAttribute{ typeInfo->attributes.get<EditorVisibleComponent>().value() };
 
         auto editorTypeInfo{ gcnew EditorTypeInfo{} };
@@ -91,15 +111,20 @@ namespace {
 
     void modifyComponentMember(uint8_t *const memory, clove::reflection::TypeInfo const *typeInfo, std::string_view value, size_t const requiredOffset, size_t currentOffset) {
         for(auto const &member : typeInfo->members) {
-            if(std::optional<EditorEditableMember> attribute{ member.attributes.get<EditorEditableMember>() }) {
-                size_t const totalMemberOffset{ currentOffset + member.offset };
-                reflection::TypeInfo const *memberTypeInfo{ reflection::getTypeInfo(member.id) };
+            size_t const totalMemberOffset{ currentOffset + member.offset };
+            reflection::TypeInfo const *memberTypeInfo{ reflection::getTypeInfo(member.id) };
 
-                if(memberTypeInfo != nullptr) {
-                    modifyComponentMember(memory, memberTypeInfo, value, requiredOffset, totalMemberOffset);
-                } else if(totalMemberOffset == requiredOffset) {
+            if(memberTypeInfo != nullptr) {
+                modifyComponentMember(memory, memberTypeInfo, value, requiredOffset, totalMemberOffset);
+            } else if(totalMemberOffset == requiredOffset) {
+                if(std::optional<EditorEditableMember> attribute{ member.attributes.get<EditorEditableMember>() }) {
                     attribute->onEditorSetValue(memory, totalMemberOffset, member.size, value);
+                } else if(std::optional<EditorEditableDropdown> attribute{ member.attributes.get<EditorEditableDropdown>() }) {
+                    attribute->setSelectedItem(memory, totalMemberOffset, member.size, value);
+                } else {
+                    CLOVE_LOG(Membrane, LogLevel::Error, "{0}: Reached required member but it does not have an editable attribute.", CLOVE_FUNCTION_NAME);
                 }
+                return;
             }
         }
     }
@@ -389,7 +414,7 @@ namespace membrane {
                 deserialiseComponent(typeInfo, componentMemory, componentNode);
 
                 trackedComponents[entity].push_back(typeInfo);
-                editorEntity->components->Add(constructEditorTypeInfo(typeInfo, componentMemory));
+                editorEntity->components->Add(constructComponentEditorTypeInfo(typeInfo, componentMemory));
             }
 
             entities->Add(editorEntity);
@@ -447,7 +472,7 @@ namespace membrane {
         auto message{ gcnew Engine_OnComponentAdded };
         message->entity        = entity;
         message->componentName = gcnew System::String{ typeName.data() };
-        message->typeInfo      = constructEditorTypeInfo(typeInfo, componentMemory);
+        message->typeInfo      = constructComponentEditorTypeInfo(typeInfo, componentMemory);
 
         MessageHandler::sendMessage(message);
     }

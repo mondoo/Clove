@@ -63,7 +63,18 @@ namespace Bulb {
 
                 case Membrane.EditorTypeType.Dropdown: {
                     var dropdownData = (Membrane.EditorTypeDropdown)typeInfo.typeData;
-                    vm = new TypeViewModel(typeInfo.displayName, dropdownData.currentSelection, dropdownData.dropdownItems);
+                    List<TypeViewModel> dropdownMembers = null;
+
+                    if(dropdownData.dropdownTypeInfos != null) {
+                        dropdownMembers = new List<TypeViewModel>();
+
+                        foreach (Membrane.EditorTypeInfo memberInfo in dropdownData.dropdownTypeInfos) {
+                            dropdownMembers.Add(BuildTypeViewModel(memberInfo));
+                        }
+                    }
+
+                    vm = new TypeViewModel(typeInfo.displayName, typeInfo.offset, dropdownData.dropdownItems, dropdownData.currentSelection, dropdownMembers);
+                    vm.OnValueChanged += OnValueChanged;
                 }
                 break;
 
