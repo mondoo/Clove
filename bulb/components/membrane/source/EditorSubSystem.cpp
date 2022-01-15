@@ -137,13 +137,21 @@ namespace {
         serialiser::Node members{};
 
         for(auto const &member : componentTypeInfo->members) {
-            if(std::optional<EditorEditableMember> attribute{ member.attributes.get<EditorEditableMember>() }) {
-                size_t const totalMemberOffset{ currentOffset + member.offset };
+            size_t const totalMemberOffset{ currentOffset + member.offset };
 
-                if(reflection::TypeInfo const *memberType{ reflection::getTypeInfo(member.id) }) {
-                    members[member.name] = serialiseComponent(memberType, componentMemory, totalMemberOffset);
-                } else {
+            if(reflection::TypeInfo const *memberType{ reflection::getTypeInfo(member.id) }) {
+                members[member.name] = serialiseComponent(memberType, componentMemory, totalMemberOffset);
+            } else {
+                if(std::optional<EditorEditableMember> attribute{ member.attributes.get<EditorEditableMember>() }) {
                     members[member.name] = attribute->onEditorGetValue(componentMemory, totalMemberOffset, member.size);
+                } else if(std::optional<EditorEditableDropdown> attribute{ member.attributes.get<EditorEditableDropdown>() }) {
+                    size_t const index{ attribute->getSelectedIndex(componentMemory, totalMemberOffset, member.size) };
+                    if(attribute->getTypeInfoForMember != nullptr) {
+                        members[member.name]["selection"] = index;
+                        members[member.name]["value"]     = serialiseComponent(attribute->getTypeInfoForMember(attribute->getDropdownMembers()[index]), componentMemory, totalMemberOffset);
+                    } else {
+                        members[member.name] = index;
+                    }
                 }
             }
         }
