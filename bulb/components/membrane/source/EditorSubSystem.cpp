@@ -418,6 +418,8 @@ namespace membrane {
         Engine_OnEntityDeleted ^ message { gcnew Engine_OnEntityDeleted };
         message->entity = entity;
         MessageHandler::sendMessage(message);
+
+        trackedComponents.erase(entity);
     }
 
     void EditorSubSystem::addComponent(clove::Entity entity, std::string_view typeName) {
