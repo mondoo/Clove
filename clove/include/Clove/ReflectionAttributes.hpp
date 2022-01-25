@@ -63,8 +63,8 @@ namespace clove {
         std::optional<std::string> name{}; /**< Name of the member. If not set then will just use the type's name. */
 
         std::function<std::vector<std::string>()> getDropdownMembers{};                          /**< Returns all possible members for the drop down. */
-        std::function<void(uint8_t *const, size_t, size_t, std::string_view)> setSelectedItem{}; /**< Sets the current dropdown selection. Returns the typeInfo of the new selection. Items will need to be set up as EditorEditableMembers. */
-        std::function<size_t(uint8_t const *const, size_t, size_t)> getSelectedIndex{};          /**< Returns the index and typeInfo of the currently selected item. Items will need to be set up as EditorEditableMembers. */
+        std::function<void(uint8_t *const, size_t, size_t, std::string_view)> setSelectedItem{}; /**< Sets the current dropdown selection. */
+        std::function<size_t(uint8_t const *const, size_t, size_t)> getSelectedIndex{};          /**< Returns the index of the currently selected item. */
 
         std::function<reflection::TypeInfo const *(std::string_view)> getTypeInfoForMember{ nullptr }; /**< OPTIONAL. If set then when a member is selected this type info will also display.*/
     };

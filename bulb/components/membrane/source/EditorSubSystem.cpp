@@ -147,8 +147,10 @@ namespace {
                 } else if(std::optional<EditorEditableDropdown> attribute{ member.attributes.get<EditorEditableDropdown>() }) {
                     size_t const index{ attribute->getSelectedIndex(componentMemory, totalMemberOffset, member.size) };
                     if(attribute->getTypeInfoForMember != nullptr) {
+                        reflection::TypeInfo const *const selectedTypeInfo{ attribute->getTypeInfoForMember(attribute->getDropdownMembers()[index]) };
+
                         members[member.name]["selection"] = index;
-                        members[member.name]["value"]     = serialiseComponent(attribute->getTypeInfoForMember(attribute->getDropdownMembers()[index]), componentMemory, totalMemberOffset);
+                        members[member.name]["value"]     = serialiseComponent(selectedTypeInfo, componentMemory, totalMemberOffset);
                     } else {
                         members[member.name] = index;
                     }
@@ -161,13 +163,28 @@ namespace {
 
     void deserialiseComponent(reflection::TypeInfo const *const componentTypeInfo, uint8_t *const componentMemory, serialiser::Node const &componentNode, size_t currentOffset = 0) {
         for(auto const &member : componentTypeInfo->members) {
-            if(std::optional<EditorEditableMember> attribute{ member.attributes.get<EditorEditableMember>() }) {
-                size_t const totalMemberOffset{ currentOffset + member.offset };
+            size_t const totalMemberOffset{ currentOffset + member.offset };
 
-                if(reflection::TypeInfo const *memberType{ reflection::getTypeInfo(member.id) }) {
-                    deserialiseComponent(memberType, componentMemory, componentNode[member.name], totalMemberOffset);
-                } else {
+            if(reflection::TypeInfo const *memberType{ reflection::getTypeInfo(member.id) }) {
+                deserialiseComponent(memberType, componentMemory, componentNode[member.name], totalMemberOffset);
+            } else {
+                if(std::optional<EditorEditableMember> attribute{ member.attributes.get<EditorEditableMember>() }) {
                     attribute->onEditorSetValue(componentMemory, totalMemberOffset, member.size, componentNode[member.name].as<std::string>());
+                } else if(std::optional<EditorEditableDropdown> attribute{ member.attributes.get<EditorEditableDropdown>() }) {
+                    std::vector<std::string> const dropdownMembers{ attribute->getDropdownMembers() };
+                    serialiser::Node const &dropdownNode{ componentNode[member.name] };
+
+                    bool const isOnlyIndex{ dropdownNode.getType() == serialiser::Node::Type::Scalar };
+                    if(isOnlyIndex) {
+                        size_t const index{ dropdownNode.as<size_t>() };
+                        attribute->setSelectedItem(componentMemory, totalMemberOffset, member.size, dropdownMembers[index]);
+                    } else {
+                        size_t const index{ dropdownNode["selection"].as<size_t>() };
+                        attribute->setSelectedItem(componentMemory, totalMemberOffset, member.size, dropdownMembers[index]);
+
+                        reflection::TypeInfo const *const selectedTypeInfo{ attribute->getTypeInfoForMember(dropdownMembers[index]) };
+                        deserialiseComponent(selectedTypeInfo, componentMemory, dropdownNode["value"], totalMemberOffset);
+                    }
                 }
             }
         }
