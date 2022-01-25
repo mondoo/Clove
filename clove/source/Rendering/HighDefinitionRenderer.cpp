@@ -265,10 +265,6 @@ namespace clove {
         renderSene(renderGraph, renderGraphMeshes, shadowMaps, renderTargetImage, depthTargetImage);
 
         //Execute UI work
-        //TODO: Cache instead of making every frame
-        std::unordered_map<std::string, std::string> shaderIncludes;
-        shaderIncludes["Constants.glsl"] = { constants, constantsLength };
-
         RgRenderPass::Descriptor uiPassDescriptor{
             .vertexShader     = renderGraph.createShader({ uivert, uivertLength }, shaderIncludes, "UI (vertex)", GhaShader::Stage::Vertex),
             .pixelShader      = renderGraph.createShader({ widgetpixel, widgetpixelLength }, shaderIncludes, "Widget (pixel)", GhaShader::Stage::Pixel),
@@ -429,6 +425,8 @@ namespace clove {
     }
 
     void HighDefinitionRenderer::skinMeshes(RenderGraph &renderGraph, std::vector<RenderGraphMeshInfo> &meshes) {
+        uint32_t constexpr workgroupSize{ 256 }; //Workgroup size of each dispatch - see SkinningCompute.glsl
+
         RgComputePass::Descriptor passDescriptor{
             .shader = renderGraph.createShader({ skinningcompute, skinningcomputeLength }, shaderIncludes, "Mesh skinner (compute)", GhaShader::Stage::Compute),
         };
@@ -475,7 +473,7 @@ namespace clove {
                                                                        .size   = mesh.vertexBufferSize,
                                                                    },
                                                                },
-                                                               .disptachSize = { (mesh.vertexCount / AVERAGE_WORK_GROUP_SIZE) + 1, 1, 1 },
+                                                               .disptachSize = { (mesh.vertexCount / workgroupSize) + 1, 1, 1 },
                                                            });
 
             mesh.vertexBuffer = skinnedBuffer;
