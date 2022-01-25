@@ -174,6 +174,12 @@ namespace clove {
     }
 
     void HighDefinitionRenderer::end() {
+        //Prevent render graph execution if we do not have anything to render.
+        //TODO: This can be removed once shader reflection is in.
+        if(currentFrameData.meshes.empty()){
+            return;
+        }
+
         framesInFlight[currentFrame]->wait();
 
         //Aquire the next available image from the render target
