@@ -19,6 +19,7 @@
 #include "Components/CollisionShapeComponent.cpp"
 #include "Components/PointLightComponent.cpp"
 #include "Components/StaticModelComponent.cpp"
+#include "Components/RigidBodyComponent.cpp"
 #include "ReflectionCommon.cpp"
 
 namespace clove {
