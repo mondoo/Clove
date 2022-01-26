@@ -6,8 +6,6 @@
 #include "Membrane/Messages.hpp"
 
 #include <Clove/Application.hpp>
-#include <Clove/Components/StaticModelComponent.hpp>
-#include <Clove/Components/TransformComponent.hpp>
 #include <Clove/ECS/EntityManager.hpp>
 #include <Clove/Graphics/GhaBuffer.hpp>
 #include <Clove/Graphics/GhaImage.hpp>

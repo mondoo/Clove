@@ -3,6 +3,8 @@
 #include "Clove/ReflectionAttributes.hpp"
 
 #include <Clove/Reflection/Reflection.hpp>
+#include <Clove/ECS/EntityManager.hpp>
+#include <Clove/ECS/Entity.hpp>
 
 CLOVE_REFLECT_BEGIN(clove::PointLightComponent, clove::EditorVisibleComponent{
                                                     .name                    = "Point Light Component",

@@ -8,10 +8,6 @@
 
 #include <Clove/Application.hpp>
 #include <Clove/Components/CameraComponent.hpp>
-#include <Clove/Components/CollisionShapeComponent.hpp>
-#include <Clove/Components/PointLightComponent.hpp>
-#include <Clove/Components/RigidBodyComponent.hpp>
-#include <Clove/Components/StaticModelComponent.hpp>
 #include <Clove/Components/TransformComponent.hpp>
 #include <Clove/ECS/EntityManager.hpp>
 #include <Clove/Log/Log.hpp>

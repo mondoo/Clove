@@ -1,6 +1,5 @@
 #include "Membrane/ReflectionHelper.hpp"
 
-#include <Clove/Components/TransformComponent.hpp>
 #include <Clove/Reflection/Reflection.hpp>
 #include <Clove/ReflectionAttributes.hpp>
 #include <msclr/marshal_cppstd.h>

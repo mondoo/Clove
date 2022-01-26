@@ -14,14 +14,6 @@
 #include <Clove/Graphics/Gha.hpp>
 #include <Clove/Graphics/GhaDevice.hpp>
 
-//TODO: These files do not provide the reflection info unless included in another
-//Looks like they need some sort of function declaration in there with the definition in an included header
-#include "Components/CollisionShapeComponent.cpp"
-#include "Components/PointLightComponent.cpp"
-#include "Components/StaticModelComponent.cpp"
-#include "Components/RigidBodyComponent.cpp"
-#include "ReflectionCommon.cpp"
-
 namespace clove {
     Application *Application::instance{ nullptr };
 

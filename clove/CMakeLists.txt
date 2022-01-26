@@ -79,15 +79,15 @@ add_library(
 		${INCLUDE}/Components/CameraComponent.hpp
 		${INCLUDE}/Components/CollisionResponseComponent.hpp
 		${INCLUDE}/Components/CollisionShapeComponent.hpp
-		#${SOURCE}/Components/CollisionShapeComponent.cpp
+		${SOURCE}/Components/CollisionShapeComponent.cpp
 		${INCLUDE}/Components/DirectionalLightComponent.hpp
 		${INCLUDE}/Components/ParentComponent.hpp
 		${INCLUDE}/Components/PointLightComponent.hpp
-		#${SOURCE}/Components/PointLightComponent.cpp
+		${SOURCE}/Components/PointLightComponent.cpp
 		${INCLUDE}/Components/RigidBodyComponent.hpp
 		${SOURCE}/Components/RigidBodyComponent.cpp
 		${INCLUDE}/Components/StaticModelComponent.hpp
-		#${SOURCE}/Components/StaticModelComponent.cpp
+		${SOURCE}/Components/StaticModelComponent.cpp
 		${INCLUDE}/Components/TransformComponent.hpp
 		${SOURCE}/Components/TransformComponent.cpp
 
@@ -203,8 +203,7 @@ add_library(
 		${INCLUDE}/ModelLoader.hpp
 		${SOURCE}/ModelLoader.cpp
 
-		#TODO: See Application.cpp
-		#${SOURCE}/ReflectionCommon.cpp
+		${SOURCE}/ReflectionCommon.cpp
 
 		${INCLUDE}/ReflectionAttributes.hpp
 
