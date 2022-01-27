@@ -13,6 +13,8 @@ public:
     float y;
 };
 
+CLOVE_REFLECT_DECLARE_TYPE(PublicReflectClass)
+
 CLOVE_REFLECT_BEGIN(PublicReflectClass, TestAttribute{ .text = "class" })
 CLOVE_REFLECT_MEMBER(x, TestAttribute{ .text = "member" })
 CLOVE_REFLECT_MEMBER(y)
@@ -42,6 +44,8 @@ public:
     };
 };
 
+CLOVE_REFLECT_DECLARE_TYPE(PrivateReflectClass)
+
 CLOVE_REFLECT_BEGIN(PrivateReflectClass)
 CLOVE_REFLECT_MEMBER(a)
 CLOVE_REFLECT_MEMBER(b)
@@ -61,6 +65,8 @@ namespace test {
     };
 }
 
+CLOVE_REFLECT_DECLARE_TYPE(test::NamespaceReflectedClass)
+
 CLOVE_REFLECT_BEGIN(test::NamespaceReflectedClass)
 CLOVE_REFLECT_MEMBER(a)
 CLOVE_REFLECT_MEMBER(b)
@@ -76,10 +82,14 @@ struct Nested {
     int b;
 };
 
+CLOVE_REFLECT_DECLARE_TYPE(Internal)
+
 CLOVE_REFLECT_BEGIN(Internal)
 CLOVE_REFLECT_MEMBER(a)
 CLOVE_REFLECT_MEMBER(b)
 CLOVE_REFLECT_END
+
+CLOVE_REFLECT_DECLARE_TYPE(Nested)
 
 CLOVE_REFLECT_BEGIN(Nested)
 CLOVE_REFLECT_MEMBER(a)

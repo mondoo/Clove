@@ -2,7 +2,6 @@
 
 #include "Clove/ReflectionAttributes.hpp"
 
-#include <Clove/Reflection/Reflection.hpp>
 #include <Clove/ECS/EntityManager.hpp>
 #include <Clove/ECS/Entity.hpp>
 

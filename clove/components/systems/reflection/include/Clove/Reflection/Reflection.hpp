@@ -5,8 +5,8 @@
 #include <string>
 #include <tuple>
 #include <typeinfo>
-#include <vector>
 #include <unordered_map>
+#include <vector>
 
 namespace clove::reflection {
     class AttributeContainer {
@@ -116,19 +116,24 @@ namespace clove::reflection {
 #define INTERNAL_CLOVE_REFLECT_CAT2(a, b) a##b
 #define INTERNAL_CLOVE_REFLECT_CAT(a, b) INTERNAL_CLOVE_REFLECT_CAT2(a, b)
 
-#define CLOVE_REFLECT_BEGIN(classType, ...)                                                                                         \
-    template<>                                                                                                                      \
-    struct ::clove::reflection::internal::CreatorHelper<classType> {                                                                \
-        CreatorHelper();                                                                                                            \
-    };                                                                                                                              \
-    inline static ::clove::reflection::internal::CreatorHelper<classType> const INTERNAL_CLOVE_REFLECT_CAT(creator, __COUNTER__){}; \
-                                                                                                                                    \
-    ::clove::reflection::internal::CreatorHelper<classType>::CreatorHelper() {                                                      \
-        using Type = classType;                                                                                                     \
-        ::clove::reflection::TypeInfo info{};                                                                                       \
-        info.name = #classType;                                                                                                     \
-        info.id   = typeid(classType).hash_code();                                                                                  \
-        info.size = sizeof(classType);                                                                                              \
+/**
+ * @brief Placed in the header of a class signifying that it will be reflected.
+ * @details This should always be called before CLOVE_REFLECT_BEGIN etc.
+ */
+#define CLOVE_REFLECT_DECLARE_TYPE(classType)                        \
+    template<>                                                       \
+    struct ::clove::reflection::internal::CreatorHelper<classType> { \
+        CreatorHelper();                                             \
+    };                                                               \
+    static inline ::clove::reflection::internal::CreatorHelper<classType> const INTERNAL_CLOVE_REFLECT_CAT(creator, __COUNTER__){};
+
+#define CLOVE_REFLECT_BEGIN(classType, ...)                                    \
+    ::clove::reflection::internal::CreatorHelper<classType>::CreatorHelper() { \
+        using Type = classType;                                                \
+        ::clove::reflection::TypeInfo info{};                                  \
+        info.name = #classType;                                                \
+        info.id   = typeid(classType).hash_code();                             \
+        info.size = sizeof(classType);                                         \
         ::clove::reflection::internal::populateAttributes<0>(info.attributes, std::make_tuple(__VA_ARGS__));
 
 #define CLOVE_REFLECT_MEMBER(member, ...)                                                                          \

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Clove/Maths/Vector.hpp>
+#include <Clove/Reflection/Reflection.hpp>
 
 namespace clove {
     struct PointLightComponent {
@@ -9,3 +10,5 @@ namespace clove {
         vec3f specularColour{ 1.0f, 1.0f, 1.0f };
     };
 }
+
+CLOVE_REFLECT_DECLARE_TYPE(clove::PointLightComponent)

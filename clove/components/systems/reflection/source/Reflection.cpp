@@ -42,8 +42,6 @@ namespace clove::reflection {
         void Registry::addTypeInfo(TypeId const typeId, reflection::TypeInfo typeInfo) {
             if(!types.contains(typeId)) {
                 types.emplace(typeId, std::move(typeInfo));
-            } else {
-                CLOVE_LOG(CloveReflection, LogLevel::Warning, "TypeId {0} ({1}) already exists in registry. Ignoring potential duplicate.", typeId, typeInfo.name);
             }
         }
     }

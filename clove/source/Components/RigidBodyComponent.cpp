@@ -4,7 +4,6 @@
 
 #include <Clove/ECS/Entity.hpp>
 #include <Clove/ECS/EntityManager.hpp>
-#include <Clove/Reflection/Reflection.hpp>
 
 namespace clove {
     void RigidBodyComponent::applyForce(vec3f force, vec3f relativeOffset) {

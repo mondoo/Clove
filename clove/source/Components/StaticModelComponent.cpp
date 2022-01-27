@@ -4,8 +4,6 @@
 #include "Clove/FileSystem/AssetManager.hpp"
 #include "Clove/ReflectionAttributes.hpp"
 
-#include <Clove/Reflection/Reflection.hpp>
-
 CLOVE_REFLECT_BEGIN(clove::StaticModelComponent, clove::EditorVisibleComponent{
                                                      .name                    = "Static Model Component",
                                                      .onEditorCreateComponent = [](clove::Entity entity, clove::EntityManager &manager) -> uint8_t * {

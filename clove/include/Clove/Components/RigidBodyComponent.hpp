@@ -3,6 +3,7 @@
 #include <Clove/Maths/Vector.hpp>
 #include <cinttypes>
 #include <optional>
+#include <Clove/Reflection/Reflection.hpp>
 
 namespace clove {
     /**
@@ -87,3 +88,5 @@ namespace clove {
         vec3f currentVelocity{};
     };
 }
+
+CLOVE_REFLECT_DECLARE_TYPE(clove::RigidBodyComponent)

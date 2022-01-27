@@ -2,6 +2,7 @@
 
 #include <Clove/Maths/Vector.hpp>
 #include <variant>
+#include <Clove/Reflection/Reflection.hpp>
 
 namespace clove {
     /**
@@ -25,3 +26,7 @@ namespace clove {
         ShapeVariant shape{ Sphere{} };//Provide a constructed shape to work around a problem on g++/clang 10
     };
 }
+
+CLOVE_REFLECT_DECLARE_TYPE(clove::CollisionShapeComponent::Sphere)
+CLOVE_REFLECT_DECLARE_TYPE(clove::CollisionShapeComponent::Cube)
+CLOVE_REFLECT_DECLARE_TYPE(clove::CollisionShapeComponent)

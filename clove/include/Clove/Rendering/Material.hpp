@@ -62,4 +62,6 @@ namespace clove {
     };
 }
 
+CLOVE_REFLECT_DECLARE_TYPE(clove::Material)
+
 #include "Material.inl"

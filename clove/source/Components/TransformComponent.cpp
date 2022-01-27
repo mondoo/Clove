@@ -7,7 +7,6 @@
 #include <Clove/Log/Log.hpp>
 #include <Clove/Maths/Maths.hpp>
 #include <Clove/Maths/MathsHelpers.hpp>
-#include <Clove/Reflection/Reflection.hpp>
 
 namespace clove {
     vec3f TransformComponent::getWorldPosition() const {

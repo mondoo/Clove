@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Clove/Maths/MathsTypes.hpp>
+#include <Clove/Reflection/Reflection.hpp>
 
 namespace clove {
     /**
@@ -40,3 +41,5 @@ namespace clove {
         vec3f getUp() const;
     };
 }
+
+CLOVE_REFLECT_DECLARE_TYPE(clove::TransformComponent)
