@@ -27,3 +27,7 @@ target_link_libraries(
         CloveLog
 		CloveMemory
 )
+
+if(CLOVE_BUILD_TESTS)
+	add_subdirectory(tests)
+endif()
