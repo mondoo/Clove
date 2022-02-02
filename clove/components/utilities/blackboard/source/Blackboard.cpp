@@ -15,7 +15,7 @@ namespace clove {
 
     Blackboard::Blackboard(Blackboard const &other)
         : memoryBlock{ other.memoryBlock.getSize() } {
-        std::byte *const memoryStart{ const_cast<std::byte *>(memoryBlock.getMemory()) };//Horrible const_cast required here as ListAllocator::getMemory should return const
+        std::byte *const memoryStart{ const_cast<std::byte *>(memoryBlock.getMemory()) };//NOLINT Horrible const_cast required here as ListAllocator::getMemory should return const
         std::byte const *const otherMemoryStart{ other.memoryBlock.getMemory() };
 
         memcpy(memoryStart, otherMemoryStart, other.memoryBlock.getSize());
@@ -35,7 +35,7 @@ namespace clove {
     Blackboard &Blackboard::operator=(Blackboard const &other) {
         memoryBlock = { other.memoryBlock.getSize() };
 
-        std::byte *const memoryStart{ const_cast<std::byte *>(memoryBlock.getMemory()) };//Horrible const_cast required here as ListAllocator::getMemory should return const
+        std::byte *const memoryStart{ const_cast<std::byte *>(memoryBlock.getMemory()) };//NOLINT Horrible const_cast required here as ListAllocator::getMemory should return const
         std::byte const *const otherMemoryStart{ other.memoryBlock.getMemory() };
 
         memcpy(memoryStart, otherMemoryStart, other.memoryBlock.getSize());
