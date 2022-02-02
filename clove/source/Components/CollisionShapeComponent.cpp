@@ -14,14 +14,10 @@ CLOVE_REFLECT_MEMBER(halfExtents, clove::EditorEditableMember{})
 CLOVE_REFLECT_END
 
 CLOVE_REFLECT_BEGIN(clove::CollisionShapeComponent, clove::EditorVisibleComponent{
-                                                        .name                    = "Collision Shape Component",
-                                                        .onEditorCreateComponent = [](clove::Entity entity, clove::EntityManager &manager) -> uint8_t * {
-                                                            return reinterpret_cast<uint8_t *>(&manager.addComponent<clove::CollisionShapeComponent>(entity));
-                                                        },
-                                                        .onEditorGetComponent = [](clove::Entity entity, clove::EntityManager &manager) -> uint8_t * {
-                                                            return reinterpret_cast<uint8_t *>(&manager.getComponent<clove::CollisionShapeComponent>(entity));
-                                                        },
-                                                        .onEditorDestroyComponent = [](clove::Entity entity, clove::EntityManager &manager) { manager.removeComponent<clove::CollisionShapeComponent>(entity); },
+                                                        .name                     = "Collision Shape Component",
+                                                        .onEditorCreateComponent  = &createComponentHelper<clove::CollisionShapeComponent>,
+                                                        .onEditorGetComponent     = &getComponentHelper<clove::CollisionShapeComponent>,
+                                                        .onEditorDestroyComponent = &destroyComponentHelper<clove::CollisionShapeComponent>,
                                                     })
 CLOVE_REFLECT_MEMBER(shape, clove::EditorEditableDropdown{
                                 .getDropdownMembers = []() -> std::vector<std::string> {

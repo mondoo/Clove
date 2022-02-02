@@ -16,14 +16,10 @@ namespace clove {
 }
 
 CLOVE_REFLECT_BEGIN(clove::RigidBodyComponent, clove::EditorVisibleComponent{
-                                                   .name                    = "Rigid Body Component",
-                                                   .onEditorCreateComponent = [](clove::Entity entity, clove::EntityManager &manager) -> uint8_t * {
-                                                       return reinterpret_cast<uint8_t *>(&manager.addComponent<clove::RigidBodyComponent>(entity));
-                                                   },
-                                                   .onEditorGetComponent = [](clove::Entity entity, clove::EntityManager &manager) -> uint8_t * {
-                                                       return reinterpret_cast<uint8_t *>(&manager.getComponent<clove::RigidBodyComponent>(entity));
-                                                   },
-                                                   .onEditorDestroyComponent = [](clove::Entity entity, clove::EntityManager &manager) { manager.removeComponent<clove::RigidBodyComponent>(entity); },
+                                                   .name                     = "Rigid Body Component",
+                                                   .onEditorCreateComponent  = &createComponentHelper<clove::RigidBodyComponent>,
+                                                   .onEditorGetComponent     = &getComponentHelper<clove::RigidBodyComponent>,
+                                                   .onEditorDestroyComponent = &destroyComponentHelper<clove::RigidBodyComponent>,
                                                })
 CLOVE_REFLECT_MEMBER(collisionGroup, clove::EditorEditableMember{})
 CLOVE_REFLECT_MEMBER(collisionMask, clove::EditorEditableMember{})

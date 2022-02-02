@@ -5,14 +5,10 @@
 #include "Clove/ReflectionAttributes.hpp"
 
 CLOVE_REFLECT_BEGIN(clove::StaticModelComponent, clove::EditorVisibleComponent{
-                                                     .name                    = "Static Model Component",
-                                                     .onEditorCreateComponent = [](clove::Entity entity, clove::EntityManager &manager) -> uint8_t * {
-                                                         return reinterpret_cast<uint8_t *>(&manager.addComponent<clove::StaticModelComponent>(entity));
-                                                     },
-                                                     .onEditorGetComponent = [](clove::Entity entity, clove::EntityManager &manager) -> uint8_t * {
-                                                         return reinterpret_cast<uint8_t *>(&manager.getComponent<clove::StaticModelComponent>(entity));
-                                                     },
-                                                     .onEditorDestroyComponent = [](clove::Entity entity, clove::EntityManager &manager) { manager.removeComponent<clove::StaticModelComponent>(entity); },
+                                                     .name                     = "Static Model Component",
+                                                     .onEditorCreateComponent  = &createComponentHelper<clove::StaticModelComponent>,
+                                                     .onEditorGetComponent     = &getComponentHelper<clove::StaticModelComponent>,
+                                                     .onEditorDestroyComponent = &destroyComponentHelper<clove::StaticModelComponent>,
                                                  })
 CLOVE_REFLECT_MEMBER(model, clove::EditorEditableMember{
                                 .onEditorGetValue = [](uint8_t const *const memory, size_t offset, size_t size) -> std::string {

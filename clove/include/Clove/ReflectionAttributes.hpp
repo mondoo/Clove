@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Clove/ECS/Entity.hpp>
+#include <Clove/ECS/EntityManager.hpp>
 #include <Clove/Log/Log.hpp>
 #include <Clove/Reflection/Reflection.hpp>
 #include <functional>
@@ -9,10 +10,6 @@
 #include <string>
 
 CLOVE_DECLARE_LOG_CATEGORY(CloveReflection)
-
-namespace clove {
-    class EntityManager;
-}
 
 namespace clove {
     inline std::string getFloatValue(uint8_t const *const memory, size_t offset, size_t size) {
@@ -31,6 +28,21 @@ namespace clove {
         } catch(std::exception e) {
             CLOVE_LOG(CloveReflection, LogLevel::Error, "Could not convert value {0} to float", value);
         }
+    }
+
+    template<typename ComponentType>
+    uint8_t *createComponentHelper(clove::Entity entity, clove::EntityManager &manager) {
+        return reinterpret_cast<uint8_t *>(&manager.addComponent<ComponentType>(entity));
+    }
+
+    template<typename ComponentType>
+    uint8_t *getComponentHelper(clove::Entity entity, clove::EntityManager &manager) {
+        return reinterpret_cast<uint8_t *>(&manager.getComponent<ComponentType>(entity));
+    }
+
+    template<typename ComponentType>
+    void destroyComponentHelper(clove::Entity entity, clove::EntityManager &manager) {
+        manager.removeComponent<ComponentType>(entity);
     }
 }
 

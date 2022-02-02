@@ -37,14 +37,10 @@ namespace clove {
 }
 
 CLOVE_REFLECT_BEGIN(clove::TransformComponent, clove::EditorVisibleComponent{
-                                                   .name                    = "Transform Component",
-                                                   .onEditorCreateComponent = [](clove::Entity entity, clove::EntityManager &manager) -> uint8_t * {
-                                                       return reinterpret_cast<uint8_t *>(&manager.addComponent<clove::TransformComponent>(entity));
-                                                   },
-                                                   .onEditorGetComponent = [](clove::Entity entity, clove::EntityManager &manager) -> uint8_t * {
-                                                       return reinterpret_cast<uint8_t *>(&manager.getComponent<clove::TransformComponent>(entity));
-                                                   },
-                                                   .onEditorDestroyComponent = [](clove::Entity entity, clove::EntityManager &manager) { manager.removeComponent<clove::TransformComponent>(entity); },
+                                                   .name                     = "Transform Component",
+                                                   .onEditorCreateComponent  = &createComponentHelper<clove::TransformComponent>,
+                                                   .onEditorGetComponent     = &getComponentHelper<clove::TransformComponent>,
+                                                   .onEditorDestroyComponent = &destroyComponentHelper<clove::TransformComponent>,
                                                })
 CLOVE_REFLECT_MEMBER(position, clove::EditorEditableMember{})
 CLOVE_REFLECT_MEMBER(rotation, clove::EditorEditableMember{})
