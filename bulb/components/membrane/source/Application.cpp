@@ -17,6 +17,8 @@
 #include <filesystem>
 #include <msclr/marshal_cppstd.h>
 
+#include <Clove/Reflection/Reflection.hpp>
+
 CLOVE_DECLARE_LOG_CATEGORY(Membrane)
 
 #ifndef GAME_OUTPUT_DIR
@@ -34,6 +36,8 @@ CLOVE_DECLARE_LOG_CATEGORY(Membrane)
 
 typedef void (*setUpEditorApplicationFn)(clove::Application *app);
 typedef void (*tearDownEditorApplicationFn)(clove::Application *app);
+
+typedef void (*setUpReflectorFn)(clove::reflection::internal::Registry *reg);
 
 namespace {
     std::string_view constexpr dllPath{ GAME_MODULE_DIR "/" GAME_NAME ".dll" };
@@ -209,6 +213,13 @@ namespace membrane {
     bool Application::tryLoadGameDll(std::string_view path) {
         if(gameLibrary = LoadLibrary(path.data()); gameLibrary != nullptr) {
             if(setUpEditorApplicationFn setUpEditorApplication{ (setUpEditorApplicationFn)GetProcAddress(gameLibrary, "setUpEditorApplication") }; setUpEditorApplication != nullptr) {
+                //Set up reflection system in module
+                {
+                    setUpReflectorFn proc{ (setUpReflectorFn)GetProcAddress(gameLibrary, "setUpReflector") };
+                    CLOVE_ASSERT(proc);
+                    proc(&clove::reflection::internal::Registry::get());
+                }
+
                 (setUpEditorApplication)(app);
             } else {
                 CLOVE_LOG(Membrane, clove::LogLevel::Error, "Could not load game initialise function. Please provide 'setUpEditorApplication' in client code.");

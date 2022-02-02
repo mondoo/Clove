@@ -16,6 +16,16 @@ namespace clove::reflection {
 
         //FUNCTIONS
     public:
+        AttributeContainer();
+
+        AttributeContainer(AttributeContainer const &other);
+        AttributeContainer(AttributeContainer &&other) noexcept;
+
+        AttributeContainer &operator=(AttributeContainer const &other);
+        AttributeContainer &operator=(AttributeContainer &&other) noexcept;
+
+        ~AttributeContainer();
+
         template<typename AttributeType>
         void add(AttributeType &&attribute);
 
