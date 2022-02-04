@@ -123,6 +123,10 @@ namespace clove::reflection {
     }
 }
 
+//Custom sizeof / typeid. GCC does not allow sizeof(Type::member)
+#define INTERAL_CLOVE_MEMBER_SIZE(type, member) sizeof(((type *)0)->member)
+#define INTERAL_CLOVE_MEMBER_TYPEID(type, member) typeid(((type *)0)->member)
+
 #define INTERNAL_CLOVE_REFLECT_CAT2(a, b) a##b
 #define INTERNAL_CLOVE_REFLECT_CAT(a, b) INTERNAL_CLOVE_REFLECT_CAT2(a, b)
 
@@ -150,9 +154,9 @@ namespace clove::reflection {
     {                                                                                                              \
         ::clove::reflection::MemberInfo memberInfo{};                                                              \
         memberInfo.name   = #member;                                                                               \
-        memberInfo.id     = typeid(Type::member).hash_code();                                                      \
+        memberInfo.id     = INTERAL_CLOVE_MEMBER_TYPEID(Type, member).hash_code();                                 \
         memberInfo.offset = offsetof(Type, member);                                                                \
-        memberInfo.size   = sizeof(Type::member);                                                                  \
+        memberInfo.size   = INTERAL_CLOVE_MEMBER_SIZE(Type, member);                                               \
         ::clove::reflection::internal::populateAttributes<0>(memberInfo.attributes, std::make_tuple(__VA_ARGS__)); \
         info.members.push_back(std::move(memberInfo));                                                             \
     }
