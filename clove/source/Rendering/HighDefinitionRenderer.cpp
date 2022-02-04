@@ -174,6 +174,12 @@ namespace clove {
     }
 
     void HighDefinitionRenderer::end() {
+        //Prevent render graph execution if we do not have anything to render.
+        //TODO: This can be removed once shader reflection is in.
+        if(currentFrameData.meshes.empty()){
+            return;
+        }
+
         framesInFlight[currentFrame]->wait();
 
         //Aquire the next available image from the render target
@@ -215,7 +221,7 @@ namespace clove {
                 .model                 = meshInfo.transform,
                 .inverseTransposeModel = inverse(transpose(meshInfo.transform)),
             };
-            vec4f const colourData{ meshInfo.material->getColour() };
+            vec4f const colourData{ meshInfo.material.getColour() };
 
             size_t const modelBufferSize{ sizeof(modelData) };
             size_t const colourBufferSize{ sizeof(colourData) };
@@ -224,8 +230,8 @@ namespace clove {
             renderGraph.writeToBuffer(colourBuffer, &colourData, 0, sizeof(colourData));
 
             //Textures
-            RgImageId diffuseTexture{ renderGraph.createImage(meshInfo.material->getDiffuseImage()) };
-            RgImageId specularTexture{ renderGraph.createImage(meshInfo.material->getSpecularImage()) };
+            RgImageId diffuseTexture{ renderGraph.createImage(meshInfo.material.getDiffuseImage()) };
+            RgImageId specularTexture{ renderGraph.createImage(meshInfo.material.getSpecularImage()) };
             RgSampler materialSampler{ renderGraph.createSampler(GhaSampler::Descriptor{
                 .minFilter        = GhaSampler::Filter::Linear,
                 .magFilter        = GhaSampler::Filter::Linear,
