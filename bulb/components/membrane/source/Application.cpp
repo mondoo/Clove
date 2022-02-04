@@ -69,8 +69,6 @@ namespace membrane {
         vfs->mount(GAME_DIR "/content", ".");
         std::filesystem::create_directories(vfs->resolve("."));
 
-        app->pushSubSystem<EditorSubSystem>(app->getEntityManager());
-
         MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_Stop ^>(this, &Application::setEditorMode));
         MessageHandler::bindToMessage(gcnew MessageSentHandler<Editor_Play ^>(this, &Application::setRuntimeMode));
     }
@@ -155,6 +153,10 @@ namespace membrane {
         }
 
         CLOVE_LOG(Membrane, clove::LogLevel::Info, "Successfully loaded {0} dll", gameName);
+    }
+
+    void Application::startSession() {
+        app->pushSubSystem<EditorSubSystem>(app->getEntityManager());
     }
 
     bool Application::isRunning() {
