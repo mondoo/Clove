@@ -130,20 +130,20 @@ namespace clove::reflection {
  * @brief Placed in the header of a class signifying that it will be reflected.
  * @details This should always be called before CLOVE_REFLECT_BEGIN etc.
  */
-#define CLOVE_REFLECT_DECLARE_TYPE(classType)                        \
-    template<>                                                       \
-    struct ::clove::reflection::internal::CreatorHelper<classType> { \
-        CreatorHelper();                                             \
-    };                                                               \
-    static inline ::clove::reflection::internal::CreatorHelper<classType> const INTERNAL_CLOVE_REFLECT_CAT(creator, __COUNTER__){};
+#define CLOVE_REFLECT_DECLARE_TYPE(classType)                      \
+    template<>                                                     \
+    struct clove::reflection::internal::CreatorHelper<classType> { \
+        CreatorHelper();                                           \
+    };                                                             \
+    static inline clove::reflection::internal::CreatorHelper<classType> const INTERNAL_CLOVE_REFLECT_CAT(creator, __COUNTER__){};
 
-#define CLOVE_REFLECT_BEGIN(classType, ...)                                    \
-    ::clove::reflection::internal::CreatorHelper<classType>::CreatorHelper() { \
-        using Type = classType;                                                \
-        ::clove::reflection::TypeInfo info{};                                  \
-        info.name = #classType;                                                \
-        info.id   = typeid(classType).hash_code();                             \
-        info.size = sizeof(classType);                                         \
+#define CLOVE_REFLECT_BEGIN(classType, ...)                                  \
+    clove::reflection::internal::CreatorHelper<classType>::CreatorHelper() { \
+        using Type = classType;                                              \
+        ::clove::reflection::TypeInfo info{};                                \
+        info.name = #classType;                                              \
+        info.id   = typeid(classType).hash_code();                           \
+        info.size = sizeof(classType);                                       \
         ::clove::reflection::internal::populateAttributes<0>(info.attributes, std::make_tuple(__VA_ARGS__));
 
 #define CLOVE_REFLECT_MEMBER(member, ...)                                                                          \
@@ -157,9 +157,9 @@ namespace clove::reflection {
         info.members.push_back(std::move(memberInfo));                                                             \
     }
 
-#define CLOVE_REFLECT_END                                                                                  \
-    ::clove::reflection::internal::Registry::get().addTypeInfo(typeid(Type).hash_code(), std::move(info)); \
-    }                                                                                                      \
+#define CLOVE_REFLECT_END                                                                                \
+    clove::reflection::internal::Registry::get().addTypeInfo(typeid(Type).hash_code(), std::move(info)); \
+    }                                                                                                    \
     ;
 
 /**
