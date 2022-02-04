@@ -6,6 +6,7 @@ CLOVE_DECLARE_LOG_CATEGORY(CloveReflection)
 
 static clove::reflection::internal::Registry *instance{ nullptr };
 
+#if CLOVE_PLATFORM_WINDOWS
 extern "C" {
 __declspec(dllexport) void setUpReflector(clove::reflection::internal::Registry *reg) {
     std::unordered_map<clove::reflection::TypeId, clove::reflection::TypeInfo> types{ clove::reflection::internal::Registry::get().getRegisteredTypes() };
@@ -18,6 +19,7 @@ __declspec(dllexport) void setUpReflector(clove::reflection::internal::Registry 
     instance = reg;
 }
 }
+#endif
 
 namespace clove::reflection {
     AttributeContainer::AttributeContainer() = default;

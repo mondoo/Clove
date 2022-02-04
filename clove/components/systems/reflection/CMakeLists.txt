@@ -24,6 +24,7 @@ target_link_libraries(
     CloveReflection
 
     PUBLIC
+        CloveDefinitions
 		CloveBlackboard
 )
 
