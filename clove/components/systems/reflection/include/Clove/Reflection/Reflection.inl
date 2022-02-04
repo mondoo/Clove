@@ -26,7 +26,7 @@ namespace clove::reflection {
         std::vector<TypeInfo const *> typeInfos{};
 
         for(auto &&[typeId, typeInfo] : internal::Registry::get().getRegisteredTypes()) {
-            if(typeInfo.attributes.contains<AttributeType>()) {
+            if(typeInfo.attributes.template contains<AttributeType>()) {//template required here as GCC gets confused with the triangle brakets
                 typeInfos.push_back(&typeInfo);
             }
         }
